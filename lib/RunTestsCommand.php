@@ -84,8 +84,7 @@ class RunTestsCommand extends Command
                     [
                         '--log-junit=logs/' . $fileObject->getFileName() . '.xml', // TODO: prefix group annotation?
                         '--configuration=lib/test/phpunit.xml',
-                        $fileName,
-                        $browsers
+                        $fileName
                     ]
                 )
                 ->getProcess();

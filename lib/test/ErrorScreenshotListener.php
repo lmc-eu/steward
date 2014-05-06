@@ -29,10 +29,10 @@ class ErrorScreenshotListener extends PHPUnit_Framework_BaseTestListener {
             throw new InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
         $test->log('Taking screenshot because: ' . $e->getMessage());
-        if (!$test->webDriver instanceof RemoteWebDriver) {
+        if (!$test->wd instanceof RemoteWebDriver) {
             $test->log("No webdriver, no screenshot.");
         }
-        $test->webDriver->takeScreenshot(
+        $test->wd->takeScreenshot(
             __DIR__ . '/../../logs/'
             . Strings::webalize(get_class($test))
             . '-'

@@ -18,7 +18,7 @@ class WebdriverListener extends PHPUnit_Framework_BaseTestListener {
             \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME
         ];
 
-        $test->webDriver = \RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities);
+        $test->wd = \RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities);
 
     }
 
@@ -30,9 +30,9 @@ class WebdriverListener extends PHPUnit_Framework_BaseTestListener {
 
         $test->log(sprintf('Destroying "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName()));
 
-        if ($test->webDriver instanceof \RemoteWebDriver) {
-            $test->webDriver->close();
-            $test->webDriver->quit();
+        if ($test->wd instanceof \RemoteWebDriver) {
+            $test->wd->close();
+            $test->wd->quit();
         }
     }
 }

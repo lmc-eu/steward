@@ -11,7 +11,7 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase {
     /**
      * @var \RemoteWebDriver
      */
-    public $webDriver;
+    public $wd;
 
     public function setUp() {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
