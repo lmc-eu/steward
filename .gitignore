@@ -1,0 +1,8 @@
+# Ignore libraries installed using Composer
+vendor
+# Ignore test logs
+logs
+
+# IDE files
+.idea
+nbproject
