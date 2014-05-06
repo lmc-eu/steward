@@ -1,18 +1,20 @@
 <?php
 
+namespace Lmc\Steward\Test;
+
 use Nette\Utils\Strings;
 
 /**
  * Listener to take screenshot on each error or failure
  */
-class ErrorScreenshotListener extends PHPUnit_Framework_BaseTestListener {
-
-    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
+class ErrorScreenshotListener extends \PHPUnit_Framework_BaseTestListener
+{
+    public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
         $this->takeScreenshot($test, $e, $time);
     }
 
-    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time)
+    public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
     {
         $this->takeScreenshot($test, $e, $time);
     }
@@ -23,13 +25,13 @@ class ErrorScreenshotListener extends PHPUnit_Framework_BaseTestListener {
      * @param Exception $e
      * @param $time
      */
-    private function takeScreenshot(PHPUnit_Framework_Test $test, Exception $e, $time)
+    private function takeScreenshot(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
-        if (!$test instanceof Lmc\Steward\Test\AbstractTestCase) {
-            throw new InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
+        if (!$test instanceof AbstractTestCase) {
+            throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
         $test->log('Taking screenshot because: ' . $e->getMessage());
-        if (!$test->wd instanceof RemoteWebDriver) {
+        if (!$test->wd instanceof \RemoteWebDriver) {
             $test->log("No webdriver, no screenshot.");
         }
         $test->wd->takeScreenshot(

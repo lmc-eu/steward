@@ -40,6 +40,13 @@ class RunTestsCommand extends Command
                 'phantomjs'
             )
             ->addOption(
+                'lmc-env',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'LMC environment name, use unknown for localhost',
+                'unknown'
+            )
+            ->addOption(
                 'dir',
                 null,
                 InputOption::VALUE_REQUIRED,
@@ -64,6 +71,7 @@ class RunTestsCommand extends Command
     {
         $pattern = $input->getOption('pattern');
         $dir = $input->getOption('dir');
+        $lmcEnv = $input->getOption('lmc-env');
         $browsers = $input->getArgument('browser');
         $output->writeln($dir);
 
@@ -79,6 +87,7 @@ class RunTestsCommand extends Command
             // Prepare Processes for each testcase
             $process = (new ProcessBuilder())
                 ->setEnv('BROWSER_NAME', $browsers)
+                ->setEnv('LMC_ENV', $lmcEnv)
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(
                     [
