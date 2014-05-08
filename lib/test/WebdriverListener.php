@@ -19,11 +19,9 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         );
 
         $capabilities = [
-            \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME
+            \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME,
         ];
-
         $test->wd = \RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities);
-
     }
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
@@ -32,9 +30,12 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
 
-        $test->log(sprintf('Destroying "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName()));
-
         if ($test->wd instanceof \RemoteWebDriver) {
+            $test->log(sprintf('Destroying "%s" webdriver for "%s::%s" (session %s)', BROWSER_NAME, get_class($test), $test->getName(), $test->wd->getSessionID()));
+
+            // Necessary for phantomjs - see https://github.com/detro/ghostdriver/issues/343
+            $test->wd->getCommandExecutor()->execute('deleteAllCookies');
+
             $test->wd->close();
             $test->wd->quit();
         }
