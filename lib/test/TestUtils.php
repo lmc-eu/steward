@@ -1,0 +1,66 @@
+<?php
+
+namespace Lmc\Steward\Test;
+
+/**
+ * Commons test utils and syntax sugar for tests
+ *
+ * @copyright LMC s.r.o.
+ */
+class TestUtils
+{
+    /**
+     * @var AbstactTestCase
+     */
+    protected $test;
+
+    /**
+     * Create utils instance
+     * @param \Lmc\Steward\Test\AbstractTestCase $test
+     */
+    public function __construct(AbstractTestCase $test)
+    {
+        $this->test = $test;
+    }
+
+    /**
+     * Set value of Select2 element
+     * @param string $originalId ID of original select/input element
+     * @param string $value Value to be selected
+     * @param string $multiSelect OPTIONAL Is the select multiselect?
+     * @todo Support multiple values for multiselects
+     */
+    public function setSelect2Value($originalId, $value, $multiSelect = false)
+    {
+        $select2selector = '#s2id_' . $originalId;
+
+        // Wait for select2 to appear
+        $select2link = $this->test->wd->wait()->until(
+            \WebDriverExpectedCondition::presenceOfElementLocated(
+                \WebDriverBy::cssSelector($select2selector . ' ' . ($multiSelect ? 'input' : 'a'))
+            )
+        );
+
+        // Click on element to open dropdown - to copy users behavior
+        $select2link->click();
+
+        $this->test->log('Sending keys to select2: ' . $value);
+
+        // Insert searched term into s2 generated input
+        $this->test->wd
+            ->findElement(\WebDriverBy::cssSelector($multiSelect ? $select2selector . ' input' : '#select2-drop input'))
+            ->sendKeys($value);
+
+        // Wait until result are rendered (or maybe loaded with ajax)
+        $firstResult = $this->test->wd->wait()->until(
+            \WebDriverExpectedCondition::presenceOfElementLocated(
+                \WebDriverBy::cssSelector('.select2-drop .select2-result')
+            )
+        );
+
+        $this->test->log('Dropdown detected, selecting the first result: ' . $firstResult->getText());
+
+        // Select first item in results
+        $firstResult->click();
+    }
+}
