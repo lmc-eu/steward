@@ -34,13 +34,14 @@ class ErrorScreenshotListener extends \PHPUnit_Framework_BaseTestListener
         if (!$test->wd instanceof \RemoteWebDriver) {
             $test->log("No webdriver, no screenshot.");
         }
+
         $test->wd->takeScreenshot(
             __DIR__ . '/../../logs/'
             . Strings::webalize(get_class($test))
             . '-'
             . Strings::webalize($test->getName())
             . '-'
-            . time()
+            . date('Y-m-d-H-i-s')
             . '.png'
         );
     }
