@@ -59,6 +59,12 @@ class RunTestsCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Pattern for test files to be run',
                 '*Test.php'
+            )
+            ->addOption(
+                'group',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Only runs tests from the specified @group (option is passed to PHPUnit)'
             );
     }
 
@@ -69,33 +75,57 @@ class RunTestsCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln(
+            'Steward is running the tests...'
+            . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
+        );
+
+        $browsers = $input->getArgument('browser');
+
         $pattern = $input->getOption('pattern');
         $dir = $input->getOption('dir');
         $lmcEnv = $input->getOption('lmc-env');
-        $browsers = $input->getArgument('browser');
-        $output->writeln($dir);
+        $group = $input->getOption('group');
 
+        $output->writeln(sprintf('Browser: %s', $browsers));
+        $output->writeln(sprintf('LMC environment: %s', $lmcEnv));
+
+        $output->writeln('Searching for testcases:');
+        if ($group) {
+            $output->writeln(sprintf(' - in group "%s"', $group));
+        }
+        $output->writeln(sprintf(' - in directory "%s"', $dir));
+        $output->writeln(sprintf(' - by pattern "%s"', $pattern));
+
+        $testCasesNum = 0;
         foreach (Finder::findFiles($pattern)->from($dir) as $fileName => $fileObject) {
-            $output->writeln(sprintf('Found testcase file: %s', $fileName));
-
             // Parse classes from the testcase file
             $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
 
             // Get annotations for the first class in testcase (one file = one class)
             $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
 
+            // Is group is specified, but the class does not have it, skipt the test now
+            if ($group) {
+                if (!in_array($group, $annotations['group'])) {
+                    continue;
+                }
+                $output->writeln(sprintf('Found testcase #%d file in group %s: %s', ++$testCasesNum, $group, $fileName));
+            } else {
+                $output->writeln(sprintf('Found testcase #%d file: %s', ++$testCasesNum, $fileName));
+            }
+
+            $phpunitArgs = [
+                '--log-junit=logs/' . $fileObject->getFileName() . '.xml',
+                '--configuration=lib/test/phpunit.xml',
+            ];
+
             // Prepare Processes for each testcase
             $process = (new ProcessBuilder())
                 ->setEnv('BROWSER_NAME', $browsers)
                 ->setEnv('LMC_ENV', $lmcEnv)
                 ->setPrefix('vendor/bin/phpunit')
-                ->setArguments(
-                    [
-                        '--log-junit=logs/' . $fileObject->getFileName() . '.xml', // TODO: prefix group annotation?
-                        '--configuration=lib/test/phpunit.xml',
-                        $fileName
-                    ]
-                )
+                ->setArguments(array_merge($phpunitArgs, [$fileName]))
                 ->getProcess();
 
             $this->addProcessToQueue(
@@ -104,6 +134,11 @@ class RunTestsCommand extends Command
                 $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '',
                 $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : 0
             );
+        }
+
+        if (!count($this->processes)) {
+            $output->writeln('No testcases matched given criteria, exiting.');
+            return;
         }
 
         // Ensure dependencies links to existing classes
