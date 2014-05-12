@@ -32,7 +32,15 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         }
 
         if ($test->wd instanceof \RemoteWebDriver) {
-            $test->log(sprintf('Destroying "%s" webdriver for "%s::%s" (session %s)', BROWSER_NAME, get_class($test), $test->getName(), $test->wd->getSessionID()));
+            $test->log(
+                sprintf(
+                    'Destroying "%s" webdriver for "%s::%s" (session %s)',
+                    BROWSER_NAME,
+                    get_class($test),
+                    $test->getName(),
+                    $test->wd->getSessionID()
+                )
+            );
 
             // Necessary for phantomjs - see https://github.com/detro/ghostdriver/issues/343
             $test->wd->getCommandExecutor()->execute('deleteAllCookies');
