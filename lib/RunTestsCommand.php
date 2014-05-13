@@ -110,7 +110,14 @@ class RunTestsCommand extends Command
                 if (!in_array($group, $annotations['group'])) {
                     continue;
                 }
-                $output->writeln(sprintf('Found testcase #%d file in group %s: %s', ++$testCasesNum, $group, $fileName));
+                $output->writeln(
+                    sprintf(
+                        'Found testcase #%d file in group %s: %s',
+                        ++$testCasesNum,
+                        $group,
+                        $fileName
+                    )
+                );
             } else {
                 $output->writeln(sprintf('Found testcase #%d file: %s', ++$testCasesNum, $fileName));
             }

@@ -63,4 +63,18 @@ class TestUtils
         // Select first item in results
         $firstResult->click();
     }
+
+    /**
+     * Sleep for given amout of seconds.
+     * Unlike sleep(), also the float values are supported.
+     * ALWAYS TRY TO USE WAIT() INSTEAD!
+     * @param float $seconds
+     */
+    public function sleep($seconds)
+    {
+        $fullSecond = floor($seconds);
+        $microseconds = fmod($seconds, 1) * 1000000000;
+
+        time_nanosleep($fullSecond, $microseconds);
+    }
 }
