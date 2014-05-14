@@ -54,7 +54,7 @@ class TestUtils
         // Wait until result are rendered (or maybe loaded with ajax)
         $firstResult = $this->test->wd->wait()->until(
             \WebDriverExpectedCondition::presenceOfElementLocated(
-                \WebDriverBy::cssSelector('.select2-drop .select2-result')
+                \WebDriverBy::cssSelector('.select2-drop .select2-result.select2-highlighted')
             )
         );
 
