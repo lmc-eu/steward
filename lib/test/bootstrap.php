@@ -2,6 +2,8 @@
 
 // Bootstrap before each Testcase
 
+date_default_timezone_set('Europe/Prague');
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 // Set used environment varibles as PHP constanst to be used in tests
