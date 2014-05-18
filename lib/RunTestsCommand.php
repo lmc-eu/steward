@@ -47,6 +47,13 @@ class RunTestsCommand extends Command
                 'unknown'
             )
             ->addOption(
+                'server-url',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Selenium server (hub) hub hostname and port',
+                'http://localhost:4444'
+            )
+            ->addOption(
                 'dir',
                 null,
                 InputOption::VALUE_REQUIRED,
@@ -85,10 +92,12 @@ class RunTestsCommand extends Command
         $pattern = $input->getOption('pattern');
         $dir = $input->getOption('dir');
         $lmcEnv = $input->getOption('lmc-env');
+        $serverUrl = $input->getOption('server-url');
         $group = $input->getOption('group');
 
         $output->writeln(sprintf('Browser: %s', $browsers));
         $output->writeln(sprintf('LMC environment: %s', $lmcEnv));
+        $output->writeln(sprintf('Selenium server (hub) url: %s', $serverUrl));
 
         $output->writeln('Searching for testcases:');
         if ($group) {
@@ -131,6 +140,7 @@ class RunTestsCommand extends Command
             $process = (new ProcessBuilder())
                 ->setEnv('BROWSER_NAME', $browsers)
                 ->setEnv('LMC_ENV', $lmcEnv)
+                ->setEnv('SERVER_URL', $serverUrl)
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(array_merge($phpunitArgs, [$fileName]))
                 ->getProcess();

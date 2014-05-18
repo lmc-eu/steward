@@ -22,7 +22,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME,
         ];
 
-        $test->wd = \RemoteWebDriver::create('http://localhost:4444/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
+        $test->wd = \RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
     }
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)

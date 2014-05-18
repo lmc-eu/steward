@@ -18,3 +18,9 @@ if (!$lmcEnv) {
     throw new Exception('LMC_ENV environment variable must be defined');
 }
 define('LMC_ENV', $lmcEnv);
+
+$serverUrl = getenv('SERVER_URL');
+if (!$serverUrl) {
+    throw new Exception('SERVER_URL environment variable must be defined');
+}
+define('SERVER_URL', $serverUrl);
