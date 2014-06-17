@@ -1,3 +1,6 @@
+# Ignore downloaded files
+bin/selenium-server-standalone-*.jar
+
 # Ignore libraries installed using Composer
 vendor
 # Ignore test logs

@@ -35,7 +35,7 @@ class RunTestsCommand extends Command
             ->setDescription('Run tests planner and execute tests')
             ->addArgument(
                 'browser',
-                InputArgument::OPTIONAL, // TODO: IS_ARRAY to allow multiple browsers
+                InputArgument::OPTIONAL, // TODO: IS_ARRAY to allow multiple browsers?
                 'Browsers in which test should be run',
                 'phantomjs'
             )
