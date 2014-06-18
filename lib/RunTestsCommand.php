@@ -93,11 +93,20 @@ class RunTestsCommand extends Command
         $dir = $input->getOption('dir');
         $lmcEnv = $input->getOption('lmc-env');
         $serverUrl = $input->getOption('server-url');
+        $parsedUrl = parse_url($serverUrl);
         $group = $input->getOption('group');
 
         $output->writeln(sprintf('Browser: %s', $browsers));
         $output->writeln(sprintf('LMC environment: %s', $lmcEnv));
-        $output->writeln(sprintf('Selenium server (hub) url: %s', $serverUrl));
+        $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
+
+        // Try connection
+        $seleniumConnection = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $connectionErrorNo, $connectionError);
+        if (!is_resource($seleniumConnection)) {
+            $output->writeln(sprintf('error (%s)', $connectionError));
+            return 1;
+        }
+        $output->writeln('OK');
 
         $output->writeln('Searching for testcases:');
         if ($group) {
@@ -121,14 +130,14 @@ class RunTestsCommand extends Command
                 }
                 $output->writeln(
                     sprintf(
-                        'Found testcase #%d file in group %s: %s',
+                        'Found testcase file #%d in group %s: %s',
                         ++$testCasesNum,
                         $group,
                         $fileName
                     )
                 );
             } else {
-                $output->writeln(sprintf('Found testcase #%d file: %s', ++$testCasesNum, $fileName));
+                $output->writeln(sprintf('Found testcase file #%d: %s', ++$testCasesNum, $fileName));
             }
 
             $phpunitArgs = [
@@ -155,7 +164,7 @@ class RunTestsCommand extends Command
 
         if (!count($this->processes)) {
             $output->writeln('No testcases matched given criteria, exiting.');
-            return;
+            return 1;
         }
 
         // Ensure dependencies links to existing classes
@@ -275,7 +284,7 @@ class RunTestsCommand extends Command
                 if (!$processObject->process->isStarted()) {
                     $output->writeln(
                         sprintf(
-                            'Running command for class "%s": %s',
+                            'Running command for class "%s":' . "\n" . '%s',
                             $testClass,
                             $processObject->process->getCommandLine()
                         )
