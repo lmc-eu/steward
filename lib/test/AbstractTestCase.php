@@ -8,13 +8,8 @@ namespace Lmc\Steward\Test;
  *
  * @copyright LMC s.r.o.
  */
-abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractTestCase extends AbstractTestCaseBase
 {
-    /**
-     * @var \RemoteWebDriver
-     */
-    public $wd;
-
     /**
      * Commmon test utils, instantiated on setUp
      * @var TestUtils
@@ -24,14 +19,12 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
-
         $this->utils = new TestUtils($this);
     }
 
     public function tearDown()
     {
         unset($this->utils);
-
         $this->log('Finished execution of test ' . get_called_class() . '::' . $this->getName());
     }
 

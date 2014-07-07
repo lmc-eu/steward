@@ -10,15 +10,15 @@ namespace Lmc\Steward\Test;
 class TestUtils
 {
     /**
-     * @var AbstactTestCase
+     * @var AbstractTestCaseBase
      */
     protected $test;
 
     /**
      * Create utils instance
-     * @param \Lmc\Steward\Test\AbstractTestCase $test
+     * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
      */
-    public function __construct(AbstractTestCase $test)
+    public function __construct(AbstractTestCaseBase $test)
     {
         $this->test = $test;
     }
@@ -27,7 +27,7 @@ class TestUtils
      * Set value of Select2 element
      * @param string $originalId ID of original select/input element
      * @param string $value Value to be selected
-     * @param string $multiSelect OPTIONAL Is the select multiselect?
+     * @param bool $multiSelect OPTIONAL Is the select multiselect?
      * @todo Support multiple values for multiselects
      */
     public function setSelect2Value($originalId, $value, $multiSelect = false)
