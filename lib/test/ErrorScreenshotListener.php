@@ -22,7 +22,7 @@ class ErrorScreenshotListener extends \PHPUnit_Framework_BaseTestListener
     /**
      * Take screenshot and save it
      * @param PHPUnit_Framework_Test|LmcTestCase $test
-     * @param Exception $e
+     * @param Exception                          $e
      * @param $time
      */
     private function takeScreenshot(\PHPUnit_Framework_Test $test, \Exception $e, $time)

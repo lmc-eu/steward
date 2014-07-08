@@ -25,9 +25,9 @@ class TestUtils
 
     /**
      * Set value of Select2 element
-     * @param string $originalId ID of original select/input element
-     * @param string $value Value to be selected
-     * @param bool $multiSelect OPTIONAL Is the select multiselect?
+     * @param string $originalId  ID of original select/input element
+     * @param string $value       Value to be selected
+     * @param bool   $multiSelect OPTIONAL Is the select multiselect?
      * @todo Support multiple values for multiselects
      */
     public function setSelect2Value($originalId, $value, $multiSelect = false)

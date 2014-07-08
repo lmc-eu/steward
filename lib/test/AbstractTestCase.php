@@ -16,14 +16,21 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
      */
     public $utils;
 
+    /**
+     * @var Legacy
+     */
+    public $legacy;
+
     public function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
         $this->utils = new TestUtils($this);
+        $this->legacy = new Legacy($this, get_called_class());
     }
 
     public function tearDown()
     {
+        unset($this->legacy);
         unset($this->utils);
         $this->log('Finished execution of test ' . get_called_class() . '::' . $this->getName());
     }
