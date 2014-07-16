@@ -19,7 +19,7 @@
  * {
  *      public function test()
  *      {
- *          $data = $legacy->loadWithName();
+ *          $data = $legacy->loadWithName('my_test_case_legacy');
  *      }
  * }
  *
@@ -28,6 +28,8 @@
  * of the test running - the class must have PhaseN in the name where N is a digit - this because different phases
  * of the test-case will differ in the digit but the rest of the name will be the same
  * - and so different phases of the same test-case can access the same legacy
+ * You can choose whether the legacy should be shared between tests in a test case (class) or accessible only
+ * by the same test function.
  *
  * example:
  * class FooPhase1Test
@@ -52,6 +54,9 @@ namespace Lmc\Steward\Test;
 
 class Legacy
 {
+    const LEGACY_TYPE_CASE = "CASE";
+    const LEGACY_TYPE_TEST = "TEST";
+
     /**
      * @var AbstractTestCaseBase
      */
@@ -74,17 +79,22 @@ class Legacy
 
     /**
      * Generates a filename (without path) for the legacy based on the name of the test-case
+     * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
+     *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @return string
      * @throws LegacyException
      */
-    protected function getLegacyName()
+    protected function getLegacyName($type)
     {
         $name = $this->testClassName;
 
         if (preg_match('/Phase\d/', $name)) {
             $name = preg_replace('/Phase\d/', '', $name);
             $name = str_replace(['/', '\\'], '-', $name);
-            $name .= '#' . $this->test->getName() . ".legacy";
+            if ($type == Legacy::LEGACY_TYPE_TEST) {
+                $name .= '#' . $this->test->getName();
+            }
+            $name .= ".legacy";
         } else {
             throw new LegacyException(
                 "Cannot generate legacy name from class without 'Phase' followed by number in name " . $name);
@@ -121,23 +131,27 @@ class Legacy
      * Store legacy of test getLegacyFilename is called to generate filename
      *      from the test class name
      * @param $data
+     * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
+     *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @throws LegacyException
      */
-    public function save($data)
+    public function save($data, $type = Legacy::LEGACY_TYPE_CASE)
     {
-        $this->saveWithName($data, $this->getLegacyName());
+        $this->saveWithName($data, $this->getLegacyName($type));
     }
 
     /**
      * Reads legacy of test getLegacyFilename is called to generate filename
      * from the test class name
      * raises exception if it is not found
+     * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
+     *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @return Mixed
      * @throws LegacyException
      */
-    public function load()
+    public function load($type = Legacy::LEGACY_TYPE_CASE)
     {
-        return $this->loadWithName($this->getLegacyName());
+        return $this->loadWithName($this->getLegacyName($type));
     }
 
     /**
