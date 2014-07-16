@@ -30,9 +30,9 @@ class ErrorScreenshotListener extends \PHPUnit_Framework_BaseTestListener
         if (!$test instanceof AbstractTestCase) {
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
-        $test->log('Taking screenshot because: ' . $e->getMessage());
+        $test->log('Taking screenshot because: %s', $e->getMessage());
         if (!$test->wd instanceof \RemoteWebDriver) {
-            $test->log("No webdriver, no screenshot.");
+            $test->log('No webdriver, no screenshot.');
         }
 
         $test->wd->takeScreenshot(

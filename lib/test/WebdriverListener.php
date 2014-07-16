@@ -14,9 +14,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
 
-        $test->log(
-            sprintf('Initializing "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName())
-        );
+        $test->log('Initializing "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName());
 
         $capabilities = [
             \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME,
@@ -38,13 +36,11 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         if ($test->wd instanceof \RemoteWebDriver) {
             $test->log(
-                sprintf(
-                    'Destroying "%s" webdriver for "%s::%s" (session %s)',
-                    BROWSER_NAME,
-                    get_class($test),
-                    $test->getName(),
-                    $test->wd->getSessionID()
-                )
+                'Destroying "%s" webdriver for "%s::%s" (session %s)',
+                BROWSER_NAME,
+                get_class($test),
+                $test->getName(),
+                $test->wd->getSessionID()
             );
 
             // Necessary for phantomjs - see https://github.com/detro/ghostdriver/issues/343

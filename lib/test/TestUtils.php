@@ -44,7 +44,7 @@ class TestUtils
         // Click on element to open dropdown - to copy users behavior
         $select2link->click();
 
-        $this->test->log('Sending keys to select2: ' . $value);
+        $this->test->log('Sending keys to select2: %s', $value);
 
         // Insert searched term into s2 generated input
         $this->test->wd
@@ -58,7 +58,7 @@ class TestUtils
             )
         );
 
-        $this->test->log('Dropdown detected, selecting the first result: ' . $firstResult->getText());
+        $this->test->log('Dropdown detected, selecting the first result: %s', $firstResult->getText());
 
         // Select first item in results
         $firstResult->click();

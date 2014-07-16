@@ -36,10 +36,17 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo
+     * Log to output
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
+     * @param mixed $args,... OPTIONAL Variable number of parameters inserted into $format string
      */
-    public function log($msg)
+    public function log($format, $args = null)
     {
-        echo '[' . date("Y-m-d H:i:s") . ']: ' . $msg . "\n";
+        $argv = func_get_args();
+        $format = array_shift($argv);
+
+        echo '[' . date("Y-m-d H:i:s") . ']: '
+            . vsprintf($format, $argv)
+            . "\n";
     }
 }
