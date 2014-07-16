@@ -4,34 +4,19 @@ namespace Lmc\Steward\Test;
 
 /**
  * Abstract test case to be used by all test cases.
- * It adds loging, some common logics and assertions.
+ * It adds logging, some common logic and assertions.
  *
  * @copyright LMC s.r.o.
  */
 abstract class AbstractTestCase extends AbstractTestCaseBase
 {
-    /**
-     * Commmon test utils, instantiated on setUp
-     * @var TestUtils
-     */
-    public $utils;
-
-    /**
-     * @var Legacy
-     */
-    public $legacy;
-
     public function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
-        $this->utils = new TestUtils($this);
-        $this->legacy = new Legacy($this, get_called_class());
     }
 
     public function tearDown()
     {
-        unset($this->legacy);
-        unset($this->utils);
         $this->log('Finished execution of test ' . get_called_class() . '::' . $this->getName());
     }
 

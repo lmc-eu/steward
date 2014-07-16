@@ -20,12 +20,11 @@ class Legacy
     /**
      * Create Legacy instance
      * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
-     * @param string $testClassName
      */
-    public function __construct(AbstractTestCaseBase $test, $testClassName)
+    public function __construct(AbstractTestCaseBase $test)
     {
         $this->test = $test;
-        $this->testClassName = $testClassName;
+        $this->testClassName = get_class($this->test);
     }
 
     /**
