@@ -1,6 +1,51 @@
 <?php
 /**
  * Allows sharing data between test-cases and phases of tests
+ *
+ * Two possible uses
+ * 1. loadWithName and saveWithName - you must define a name for the legacy which will be used as a filename
+ * to store the data - beware - the name must be unique through all test-cases
+ *
+ * example:
+ * class FooPhase1Test
+ * {
+ *      public function test()
+ *      {
+ *          $legacy->saveWithName("some data to be remembered", 'my_test_case_legacy');
+ *      }
+ * }
+ *
+ * class FooPhase2Test
+ * {
+ *      public function test()
+ *      {
+ *          $data = $legacy->loadWithName();
+ *      }
+ * }
+ *
+ *
+ * 2. load and save - the name of the legacy (file) is generated from the name of the test case class and the name
+ * of the test running - the class must have PhaseN in the name where N is a digit - this because different phases
+ * of the test-case will differ in the digit but the rest of the name will be the same
+ * - and so different phases of the same test-case can access the same legacy
+ *
+ * example:
+ * class FooPhase1Test
+ * {
+ *      public function test()
+ *      {
+ *          $legacy->save("some data to be remembered");
+ *      }
+ * }
+ *
+ * class FooPhase2Test
+ * {
+ *      public function test()
+ *      {
+ *          $data = $legacy->load();
+ *      }
+ * }
+ *
  */
 
 namespace Lmc\Steward\Test;
