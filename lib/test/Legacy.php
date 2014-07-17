@@ -108,13 +108,13 @@ class Legacy
     }
 
     /**
-     * Makes a fully qualified path to file with legacy
+     * Gets a path to file with legacy data
      * @param $filename
      * @return string
      */
-    protected function makeLegacyFullPath($filename)
+    protected function getLegacyFullPath($filename)
     {
-        return "logs/" . $filename;
+        return __DIR__ . '/../../logs/' . $filename;
     }
 
     /**
@@ -126,7 +126,7 @@ class Legacy
      */
     public function saveWithName($data, $legacyName)
     {
-        $filename = $this->makeLegacyFullPath($legacyName);
+        $filename = $this->getLegacyFullPath($legacyName);
         if (file_put_contents($filename, serialize($data)) === false) {
             throw new LegacyException("Cannot save legacy to file " . $filename);
         }
@@ -151,7 +151,7 @@ class Legacy
      * raises exception if it is not found
      * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
-     * @return Mixed
+     * @return mixed
      * @throws LegacyException
      */
     public function load($type = Legacy::LEGACY_TYPE_CASE)
@@ -164,29 +164,27 @@ class Legacy
      * raises exception if it is not found
      * @param string $legacyName filename to store the data
      *      from the test class name
-     * @return Mixed
+     * @return mixed
      * @throws LegacyException
      */
     public function loadWithName($legacyName)
     {
-        $filename = $this->makeLegacyFullPath($legacyName);
+        $filename = $this->getLegacyFullPath($legacyName);
 
-        // if the file doesn't exist - raise exception
         if (!file_exists($filename)) {
             throw new LegacyException("Cannot find legacy file " . $filename);
         }
 
         $data = file_get_contents($filename);
-        if ($data===false) {
+        if ($data === false) {
             throw new LegacyException("Cannot read legacy file " . $filename);
         }
 
         $legacy = unserialize($data);
-        if ($legacy===false) {
+        if ($legacy === false) {
             throw new LegacyException("Cannot parse legacy form file " . $filename);
         }
 
         return $legacy;
     }
-
 }
