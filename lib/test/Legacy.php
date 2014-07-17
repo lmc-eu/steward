@@ -52,6 +52,8 @@
 
 namespace Lmc\Steward\Test;
 
+use Nette\Utils\Strings;
+
 class Legacy
 {
     const LEGACY_TYPE_CASE = "CASE";
@@ -88,17 +90,20 @@ class Legacy
     {
         $name = $this->testClassName;
 
-        if (preg_match('/Phase\d/', $name)) {
-            $name = preg_replace('/Phase\d/', '', $name);
-            $name = str_replace(['/', '\\'], '-', $name);
-            if ($type == Legacy::LEGACY_TYPE_TEST) {
-                $name .= '#' . $this->test->getName();
-            }
-            $name .= ".legacy";
-        } else {
+        if (!preg_match('/Phase\d/', $name)) {
             throw new LegacyException(
-                "Cannot generate legacy name from class without 'Phase' followed by number in name " . $name);
+                "Cannot generate legacy name from class without 'Phase' followed by number in name " . $name
+            );
         }
+
+        $name = preg_replace('/Phase\d/', '', $name); // remove 'PhaseX' from the name
+        $name = Strings::webalize($name, null, $lower = false);
+
+        if ($type == Legacy::LEGACY_TYPE_TEST) {
+            $name .= '#' . Strings::webalize($this->test->getName(), null, $lower = false);
+        }
+
+        $name .= '.legacy';
         return $name;
     }
 
@@ -142,7 +147,7 @@ class Legacy
 
     /**
      * Reads legacy of test getLegacyFilename is called to generate filename
-     * from the test class name
+     * from the test class name.
      * raises exception if it is not found
      * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)

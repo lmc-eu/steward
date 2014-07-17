@@ -37,9 +37,9 @@ class ErrorScreenshotListener extends \PHPUnit_Framework_BaseTestListener
 
         $test->wd->takeScreenshot(
             __DIR__ . '/../../logs/'
-            . Strings::webalize(get_class($test))
+            . Strings::webalize(get_class($test), null, $lower = false)
             . '-'
-            . Strings::webalize($test->getName())
+            . Strings::webalize($test->getName(), null, $lower = false)
             . '-'
             . date('Y-m-d-H-i-s')
             . '.png'
