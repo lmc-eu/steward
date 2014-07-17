@@ -10,9 +10,17 @@ namespace Lmc\Steward\Test;
  */
 abstract class AbstractTestCase extends AbstractTestCaseBase
 {
+    /**
+     * Common test utils, instantiated on setUp.
+     * @var TestUtils
+     */
+    public $utils;
+
     public function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
+
+        $this->utils = new TestUtils($this);
     }
 
     public function tearDown()

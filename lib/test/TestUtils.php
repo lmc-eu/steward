@@ -3,7 +3,8 @@
 namespace Lmc\Steward\Test;
 
 /**
- * Commons test utils and syntax sugar for tests
+ * Common test utils and syntax sugar for tests.
+ * Should be accessible in all tests.
  *
  * @copyright LMC s.r.o.
  */
