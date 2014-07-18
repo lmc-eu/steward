@@ -66,7 +66,7 @@ class TestUtils
     }
 
     /**
-     * Sleep for given amout of seconds.
+     * Sleep for given amount of seconds.
      * Unlike sleep(), also the float values are supported.
      * ALWAYS TRY TO USE WAIT() INSTEAD!
      * @param float $seconds

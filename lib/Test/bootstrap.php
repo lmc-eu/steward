@@ -6,7 +6,7 @@ date_default_timezone_set('Europe/Prague');
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// Set used environment varibles as PHP constanst to be used in tests
+// Set used environment variables as PHP constants to be used in tests
 $browserName = getenv('BROWSER_NAME');
 if (!$browserName) {
     throw new Exception('BROWSER_NAME environment variable must be defined');

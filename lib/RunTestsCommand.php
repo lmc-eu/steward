@@ -123,7 +123,7 @@ class RunTestsCommand extends Command
             // Get annotations for the first class in testcase (one file = one class)
             $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
 
-            // Is group is specified, but the class does not have it, skipt the test now
+            // If group is specified, but the class does not have it, skip the test now
             if ($group) {
                 if (!in_array($group, $annotations['group'])) {
                     continue;
@@ -177,7 +177,7 @@ class RunTestsCommand extends Command
             }
         }
 
-        // Set tasks without delay as prepared in order to make them executed instanly
+        // Set tasks without delay as prepared in order to make them executed instantly
         $queuedProcesses = $this->getProcesses('queued');
         foreach ($queuedProcesses as $className => $processObject) {
             if (!$processObject->delayMinutes) {
@@ -238,7 +238,7 @@ class RunTestsCommand extends Command
     }
 
     /**
-     * Get array of processes havig given status
+     * Get array of processes having given status
      * @param string $status
      * @return array
      */
@@ -269,7 +269,7 @@ class RunTestsCommand extends Command
      */
     protected function executionLoop(OutputInterface $output)
     {
-        // Iterate over prepared and queued until eveything is done
+        // Iterate over prepared and queued until everything is done
         while (true) {
             $prepared = $this->getProcesses('prepared');
             $queued = $this->getProcesses('queued');
