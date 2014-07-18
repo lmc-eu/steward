@@ -142,7 +142,7 @@ class RunTestsCommand extends Command
 
             $phpunitArgs = [
                 '--log-junit=logs/' . $fileObject->getFileName() . '.xml',
-                '--configuration=lib/test/phpunit.xml',
+                '--configuration=lib/Test/phpunit.xml',
             ];
 
             // Prepare Processes for each testcase
