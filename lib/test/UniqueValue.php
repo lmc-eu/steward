@@ -7,6 +7,11 @@ namespace Lmc\Steward\Test;
 
 class UniqueValue
 {
+    /** @var string Test case instance */
+    protected $test;
+    /** @var string Name of the test case class */
+    protected $testClassName;
+
     /**
      * Create UniqueValue instance
      * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
@@ -23,10 +28,10 @@ class UniqueValue
     }
 
     /**
-     * generates unique name from current time with prefix and suffix
+     * Generates unique name from current time with prefix and suffix
      * if prefix is not specified uses fully qualified name of the test class
      * suffix is optional
-     * @param null $prefix
+     * @param string|null $prefix
      * @param string $suffix
      * @return string
      */
@@ -35,14 +40,14 @@ class UniqueValue
         if ($prefix === null) {
             $prefix = $this->getTestClassKey();
         }
-        $now = new \DateTime();
 
-        return $prefix . $now->format('YmdHis') . $suffix;
+        return $prefix . (new \DateTime())->format('YmdHis') . $suffix;
     }
 
     /**
-     * generates unique name from current time and $distinguishingPrefix and appends $readablePrefix and $readableSuffix
-     * @param int $maxLength max total length including $readablePrefix and $readableSuffix - will cut the generated part
+     * Generates unique name from current time and $distinguishingPrefix and appends $readablePrefix and $readableSuffix
+     * @param int $maxLength max total length including $readablePrefix and $readableSuffix - will cut the
+     *      generated part
      * @param string $readablePrefix pre-pended to the hashed value
      * @param string $readableSuffix appended to the hashed value
      * @param null $distinguishingPrefix default uses the fully qualified class name of the test
@@ -54,10 +59,11 @@ class UniqueValue
         $readableSuffix = "",
         $distinguishingPrefix = null
     ) {
-        // maxLength - prefix length - suffix length
-        $ml = $maxLength - strlen($readablePrefix) - strlen($readableSuffix);
-        $sha1 = sha1($this->createTimestampValue($distinguishingPrefix));
+        // hashLength = maxLength - prefix length - suffix length
+        $hashLength = $maxLength - strlen($readablePrefix) - strlen($readableSuffix);
 
-        return $readablePrefix . substr($sha1, 0, $ml) . $readableSuffix;
+        $hash = sha1($this->createTimestampValue($distinguishingPrefix));
+
+        return $readablePrefix . substr($hash, 0, $hashLength) . $readableSuffix;
     }
 }
