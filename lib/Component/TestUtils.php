@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Component;
 
 /**
  * Common test utils and syntax sugar for tests.
@@ -19,16 +19,16 @@ class TestUtils
      * Create utils instance
      * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
      */
-    public function __construct(AbstractTestCaseBase $test)
+    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $test)
     {
         $this->test = $test;
     }
 
     /**
      * Set value of Select2 element
-     * @param string $originalId  ID of original select/input element
-     * @param string $value       Value to be selected
-     * @param bool   $multiSelect OPTIONAL Is the select multiselect?
+     * @param string $originalId ID of original select/input element
+     * @param string $value Value to be selected
+     * @param bool $multiSelect OPTIONAL Is the select multiselect?
      * @todo Support multiple values for multiselects
      */
     public function setSelect2Value($originalId, $value, $multiSelect = false)

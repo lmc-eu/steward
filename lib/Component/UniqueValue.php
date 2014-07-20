@@ -3,7 +3,7 @@
  * Generating unique values for identifiers based on the name of running test-case and current time
  */
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Component;
 
 class UniqueValue
 {
@@ -16,7 +16,7 @@ class UniqueValue
      * Create UniqueValue instance
      * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
      */
-    public function __construct(AbstractTestCaseBase $test)
+    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $test)
     {
         $this->test = $test;
         $this->testClassName = get_class($this->test);

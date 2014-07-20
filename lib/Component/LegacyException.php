@@ -3,7 +3,7 @@
  * Exception raised by Legacy
  */
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Component;
 
 use Exception;
 

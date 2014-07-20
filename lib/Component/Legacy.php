@@ -50,7 +50,7 @@
  *
  */
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Component;
 
 use Nette\Utils\Strings;
 
@@ -73,7 +73,7 @@ class Legacy
      * Create Legacy instance
      * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
      */
-    public function __construct(AbstractTestCaseBase $test)
+    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $test)
     {
         $this->test = $test;
         $this->testClassName = get_class($this->test);

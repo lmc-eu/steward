@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Test;
 
+use Lmc\Steward\Component\TestUtils;
+
 /**
  * Abstract test case to be used by all test cases.
  * It adds logging, some common logic and assertions.
