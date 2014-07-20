@@ -293,8 +293,20 @@ class RunTestsCommand extends Command
                     continue;
                 }
 
-                $output->write($processObject->process->getIncrementalOutput());
-                $output->write($processObject->process->getIncrementalErrorOutput());
+                $processOutput = $processObject->process->getIncrementalOutput();
+                if ($processOutput) {
+                    $processOutputLines = explode("\n", $processOutput);
+
+                    // color output lines containing "[WARN]"
+                    foreach ($processOutputLines as &$processOutputLine) {
+                        if (strpos($processOutputLine, '[WARN]') !== false) {
+                            $processOutputLine = '<fg=black;bg=yellow>' . $processOutputLine . '</fg=black;bg=yellow>';
+                        }
+                    }
+                    $output->write(implode("\n", $processOutputLines));
+                }
+
+                $output->write('<error>' . $processObject->process->getIncrementalErrorOutput() . '</error>');
 
                 if (!$processObject->process->isRunning()) {
                     $output->writeln(sprintf('Process for class "%s" finished', $testClass));

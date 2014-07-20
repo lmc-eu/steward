@@ -37,11 +37,33 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
      */
     public function log($format, $args = null)
     {
-        $argv = func_get_args();
-        $format = array_shift($argv);
+        echo $this->formatOutput(func_get_args());
+    }
 
-        echo '[' . date("Y-m-d H:i:s") . ']: '
-            . vsprintf($format, $argv)
+    /**
+     * Log warning to output. Unlike log(), it will be prefixed with "WARN: " and colored.
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
+     * @param mixed $args,... OPTIONAL Variable number of parameters inserted into $format string
+     */
+    public function warn($format, $args = null)
+    {
+        echo $this->formatOutput(func_get_args(), $isWarn = true);
+    }
+
+    /**
+     * Format output
+     * @param array $args Array of arguments passed to original sprintf()-like function
+     * @param bool $isWarn OPTIONAL Is message warning? Default is false.
+     * @return string Formatted output
+     */
+    protected function formatOutput(array $args, $isWarn = false)
+    {
+        $format = array_shift($args);
+
+        return '[' . date("Y-m-d H:i:s") . ']'
+            . ($isWarn ? ' [WARN]' : '')
+            . ': '
+            . vsprintf($format, $args)
             . "\n";
     }
 }
