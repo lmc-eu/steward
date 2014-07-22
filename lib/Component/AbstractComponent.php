@@ -26,7 +26,7 @@ abstract class AbstractComponent
         // Methods log() and warn() prepend componentName to message and call the same method on TestCase.
         if ($name == 'log' || $name == 'warn') {
             $arguments[0] = '[' . $this->componentName . '] ' . $arguments[0];
-            call_user_method_array($name, $this->tc, $arguments);
+            call_user_func_array([$this->tc, $name], $arguments);
         }
     }
 }
