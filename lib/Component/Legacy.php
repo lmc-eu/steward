@@ -106,7 +106,6 @@ class Legacy extends AbstractComponent
             $name .= '#' . Strings::webalize($this->tc->getName(), null, $lower = false);
         }
 
-        $name .= '.legacy';
         return $name;
     }
 
@@ -117,7 +116,7 @@ class Legacy extends AbstractComponent
      */
     protected function getLegacyFullPath($filename)
     {
-        return __DIR__ . '/../../logs/' . $filename;
+        return realpath(__DIR__ . '/../../logs') . '/' . $filename . $this->extension;
     }
 
     /**
