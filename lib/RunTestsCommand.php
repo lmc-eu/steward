@@ -11,6 +11,7 @@ use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 use Nette\Utils\Finder;
 use Nette\Reflection\AnnotationsParser;
+use Nette\Utils\Strings;
 
 /**
  * Run tests command is used to start Steward test planner and execute tests one by one,
@@ -141,7 +142,9 @@ class RunTestsCommand extends Command
             }
 
             $phpunitArgs = [
-                '--log-junit=logs/' . $fileObject->getFileName() . '.xml',
+                '--log-junit=logs/'
+                . Strings::webalize(key($classes), null, $lower = false)
+                . '.xml',
                 '--configuration=lib/Test/phpunit.xml',
             ];
 
