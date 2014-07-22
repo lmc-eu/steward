@@ -54,15 +54,10 @@ namespace Lmc\Steward\Component;
 
 use Nette\Utils\Strings;
 
-class Legacy
+class Legacy extends AbstractComponent
 {
     const LEGACY_TYPE_CASE = "CASE";
     const LEGACY_TYPE_TEST = "TEST";
-
-    /**
-     * @var AbstractTestCaseBase
-     */
-    protected $test;
 
     /**
      * @var string
@@ -70,17 +65,25 @@ class Legacy
     protected $testClassName;
 
     /**
-     * Create Legacy instance
-     * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
+     * @var string
      */
-    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $test)
+    protected $extension = '.legacy';
+
+
+    /**
+     * Create Legacy instance
+     * @param \Lmc\Steward\Test\AbstractTestCaseBase $tc TestCase instance
+     */
+    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $tc)
     {
-        $this->test = $test;
-        $this->testClassName = get_class($this->test);
+        parent::__construct($tc);
+        $this->testClassName = get_class($tc);
+
+        $this->log('New legacy instantiated in class "%s"', $this->testClassName);
     }
 
     /**
-     * Generates a filename (without path) for the legacy based on the name of the test-case
+     * Generates a filename (without path and extension) for the legacy based on the name of the test-case
      * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @return string
@@ -100,7 +103,7 @@ class Legacy
         $name = Strings::webalize($name, null, $lower = false);
 
         if ($type == Legacy::LEGACY_TYPE_TEST) {
-            $name .= '#' . Strings::webalize($this->test->getName(), null, $lower = false);
+            $name .= '#' . Strings::webalize($this->tc->getName(), null, $lower = false);
         }
 
         $name .= '.legacy';
@@ -127,6 +130,7 @@ class Legacy
     public function saveWithName($data, $legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
+        $this->log('Saving legacy "%s" data to file "%s"', $legacyName, $filename);
         if (file_put_contents($filename, serialize($data)) === false) {
             throw new LegacyException("Cannot save legacy to file " . $filename);
         }
@@ -170,6 +174,8 @@ class Legacy
     public function loadWithName($legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
+
+        $this->log('Reading legacy "%s" from file "%s"', $legacyName, $filename);
 
         if (!file_exists($filename)) {
             throw new LegacyException("Cannot find legacy file " . $filename);

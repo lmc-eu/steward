@@ -5,21 +5,19 @@
 
 namespace Lmc\Steward\Component;
 
-class UniqueValue
+class UniqueValue extends AbstractComponent
 {
-    /** @var string Test case instance */
-    protected $test;
     /** @var string Name of the test case class */
     protected $testClassName;
 
     /**
      * Create UniqueValue instance
-     * @param \Lmc\Steward\Test\AbstractTestCaseBase $test
+     * @param \Lmc\Steward\Test\AbstractTestCaseBase $tc TestCase instance
      */
-    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $test)
+    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $tc)
     {
-        $this->test = $test;
-        $this->testClassName = get_class($this->test);
+        parent::__construct($tc);
+        $this->testClassName = get_class($tc);
     }
 
     public function getTestClassKey()
