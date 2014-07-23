@@ -25,7 +25,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             $capabilities['ie.ensureCleanSession'] = true;
         }
 
-        $test->wd = \RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
+        $test->wd = RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
 
         // Force screen resolution for Phantom, otherwise it uses some weird unchangeable defaults
         if (BROWSER_NAME == 'phantomjs') {
