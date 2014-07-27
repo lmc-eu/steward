@@ -116,7 +116,7 @@ class Legacy extends AbstractComponent
      */
     protected function getLegacyFullPath($filename)
     {
-        return realpath(__DIR__ . '/../../logs') . '/' . $filename . $this->extension;
+        return sys_get_temp_dir() . '/' . $filename . $this->extension;
     }
 
     /**
