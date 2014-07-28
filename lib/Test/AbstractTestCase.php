@@ -18,6 +18,13 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
      */
     public $utils;
 
+    /**
+     * Names of existing LMC environments
+     * @todo TODO: remove - is LMC specific
+     * @var array
+     */
+    public static $lmcEnvs = ['dev1', 'dev2', 'dev3', 'devel', 'deploy', 'prod'];
+
     public function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());

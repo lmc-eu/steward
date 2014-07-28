@@ -35,17 +35,15 @@ class RunTestsCommand extends Command
          $this->setName('run-tests')
             ->setDescription('Run tests planner and execute tests')
             ->addArgument(
+                'environment',
+                InputArgument::REQUIRED,
+                'Environment name (must be specified to avoid unintentional run against production)'
+            )
+            ->addArgument(
                 'browser',
                 InputArgument::OPTIONAL, // TODO: IS_ARRAY to allow multiple browsers?
-                'Browsers in which test should be run',
+                'Browsers in which tests should be run',
                 'phantomjs'
-            )
-            ->addOption(
-                'lmc-env',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'LMC environment name, use unknown for localhost',
-                'unknown'
             )
             ->addOption(
                 'server-url',
@@ -89,10 +87,10 @@ class RunTestsCommand extends Command
         );
 
         $browsers = $input->getArgument('browser');
+        $environment = $input->getArgument('environment');
 
         $pattern = $input->getOption('pattern');
         $dir = $input->getOption('dir');
-        $lmcEnv = $input->getOption('lmc-env');
         $serverUrl = $input->getOption('server-url');
         $parsedUrl = parse_url($serverUrl);
         $group = $input->getOption('group');
@@ -151,7 +149,7 @@ class RunTestsCommand extends Command
             // Prepare Processes for each testcase
             $process = (new ProcessBuilder())
                 ->setEnv('BROWSER_NAME', $browsers)
-                ->setEnv('LMC_ENV', $lmcEnv)
+                ->setEnv('ENV', strtolower($environment))
                 ->setEnv('SERVER_URL', $serverUrl)
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(array_merge($phpunitArgs, [$fileName]))

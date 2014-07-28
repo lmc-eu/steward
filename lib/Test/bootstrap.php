@@ -13,11 +13,11 @@ if (!$browserName) {
 }
 define('BROWSER_NAME', $browserName);
 
-$lmcEnv = getenv('LMC_ENV');
-if (!$lmcEnv) {
-    throw new Exception('LMC_ENV environment variable must be defined');
+$env = getenv('ENV');
+if (!$env) {
+    throw new Exception('ENV environment variable must be defined');
 }
-define('LMC_ENV', $lmcEnv);
+define('ENV', $env);
 
 $serverUrl = getenv('SERVER_URL');
 if (!$serverUrl) {
