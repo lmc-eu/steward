@@ -96,7 +96,8 @@ class RunTestsCommand extends Command
         $group = $input->getOption('group');
 
         $output->writeln(sprintf('Browser: %s', $browsers));
-        $output->writeln(sprintf('LMC environment: %s', $lmcEnv));
+        $output->writeln(sprintf('Environment: %s', $environment));
+
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
 
         // Try connection
