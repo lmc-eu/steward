@@ -70,7 +70,7 @@ class RunTestsCommand extends Command
                 'group',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Only runs tests from the specified @group (option is passed to PHPUnit)'
+                'Only runs testcases with specified @group of this name'
             );
     }
 
