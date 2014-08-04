@@ -271,6 +271,8 @@ class RunTestsCommand extends Command
      */
     protected function executionLoop(OutputInterface $output)
     {
+        $counterWaitingOutput = 1;
+        $counterProcessesLast = 0;
         // Iterate over prepared and queued until everything is done
         while (true) {
             $prepared = $this->getProcesses('prepared');
@@ -333,14 +335,26 @@ class RunTestsCommand extends Command
                 }
             }
 
-            $output->writeln(
-                sprintf(
-                    "waiting (running: %d, queued: %d, finished: %d)",
-                    count($this->getProcesses('prepared')),
-                    count($this->getProcesses('queued')),
-                    count($this->getProcesses('finished'))
-                )
-            );
+            $countProcessesPrepared = count($this->getProcesses('prepared'));
+            $countProcessesQueued = count($this->getProcesses('queued'));
+            $countProcessesFinished = count($this->getProcesses('finished'));
+            $counterProcesses = $countProcessesPrepared . $countProcessesQueued . $countProcessesFinished;
+            // don't show same output for 10 seconds
+            if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
+                $counterWaitingOutput++;
+            } else {
+                $output->writeln(
+                    sprintf(
+                        "[%s]: waiting (running: %d, queued: %d, finished: %d)",
+                        date("Y-m-d H:i:s"),
+                        $countProcessesPrepared,
+                        $countProcessesQueued,
+                        $countProcessesFinished
+                    )
+                );
+                $counterWaitingOutput = 1;
+            }
+            $counterProcessesLast = $counterProcesses;
             sleep(1);
         }
     }
