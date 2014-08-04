@@ -125,7 +125,7 @@ class RunTestsCommand extends Command
 
             // If group is specified, but the class does not have it, skip the test now
             if ($group) {
-                if (!in_array($group, $annotations['group'])) {
+                if (!array_key_exists('group', $annotations) || !in_array($group, $annotations['group'])) {
                     continue;
                 }
                 $output->writeln(
