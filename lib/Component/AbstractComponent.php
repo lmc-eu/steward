@@ -2,6 +2,11 @@
 
 namespace Lmc\Steward\Component;
 
+/**
+ * Class AbstractComponent
+ * @method void log(string $message, $arguments)
+ * @method void warn(string $message, $arguments)
+ */
 abstract class AbstractComponent
 {
     /** @var \Lmc\Steward\Test\AbstractTestCaseBase */
