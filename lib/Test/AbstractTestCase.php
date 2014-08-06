@@ -68,7 +68,7 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         $format = array_shift($args);
 
         // If first item of arguments contains another array use it as arguments
-        if (is_array($args[0])) {
+        if (!empty($args) && is_array($args[0])) {
             $args = $args[0];
         }
 
