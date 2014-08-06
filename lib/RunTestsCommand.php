@@ -338,7 +338,7 @@ class RunTestsCommand extends Command
             $countProcessesPrepared = count($this->getProcesses('prepared'));
             $countProcessesQueued = count($this->getProcesses('queued'));
             $countProcessesFinished = count($this->getProcesses('finished'));
-            $counterProcesses = $countProcessesPrepared . $countProcessesQueued . $countProcessesFinished;
+            $counterProcesses = $countProcessesPrepared . "|" . $countProcessesQueued . "|" . $countProcessesFinished;
             // if the output didn't change, wait 10 seconds before printing it again
             if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
                 $counterWaitingOutput++;
