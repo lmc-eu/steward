@@ -1,10 +1,10 @@
 <?php
-/**
- * Generating unique values for identifiers based on the name of running test-case and current time
- */
 
 namespace Lmc\Steward\Component;
 
+/**
+ * Generating unique values for identifiers based on the name of running test-case and current time
+ */
 class UniqueValue extends AbstractComponent
 {
     /** @var string Name of the test case class */

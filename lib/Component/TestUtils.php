@@ -5,8 +5,6 @@ namespace Lmc\Steward\Component;
 /**
  * Common test utils and syntax sugar for tests.
  * Should be accessible in all tests.
- *
- * @copyright LMC s.r.o.
  */
 class TestUtils extends AbstractComponent
 {

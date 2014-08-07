@@ -3,7 +3,8 @@
 namespace Lmc\Steward\Component;
 
 /**
- * Class AbstractComponent
+ * AbstractComponent used as parent of all components to add some default functionality and interface .
+ *
  * @method void log(string $message, $arguments)
  * @method void warn(string $message, $arguments)
  */
