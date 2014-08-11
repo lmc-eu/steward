@@ -5,18 +5,18 @@ namespace Lmc\Steward\Test;
 use Nette\Utils\Strings;
 
 /**
- * Listener to take screenshot on each error or failure.
+ * Listener to take snapshots of the page (screenshot and html snapshot) on each error or failure.
  */
-class ScreenshotListener extends \PHPUnit_Framework_BaseTestListener
+class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
 {
     public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
-        $this->takeScreenshot($test, $e, $time);
+        $this->takeSnapshot($test, $e, $time);
     }
 
     public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
     {
-        $this->takeScreenshot($test, $e, $time);
+        $this->takeSnapshot($test, $e, $time);
     }
 
     /**
@@ -25,7 +25,7 @@ class ScreenshotListener extends \PHPUnit_Framework_BaseTestListener
      * @param Exception $e
      * @param $time
      */
-    private function takeScreenshot(AbstractTestCase $test, \Exception $e, $time)
+    private function takeSnapshot(AbstractTestCase $test, \Exception $e, $time)
     {
         $savePath = __DIR__ . '/../../logs/';
 
@@ -35,14 +35,19 @@ class ScreenshotListener extends \PHPUnit_Framework_BaseTestListener
             . '-'
             . date('Y-m-d-H-i-s');
 
-        $test->log('Taking screenshot because: "%s"', $e->getMessage());
-
         if (!$test->wd instanceof \RemoteWebDriver) {
             $test->warn('WebDriver instance not found, cannot take screenshot.');
             return;
         }
 
+        $test->log('Taking snapshots of page "%s" because: "%s"', $test->wd->getCurrentURL(), $e->getMessage());
+
+        // Save PNG screenshot
         $test->wd->takeScreenshot($savePath . $testIdentifier . '.png');
-        $test->log('Screenshot saved to file "%s" ', $e->getMessage(), $testIdentifier . '.png');
+        $test->log('Screenshot saved to file "%s" ', $testIdentifier . '.png');
+
+        // Save HTML snapshot of page
+        file_put_contents($savePath . $testIdentifier . '.html', $test->wd->getPageSource());
+        $test->log('HTML snapshot saved to file "%s" ', $testIdentifier . '.html');
     }
 }
