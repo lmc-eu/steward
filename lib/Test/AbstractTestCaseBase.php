@@ -15,7 +15,17 @@ abstract class AbstractTestCaseBase extends \PHPUnit_Framework_TestCase
      */
     public $wd;
 
+    /**
+     * Log to output
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
+     * @param mixed $args,... OPTIONAL Variable number of parameters inserted into $format string
+     */
     abstract public function log($format, $args = null);
 
+    /**
+     * Log warning to output. Unlike log(), it will be prefixed with "WARN: " and colored.
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
+     * @param mixed $args,... OPTIONAL Variable number of parameters inserted into $format string
+     */
     abstract public function warn($format, $args = null);
 }

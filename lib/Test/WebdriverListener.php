@@ -3,8 +3,12 @@
 namespace Lmc\Steward\Test;
 
 /**
- * This is a workaround for the order in which PHPUnit executes addFailure on listeners and tearDown
- * If taking screenshot using addFailure, tearDown was already called and the browser closed
+ * Listener to initialize and destroy WebDriver befaore and after each tests.
+ *
+ * Note: This is done as listener rather then in setUp() and tearDown(), as a workaround
+ * for the sequence in which PHPUnit executes tearDown() of tests and addFailure() on listeners.
+ * If taking screenshot using addFailure(), tearDown() would have already been called and the
+ * browser would be closed.
  */
 class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 {

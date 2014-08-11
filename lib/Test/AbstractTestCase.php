@@ -37,21 +37,11 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         $this->log('Finished execution of test ' . get_called_class() . '::' . $this->getName());
     }
 
-    /**
-     * Log to output
-     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
-     * @param mixed $args,... OPTIONAL Variable number of parameters inserted into $format string
-     */
     public function log($format, $args = null)
     {
         echo $this->formatOutput(func_get_args());
     }
 
-    /**
-     * Log warning to output. Unlike log(), it will be prefixed with "WARN: " and colored.
-     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
-     * @param mixed $args,... OPTIONAL Variable number of parameters inserted into $format string
-     */
     public function warn($format, $args = null)
     {
         echo $this->formatOutput(func_get_args(), $isWarn = true);

@@ -1,6 +1,6 @@
 <phpunit bootstrap="bootstrap.php">
     <listeners>
-        <listener class="Lmc\Steward\Test\ErrorScreenshotListener" file="ErrorScreenshotListener.php" />
+        <listener class="Lmc\Steward\Test\ScreenshotListener" file="ScreenshotListener.php" />
         <listener class="Lmc\Steward\Test\WebdriverListener" file="WebdriverListener.php" />
     </listeners>
 </phpunit>
