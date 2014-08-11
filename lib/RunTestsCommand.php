@@ -147,6 +147,11 @@ class RunTestsCommand extends Command
                 '--configuration=lib/Test/phpunit.xml',
             ];
 
+            // If ANSI output is enabled, turn on colors on PHPUnit
+            if ($output->isDecorated()) {
+                $phpunitArgs[] = '--colors';
+            }
+
             // Prepare Processes for each testcase
             $process = (new ProcessBuilder())
                 ->setEnv('BROWSER_NAME', $browsers)
