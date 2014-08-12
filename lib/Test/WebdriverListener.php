@@ -3,9 +3,9 @@
 namespace Lmc\Steward\Test;
 
 /**
- * Listener to initialize and destroy WebDriver befaore and after each tests.
+ * Listener for initialization and destruction of WebDriver before and after each test.
  *
- * Note: This is done as listener rather then in setUp() and tearDown(), as a workaround
+ * Note: This is done as a listener rather then in setUp() and tearDown(), as a workaround
  * for the sequence in which PHPUnit executes tearDown() of tests and addFailure() on listeners.
  * If taking screenshot using addFailure(), tearDown() would have already been called and the
  * browser would be closed.
