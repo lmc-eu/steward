@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Component;
 
+use Lmc\Steward\Test\AbstractTestCaseBase;
+
 /**
  * AbstractComponent used as parent of all components to add some default functionality and interface .
  *
@@ -10,16 +12,16 @@ namespace Lmc\Steward\Component;
  */
 abstract class AbstractComponent
 {
-    /** @var \Lmc\Steward\Test\AbstractTestCaseBase */
+    /** @var AbstractTestCaseBase */
     protected $tc;
 
     /** @var string */
     protected $componentName;
 
     /**
-     * @param \Lmc\Steward\Test\AbstractTestCaseBase $tc TestCase instance
+     * @param AbstractTestCaseBase $tc TestCase instance
      */
-    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $tc)
+    public function __construct(AbstractTestCaseBase $tc)
     {
         $this->tc = $tc;
 
