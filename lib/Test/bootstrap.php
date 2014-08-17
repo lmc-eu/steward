@@ -24,3 +24,9 @@ if (!$serverUrl) {
     throw new Exception('SERVER_URL environment variable must be defined');
 }
 define('SERVER_URL', $serverUrl);
+
+$publishResults = getenv('PUBLISH_RESULTS');
+if (!isset($publishResults)) {
+    $publishResults = false;
+}
+define('PUBLISH_RESULTS', $publishResults);

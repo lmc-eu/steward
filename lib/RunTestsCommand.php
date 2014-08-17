@@ -23,6 +23,7 @@ class RunTestsCommand extends Command
 {
     /**
      * Array of objects with test processes, indexed by testcase fully qualified name
+     *
      * @var array
      */
     protected $processes = [];
@@ -32,7 +33,7 @@ class RunTestsCommand extends Command
      */
     protected function configure()
     {
-         $this->setName('run-tests')
+        $this->setName('run-tests')
             ->setDescription('Run tests planner and execute tests')
             ->addArgument(
                 'environment',
@@ -71,11 +72,19 @@ class RunTestsCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Only runs testcases with specified @group of this name'
+            )
+            ->addOption(
+                'publish-results',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Publish test results to test storage, default storage is adela',
+                false
             );
     }
 
     /**
      * Execute command
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      */
@@ -94,6 +103,7 @@ class RunTestsCommand extends Command
         $serverUrl = $input->getOption('server-url');
         $parsedUrl = parse_url($serverUrl);
         $group = $input->getOption('group');
+        $publishResults = $input->getOption('publish-results');
 
         $output->writeln(sprintf('Browser: %s', $browsers));
         $output->writeln(sprintf('Environment: %s', $environment));
@@ -104,6 +114,7 @@ class RunTestsCommand extends Command
         $seleniumConnection = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $connectionErrorNo, $connectionError);
         if (!is_resource($seleniumConnection)) {
             $output->writeln(sprintf('error (%s)', $connectionError));
+
             return 1;
         }
         $output->writeln('OK');
@@ -157,6 +168,7 @@ class RunTestsCommand extends Command
                 ->setEnv('BROWSER_NAME', $browsers)
                 ->setEnv('ENV', strtolower($environment))
                 ->setEnv('SERVER_URL', $serverUrl)
+                ->setEnv('PUBLISH_RESULTS', $publishResults)
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(array_merge($phpunitArgs, [$fileName]))
                 ->getProcess();
@@ -171,6 +183,7 @@ class RunTestsCommand extends Command
 
         if (!count($this->processes)) {
             $output->writeln('No testcases matched given criteria, exiting.');
+
             return 1;
         }
 
@@ -178,7 +191,8 @@ class RunTestsCommand extends Command
         $queuedProcesses = $this->getProcesses('queued');
         foreach ($queuedProcesses as $className => $processObject) {
             if (!empty($processObject->delayAfter)
-                && !array_key_exists($processObject->delayAfter, $queuedProcesses)) {
+                && !array_key_exists($processObject->delayAfter, $queuedProcesses)
+            ) {
                 $output->writeln(sprintf('Testcase "%s" has invalid dependency, not queueing it.', $className));
                 $this->removeProcess($className);
             }
@@ -207,6 +221,7 @@ class RunTestsCommand extends Command
 
     /**
      * Add new process to the queue
+     *
      * @param Process $process PHPUnit process to run
      * @param string $className Tested class fully qualified name
      * @param string $delayAfter OPTIONAL Other fully qualified class name after which this test should be run.
@@ -246,7 +261,9 @@ class RunTestsCommand extends Command
 
     /**
      * Get array of processes having given status
+     *
      * @param string $status
+     *
      * @return array
      */
     protected function getProcesses($status)
@@ -263,6 +280,7 @@ class RunTestsCommand extends Command
 
     /**
      * Remove process - no matter its status
+     *
      * @param type $className
      */
     protected function removeProcess($className)
@@ -272,6 +290,7 @@ class RunTestsCommand extends Command
 
     /**
      * Start planner execution loop
+     *
      * @param OutputInterface $output
      */
     protected function executionLoop(OutputInterface $output)
@@ -334,7 +353,8 @@ class RunTestsCommand extends Command
                 $delaySeconds = $processObject->delayMinutes * 60;
 
                 if (in_array($processObject->delayAfter, $finishedClasses)
-                    && (time() - $finished[$processObject->delayAfter]->finishedTime) > $delaySeconds) {
+                    && (time() - $finished[$processObject->delayAfter]->finishedTime) > $delaySeconds
+                ) {
                     $output->writeln(sprintf('Unqueing class "%s"', $testClass));
                     $processObject->status = 'prepared';
                 }
