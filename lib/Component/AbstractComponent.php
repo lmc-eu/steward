@@ -7,8 +7,8 @@ use Lmc\Steward\Test\AbstractTestCaseBase;
 /**
  * AbstractComponent used as parent of all components to add some default functionality and interface .
  *
- * @method void log(string $message, $arguments)
- * @method void warn(string $message, $arguments)
+ * @method void log(string $message, $arguments = null)
+ * @method void warn(string $message, $arguments = null)
  */
 abstract class AbstractComponent
 {
