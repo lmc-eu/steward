@@ -75,9 +75,8 @@ class RunTestsCommand extends Command
             ->addOption(
                 'publish-results',
                 null,
-                InputOption::VALUE_OPTIONAL,
-                'Publish test results to test storage, default storage is adela',
-                false
+                InputOption::VALUE_NONE,
+                'Publish test results to test storage'
             );
     }
 
@@ -106,6 +105,8 @@ class RunTestsCommand extends Command
 
         $output->writeln(sprintf('Browser: %s', $browsers));
         $output->writeln(sprintf('Environment: %s', $environment));
+
+        $output->writeln(sprintf('Publish results: %s', ($publishResults) ? 'yes' : 'no'));
 
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
 
