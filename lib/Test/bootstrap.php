@@ -25,6 +25,12 @@ if (!$serverUrl) {
 }
 define('SERVER_URL', $serverUrl);
 
+$debug = getenv('DEBUG');
+if (!isset($debug)) {
+    $debug = false;
+}
+define('DEBUG', $debug);
+
 $publishResults = getenv('PUBLISH_RESULTS');
 if (!isset($publishResults)) {
     $publishResults = false;

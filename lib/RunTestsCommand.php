@@ -139,16 +139,20 @@ class RunTestsCommand extends Command
                 if (!array_key_exists('group', $annotations) || !in_array($group, $annotations['group'])) {
                     continue;
                 }
-                $output->writeln(
-                    sprintf(
-                        'Found testcase file #%d in group %s: %s',
-                        ++$testCasesNum,
-                        $group,
-                        $fileName
-                    )
-                );
+                if ($output->isDebug()) {
+                    $output->writeln(
+                        sprintf(
+                            'Found testcase file #%d in group %s: %s',
+                            ++$testCasesNum,
+                            $group,
+                            $fileName
+                        )
+                    );
+                }
             } else {
-                $output->writeln(sprintf('Found testcase file #%d: %s', ++$testCasesNum, $fileName));
+                if ($output->isDebug()) {
+                    $output->writeln(sprintf('Found testcase file #%d: %s', ++$testCasesNum, $fileName));
+                }
             }
 
             $phpunitArgs = [
@@ -169,6 +173,7 @@ class RunTestsCommand extends Command
                 ->setEnv('ENV', strtolower($environment))
                 ->setEnv('SERVER_URL', $serverUrl)
                 ->setEnv('PUBLISH_RESULTS', $publishResults)
+                ->setEnv('DEBUG', $output->isDebug())
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(array_merge($phpunitArgs, [$fileName]))
                 ->getProcess();
@@ -202,17 +207,21 @@ class RunTestsCommand extends Command
         $queuedProcesses = $this->getProcesses('queued');
         foreach ($queuedProcesses as $className => $processObject) {
             if (!$processObject->delayMinutes) {
-                $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
+                if ($output->isDebug()) {
+                    $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
+                }
                 $processObject->status = 'prepared';
             } else {
-                $output->writeln(
-                    sprintf(
-                        'Testcase "%s" is queued to be run %d minutes after testcase "%s" is finished',
-                        $className,
-                        $processObject->delayMinutes,
-                        $processObject->delayAfter
-                    )
-                );
+                if ($output->isDebug()) {
+                    $output->writeln(
+                        sprintf(
+                            'Testcase "%s" is queued to be run %d minutes after testcase "%s" is finished',
+                            $className,
+                            $processObject->delayMinutes,
+                            $processObject->delayAfter
+                        )
+                    );
+                }
             }
         }
 
@@ -310,13 +319,15 @@ class RunTestsCommand extends Command
             // Start all prepared tasks and set status of not running as finished
             foreach ($prepared as $testClass => $processObject) {
                 if (!$processObject->process->isStarted()) {
-                    $output->writeln(
-                        sprintf(
-                            'Running command for class "%s":' . "\n" . '%s',
-                            $testClass,
-                            $processObject->process->getCommandLine()
-                        )
-                    );
+                    if ($output->isDebug()) {
+                        $output->writeln(
+                            sprintf(
+                                'Running command for class "%s":' . "\n" . '%s',
+                                $testClass,
+                                $processObject->process->getCommandLine()
+                            )
+                        );
+                    }
                     $processObject->process->start();
                     continue;
                 }
