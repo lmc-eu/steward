@@ -42,9 +42,8 @@ class RunTestsCommand extends Command
             )
             ->addArgument(
                 'browser',
-                InputArgument::OPTIONAL, // TODO: IS_ARRAY to allow multiple browsers?
-                'Browsers in which tests should be run',
-                'phantomjs'
+                InputArgument::REQUIRED,
+                'Browser in which tests should be run'
             )
             ->addOption(
                 'server-url',
