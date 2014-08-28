@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward;
 
+use Lmc\Steward\Test\ProcessSet;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,13 +22,6 @@ use Nette\Utils\Strings;
  */
 class RunTestsCommand extends Command
 {
-    /**
-     * Array of objects with test processes, indexed by testcase fully qualified name
-     *
-     * @var array
-     */
-    protected $processes = [];
-
     /**
      * Configure command
      */
@@ -88,6 +82,8 @@ class RunTestsCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $processSet = new ProcessSet();
+
         $output->writeln(
             'Steward is running the tests...'
             . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
@@ -178,7 +174,7 @@ class RunTestsCommand extends Command
                 ->setArguments(array_merge($phpunitArgs, [$fileName]))
                 ->getProcess();
 
-            $this->addProcessToQueue(
+            $processSet->add(
                 $process,
                 key($classes),
                 $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '',
@@ -186,25 +182,25 @@ class RunTestsCommand extends Command
             );
         }
 
-        if (!count($this->processes)) {
+        if (!count($processSet)) {
             $output->writeln('No testcases matched given criteria, exiting.');
 
             return 1;
         }
 
         // Ensure dependencies links to existing classes
-        $queuedProcesses = $this->getProcesses('queued');
+        $queuedProcesses = $processSet->get('queued');
         foreach ($queuedProcesses as $className => $processObject) {
             if (!empty($processObject->delayAfter)
                 && !array_key_exists($processObject->delayAfter, $queuedProcesses)
             ) {
                 $output->writeln(sprintf('Testcase "%s" has invalid dependency, not queueing it.', $className));
-                $this->removeProcess($className);
+                $processSet->remove($className);
             }
         }
 
         // Set tasks without delay as prepared in order to make them executed instantly
-        $queuedProcesses = $this->getProcesses('queued');
+        $queuedProcesses = $processSet->get('queued');
         foreach ($queuedProcesses as $className => $processObject) {
             if (!$processObject->delayMinutes) {
                 if ($output->isDebug()) {
@@ -225,91 +221,23 @@ class RunTestsCommand extends Command
             }
         }
 
-        $this->executionLoop($output);
-    }
-
-    /**
-     * Add new process to the queue
-     *
-     * @param Process $process PHPUnit process to run
-     * @param string $className Tested class fully qualified name
-     * @param string $delayAfter OPTIONAL Other fully qualified class name after which this test should be run.
-     * If is set, $delayMinutes must be > 0
-     * @param int $delayMinutes OPTIONAL Delay execution for $delayMinutes after $delayAfter test
-     */
-    protected function addProcessToQueue(Process $process, $className, $delayAfter = '', $delayMinutes = 0)
-    {
-        $delayMinutes = abs((int) $delayMinutes);
-        if (!empty($delayAfter) && $delayMinutes === 0) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Test "%s" should run after "%s", but not delay was defined',
-                    $className,
-                    $delayAfter
-                )
-            );
-        }
-        if ($delayMinutes !== 0 && empty($delayAfter)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Test "%s" has defined delay %d minutes, but does not have defined the task to run after',
-                    $className,
-                    $delayMinutes
-                )
-            );
-        }
-
-        $this->processes[$className] = (object) [
-            'status' => 'queued',
-            'process' => $process,
-            'delayAfter' => $delayAfter,
-            'delayMinutes' => $delayMinutes,
-            'finishedTime' => null,
-        ];
-    }
-
-    /**
-     * Get array of processes having given status
-     *
-     * @param string $status
-     *
-     * @return array
-     */
-    protected function getProcesses($status)
-    {
-        $return = [];
-        foreach ($this->processes as $className => $processObject) {
-            if ($processObject->status == $status) {
-                $return[$className] = $processObject;
-            }
-        }
-
-        return $return;
-    }
-
-    /**
-     * Remove process - no matter its status
-     *
-     * @param type $className
-     */
-    protected function removeProcess($className)
-    {
-        unset($this->processes[$className]);
+        $this->executionLoop($output, $processSet);
     }
 
     /**
      * Start planner execution loop
      *
      * @param OutputInterface $output
+     * @param ProcessSet $processSet
      */
-    protected function executionLoop(OutputInterface $output)
+    protected function executionLoop(OutputInterface $output, ProcessSet $processSet)
     {
         $counterWaitingOutput = 1;
         $counterProcessesLast = 0;
         // Iterate over prepared and queued until everything is done
         while (true) {
-            $prepared = $this->getProcesses('prepared');
-            $queued = $this->getProcesses('queued');
+            $prepared = $processSet->get('prepared');
+            $queued = $processSet->get('queued');
 
             if (count($prepared) == 0 && count($queued) == 0) {
                 $output->writeln('No tasks left, exiting the execution loop...');
@@ -355,7 +283,7 @@ class RunTestsCommand extends Command
             }
 
             // Add queued tasks to prepared if their dependent task is done and delay has passed
-            $finished = $this->getProcesses('finished');
+            $finished = $processSet->get('finished');
             $finishedClasses = [];
             foreach ($finished as $testClass => $processObject) {
                 $finishedClasses[] = $testClass;
@@ -371,9 +299,9 @@ class RunTestsCommand extends Command
                 }
             }
 
-            $countProcessesPrepared = count($this->getProcesses('prepared'));
-            $countProcessesQueued = count($this->getProcesses('queued'));
-            $countProcessesFinished = count($this->getProcesses('finished'));
+            $countProcessesPrepared = count($processSet->get('prepared'));
+            $countProcessesQueued = count($processSet->get('queued'));
+            $countProcessesFinished = count($processSet->get('finished'));
             $counterProcesses = [$countProcessesPrepared, $countProcessesQueued, $countProcessesFinished];
             // if the output didn't change, wait 10 seconds before printing it again
             if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
