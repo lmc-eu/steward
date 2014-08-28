@@ -188,15 +188,15 @@ class RunTestsCommand extends Command
             return 1;
         }
 
-        // Ensure dependencies links to existing classes
-        $queuedProcesses = $processSet->get('queued');
-        foreach ($queuedProcesses as $className => $processObject) {
-            if (!empty($processObject->delayAfter)
-                && !array_key_exists($processObject->delayAfter, $queuedProcesses)
-            ) {
-                $output->writeln(sprintf('Testcase "%s" has invalid dependency, not queueing it.', $className));
-                $processSet->remove($className);
-            }
+        if ($invalidDependencies = $processSet->checkDependencies()) {
+            $output->writeln(
+                sprintf(
+                    '<fg=black;bg=yellow>'
+                    . 'Found invalid @delayAfter dependencies (in %s). These testcases were not queued.'
+                    . '</fg=black;bg=yellow>',
+                    implode(', ', $invalidDependencies)
+                )
+            );
         }
 
         // Set tasks without delay as prepared in order to make them executed instantly

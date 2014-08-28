@@ -7,8 +7,8 @@ use Symfony\Component\Process\Process;
 /**
  * Set of Test processes.
  */
-class ProcessSet implements \Countable {
-
+class ProcessSet implements \Countable
+{
     /**
      * Array of objects with test processes, indexed by testcase fully qualified name
      * @var array
@@ -92,5 +92,23 @@ class ProcessSet implements \Countable {
     public function remove($className)
     {
         unset($this->processes[$className]);
+    }
+
+    public function checkDependencies()
+    {
+        $invalidDependencies = [];
+
+        // Ensure dependencies links to existing classes
+        $queuedProcesses = $this->get('queued');
+        foreach ($queuedProcesses as $className => $processObject) {
+            if (!empty($processObject->delayAfter)
+                && !array_key_exists($processObject->delayAfter, $queuedProcesses)
+            ) {
+                $invalidDependencies[] = $className;
+                $this->remove($className);
+            }
+        }
+
+        return $invalidDependencies;
     }
 }
