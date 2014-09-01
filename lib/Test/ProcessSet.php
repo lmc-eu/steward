@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Test;
 
+use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -14,6 +15,19 @@ class ProcessSet implements \Countable
      * @var array
      */
     protected $processes = [];
+
+    /** Process prepared to be run */
+    const PROCESS_STATUS_PREPARED = 'prepared';
+    /** Process in queue  - waiting to be prepared */
+    const PROCESS_STATUS_QUEUED = 'queued';
+    /** Finished process */
+    const PROCESS_STATUS_FINISHED = 'finished';
+
+    public static $statuses = [
+        self::PROCESS_STATUS_PREPARED,
+        self::PROCESS_STATUS_QUEUED,
+        self::PROCESS_STATUS_FINISHED,
+    ];
 
     /**
      * Get count of all processes in the set
@@ -94,6 +108,26 @@ class ProcessSet implements \Countable
         unset($this->processes[$className]);
     }
 
+    /**
+     * Set status of given process
+     * @param $className
+     * @param $status
+     * @throws \InvalidArgumentException
+     */
+    public function setStatus($className, $status)
+    {
+        if (!in_array($status, self::$statuses)) {
+            throw new \InvalidArgumentException(
+                sprintf('Process status must be one of "%s", but "%s" given', join(', ', self::$statuses), $status)
+            );
+        }
+        $this->processes[$className]->status = $status;
+    }
+
+    /**
+     * Check dependencies of all queued processes
+     * @return array
+     */
     public function checkDependencies()
     {
         $invalidDependencies = [];

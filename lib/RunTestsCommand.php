@@ -200,13 +200,13 @@ class RunTestsCommand extends Command
         }
 
         // Set tasks without delay as prepared in order to make them executed instantly
-        $queuedProcesses = $processSet->get('queued');
+        $queuedProcesses = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
         foreach ($queuedProcesses as $className => $processObject) {
             if (!$processObject->delayMinutes) {
                 if ($output->isDebug()) {
                     $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
                 }
-                $processObject->status = 'prepared';
+                $processSet->setStatus($className, ProcessSet::PROCESS_STATUS_PREPARED);
             } else {
                 if ($output->isDebug()) {
                     $output->writeln(
@@ -236,8 +236,8 @@ class RunTestsCommand extends Command
         $counterProcessesLast = 0;
         // Iterate over prepared and queued until everything is done
         while (true) {
-            $prepared = $processSet->get('prepared');
-            $queued = $processSet->get('queued');
+            $prepared = $processSet->get(ProcessSet::PROCESS_STATUS_PREPARED);
+            $queued = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
 
             if (count($prepared) == 0 && count($queued) == 0) {
                 $output->writeln('No tasks left, exiting the execution loop...');
@@ -277,7 +277,7 @@ class RunTestsCommand extends Command
 
                 if (!$processObject->process->isRunning()) {
                     $output->writeln(sprintf('Process for class "%s" finished', $testClass));
-                    $processObject->status = 'finished';
+                    $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_FINISHED);
                     $processObject->finishedTime = time();
                 }
             }
@@ -295,13 +295,13 @@ class RunTestsCommand extends Command
                     && (time() - $finished[$processObject->delayAfter]->finishedTime) > $delaySeconds
                 ) {
                     $output->writeln(sprintf('Unqueing class "%s"', $testClass));
-                    $processObject->status = 'prepared';
+                    $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_PREPARED);
                 }
             }
 
-            $countProcessesPrepared = count($processSet->get('prepared'));
-            $countProcessesQueued = count($processSet->get('queued'));
-            $countProcessesFinished = count($processSet->get('finished'));
+            $countProcessesPrepared = count($processSet->get(ProcessSet::PROCESS_STATUS_PREPARED));
+            $countProcessesQueued = count($processSet->get(ProcessSet::PROCESS_STATUS_QUEUED));
+            $countProcessesFinished = count($processSet->get(ProcessSet::PROCESS_STATUS_FINISHED));
             $counterProcesses = [$countProcessesPrepared, $countProcessesQueued, $countProcessesFinished];
             // if the output didn't change, wait 10 seconds before printing it again
             if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
