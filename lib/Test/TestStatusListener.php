@@ -82,7 +82,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             $publisher->publishResult(
                 get_class($test),
                 $test->getName(),
-                $status = 'finished', // @TODO: use constant, change to done
+                $status = 'done', // @TODO: use constant
                 $result = $test->getStatus(), // @TODO: use constant instead of int value
                 $test->getStatusMessage()
             );
@@ -99,7 +99,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         foreach ($this->publishers as $publisher) {
             $publisher->publishResults(
                 $suite->getName(),
-                $status = ProcessSet::PROCESS_STATUS_FINISHED,
+                $status = ProcessSet::PROCESS_STATUS_DONE,
                 $result = null,
                 $this->startDate,
                 new \DateTimeImmutable()

@@ -24,12 +24,13 @@ class ProcessSet implements \Countable
     /** Process in queue  - waiting to be prepared */
     const PROCESS_STATUS_QUEUED = 'queued';
     /** Finished process */
-    const PROCESS_STATUS_FINISHED = 'finished'; // @TODO: rename to done
+    const PROCESS_STATUS_DONE = 'done';
 
+    /** @var array List of possible process statuses */
     public static $statuses = [
         self::PROCESS_STATUS_PREPARED,
         self::PROCESS_STATUS_QUEUED,
-        self::PROCESS_STATUS_FINISHED,
+        self::PROCESS_STATUS_DONE,
     ];
 
     /**
@@ -97,7 +98,7 @@ class ProcessSet implements \Countable
     /**
      * Get array of processes in the set having given status
      *
-     * @param string $status
+     * @param string $status {prepared, queued, done}
      *
      * @return array
      */
@@ -139,7 +140,7 @@ class ProcessSet implements \Countable
         $this->processes[$className]->status = $status;
 
         $result = '';
-        if ($status == self::PROCESS_STATUS_FINISHED) {
+        if ($status == self::PROCESS_STATUS_DONE) {
             switch ($this->processes[$className]->process->getExitCode()) {
                 case \PHPUnit_TextUI_TestRunner::STATUS_PASSED: // all tests passed
                     $result = null; // do nothing, as the result is saved by the TestStatusListener

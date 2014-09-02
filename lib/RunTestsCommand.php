@@ -280,22 +280,22 @@ class RunTestsCommand extends Command
 
                 if (!$processObject->process->isRunning()) {
                     $output->writeln(sprintf('Process for class "%s" finished', $testClass));
-                    $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_FINISHED);
+                    $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
                     $processObject->finishedTime = time();
                 }
             }
 
             // Add queued tasks to prepared if their dependent task is done and delay has passed
-            $finished = $processSet->get('finished');
-            $finishedClasses = [];
-            foreach ($finished as $testClass => $processObject) {
-                $finishedClasses[] = $testClass;
+            $done = $processSet->get('done');
+            $doneClasses = [];
+            foreach ($done as $testClass => $processObject) {
+                $doneClasses[] = $testClass;
             }
             foreach ($queued as $testClass => $processObject) {
                 $delaySeconds = $processObject->delayMinutes * 60;
 
-                if (in_array($processObject->delayAfter, $finishedClasses)
-                    && (time() - $finished[$processObject->delayAfter]->finishedTime) > $delaySeconds
+                if (in_array($processObject->delayAfter, $doneClasses)
+                    && (time() - $done[$processObject->delayAfter]->finishedTime) > $delaySeconds
                 ) {
                     $output->writeln(sprintf('Unqueing class "%s"', $testClass));
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_PREPARED);
@@ -304,19 +304,19 @@ class RunTestsCommand extends Command
 
             $countProcessesPrepared = count($processSet->get(ProcessSet::PROCESS_STATUS_PREPARED));
             $countProcessesQueued = count($processSet->get(ProcessSet::PROCESS_STATUS_QUEUED));
-            $countProcessesFinished = count($processSet->get(ProcessSet::PROCESS_STATUS_FINISHED));
-            $counterProcesses = [$countProcessesPrepared, $countProcessesQueued, $countProcessesFinished];
+            $countProcessesDone = count($processSet->get(ProcessSet::PROCESS_STATUS_DONE));
+            $counterProcesses = [$countProcessesPrepared, $countProcessesQueued, $countProcessesDone];
             // if the output didn't change, wait 10 seconds before printing it again
             if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
                 $counterWaitingOutput++;
             } else {
                 $output->writeln(
                     sprintf(
-                        "[%s]: waiting (running: %d, queued: %d, finished: %d)",
+                        "[%s]: waiting (running: %d, queued: %d, done: %d)",
                         date("Y-m-d H:i:s"),
                         $countProcessesPrepared,
                         $countProcessesQueued,
-                        $countProcessesFinished
+                        $countProcessesDone
                     )
                 );
                 $counterWaitingOutput = 1;

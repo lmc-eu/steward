@@ -85,7 +85,7 @@ class XmlPublisher extends AbstractPublisher
         if ($status == 'started') { // @TODO: use constant
             $testNode['start'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
         }
-        if ($status == 'finished') { // @TODO: use constant, replace with done
+        if ($status == 'done') { // @TODO: use constant
             $testNode['end'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
         }
 
