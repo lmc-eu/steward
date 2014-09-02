@@ -7,6 +7,16 @@ namespace Lmc\Steward\Test;
  */
 abstract class AbstractPublisher
 {
+    /** @var array */
+    public static $testResultsMap = [
+        -1 => 'running',
+        \PHPUnit_Runner_BaseTestRunner::STATUS_PASSED => 'passed',
+        \PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED => 'skipped',
+        \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE => 'incomplete',
+        \PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE => 'failed',
+        \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR => 'broken',
+    ];
+
     /** @var string */
     protected $environment;
 
@@ -30,15 +40,17 @@ abstract class AbstractPublisher
      * Publish testcase result
      *
      * @param string $testCaseName
-     * @param string $status
+     * @param string $status {prepared, queued, done}
+     * @param string $result {passed, failed, fatal}
      * @param \DateTimeInterface $startDate Testcase start datetime
      * @param \DateTimeInterface $endDate Testcase end datetime
      */
     abstract public function publishResults(
         $testCaseName,
         $status,
-        \DateTimeInterface $startDate,
-        \DateTimeInterface $endDate
+        $result = null,
+        \DateTimeInterface $startDate = null,
+        \DateTimeInterface $endDate = null
     );
 
     /**
@@ -46,10 +58,11 @@ abstract class AbstractPublisher
      *
      * @param string $testCaseName
      * @param string $testName
-     * @param string $status
+     * @param string $status {started, done}
+     * @param string $result {passed, failed, broken, skipped, incomplete}
      * @param string $message
      */
-    abstract public function publishResult($testCaseName, $testName, $status, $message);
+    abstract public function publishResult($testCaseName, $testName, $status, $result = null, $message = null);
 
     /**
      * Is debug mode enabled?

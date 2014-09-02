@@ -16,18 +16,31 @@ class ProcessSet implements \Countable
      */
     protected $processes = [];
 
+    /** @var AbstractPublisher */
+    protected $publisher;
+
     /** Process prepared to be run */
     const PROCESS_STATUS_PREPARED = 'prepared';
     /** Process in queue  - waiting to be prepared */
     const PROCESS_STATUS_QUEUED = 'queued';
     /** Finished process */
-    const PROCESS_STATUS_FINISHED = 'finished';
+    const PROCESS_STATUS_FINISHED = 'finished'; // @TODO: rename to done
 
     public static $statuses = [
         self::PROCESS_STATUS_PREPARED,
         self::PROCESS_STATUS_QUEUED,
         self::PROCESS_STATUS_FINISHED,
     ];
+
+    /**
+     * Instantiate processSet to manage processes in different states,
+     * If publisher is passed, it is used to publish process statuses after status changes.
+     * @param AbstractPublisher $publisher OPTIONAL
+     */
+    public function __construct(AbstractPublisher $publisher = null)
+    {
+        $this->publisher = $publisher;
+    }
 
     /**
      * Get count of all processes in the set
@@ -77,6 +90,8 @@ class ProcessSet implements \Countable
             'delayMinutes' => $delayMinutes,
             'finishedTime' => null,
         ];
+
+        $this->publisher->publishResults($className, 'queued', '');
     }
 
     /**
@@ -110,8 +125,8 @@ class ProcessSet implements \Countable
 
     /**
      * Set status of given process
-     * @param $className
-     * @param $status
+     * @param $className string
+     * @param $status string
      * @throws \InvalidArgumentException
      */
     public function setStatus($className, $status)
@@ -122,6 +137,26 @@ class ProcessSet implements \Countable
             );
         }
         $this->processes[$className]->status = $status;
+
+        $result = '';
+        if ($status == self::PROCESS_STATUS_FINISHED) {
+            switch ($this->processes[$className]->process->getExitCode()) {
+                case \PHPUnit_TextUI_TestRunner::STATUS_PASSED: // all tests passed
+                    $result = null; // do nothing, as the result is saved by the TestStatusListener
+                    break;
+                case 255: // PHP fatal error
+                    $result = 'fatal';
+                    break;
+                case \PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT: // exception thrown from phpunit
+                case \PHPUnit_TextUI_TestRunner::FAILURE_EXIT: // some test failed
+                default:
+                    $result = 'failed';
+                    break;
+            }
+        }
+        if (!is_null($result)) {
+            $this->publisher->publishResults($className, $status, $result);
+        }
     }
 
     /**

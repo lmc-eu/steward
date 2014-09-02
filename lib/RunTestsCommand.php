@@ -3,6 +3,7 @@
 namespace Lmc\Steward;
 
 use Lmc\Steward\Test\ProcessSet;
+use Lmc\Steward\Test\XmlPublisher;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -82,8 +83,6 @@ class RunTestsCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $processSet = new ProcessSet();
-
         $output->writeln(
             'Steward is running the tests...'
             . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
@@ -121,6 +120,10 @@ class RunTestsCommand extends Command
         }
         $output->writeln(sprintf(' - in directory "%s"', $dir));
         $output->writeln(sprintf(' - by pattern "%s"', $pattern));
+
+        $processSet = new ProcessSet(
+            new XmlPublisher($environment, null, null)
+        );
 
         $testCasesNum = 0;
         foreach (Finder::findFiles($pattern)->from($dir) as $fileName => $fileObject) {
