@@ -90,7 +90,11 @@ class XmlPublisher extends AbstractPublisher
         }
         if (!is_null($result) && !in_array($result, self::$testResults)) {
             throw new \InvalidArgumentException(
-                sprintf('Tests result must be one of "%s", but "%s" given', join(', ', self::$testResults), $result)
+                sprintf(
+                    'Tests result must be null or one of "%s", but "%s" given',
+                    join(', ', self::$testResults),
+                    $result
+                )
             );
         }
 
