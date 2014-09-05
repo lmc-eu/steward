@@ -21,11 +21,22 @@ class XmlPublisher extends AbstractPublisher
     }
 
     /**
+     * Set file name. Mostly usable for testing to override the default.
      * @param string $fileName
      */
     public function setFileName($fileName)
     {
         $this->fileName = $fileName;
+    }
+
+    /**
+     * Clean the file with all previous results (if exists).
+     */
+    public function clean()
+    {
+        if (file_exists($this->fileName)) {
+            unlink($this->fileName);
+        }
     }
 
     /**

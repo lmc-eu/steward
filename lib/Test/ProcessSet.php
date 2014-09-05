@@ -85,7 +85,7 @@ class ProcessSet implements \Countable
         }
 
         $this->processes[$className] = (object) [
-            'status' => 'queued',
+            'status' => self::PROCESS_STATUS_QUEUED,
             'process' => $process,
             'delayAfter' => $delayAfter,
             'delayMinutes' => $delayMinutes,
@@ -169,7 +169,7 @@ class ProcessSet implements \Countable
         $invalidDependencies = [];
 
         // Ensure dependencies links to existing classes
-        $queuedProcesses = $this->get('queued');
+        $queuedProcesses = $this->get(self::PROCESS_STATUS_QUEUED);
         foreach ($queuedProcesses as $className => $processObject) {
             if (!empty($processObject->delayAfter)
                 && !array_key_exists($processObject->delayAfter, $queuedProcesses)

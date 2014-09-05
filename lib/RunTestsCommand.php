@@ -121,9 +121,9 @@ class RunTestsCommand extends Command
         $output->writeln(sprintf(' - in directory "%s"', $dir));
         $output->writeln(sprintf(' - by pattern "%s"', $pattern));
 
-        $processSet = new ProcessSet(
-            new XmlPublisher($environment, null, null)
-        );
+        $xmlPublisher = new XmlPublisher($environment, null, null);
+        $xmlPublisher->clean();
+        $processSet = new ProcessSet($xmlPublisher);
 
         $testCasesNum = 0;
         foreach (Finder::findFiles($pattern)->from($dir) as $fileName => $fileObject) {
