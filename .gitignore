@@ -2,6 +2,7 @@
 bin/selenium-server-standalone-*.jar
 
 # Ignore libraries installed using Composer
+composer.phar
 vendor
 # Ignore test logs
 logs
