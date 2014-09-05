@@ -3,9 +3,11 @@
 namespace Lmc\Steward;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * Install (download) Selenium standalone server.
@@ -38,13 +40,12 @@ class InstallCommand extends Command
      */
     protected function configure()
     {
-         $this->setName('install')
+        $this->setName('install')
             ->setDescription('Download latest Selenium standalone server jar file')
             ->addArgument(
                 'version',
                 InputArgument::OPTIONAL,
-                'Overwrite Selenium version to install',
-                $this->version
+                'Specific Selenium version to install'
             );
     }
 
@@ -52,15 +53,31 @@ class InstallCommand extends Command
      * Execute command
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return int|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $version = $input->getArgument('version'); // exact version could be specified as argument
+
+        if (!$version) {
+            $latestVersion = $this->getLatestVersion();
+
+            /** @var QuestionHelper $questionHelper */
+            $questionHelper = $this->getHelper('question');
+
+            $question = new Question(
+                '<question>Enter Selenium server version to install:</question> '
+                . ($latestVersion ? "[$latestVersion] " : ''),
+                $latestVersion
+            );
+            $version = $questionHelper->ask($input, $output, $question);
+        }
+
         $output->writeln(
-            'Steward is downloading Selenium standalone server...'
+            'Steward is now downloading Selenium standalone server...'
             . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
         );
 
-        $version = $input->getArgument('version');
         $versionParts = explode('.', $version);
 
         $fileName = 'selenium-server-standalone-' . $version . '.jar';
@@ -94,5 +111,33 @@ class InstallCommand extends Command
 
         $output->writeln('Downloaded ' . $downloadedSize . ' bytes, file saved succesfully.');
         return 0;
+    }
+
+    /**
+     * Get latest released version of Selenium server. If not found, null is returned.
+     * @return string|null
+     */
+    protected function getLatestVersion()
+    {
+        $data = file_get_contents($this->storageUrl);
+        if (!$data) {
+            return;
+        }
+        libxml_use_internal_errors(true); // disable errors from being thrown
+        $xml = simplexml_load_string($data);
+
+        if (!$xml) {
+            return;
+        }
+
+        $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
+        $lastRelease = end($releases); // something like "2.42/selenium-server-standalone-2.42.2.jar"
+
+        $lastVersion = preg_replace('/.*standalone-([0-9\.]*)\.jar/', '$1', $lastRelease);
+        if ($lastRelease == $lastVersion) { // regexp not matched
+            return;
+        }
+
+        return $lastVersion;
     }
 }
