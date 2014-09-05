@@ -7,14 +7,44 @@ namespace Lmc\Steward\Test;
  */
 abstract class AbstractPublisher
 {
-    /** @var array */
+    /** Test started and is currently executed by Selenium */
+    const TEST_STATUS_STARTED = 'started';
+    /** Test was finished */
+    const TEST_STATUS_DONE = 'done';
+
+    /** Test passed */
+    const TEST_RESULT_PASSED = 'passed';
+    /** Test failed (eg. some assertion does not match) */
+    const TEST_RESULT_FAILED = 'failed';
+    /** Test was broken (ie. Exception was thrown) */
+    const TEST_RESULT_BROKEN = 'broken';
+    /** Test was skipped using markTestSkipped() */
+    const TEST_RESULT_SKIPPED = 'skipped';
+    /** Test was skipped using markTestIncomplete() */
+    const TEST_RESULT_INCOMPLETE = 'incomplete';
+
+    /** @var array List of possible test statuses */
+    public static $testStatuses = [
+        self::TEST_STATUS_STARTED,
+        self::TEST_STATUS_DONE,
+    ];
+
+    /** @var array List of possible test results */
+    public static $testResults = [
+        self::TEST_RESULT_PASSED,
+        self::TEST_RESULT_FAILED,
+        self::TEST_RESULT_BROKEN,
+        self::TEST_RESULT_SKIPPED,
+        self::TEST_RESULT_INCOMPLETE,
+    ];
+
+    /** @var array Map of PHPUnit test results constants to our tests results */
     public static $testResultsMap = [
-        -1 => 'running',
-        \PHPUnit_Runner_BaseTestRunner::STATUS_PASSED => 'passed',
-        \PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED => 'skipped',
-        \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE => 'incomplete',
-        \PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE => 'failed',
-        \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR => 'broken',
+        \PHPUnit_Runner_BaseTestRunner::STATUS_PASSED => self::TEST_RESULT_PASSED,
+        \PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED => self::TEST_RESULT_SKIPPED,
+        \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE => self::TEST_RESULT_INCOMPLETE,
+        \PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE => self::TEST_RESULT_FAILED,
+        \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR => self::TEST_RESULT_BROKEN,
     ];
 
     /** @var string */
@@ -40,8 +70,8 @@ abstract class AbstractPublisher
      * Publish testcase result
      *
      * @param string $testCaseName
-     * @param string $status {prepared, queued, done}
-     * @param string $result {passed, failed, fatal}
+     * @param string $status One of ProcessSet::$processStatuses
+     * @param string $result One of ProcessSet::$processResults
      * @param \DateTimeInterface $startDate Testcase start datetime
      * @param \DateTimeInterface $endDate Testcase end datetime
      */
@@ -58,8 +88,8 @@ abstract class AbstractPublisher
      *
      * @param string $testCaseName
      * @param string $testName
-     * @param string $status {started, done}
-     * @param string $result {passed, failed, broken, skipped, incomplete}
+     * @param string $status One of self::$testStatuses
+     * @param string $result One of self::$testResults
      * @param string $message
      */
     abstract public function publishResult($testCaseName, $testName, $status, $result = null, $message = null);

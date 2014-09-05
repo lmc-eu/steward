@@ -83,21 +83,33 @@ class XmlPublisher extends AbstractPublisher
      */
     public function publishResult($testCaseName, $testName, $status, $result = null, $message = null)
     {
+        if (!in_array($status, self::$testStatuses)) {
+            throw new \InvalidArgumentException(
+                sprintf('Tests status must be one of "%s", but "%s" given', join(', ', self::$testStatuses), $status)
+            );
+        }
+        if (!is_null($result) && !in_array($result, self::$testResults)) {
+            throw new \InvalidArgumentException(
+                sprintf('Tests result must be one of "%s", but "%s" given', join(', ', self::$testResults), $result)
+            );
+        }
+
         $xml = $this->readAndLock();
 
         $testCaseNode = $this->getTestCaseNode($xml, $testCaseName);
         $testNode = $this->getTestNode($testCaseNode, $testName);
 
         $testNode['status'] = $status;
-        if (!is_null($result)) {
-            $testNode['result'] = self::$testResultsMap[$result]; // @TODO: use directly the value
-        }
 
-        if ($status == 'started') { // @TODO: use constant
+        if ($status == self::TEST_STATUS_STARTED) {
             $testNode['start'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
         }
-        if ($status == 'done') { // @TODO: use constant
+        if ($status == self::TEST_STATUS_DONE) {
             $testNode['end'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
+        }
+
+        if (!is_null($result)) {
+            $testNode['result'] = $result;
         }
 
         $this->writeAndUnlock($xml);

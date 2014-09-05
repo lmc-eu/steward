@@ -67,7 +67,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             $publisher->publishResult(
                 get_class($test),
                 $test->getName(),
-                $status = 'started' // @TODO: use constant
+                $status = AbstractPublisher::TEST_STATUS_STARTED
             );
         }
     }
@@ -82,8 +82,8 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             $publisher->publishResult(
                 get_class($test),
                 $test->getName(),
-                $status = 'done', // @TODO: use constant
-                $result = $test->getStatus(), // @TODO: use constant instead of int value
+                $status = AbstractPublisher::TEST_STATUS_DONE,
+                $result = AbstractPublisher::$testResultsMap[$test->getStatus()],
                 $test->getStatusMessage()
             );
         }
@@ -100,7 +100,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             $publisher->publishResults(
                 $suite->getName(),
                 $status = ProcessSet::PROCESS_STATUS_DONE,
-                $result = null,
+                $result = null, // do not override, the value is set by ProcessSet::setStatus()
                 $this->startDate,
                 new \DateTimeImmutable()
             );

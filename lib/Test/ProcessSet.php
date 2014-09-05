@@ -26,11 +26,25 @@ class ProcessSet implements \Countable
     /** Finished process */
     const PROCESS_STATUS_DONE = 'done';
 
+    /** Process passed successful (with all its tests passing) */
+    const PROCESS_RESULT_PASSED = 'passed';
+    /** Process failed - some tests have failed or are broken */
+    const PROCESS_RESULT_FAILED = 'failed';
+    /** Process fatally failed (PHP fatal error occurred - eg. no webdriver available) */
+    const PROCESS_RESULT_FATAL = 'fatal';
+
     /** @var array List of possible process statuses */
-    public static $statuses = [
+    public static $processStatuses = [
         self::PROCESS_STATUS_PREPARED,
         self::PROCESS_STATUS_QUEUED,
         self::PROCESS_STATUS_DONE,
+    ];
+
+    /** @var array List of possible process results */
+    public static $processResults = [
+        self::PROCESS_RESULT_PASSED,
+        self::PROCESS_RESULT_FAILED,
+        self::PROCESS_RESULT_FATAL,
     ];
 
     /**
@@ -92,7 +106,7 @@ class ProcessSet implements \Countable
             'finishedTime' => null,
         ];
 
-        $this->publisher->publishResults($className, 'queued', '');
+        $this->publisher->publishResults($className, self::PROCESS_STATUS_QUEUED, '');
     }
 
     /**
@@ -117,7 +131,7 @@ class ProcessSet implements \Countable
     /**
      * Remove process from the set - no matter its status.
      *
-     * @param type $className
+     * @param string $className
      */
     public function remove($className)
     {
@@ -132,9 +146,13 @@ class ProcessSet implements \Countable
      */
     public function setStatus($className, $status)
     {
-        if (!in_array($status, self::$statuses)) {
+        if (!in_array($status, self::$processStatuses)) {
             throw new \InvalidArgumentException(
-                sprintf('Process status must be one of "%s", but "%s" given', join(', ', self::$statuses), $status)
+                sprintf(
+                    'Process status must be one of "%s", but "%s" given',
+                    join(', ', self::$processStatuses),
+                    $status
+                )
             );
         }
         $this->processes[$className]->status = $status;
@@ -143,26 +161,25 @@ class ProcessSet implements \Countable
         if ($status == self::PROCESS_STATUS_DONE) {
             switch ($this->processes[$className]->process->getExitCode()) {
                 case \PHPUnit_TextUI_TestRunner::STATUS_PASSED: // all tests passed
-                    $result = null; // do nothing, as the result is saved by the TestStatusListener
+                    $result = self::PROCESS_RESULT_PASSED;
+                    // for passed process save just the status and result; end time was saved by TestStatusListener
                     break;
                 case 255: // PHP fatal error
-                    $result = 'fatal';
+                    $result = self::PROCESS_RESULT_FATAL;
                     break;
                 case \PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT: // exception thrown from phpunit
                 case \PHPUnit_TextUI_TestRunner::FAILURE_EXIT: // some test failed
                 default:
-                    $result = 'failed';
+                    $result = self::PROCESS_RESULT_FAILED;
                     break;
             }
         }
-        if (!is_null($result)) {
-            $this->publisher->publishResults($className, $status, $result);
-        }
+        $this->publisher->publishResults($className, $status, $result);
     }
 
     /**
-     * Check dependencies of all queued processes
-     * @return array
+     * Check dependencies of all queued processes and remove invalid ones from the set
+     * @return array Array of invalid dependencies, removed from the set
      */
     public function checkDependencies()
     {
