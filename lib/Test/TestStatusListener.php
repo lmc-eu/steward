@@ -45,7 +45,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 );
             }
             if (DEBUG) {
-                echo sprintf('Registering test results publisher "%s"', $publisherClass) . "\n";
+                printf('[%s]: Registering test results publisher "%s"' . "\n", date("Y-m-d H:i:s"), $publisherClass);
                 $publisher->setDebug(true);
             }
             $this->publishers[] = $publisher;
@@ -64,11 +64,20 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         }
         // publish test status to all publishers
         foreach ($this->publishers as $publisher) {
-            $publisher->publishResult(
-                get_class($test),
-                $test->getName(),
-                $status = AbstractPublisher::TEST_STATUS_STARTED
-            );
+            try {
+                $publisher->publishResult(
+                    get_class($test),
+                    $test->getName(),
+                    $status = AbstractPublisher::TEST_STATUS_STARTED
+                );
+            } catch (\Exception $e) {
+                printf(
+                    '[%s] [WARN]: Error publishing test started status to "%s" ("%s")' . "\n",
+                    date("Y-m-d H:i:s"),
+                    get_class($publisher),
+                    $e->getMessage()
+                );
+            }
         }
     }
 
@@ -79,13 +88,22 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         }
         // publish test status to all publishers
         foreach ($this->publishers as $publisher) {
-            $publisher->publishResult(
-                get_class($test),
-                $test->getName(),
-                $status = AbstractPublisher::TEST_STATUS_DONE,
-                $result = AbstractPublisher::$testResultsMap[$test->getStatus()],
-                $test->getStatusMessage()
-            );
+            try {
+                $publisher->publishResult(
+                    get_class($test),
+                    $test->getName(),
+                    $status = AbstractPublisher::TEST_STATUS_DONE,
+                    $result = AbstractPublisher::$testResultsMap[$test->getStatus()],
+                    $test->getStatusMessage()
+                );
+            } catch (\Exception $e) {
+                printf(
+                    '[%s] [WARN]: Error publishing test done status to "%s" ("%s")' . "\n",
+                    date("Y-m-d H:i:s"),
+                    get_class($publisher),
+                    $e->getMessage()
+                );
+            }
         }
     }
 
@@ -97,13 +115,22 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
 
         // publish to all publishers
         foreach ($this->publishers as $publisher) {
-            $publisher->publishResults(
-                $suite->getName(),
-                $status = ProcessSet::PROCESS_STATUS_DONE,
-                $result = null, // do not override, the value is set by ProcessSet::setStatus()
-                $this->startDate,
-                new \DateTimeImmutable()
-            );
+            try {
+                $publisher->publishResults(
+                    $suite->getName(),
+                    $status = ProcessSet::PROCESS_STATUS_DONE,
+                    $result = null, // do not override, the value is set by ProcessSet::setStatus()
+                    $this->startDate,
+                    new \DateTimeImmutable()
+                );
+            } catch (\Exception $e) {
+                printf(
+                    '[%s] [WARN]: Error publishing process done status to "%s" ("%s")' . "\n",
+                    date("Y-m-d H:i:s"),
+                    get_class($publisher),
+                    $e->getMessage()
+                );
+            }
         }
     }
 }
