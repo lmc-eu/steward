@@ -4,6 +4,8 @@
 namespace Lmc\Steward;
 
 use Symfony\Component\Console\Application;
+use Lmc\Steward\Command\InstallCommand;
+use Lmc\Steward\Command\RunTestsCommand;
 
 function requireIfExists($file)
 {

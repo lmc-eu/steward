@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Publisher;
 
 class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 {

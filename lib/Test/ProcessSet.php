@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Test;
 
-use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
+use Lmc\Steward\Publisher\AbstractPublisher;
 use Symfony\Component\Process\Process;
 
 /**

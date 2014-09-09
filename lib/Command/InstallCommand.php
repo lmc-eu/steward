@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward;
+namespace Lmc\Steward\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -17,23 +17,16 @@ use Symfony\Component\Console\Question\Question;
 class InstallCommand extends Command
 {
     /**
-     * Selenium version to download
-     * @var string
-     */
-    protected $version = '2.42.2';
-
-    /**
      * Selenium storage URL
      * @var string
      */
     protected $storageUrl = 'https://selenium-release.storage.googleapis.com';
 
     /**
-     * Target directory to store the selenium server
+     * Target directory to store the selenium server (relatively to __DIR__)
      * @var string
      */
-    protected $targetDir = './bin';
-
+    protected $targetDir = '/../../bin';
 
     /**
      * Configure command
@@ -83,7 +76,7 @@ class InstallCommand extends Command
         $fileName = 'selenium-server-standalone-' . $version . '.jar';
         $fileUrl = $this->storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1] . '/' . $fileName;
 
-        $targetPath = realpath($this->targetDir) . DIRECTORY_SEPARATOR . $fileName;
+        $targetPath = realpath(__DIR__ . $this->targetDir) . DIRECTORY_SEPARATOR . $fileName;
 
         $output->writeln(sprintf('Version: %s', $version));
         $output->writeln(sprintf('File URL: %s', $fileUrl));

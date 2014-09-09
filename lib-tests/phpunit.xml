@@ -5,7 +5,7 @@
     colors="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
 >
-    <testsuite>
+    <testsuite name="Steward">
         <directory>./</directory>
     </testsuite>
 

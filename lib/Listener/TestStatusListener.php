@@ -1,8 +1,9 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Listener;
 
-use PHPUnit_Framework_Test;
+use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Test\ProcessSet;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.
@@ -21,7 +22,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
     public function __construct(array $testPublishers)
     {
         // always register XmlPublisher
-        $publishersToRegister[] = 'Lmc\\Steward\\Test\\XmlPublisher';
+        $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
 
         // other publishers register only if PUBLISH_RESULTS is true
         if (PUBLISH_RESULTS) {
@@ -57,7 +58,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         $this->startDate = new \DateTimeImmutable();
     }
 
-    public function startTest(PHPUnit_Framework_Test $test)
+    public function startTest(\PHPUnit_Framework_Test $test)
     {
         if (!$test instanceof \PHPUnit_Framework_TestCase) {
             return;

@@ -1,7 +1,8 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Listener;
 
+use Lmc\Steward\Test\AbstractTestCase;
 use Nette\Utils\Strings;
 
 /**

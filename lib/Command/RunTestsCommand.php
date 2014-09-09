@@ -1,9 +1,9 @@
 <?php
 
-namespace Lmc\Steward;
+namespace Lmc\Steward\Command;
 
 use Lmc\Steward\Test\ProcessSet;
-use Lmc\Steward\Test\XmlPublisher;
+use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -52,7 +52,7 @@ class RunTestsCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with tests',
-                realpath(__DIR__ . '/../tests')
+                realpath(__DIR__ . '/../../tests')
             )
             ->addOption(
                 'pattern',
@@ -158,7 +158,7 @@ class RunTestsCommand extends Command
                 '--log-junit=logs/'
                 . Strings::webalize(key($classes), null, $lower = false)
                 . '.xml',
-                '--configuration=lib/Test/phpunit.xml',
+                '--configuration=lib/phpunit.xml',
             ];
 
             // If ANSI output is enabled, turn on colors on PHPUnit

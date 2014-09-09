@@ -4,7 +4,7 @@
 
 date_default_timezone_set('Europe/Prague');
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Set used environment variables as PHP constants to be used in tests
 $browserName = getenv('BROWSER_NAME');

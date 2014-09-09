@@ -1,6 +1,9 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Listener;
+
+use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\WebDriver\RemoteWebDriver;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
