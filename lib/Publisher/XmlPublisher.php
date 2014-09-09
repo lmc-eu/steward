@@ -177,7 +177,11 @@ class XmlPublisher extends AbstractPublisher
         }
 
         if (fstat($this->fileHandle)['size'] == 0) { // new or empty file, create empty xml element
-            $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8" ?><testcases />');
+            $xml = new \SimpleXMLElement(
+                '<?xml version="1.0" encoding="utf-8" ?>'
+                . '<?xml-stylesheet type="text/xsl" href="../lib/results.xsl"?>'
+                . '<testcases />'
+            );
         } else { // file already exists, load current xml
             $fileContents = fread($this->fileHandle, fstat($this->fileHandle)['size']);
             $xml = simplexml_load_string($fileContents);
