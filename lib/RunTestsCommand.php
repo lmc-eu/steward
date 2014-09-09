@@ -286,7 +286,7 @@ class RunTestsCommand extends Command
             }
 
             // Add queued tasks to prepared if their dependent task is done and delay has passed
-            $done = $processSet->get('done');
+            $done = $processSet->get(ProcessSet::PROCESS_STATUS_DONE);
             $doneClasses = [];
             foreach ($done as $testClass => $processObject) {
                 $doneClasses[] = $testClass;

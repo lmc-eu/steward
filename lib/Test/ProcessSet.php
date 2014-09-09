@@ -82,7 +82,7 @@ class ProcessSet implements \Countable
         if (!empty($delayAfter) && $delayMinutes === 0) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Test "%s" should run after "%s", but not delay was defined',
+                    'Test "%s" should run after "%s", but no delay was defined',
                     $className,
                     $delayAfter
                 )
@@ -179,7 +179,7 @@ class ProcessSet implements \Countable
 
     /**
      * Check dependencies of all queued processes and remove invalid ones from the set
-     * @return array Array of invalid dependencies, removed from the set
+     * @return array Array of invalid dependencies removed from the set
      */
     public function checkDependencies()
     {
