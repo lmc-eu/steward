@@ -12,10 +12,9 @@
             <body>
                 <div class="container">
                     <div class="page-header">
-                        <h1>Steward results
-                            <div class="pull-right">
-                                <small>generated with ♥</small>
-                            </div>
+                        <h1>
+                            Steward results
+                            <span class="pull-right"><small>generated with ♥</small></span>
                         </h1>
                     </div>
 
