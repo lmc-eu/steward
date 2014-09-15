@@ -27,10 +27,19 @@
                                     <li class="list-group-item">queued: <xsl:value-of select="count(//testcase[@status='queued'])"/></li>
                                     <li class="list-group-item">
                                         done: <xsl:value-of select="count(//testcase[@status='done'])"/>
-                                        <ul>
-                                            <li>passed: <xsl:value-of select="count(//testcase[@status='done' and @result='passed'])"/></li>
-                                            <li>failed: <xsl:value-of select="count(//testcase[@status='done' and @result='failed'])"/></li>
-                                            <li>fatal: <xsl:value-of select="count(//testcase[@status='done' and @result='fatal'])"/></li>
+                                        <ul style="list-style-type: none; padding-left: 20px;">
+                                            <li>
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                                passed: <xsl:value-of select="count(//testcase[@status='done' and @result='passed'])"/>
+                                            </li>
+                                            <li>
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                                failed: <xsl:value-of select="count(//testcase[@status='done' and @result='failed'])"/>
+                                            </li>
+                                            <li>
+                                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                                fatal: <xsl:value-of select="count(//testcase[@status='done' and @result='fatal'])"/>
+                                            </li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -48,10 +57,19 @@
                                     <li class="list-group-item">started: <xsl:value-of select="count(//test[@status='started'])"/></li>
                                     <li class="list-group-item">
                                         done: <xsl:value-of select="count(//test[@status='done'])"/>
-                                        <ul>
-                                            <li>passed: <xsl:value-of select="count(//test[@status='done' and @result='passed'])"/></li>
-                                            <li>failed or broken: <xsl:value-of select="count(//test[@status='done' and (@result='failed' or @result='broken')])"/></li>
-                                            <li>skipped or incomplete: <xsl:value-of select="count(//test[@status='done' and (@result='skipped' or @result='incomplete')])"/></li>
+                                        <ul style="list-style-type: none; padding-left: 20px;">
+                                            <li>
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                                passed: <xsl:value-of select="count(//test[@status='done' and @result='passed'])"/>
+                                            </li>
+                                            <li>
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                                failed or broken: <xsl:value-of select="count(//test[@status='done' and (@result='failed' or @result='broken')])"/>
+                                            </li>
+                                            <li>
+                                                <span class="glyphicon glyphicon-question-sign"></span>
+                                                skipped or incomplete: <xsl:value-of select="count(//test[@status='done' and (@result='skipped' or @result='incomplete')])"/>
+                                            </li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -105,6 +123,23 @@
                                                 <xsl:when test="@result = 'fatal'">warning</xsl:when>
                                             </xsl:choose>
                                         </xsl:attribute>
+
+                                        <!-- if the status is queued (this result is not yet know) only add time icon -->
+                                        <xsl:if test="@status = 'queued'">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </xsl:if>
+
+                                        <span>
+                                            <xsl:attribute name="class">
+                                                glyphicon
+                                                <xsl:choose>
+                                                    <xsl:when test="@result = 'passed'">glyphicon-ok</xsl:when>
+                                                    <xsl:when test="@result = 'failed'">glyphicon-remove</xsl:when>
+                                                    <xsl:when test="@result = 'fatal'">glyphicon-warning-sign</xsl:when>
+                                                </xsl:choose>
+                                            </xsl:attribute>
+                                        </span>
+                                        <xsl:text>&#160;&#160;</xsl:text>
                                         <xsl:value-of select="@result"/>
                                     </td>
                                     <td>
@@ -132,6 +167,17 @@
                                                         <xsl:when test="@result = 'skipped' or @result = 'incomplete'">info</xsl:when>
                                                     </xsl:choose>
                                                 </xsl:attribute>
+                                                <span>
+                                                    <xsl:attribute name="class">
+                                                        glyphicon
+                                                        <xsl:choose>
+                                                            <xsl:when test="@result = 'passed'">glyphicon-ok</xsl:when>
+                                                            <xsl:when test="@result = 'failed' or @result = 'broken'">glyphicon-remove</xsl:when>
+                                                            <xsl:when test="@result = 'skipped' or @result = 'incomplete'">glyphicon-question-sign</xsl:when>
+                                                        </xsl:choose>
+                                                    </xsl:attribute>
+                                                </span>
+                                                <xsl:text>&#160;&#160;</xsl:text>
                                                 <xsl:value-of select="@result"/>
                                             </td>
                                             <td>
