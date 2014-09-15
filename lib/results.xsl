@@ -6,8 +6,8 @@
     <xsl:template match="/">
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
-                <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
                 <title>Steward results</title>
+                <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
             </head>
             <body>
                 <div class="container">
@@ -104,11 +104,12 @@
                                 <th>Result</th>
                                 <th>Start</th>
                                 <th>End</th>
+                                <th>Duration</th>
                             </tr>
                         </thead>
                         <tbody>
                             <xsl:for-each select="/testcases/testcase">
-                                <tr>
+                                <tr class="testcase-row">
                                     <td colspan="2">
                                         <xsl:value-of select="@name"/>
                                     </td>
@@ -142,16 +143,18 @@
                                         <xsl:text>&#160;&#160;</xsl:text>
                                         <xsl:value-of select="@result"/>
                                     </td>
-                                    <td>
+                                    <td class="date date-start">
                                         <xsl:value-of select="@start"/>
                                     </td>
-                                    <td>
+                                    <td class="date date-end">
                                         <xsl:value-of select="@end"/>
+                                    </td>
+                                    <td class="duration">
                                     </td>
                                 </tr>
                                 <xsl:if test="test">
                                     <xsl:for-each select="test">
-                                        <tr>
+                                        <tr class="test-row">
                                             <td></td>
                                             <td>
                                                 <xsl:value-of select="@name"/>
@@ -180,11 +183,13 @@
                                                 <xsl:text>&#160;&#160;</xsl:text>
                                                 <xsl:value-of select="@result"/>
                                             </td>
-                                            <td>
+                                            <td class="date date-start">
                                                 <xsl:value-of select="@start"/>
                                             </td>
-                                            <td>
+                                            <td class="date date-end">
                                                 <xsl:value-of select="@end"/>
+                                            </td>
+                                            <td class="duration">
                                             </td>
                                         </tr>
                                     </xsl:for-each>
@@ -193,6 +198,38 @@
                         </tbody>
                     </table>
                 </div>
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+            <script>
+                <![CDATA[
+                $(function () {
+                    // caluclate and print test duration
+                    $('table tr.test-row').each(function() {
+                        var startDate = moment($('td.date-start', this).text());
+                        var endDate = moment($('td.date-end', this).text());
+                        var isPending = false;
+                        if (startDate.isValid()) {
+                            if (!endDate.isValid()) { // still running, add current time
+                                isPending = true;
+                                endDate = moment();
+                            }
+
+                            $('td.duration', this).html(
+                                (isPending ? '<i>' : '') +
+                                endDate.diff(startDate, 'seconds') + ' sec' +
+                                (isPending ? '</i>' : '')
+                            );
+                        }
+                    });
+                    // convert ISO-8601 dates to more readable ones
+                    $("td.date").each(function () {
+                        if ($(this).text().length) {
+                            $(this).text(moment($(this).text()).format('YYYY-MM-DD H:mm:ss'));
+                        }
+                    });
+                });
+                ]]>
+            </script>
             </body>
         </html>
     </xsl:template>
