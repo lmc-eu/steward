@@ -4,9 +4,11 @@
 
 ### Added
 - CHANGELOG.md file.
-- Global DEBUG constant (is true if -vvv passed to run-tests), that could be used in tests to print some more verbose output.
-- Possibility to add custom test Publishers (enabled by --publish-results). Pass it as argument of TestStatusListener in phpunit.xml.
-- During the run-tests execution, current test results are generated into logs/results.xml. This is useful eg. on long-lasting Jenkins jobs or if you want to know more precise status of the current (or last) test run.
+- Global `DEBUG` constant (is true if -vvv passed to run-tests), that could be used in tests to print some more verbose output.
+- The `install` command now checks for the latest version of Selenium server and interactively asks for confirmation
+- Possibility to add custom test Publishers (enabled by `--publish-results`). Pass it as argument of TestStatusListener in `phpunit.xml`.
+- During the `run-tests` execution, current test results are generated into `logs/results.xml`. This is useful eg. on long-lasting Jenkins jobs or if you want to know more precise status of the current (or last) test run.
+- Shortcut to WebDriver in components - it's now possible to write `$this->wd` instead of `$this->tc->wd` 
 
 ### Changed
 - The last argument of run-tests command (browser name) is now always required (as well as the environment name)

@@ -15,6 +15,9 @@ abstract class AbstractComponent
     /** @var AbstractTestCaseBase */
     protected $tc;
 
+    /** @var \WebDriver */
+    protected $wd;
+
     /** @var string */
     protected $componentName;
 
@@ -24,6 +27,7 @@ abstract class AbstractComponent
     public function __construct(AbstractTestCaseBase $tc)
     {
         $this->tc = $tc;
+        $this->wd = $tc->wd;
 
         $reflection = new \ReflectionClass($this);
         $this->componentName = $reflection->getShortName();
