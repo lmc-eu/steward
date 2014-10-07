@@ -55,6 +55,13 @@ class RunTestsCommand extends Command
                 realpath(__DIR__ . '/../../tests')
             )
             ->addOption(
+                'fixtures-dir',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Base path to directory with fixture files',
+                realpath(__DIR__ . '/../../tests')
+            )
+            ->addOption(
                 'pattern',
                 null,
                 InputOption::VALUE_REQUIRED,
@@ -93,6 +100,7 @@ class RunTestsCommand extends Command
 
         $pattern = $input->getOption('pattern');
         $dir = $input->getOption('dir');
+        $fixturesDir = $input->getOption('fixtures-dir');
         $serverUrl = $input->getOption('server-url');
         $parsedUrl = parse_url($serverUrl);
         $group = $input->getOption('group');
@@ -102,6 +110,7 @@ class RunTestsCommand extends Command
         $output->writeln(sprintf('Environment: %s', $environment));
 
         $output->writeln(sprintf('Publish results: %s', ($publishResults) ? 'yes' : 'no'));
+        $output->writeln(sprintf('Fixtures directory: %s', $environment));
 
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
 
@@ -172,6 +181,7 @@ class RunTestsCommand extends Command
                 ->setEnv('ENV', strtolower($environment))
                 ->setEnv('SERVER_URL', $serverUrl)
                 ->setEnv('PUBLISH_RESULTS', $publishResults)
+                ->setEnv('FIXTURES_DIR', $fixturesDir)
                 ->setEnv('DEBUG', $output->isDebug())
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(array_merge($phpunitArgs, [$fileName]))

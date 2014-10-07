@@ -50,6 +50,29 @@ class TestUtils extends AbstractComponent
     }
 
     /**
+     * Get path to given fixture, which could be then entered into file input field.
+     *
+     * @param string $fixture Fixture identifier (relative path to fixture from directory with tests)
+     * @return string Path to fixture
+     */
+    public function getFixturePath($fixture)
+    {
+        $directorySeparator = '/';
+        if (strpos(FIXTURES_DIR, '\\') !== false) { // if \ was used in the path, we are most probably on windows
+            $directorySeparator = '\\';
+            $fixture = str_replace('/', $directorySeparator, $fixture);
+        }
+
+        $fixturePath = rtrim(FIXTURES_DIR, $directorySeparator) . $directorySeparator .  $fixture;
+
+        if (DEBUG) {
+            $this->log('Assembled path to fixture: "%s"', $fixturePath);
+        }
+
+        return $fixturePath;
+    }
+
+    /**
      * Sleep for given amount of seconds.
      * Unlike sleep(), also the float values are supported.
      * ALWAYS TRY TO USE WAIT() INSTEAD!
