@@ -43,13 +43,20 @@ class InstallCommand extends Command
     }
 
     /**
-     * Execute command
+     * In interactive or very verbose (-vv) mode provide more output, otherwise only output full path to selenium
+     * server jar file (so it could be parsed and run).
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $verboseOutput = false;
+        if ($input->isInteractive() || $output->isVeryVerbose()) {
+            $verboseOutput = true;
+        }
+
         $version = $input->getArgument('version'); // exact version could be specified as argument
 
         if (!$version) {
@@ -66,10 +73,12 @@ class InstallCommand extends Command
             $version = $questionHelper->ask($input, $output, $question);
         }
 
-        $output->writeln(
-            'Steward is now downloading Selenium standalone server...'
-            . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
-        );
+        if ($verboseOutput) {
+            $output->writeln(
+                'Steward is now downloading Selenium standalone server...'
+                . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
+            );
+        }
 
         $versionParts = explode('.', $version);
 
@@ -78,22 +87,30 @@ class InstallCommand extends Command
 
         $targetPath = realpath(__DIR__ . $this->targetDir) . DIRECTORY_SEPARATOR . $fileName;
 
-        $output->writeln(sprintf('Version: %s', $version));
-        $output->writeln(sprintf('File URL: %s', $fileUrl));
-        $output->writeln(sprintf('Target file path: %s', $targetPath));
+        if ($verboseOutput) {
+            $output->writeln(sprintf('Version: %s', $version));
+            $output->writeln(sprintf('File URL: %s', $fileUrl));
+            $output->writeln(sprintf('Target file path: %s', $targetPath));
+        }
 
         if (file_exists($targetPath)) {
-            $output->writeln(
-                sprintf(
-                    'File "%s" already exists in directory "%s" - won\'t be downloaded again.',
-                    $fileName,
-                    realpath($this->targetDir)
-                )
-            );
+            if ($verboseOutput) {
+                $output->writeln(
+                    sprintf(
+                        'File "%s" already exists in directory "%s" - won\'t be downloaded again.',
+                        $fileName,
+                        realpath($this->targetDir)
+                    )
+                );
+            } else {
+                $output->writeln($targetPath);
+            }
             return 0;
         }
 
-        $output->writeln('Downloading (may take a while - its over 30 MB)...');
+        if ($verboseOutput) {
+            $output->writeln('Downloading (may take a while - its over 30 MB)...');
+        }
         $fp = fopen($fileUrl, 'r');
         $downloadedSize = file_put_contents($targetPath, $fp);
 
@@ -102,7 +119,12 @@ class InstallCommand extends Command
             return 1;
         }
 
-        $output->writeln('Downloaded ' . $downloadedSize . ' bytes, file saved succesfully.');
+        if ($verboseOutput) {
+            $output->writeln('Downloaded ' . $downloadedSize . ' bytes, file saved successfully.');
+        } elseif ($input->isInteractive()) {
+            $output->writeln($targetPath);
+        }
+
         return 0;
     }
 

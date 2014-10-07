@@ -18,3 +18,4 @@
     - Testcases (= process) results (for "done" status): passed, failed, fatal
     - Test statuses: started, done
     - Test results (for "done" status): passed, failed, broken, skipped, incomplete
+- The `install` command now outputs only full path to jar file in `-no-interactive` mode (except `-vv` or `-vvv` is passed) and nothing else
