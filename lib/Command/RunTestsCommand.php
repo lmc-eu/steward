@@ -110,7 +110,6 @@ class RunTestsCommand extends Command
         $output->writeln(sprintf('Environment: %s', $environment));
 
         $output->writeln(sprintf('Publish results: %s', ($publishResults) ? 'yes' : 'no'));
-        $output->writeln(sprintf('Fixtures directory: %s', $environment));
 
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
 
