@@ -14,7 +14,9 @@ function requireIfExists($file)
     }
 }
 
-if (!requireIfExists(__DIR__ . '/../vendor/autoload.php')) {
+if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when is used directly
+    && !requireIfExists(__DIR__ . '/../../../autoload.php') // when installed as dependency
+) {
     die(
         'You must set up the project dependencies, run the following commands:' . PHP_EOL .
         'curl -sS https://getcomposer.org/installer | php' . PHP_EOL .
