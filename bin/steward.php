@@ -14,7 +14,7 @@ function requireIfExists($file)
     }
 }
 
-if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when is used directly
+if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when used directly
     && !requireIfExists(__DIR__ . '/../../../autoload.php') // when installed as dependency
 ) {
     die(
