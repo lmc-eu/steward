@@ -32,6 +32,19 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         return __DIR__ . '/Fixtures/' . $fileName;
     }
 
+    public function testShouldAllowToSetCustomFileName()
+    {
+        $this->assertNotContains('custom.xml', $this->publisher->getFilePath());
+        $this->publisher->setFileName('custom.xml');
+        $this->assertContains('custom.xml', $this->publisher->getFilePath());
+    }
+
+    public function testShouldAllowToSetCustomFilePath()
+    {
+        $this->assertNotContains('/custom', $this->publisher->getFilePath());
+        $this->publisher->setFileDir('/custom');
+        $this->assertEquals('/custom/results.xml', $this->publisher->getFilePath());
+    }
 
     public function testShouldCleanPreviousResults()
     {
@@ -40,7 +53,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFileExists($fn, 'Fixture file was not created'); // check preconditions
 
-        $this->publisher->setFileName($fn);
+        $this->publisher->setFileName(basename($fn));
+        $this->publisher->setFileDir(dirname($fn));
 
         $this->publisher->clean();
 
@@ -74,7 +88,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         }
         touch($fileName);
 
-        $this->publisher->setFileName($fileName);
+        $this->publisher->setFileName(basename($fileName));
+        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
 
         $xml = simplexml_load_file($fileName)[0];
@@ -105,7 +120,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $fileName = $params[0];
         $originalTestStartDate = $params[1];
 
-        $this->publisher->setFileName($fileName);
+        $this->publisher->setFileName(basename($fileName));
+        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'done', 'passed');
 
         $xml = simplexml_load_file($fileName)[0];
@@ -135,7 +151,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         }
         touch($fileName);
 
-        $this->publisher->setFileName($fileName);
+        $this->publisher->setFileName(basename($fileName));
+        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResults('testCaseNameFoo', 'queued');
 
         $xml = simplexml_load_file($fileName)[0];
@@ -158,7 +175,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = $params[0];
 
-        $this->publisher->setFileName($fileName);
+        $this->publisher->setFileName(basename($fileName));
+        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResults(
             'testCaseNameFoo',
             'done',
@@ -179,7 +197,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage File "" does not exist or is not writeable.
+     * @expectedExceptionMessage Directory "" does not exist or is not writeable.
      */
     public function testShouldFailIfLogsDirConstantIsNotDefined()
     {
@@ -188,11 +206,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage File "/foo/bar.xml" does not exist or is not writeable.
+     * @expectedExceptionMessage Directory "/notexisting" does not exist or is not writeable.
      */
-    public function testShouldFailIfGivenStatusFileDoesNotExists()
+    public function testShouldFailIfGivenDirectoryDoesNotExists()
     {
-        $this->publisher->setFileName('/foo/bar.xml');
+        $this->publisher->setFileDir('/notexisting');
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
     }
 }

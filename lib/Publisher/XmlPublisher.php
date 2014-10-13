@@ -5,13 +5,16 @@ namespace Lmc\Steward\Publisher;
 class XmlPublisher extends AbstractPublisher
 {
     /** @var string */
-    protected $fileName;
+    protected $fileDir;
+
+    /** @var string */
+    protected $fileName = 'results.xml';
 
     /** @var resource */
     protected $fileHandle;
 
     /**
-     * Create the publisher. If LOGS_DIR constant is not defined, remember to call setFileName() and set full path to
+     * Create the publisher. If LOGS_DIR constant is not defined, remember to call setFileDir() and set full path to
      * the file.
      *
      * @param string $environment
@@ -20,13 +23,22 @@ class XmlPublisher extends AbstractPublisher
      */
     public function __construct($environment, $jobName, $buildNumber)
     {
-        if (defined('LOGS_DIR')) { // if the constrans is not defined, the setFileName() must be called explicitly later
-            $this->setFileName(LOGS_DIR . DIRECTORY_SEPARATOR . 'results.xml');
+        if (defined('LOGS_DIR')) { // if the constant is not defined, the setFileDir() must be called explicitly later
+            $this->setFileDir(LOGS_DIR);
         }
     }
 
     /**
-     * Set file name. Usable for testing to override the default or when LOGS_DIR constant was not set.
+     * Set directory where results file should be stored. Usable eg. when LOGS_DIR constant was not set.
+     * @param string $dir
+     */
+    public function setFileDir($dir)
+    {
+        $this->fileDir = $dir;
+    }
+
+    /**
+     * Change file name from the default. Mostly usable for testing.
      * @param string $fileName
      */
     public function setFileName($fileName)
@@ -35,12 +47,21 @@ class XmlPublisher extends AbstractPublisher
     }
 
     /**
+     * Get full path to results file.
+     * @return string
+     */
+    public function getFilePath()
+    {
+        return $this->fileDir . DIRECTORY_SEPARATOR . $this->fileName;
+    }
+
+    /**
      * Clean the file with all previous results (if exists).
      */
     public function clean()
     {
-        if (file_exists($this->fileName)) {
-            unlink($this->fileName);
+        if (file_exists($this->getFilePath())) {
+            unlink($this->getFilePath());
         }
     }
 
@@ -169,26 +190,28 @@ class XmlPublisher extends AbstractPublisher
      */
     protected function readAndLock()
     {
+        $file = $this->getFilePath();
+
         if ($this->fileHandle) {
             throw new \RuntimeException(
-                sprintf('File "%s" was already opened by this XmlPublisher and closed', $this->fileName)
+                sprintf('File "%s" was already opened by this XmlPublisher and closed', $file)
             );
         }
 
-        if (!is_writable($this->fileName)) {
+        if (!is_writable($this->fileDir)) {
             throw new \RuntimeException(
                 sprintf(
-                    'File "%s" does not exist or is not writeable.'
-                    . ' Didn\'t you forget to either define LOGS_DIR constant or call setFileName()?',
-                    $this->fileName
+                    'Directory "%s" does not exist or is not writeable.'
+                    . ' Didn\'t you forget to either define LOGS_DIR constant or call setFileDir()?',
+                    $this->fileDir
                 )
             );
         }
 
         // open (or create) the file and acquire exclusive lock (or wait until it is acquired)
-        $this->fileHandle = fopen($this->fileName, 'c+');
+        $this->fileHandle = fopen($file, 'c+');
         if (!flock($this->fileHandle, LOCK_EX)) {
-            throw new \RuntimeException(sprintf('Cannot obtain lock for file "%s"', $this->fileName));
+            throw new \RuntimeException(sprintf('Cannot obtain lock for file "%s"', $file));
         }
 
         if (fstat($this->fileHandle)['size'] == 0) { // new or empty file, create empty xml element
@@ -214,7 +237,7 @@ class XmlPublisher extends AbstractPublisher
             throw new \RuntimeException(
                 sprintf(
                     'File "%s" was not opened by this XmlPublisher yet (or it was already closed)',
-                    $this->fileName
+                    $this->getFilePath()
                 )
             );
         }

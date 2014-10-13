@@ -141,6 +141,7 @@ class RunTestsCommand extends Command
         $output->writeln(sprintf(' - by pattern "%s"', $pattern));
 
         $xmlPublisher = new XmlPublisher($environment, null, null);
+        $xmlPublisher->setFileDir($logsDir);
         $xmlPublisher->clean();
         $processSet = new ProcessSet($xmlPublisher);
 
