@@ -166,7 +166,7 @@ class RunTestsCommand extends Command
                 '--log-junit=logs/'
                 . Strings::webalize(key($classes), null, $lower = false)
                 . '.xml',
-                '--configuration=lib/phpunit.xml',
+                '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
             ];
 
             // If ANSI output is enabled, turn on colors on PHPUnit

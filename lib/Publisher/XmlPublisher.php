@@ -17,12 +17,7 @@ class XmlPublisher extends AbstractPublisher
      */
     public function __construct($environment, $jobName, $buildNumber)
     {
-        $fileDir = __DIR__ . '/../../logs';
-        if (!is_dir($fileDir)) {
-            mkdir($fileDir, 0755);
-        }
-
-        $this->fileName =  realpath($fileDir) . '/results.xml';
+        $this->fileName = realpath(__DIR__ . '/../../logs') . '/results.xml';
     }
 
     /**
