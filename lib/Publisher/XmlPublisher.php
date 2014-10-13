@@ -11,17 +11,22 @@ class XmlPublisher extends AbstractPublisher
     protected $fileHandle;
 
     /**
+     * Create the publisher. If LOGS_DIR constant is not defined, remember to call setFileName() and set full path to
+     * the file.
+     *
      * @param string $environment
      * @param string $jobName
      * @param int $buildNumber
      */
     public function __construct($environment, $jobName, $buildNumber)
     {
-        $this->fileName = realpath(__DIR__ . '/../../logs') . '/results.xml';
+        if (defined('LOGS_DIR')) { // if the constrans is not defined, the setFileName() must be called explicitly later
+            $this->setFileName(LOGS_DIR . DIRECTORY_SEPARATOR . 'results.xml');
+        }
     }
 
     /**
-     * Set file name. Mostly usable for testing to override the default.
+     * Set file name. Usable for testing to override the default or when LOGS_DIR constant was not set.
      * @param string $fileName
      */
     public function setFileName($fileName)
@@ -167,6 +172,16 @@ class XmlPublisher extends AbstractPublisher
         if ($this->fileHandle) {
             throw new \RuntimeException(
                 sprintf('File "%s" was already opened by this XmlPublisher and closed', $this->fileName)
+            );
+        }
+
+        if (!is_writable($this->fileName)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'File "%s" does not exist or is not writeable.'
+                    . ' Didn\'t you forget to either define LOGS_DIR constant or call setFileName()?',
+                    $this->fileName
+                )
             );
         }
 

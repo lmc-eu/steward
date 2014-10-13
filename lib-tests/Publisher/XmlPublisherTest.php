@@ -176,4 +176,23 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($xml->testcase['start']);
         $this->assertNotEmpty($xml->testcase['end']);
     }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage File "" does not exist or is not writeable.
+     */
+    public function testShouldFailIfLogsDirConstantIsNotDefined()
+    {
+        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage File "/foo/bar.xml" does not exist or is not writeable.
+     */
+    public function testShouldFailIfGivenStatusFileDoesNotExists()
+    {
+        $this->publisher->setFileName('/foo/bar.xml');
+        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+    }
 }

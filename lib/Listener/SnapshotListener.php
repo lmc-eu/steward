@@ -28,7 +28,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      */
     private function takeSnapshot(AbstractTestCase $test, \Exception $e, $time)
     {
-        $savePath = __DIR__ . '/../../logs/';
+        $savePath = LOGS_DIR . DIRECTORY_SEPARATOR;
 
         $testIdentifier = Strings::webalize(get_class($test), null, $lower = false)
             . '-'
@@ -45,10 +45,10 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
 
         // Save PNG screenshot
         $test->wd->takeScreenshot($savePath . $testIdentifier . '.png');
-        $test->log('Screenshot saved to file "%s" ', $testIdentifier . '.png');
+        $test->log('Screenshot saved to file "%s" ', $savePath . $testIdentifier . '.png');
 
         // Save HTML snapshot of page
         file_put_contents($savePath . $testIdentifier . '.html', $test->wd->getPageSource());
-        $test->log('HTML snapshot saved to file "%s" ', $testIdentifier . '.html');
+        $test->log('HTML snapshot saved to file "%s" ', $savePath . $testIdentifier . '.html');
     }
 }

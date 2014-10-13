@@ -38,9 +38,15 @@ define('PUBLISH_RESULTS', $publishResults);
 
 $fixturesDir = getenv('FIXTURES_DIR');
 if (!isset($fixturesDir)) {
-    throw new Exception('FIXTURES_DIR environment variable must be defined');
+    $logsDir = realpath(__DIR__ . '/../tests');
 }
 define('FIXTURES_DIR', $fixturesDir);
+
+$logsDir = getenv('LOGS_DIR');
+if (!isset($logsDir)) {
+    $logsDir = realpath(__DIR__ . '/../logs');
+}
+define('LOGS_DIR', $logsDir);
 
 $debug = getenv('DEBUG');
 if (!isset($debug)) {

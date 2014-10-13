@@ -48,7 +48,7 @@ class RunTestsCommand extends Command
                 'http://localhost:4444'
             )
             ->addOption(
-                'dir',
+                'tests-dir',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with tests',
@@ -60,6 +60,12 @@ class RunTestsCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Base path to directory with fixture files',
                 realpath(__DIR__ . '/../../tests')
+            )->addOption(
+                'logs-dir',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Path to directory with logs',
+                realpath(__DIR__ . '/../../logs')
             )
             ->addOption(
                 'pattern',
@@ -99,8 +105,9 @@ class RunTestsCommand extends Command
         $environment = $input->getArgument('environment');
 
         $pattern = $input->getOption('pattern');
-        $dir = $input->getOption('dir');
+        $testsDir = $input->getOption('tests-dir');
         $fixturesDir = $input->getOption('fixtures-dir');
+        $logsDir = $input->getOption('logs-dir');
         $serverUrl = $input->getOption('server-url');
         $parsedUrl = parse_url($serverUrl);
         $group = $input->getOption('group');
@@ -109,7 +116,11 @@ class RunTestsCommand extends Command
         $output->writeln(sprintf('Browser: %s', $browsers));
         $output->writeln(sprintf('Environment: %s', $environment));
 
-        $output->writeln(sprintf('Publish results: %s', ($publishResults) ? 'yes' : 'no'));
+        if ($output->isDebug()) {
+            $output->writeln(sprintf('Base path to fixtures results: %s', $fixturesDir));
+            $output->writeln(sprintf('Path to logs: %s', $logsDir));
+            $output->writeln(sprintf('Publish results: %s', ($publishResults) ? 'yes' : 'no'));
+        }
 
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
 
@@ -126,7 +137,7 @@ class RunTestsCommand extends Command
         if ($group) {
             $output->writeln(sprintf(' - in group "%s"', $group));
         }
-        $output->writeln(sprintf(' - in directory "%s"', $dir));
+        $output->writeln(sprintf(' - in directory "%s"', $testsDir));
         $output->writeln(sprintf(' - by pattern "%s"', $pattern));
 
         $xmlPublisher = new XmlPublisher($environment, null, null);
@@ -134,7 +145,7 @@ class RunTestsCommand extends Command
         $processSet = new ProcessSet($xmlPublisher);
 
         $testCasesNum = 0;
-        foreach (Finder::findFiles($pattern)->from($dir) as $fileName => $fileObject) {
+        foreach (Finder::findFiles($pattern)->from($testsDir) as $fileName => $fileObject) {
             // Parse classes from the testcase file
             $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
 
@@ -181,6 +192,7 @@ class RunTestsCommand extends Command
                 ->setEnv('SERVER_URL', $serverUrl)
                 ->setEnv('PUBLISH_RESULTS', $publishResults)
                 ->setEnv('FIXTURES_DIR', $fixturesDir)
+                ->setEnv('LOGS_DIR', $logsDir)
                 ->setEnv('DEBUG', $output->isDebug())
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(array_merge($phpunitArgs, [$fileName]))
