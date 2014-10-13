@@ -215,9 +215,14 @@ class XmlPublisher extends AbstractPublisher
         }
 
         if (fstat($this->fileHandle)['size'] == 0) { // new or empty file, create empty xml element
+            $xslPath = '../lib/results.xsl';
+            if (is_readable($this->fileDir . '/../vendor/lmc/steward/lib/results.xsl')) {
+                $xslPath = '../vendor/lmc/steward/lib/results.xsl';
+            }
+
             $xml = new \SimpleXMLElement(
                 '<?xml version="1.0" encoding="utf-8" ?>'
-                . '<?xml-stylesheet type="text/xsl" href="../lib/results.xsl"?>'
+                . '<?xml-stylesheet type="text/xsl" href="' . $xslPath . '"?>'
                 . '<testcases />'
             );
         } else { // file already exists, load current xml
