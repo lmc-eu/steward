@@ -28,7 +28,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      */
     private function takeSnapshot(AbstractTestCase $test, \Exception $e, $time)
     {
-        $savePath = LOGS_DIR . DIRECTORY_SEPARATOR;
+        $savePath = LOGS_DIR . '/';
 
         $testIdentifier = Strings::webalize(get_class($test), null, $lower = false)
             . '-'

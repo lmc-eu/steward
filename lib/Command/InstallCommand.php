@@ -85,7 +85,7 @@ class InstallCommand extends Command
         $fileName = 'selenium-server-standalone-' . $version . '.jar';
         $fileUrl = $this->storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1] . '/' . $fileName;
 
-        $targetPath = realpath(__DIR__ . $this->targetDir) . DIRECTORY_SEPARATOR . $fileName;
+        $targetPath = realpath(__DIR__ . $this->targetDir) . '/' . $fileName;
 
         if ($verboseOutput) {
             $output->writeln(sprintf('Version: %s', $version));

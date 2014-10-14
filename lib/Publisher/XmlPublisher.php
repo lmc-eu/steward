@@ -52,7 +52,7 @@ class XmlPublisher extends AbstractPublisher
      */
     public function getFilePath()
     {
-        return $this->fileDir . DIRECTORY_SEPARATOR . $this->fileName;
+        return $this->fileDir . '/' . $this->fileName;
     }
 
     /**
