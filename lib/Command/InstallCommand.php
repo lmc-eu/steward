@@ -121,7 +121,7 @@ class InstallCommand extends Command
 
         if ($verboseOutput) {
             $output->writeln('Downloaded ' . $downloadedSize . ' bytes, file saved successfully.');
-        } elseif ($input->isInteractive()) {
+        } else {
             $output->writeln($targetPath);
         }
 
