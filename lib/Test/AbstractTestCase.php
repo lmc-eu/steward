@@ -12,6 +12,12 @@ use Lmc\Steward\Component\TestUtils;
  */
 abstract class AbstractTestCase extends AbstractTestCaseBase
 {
+    /** @var int Width of browser window */
+    public static $browserWidth = 1280;
+
+    /** @var int Height of browser window */
+    public static $browserHeight = 1024;
+
     /**
      * Common test utils, instantiated on setUp.
      * @var TestUtils
@@ -28,6 +34,8 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     public function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
+
+        $this->wd->manage()->window()->setSize(new \WebDriverDimension(static::$browserWidth, static::$browserHeight));
 
         $this->utils = new TestUtils($this);
     }

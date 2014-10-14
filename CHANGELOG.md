@@ -22,3 +22,4 @@
     - Test results (for "done" status): passed, failed, broken, skipped, incomplete
 - The `install` command now outputs only full path to jar file in `-no-interactive` mode (except `-vv` or `-vvv` is passed) and nothing else
 - Path to tests in `run-tests` command is now defined using `--tests-dir`
+- Browser resolution is by default 1280x1024 and could easily be set eg. in AbstractTestCase using `$browserWidth` and `$browserHeight` properties.

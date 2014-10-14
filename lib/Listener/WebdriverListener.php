@@ -33,11 +33,6 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         }
 
         $test->wd = RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
-
-        // Force screen resolution for Phantom, otherwise it uses some weird unchangeable defaults
-        if (BROWSER_NAME == 'phantomjs') {
-            $test->wd->manage()->window()->setSize(new \WebDriverDimension(1280, 1024));
-        }
     }
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
