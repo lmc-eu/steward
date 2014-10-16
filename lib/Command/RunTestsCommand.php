@@ -77,8 +77,8 @@ class RunTestsCommand extends Command
             ->addOption(
                 'group',
                 null,
-                InputOption::VALUE_REQUIRED,
-                'Only runs testcases with specified @group of this name'
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Only runs testscases with specified @group of this name'
             )
             ->addOption(
                 'publish-results',
@@ -135,7 +135,7 @@ class RunTestsCommand extends Command
 
         $output->writeln('Searching for testcases:');
         if ($group) {
-            $output->writeln(sprintf(' - in group "%s"', $group));
+            $output->writeln(sprintf(' - in group(s): %s', implode(', ', $group)));
         }
         $output->writeln(sprintf(' - in directory "%s"', $testsDir));
         $output->writeln(sprintf(' - by pattern "%s"', $pattern));
@@ -153,17 +153,20 @@ class RunTestsCommand extends Command
             // Get annotations for the first class in testcase (one file = one class)
             $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
 
-            // If group is specified, but the class does not have it, skip the test now
             if ($group) {
-                if (!array_key_exists('group', $annotations) || !in_array($group, $annotations['group'])) {
+                // Filter out tests without any matching group
+                if (!array_key_exists('group', $annotations)
+                    || !count($matchingGroups = array_intersect($group, $annotations['group']))
+                ) {
                     continue;
                 }
+
                 if ($output->isDebug()) {
                     $output->writeln(
                         sprintf(
                             'Found testcase file #%d in group %s: %s',
                             ++$testCasesNum,
-                            $group,
+                            implode(', ', $matchingGroups),
                             $fileName
                         )
                     );
