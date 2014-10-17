@@ -48,8 +48,9 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
                 $test->wd->getSessionID()
             );
 
-            // Necessary for phantomjs - see https://github.com/detro/ghostdriver/issues/343
-            $test->wd->getCommandExecutor()->execute('deleteAllCookies');
+            // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
+            // Should be removed with PhantomJS 2
+            $test->wd->execute('deleteAllCookies');
 
             $test->wd->close();
             $test->wd->quit();
