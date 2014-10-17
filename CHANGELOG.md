@@ -10,7 +10,8 @@
 - During the `run-tests` execution, current test results are generated into `logs/results.xml`. This is useful eg. on long-lasting Jenkins jobs or if you want to know more precise status of the current (or last) test run.
 - Shortcut to WebDriver in components - it's now possible to write `$this->wd` instead of `$this->tc->wd`
 - Possibility to set `--fixtures-dir` in `run-tests` command. This is handy eg. when tests are run on remote terminal and fixtures are located on network directory.
-- Possibility to set `--logs-dir` in `run-tests` command. Useful when Steward core is installed as dependency and is run from vendor/bin/. 
+- Possibility to set `--logs-dir` in `run-tests` command. Useful when Steward core is installed as dependency and is run from vendor/bin/.
+- Possibility to easily overload any browser-specific capability, using custom (overloaded) WebdriverListener
 
 ### Changed
 - The last argument of run-tests command (browser name) is now always required (as well as the environment name)

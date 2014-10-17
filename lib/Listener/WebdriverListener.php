@@ -28,10 +28,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             \WebDriverCapabilityType::PLATFORM => \WebDriverPlatform::ANY,
         ]);
 
-        if (BROWSER_NAME == 'internet explorer') {
-            // When set to true, this capability clears the cache, cookies, history, and saved form data.
-            $capabilities->setCapability('ie.ensureCleanSession', true);
-        }
+        $capabilities = $this->setupCustomCapabilities($capabilities, BROWSER_NAME);
 
         $test->wd = RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
     }
@@ -57,5 +54,87 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             $test->wd->close();
             $test->wd->quit();
         }
+    }
+
+    /**
+     * Setup browser-specific custom capabilities.
+     * @param \DesiredCapabilities $capabilities
+     * @param $browser Browser name
+     * @return \DesiredCapabilities
+     */
+    protected function setupCustomCapabilities(\DesiredCapabilities $capabilities, $browser)
+    {
+        switch ($browser) {
+            case \WebDriverBrowserType::FIREFOX:
+                $capabilities = $this->setupFirefoxCapabilities($capabilities);
+                break;
+            case \WebDriverBrowserType::CHROME:
+                $capabilities = $this->setupChromeCapabilities($capabilities);
+                break;
+            case \WebDriverBrowserType::IE:
+                $capabilities = $this->setupInternetExplorerCapabilities($capabilities);
+                break;
+            case \WebDriverBrowserType::SAFARI:
+                $capabilities = $this->setupSafariCapabilities($capabilities);
+                break;
+            case \WebDriverBrowserType::PHANTOMJS:
+                $capabilities = $this->setupPhantomjsCapabilities($capabilities);
+                break;
+        }
+
+        return $capabilities;
+    }
+
+    /**
+     * Set up Firefox-specific capabilities
+     * @param \DesiredCapabilities $capabilities
+     * @return \DesiredCapabilities
+     */
+    protected function setupFirefoxCapabilities(\DesiredCapabilities $capabilities)
+    {
+        return $capabilities;
+    }
+
+    /**
+     * Set up Chrome/Chromium-specific capabilities
+     * @param \DesiredCapabilities $capabilities
+     * @return \DesiredCapabilities
+     */
+    protected function setupChromeCapabilities(\DesiredCapabilities $capabilities)
+    {
+        return $capabilities;
+    }
+
+    /**
+     * Set up Internet Explorer-specific capabilities
+     * @param \DesiredCapabilities $capabilities
+     * @return \DesiredCapabilities
+     */
+    protected function setupInternetExplorerCapabilities(\DesiredCapabilities $capabilities)
+    {
+        // Clears cache, cookies, history, and saved form data of MSIE.
+        $capabilities->setCapability('ie.ensureCleanSession', true);
+
+        return $capabilities;
+    }
+
+    /**
+     * Set up Safari-specific capabilities
+     * @param \DesiredCapabilities $capabilities
+     * @return \DesiredCapabilities
+     */
+    protected function setupSafariCapabilities(\DesiredCapabilities $capabilities)
+    {
+        return $capabilities;
+    }
+
+    /**
+     * Set up PhantomJS-specific capabilities
+     * @param \DesiredCapabilities $capabilities
+     * @return \DesiredCapabilities
+     */
+    protected function setupPhantomjsCapabilities(\DesiredCapabilities $capabilities)
+    {
+        return $capabilities;
     }
 }
