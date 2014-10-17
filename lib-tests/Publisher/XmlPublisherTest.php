@@ -81,17 +81,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAddTestResultToEmptyFile()
     {
-        // create empty file
-        $fileName = self::getFilePath('empty.xml');
-        if (file_exists($fileName)) {
-            unlink($fileName);
-        }
-        touch($fileName);
+        $fileName = $this->createEmptyFile();
 
-        $this->publisher->setFileName(basename($fileName));
-        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
 
+        /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName)[0];
 
         $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase);
@@ -124,6 +118,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'done', 'passed');
 
+        /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName)[0];
 
         // still only one test result is present
@@ -144,17 +139,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAddTestcaseResultToEmptyFile()
     {
-        // create empty file
-        $fileName = self::getFilePath('empty.xml');
-        if (file_exists($fileName)) {
-            unlink($fileName);
-        }
-        touch($fileName);
+        $fileName = $this->createEmptyFile();
 
-        $this->publisher->setFileName(basename($fileName));
-        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResults('testCaseNameFoo', 'queued');
 
+        /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName)[0];
 
         $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase);
@@ -185,6 +174,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
             new \DateTimeImmutable()
         );
 
+        /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName)[0];
 
         $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase);
@@ -212,5 +202,42 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     {
         $this->publisher->setFileDir('/notexisting');
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+    }
+
+    public function testShouldNotOverwriteTestsWithSameName()
+    {
+        $fileName = $this->createEmptyFile();
+
+        // create first record for testFoo
+        $this->publisher->publishResult('testCaseNameFoo', 'testFoo', 'done', XmlPublisher::TEST_RESULT_PASSED);
+
+        // create first record for testFoo, but in different testcase
+        $this->publisher->publishResult('testCaseNameBar', 'testFoo', 'done', XmlPublisher::TEST_RESULT_PASSED);
+
+        /** @var \SimpleXMLElement $xml */
+        $xml = simplexml_load_file($fileName)[0];
+
+        $tests = $xml->xpath('//test[@name="testFoo"]');
+
+        $this->assertCount(2, $tests);
+    }
+
+    /**
+     * Create empty.xml file and sets is as Publisher file
+     * @return File name
+     */
+    protected function createEmptyFile()
+    {
+        // create empty file
+        $fileName = self::getFilePath('empty.xml');
+        if (file_exists($fileName)) {
+            unlink($fileName);
+        }
+        touch($fileName);
+
+        $this->publisher->setFileName(basename($fileName));
+        $this->publisher->setFileDir(dirname($fileName));
+
+        return $fileName;
     }
 }

@@ -127,7 +127,7 @@ class XmlPublisher extends AbstractPublisher
         $xml = $this->readAndLock();
 
         $testCaseNode = $this->getTestCaseNode($xml, $testCaseName);
-        $testNode = $this->getTestNode($testCaseNode, $testName);
+        $testNode = $this->getTestNode($testCaseNode, $testCaseName, $testName);
 
         $testNode['status'] = $status;
 
@@ -168,12 +168,13 @@ class XmlPublisher extends AbstractPublisher
     /**
      * Get element for test of given name. If id does not exist yet, it is created.
      * @param \SimpleXMLElement $xml
+     * @param $testCaseName
      * @param $testName
      * @return \SimpleXMLElement
      */
-    protected function getTestNode(\SimpleXMLElement $xml, $testName)
+    protected function getTestNode(\SimpleXMLElement $xml, $testCaseName, $testName)
     {
-        $testNode = $xml->xpath('//test[@name="' . $testName . '"]');
+        $testNode = $xml->xpath('//testcase[@name="' . $testCaseName . '"]/test[@name="' . $testName . '"]');
 
         if (!$testNode) {
             $testNode = $xml->addChild('test');
