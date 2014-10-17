@@ -23,13 +23,14 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $test->log('Initializing "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName());
 
-        $capabilities = [
+        $capabilities = new \DesiredCapabilities([
             \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME,
-        ];
+            \WebDriverCapabilityType::PLATFORM => \WebDriverPlatform::ANY,
+        ]);
 
         if (BROWSER_NAME == 'internet explorer') {
             // When set to true, this capability clears the cache, cookies, history, and saved form data.
-            $capabilities['ie.ensureCleanSession'] = true;
+            $capabilities->setCapability('ie.ensureCleanSession', true);
         }
 
         $test->wd = RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
