@@ -12,6 +12,7 @@
 - Possibility to set `--fixtures-dir` in `run-tests` command. This is handy eg. when tests are run on remote terminal and fixtures are located on network directory.
 - Possibility to set `--logs-dir` in `run-tests` command. Useful when Steward core is installed as dependency and is run from vendor/bin/.
 - Possibility to easily overload any browser-specific capability, using custom (overloaded) WebdriverListener
+- Specified group(s) could be excluded from the `run-tests`, using `--exclude-group` option
 
 ### Changed
 - The last argument of run-tests command (browser name) is now always required (as well as the environment name)

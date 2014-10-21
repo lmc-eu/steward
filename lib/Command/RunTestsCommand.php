@@ -78,7 +78,13 @@ class RunTestsCommand extends Command
                 'group',
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Only runs testscases with specified @group of this name'
+                'Only run testscases with specified @group of this name'
+            )
+            ->addOption(
+                'exclude-group',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Exclude testcases with specified @group from being run'
             )
             ->addOption(
                 'publish-results',
@@ -111,6 +117,7 @@ class RunTestsCommand extends Command
         $serverUrl = $input->getOption('server-url');
         $parsedUrl = parse_url($serverUrl);
         $group = $input->getOption('group');
+        $excludeGroup = $input->getOption('exclude-group');
         $publishResults = $input->getOption('publish-results');
 
         $output->writeln(sprintf('Browser: %s', $browsers));
@@ -137,6 +144,9 @@ class RunTestsCommand extends Command
         if ($group) {
             $output->writeln(sprintf(' - in group(s): %s', implode(', ', $group)));
         }
+        if ($excludeGroup) {
+            $output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroup)));
+        }
         $output->writeln(sprintf(' - in directory "%s"', $testsDir));
         $output->writeln(sprintf(' - by pattern "%s"', $pattern));
 
@@ -153,8 +163,24 @@ class RunTestsCommand extends Command
             // Get annotations for the first class in testcase (one file = one class)
             $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
 
+            // Filter out test-cases having any of excluded groups
+            if ($excludeGroup && array_key_exists('group', $annotations)
+                && count($excludingGroups = array_intersect($excludeGroup, $annotations['group']))
+            ) {
+                if ($output->isDebug()) {
+                    $output->writeln(
+                        sprintf(
+                            'Excluding testcase file %s with group %s',
+                            $fileName,
+                            implode(', ', $excludingGroups)
+                        )
+                    );
+                }
+                continue;
+            }
+
+            // Filter out test-cases without any matching group
             if ($group) {
-                // Filter out tests without any matching group
                 if (!array_key_exists('group', $annotations)
                     || !count($matchingGroups = array_intersect($group, $annotations['group']))
                 ) {
