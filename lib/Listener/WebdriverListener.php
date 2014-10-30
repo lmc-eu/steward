@@ -23,10 +23,12 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $test->log('Initializing "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName());
 
-        $capabilities = new \DesiredCapabilities([
-            \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME,
-            \WebDriverCapabilityType::PLATFORM => \WebDriverPlatform::ANY,
-        ]);
+        $capabilities = new \DesiredCapabilities(
+            [
+                \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME,
+                \WebDriverCapabilityType::PLATFORM => \WebDriverPlatform::ANY,
+            ]
+        );
 
         $capabilities = $this->setupCustomCapabilities($capabilities, BROWSER_NAME);
 
