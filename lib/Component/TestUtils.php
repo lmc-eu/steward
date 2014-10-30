@@ -65,6 +65,11 @@ class TestUtils extends AbstractComponent
 
         $fixturePath = rtrim(FIXTURES_DIR, $directorySeparator) . $directorySeparator .  $fixture;
 
+        // if relative path was provided and the file is accessible, resolve into absolute path
+        if (realpath($fixturePath)) {
+            $fixturePath = realpath($fixturePath);
+        }
+
         if (DEBUG) {
             $this->log('Assembled path to fixture: "%s"', $fixturePath);
         }
