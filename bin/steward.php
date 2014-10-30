@@ -24,6 +24,12 @@ if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when used directly
     );
 }
 
+if (strpos(__DIR__, 'vendor/lmc/steward/bin') !== false) { // when installed as dependency
+    define('STEWARD_BASE_DIR', realpath(__DIR__ . '/../../../..'));
+} else { // when used directly
+    define('STEWARD_BASE_DIR', realpath(__DIR__ . '/..'));
+}
+
 $application = new Application('Steward', '0.0.1');
 $application
     ->addCommands(

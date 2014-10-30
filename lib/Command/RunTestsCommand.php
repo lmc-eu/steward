@@ -23,6 +23,15 @@ use Nette\Utils\Strings;
  */
 class RunTestsCommand extends Command
 {
+    public function __construct($name = null)
+    {
+        parent::__construct($name);
+
+        if (!defined('STEWARD_BASE_DIR')) {
+            throw new \RuntimeException('The STEWARD_BASE_DIR constant is not defined');
+        }
+    }
+
     /**
      * Configure command
      */
@@ -52,20 +61,20 @@ class RunTestsCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with tests',
-                realpath(__DIR__ . '/../../tests')
+                realpath(STEWARD_BASE_DIR . '/tests')
             )
             ->addOption(
                 'fixtures-dir',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Base path to directory with fixture files',
-                realpath(__DIR__ . '/../../tests')
+                realpath(STEWARD_BASE_DIR . '/tests')
             )->addOption(
                 'logs-dir',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with logs',
-                realpath(__DIR__ . '/../../logs')
+                realpath(STEWARD_BASE_DIR . '/logs')
             )
             ->addOption(
                 'pattern',
@@ -78,7 +87,7 @@ class RunTestsCommand extends Command
                 'group',
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Only run testscases with specified @group of this name'
+                'Only run testcases with specified @group of this name'
             )
             ->addOption(
                 'exclude-group',
