@@ -24,7 +24,7 @@ if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when used directly
     );
 }
 
-if (strpos(__DIR__, 'vendor/lmc/steward/bin') !== false) { // when installed as dependency
+if (strpos(__DIR__, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== false) { // when installed as dependency
     define('STEWARD_BASE_DIR', realpath(__DIR__ . '/../../../..'));
 } else { // when used directly
     define('STEWARD_BASE_DIR', realpath(__DIR__ . '/..'));
