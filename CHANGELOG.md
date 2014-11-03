@@ -15,13 +15,15 @@
 - Specified group(s) could be excluded from the `run-tests`, using `--exclude-group` option
 
 ### Changed
-- The last argument of run-tests command (browser name) is now always required (as well as the environment name)
-- The --publish-results parameter is now used without a value (as a switch to enable publishing test results).
+- The last argument of `run-tests` command (browser name) is now always required (as well as the environment name).
+- The `--publish-results` parameter is now used without a value (as a switch to enable publishing test results).
 - Unified testcases and test status and results naming:
     - Testcases (= process) statuses: done, prepared, queued
     - Testcases (= process) results (for "done" status): passed, failed, fatal
     - Test statuses: started, done
     - Test results (for "done" status): passed, failed, broken, skipped, incomplete
-- The `install` command now outputs only full path to jar file in `-no-interactive` mode (except `-vv` or `-vvv` is passed) and nothing else
-- Path to tests in `run-tests` command is now defined using `--tests-dir`
+- The `install` command now outputs only full path to jar file in `-no-interactive` mode (except `-vv` or `-vvv` is passed) and nothing else.
+- Path to tests in `run-tests` command is now defined using `--tests-dir`.
 - Browser resolution is by default 1280x1024 and could easily be set eg. in AbstractTestCase using `$browserWidth` and `$browserHeight` properties.
+- The `--group` option could now be specified multiple times to select multiple values for `run-tests`.
+- Both `run-tests` and `install` commands now uses the project base directory as root path (for logs, test files, fixtures and as jar file installation) even if installed as dependency into vendor/ dir, so that it is not necessary to define the paths manually.

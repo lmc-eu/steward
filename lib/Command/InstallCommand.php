@@ -23,10 +23,19 @@ class InstallCommand extends Command
     protected $storageUrl = 'https://selenium-release.storage.googleapis.com';
 
     /**
-     * Target directory to store the selenium server (relatively to __DIR__)
+     * Target directory to store the selenium server (relatively to STEWARD_BASE_DIR)
      * @var string
      */
-    protected $targetDir = '/../../bin';
+    protected $targetDir = '/bin';
+
+    public function __construct($name = null)
+    {
+        parent::__construct($name);
+
+        if (!defined('STEWARD_BASE_DIR')) {
+            throw new \RuntimeException('The STEWARD_BASE_DIR constant is not defined');
+        }
+    }
 
     /**
      * Configure command
@@ -85,7 +94,7 @@ class InstallCommand extends Command
         $fileName = 'selenium-server-standalone-' . $version . '.jar';
         $fileUrl = $this->storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1] . '/' . $fileName;
 
-        $targetPath = realpath(__DIR__ . $this->targetDir) . '/' . $fileName;
+        $targetPath = STEWARD_BASE_DIR . $this->targetDir . '/' . $fileName;
 
         if ($verboseOutput) {
             $output->writeln(sprintf('Version: %s', $version));
@@ -99,11 +108,11 @@ class InstallCommand extends Command
                     sprintf(
                         'File "%s" already exists in directory "%s" - won\'t be downloaded again.',
                         $fileName,
-                        realpath($this->targetDir)
+                        realpath(STEWARD_BASE_DIR . $this->targetDir)
                     )
                 );
             } else {
-                $output->writeln($targetPath);
+                $output->writeln(realpath($targetPath));
             }
             return 0;
         }
@@ -111,6 +120,11 @@ class InstallCommand extends Command
         if ($verboseOutput) {
             $output->writeln('Downloading (may take a while - its over 30 MB)...');
         }
+
+        if (!is_dir(dirname($targetPath))) {
+            mkdir(dirname($targetPath));
+        }
+
         $fp = fopen($fileUrl, 'r');
         $downloadedSize = file_put_contents($targetPath, $fp);
 
