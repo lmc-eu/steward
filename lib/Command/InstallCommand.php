@@ -26,7 +26,7 @@ class InstallCommand extends Command
      * Target directory to store the selenium server (relatively to STEWARD_BASE_DIR)
      * @var string
      */
-    protected $targetDir = '/bin';
+    protected $targetDir = '/vendor/bin';
 
     public function __construct($name = null)
     {
@@ -122,7 +122,7 @@ class InstallCommand extends Command
         }
 
         if (!is_dir(dirname($targetPath))) {
-            mkdir(dirname($targetPath));
+            mkdir(dirname($targetPath), '0777', true);
         }
 
         $fp = fopen($fileUrl, 'r');
