@@ -1,6 +1,3 @@
-# Ignore downloaded files
-bin/selenium-server-standalone-*.jar
-
 # Ignore libraries installed using Composer
 composer.phar
 vendor
@@ -14,6 +11,3 @@ composer.lock
 .idea
 *.iml
 nbproject
-
-# File with this name (really!) is created by buggy adobe pdf plugin in firefox
-C:\\nppdf32Log\\debuglog.txt
