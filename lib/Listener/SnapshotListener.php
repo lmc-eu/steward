@@ -23,7 +23,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
     /**
      * Take screenshot and save it.
      * @param AbstractTestCase $test
-     * @param Exception $e
+     * @param \Exception $e
      * @param $time
      */
     private function takeSnapshot(AbstractTestCase $test, \Exception $e, $time)
@@ -44,11 +44,13 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
         $test->log('Taking snapshots of page "%s" because: "%s"', $test->wd->getCurrentURL(), $e->getMessage());
 
         // Save PNG screenshot
-        $test->wd->takeScreenshot($savePath . $testIdentifier . '.png');
-        $test->log('Screenshot saved to file "%s" ', $savePath . $testIdentifier . '.png');
+        $screenshotPath = $savePath . $testIdentifier . '.png';
+        $test->wd->takeScreenshot($screenshotPath);
+        $test->appendTestLog('Screenshot saved to file "%s" ', $test->prependArtifactUrl($screenshotPath));
 
         // Save HTML snapshot of page
-        file_put_contents($savePath . $testIdentifier . '.html', $test->wd->getPageSource());
-        $test->log('HTML snapshot saved to file "%s" ', $savePath . $testIdentifier . '.html');
+        $htmlPath = $savePath . $testIdentifier . '.html';
+        file_put_contents($htmlPath, $test->wd->getPageSource());
+        $test->appendTestLog('HTML snapshot saved to file "%s" ', $test->prependArtifactUrl($htmlPath));
     }
 }
