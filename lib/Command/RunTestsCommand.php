@@ -17,7 +17,7 @@ use Nette\Utils\Strings;
 
 /**
  * Run tests command is used to start Steward test planner and execute tests one by one,
- * optionaly with defined delay.
+ * optionally with defined delay and relations.
  *
  * @copyright LMC s.r.o.
  */
