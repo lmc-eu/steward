@@ -129,7 +129,8 @@ class Legacy extends AbstractComponent
     public function saveWithName($data, $legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
-        $this->log('Saving legacy "%s" data to file "%s"', $legacyName, $filename);
+        $this->log('Saving data %s as legacy "%s" to file "%s"', $legacyName, $filename);
+        $this->log('Legacy data: %s' . $this->getPrintableValue($data));
         if (file_put_contents($filename, serialize($data)) === false) {
             throw new LegacyException("Cannot save legacy to file " . $filename);
         }
@@ -190,6 +191,23 @@ class Legacy extends AbstractComponent
             throw new LegacyException("Cannot parse legacy form file " . $filename);
         }
 
+        $this->log('Legacy data: %s' . $this->getPrintableValue($legacy));
         return $legacy;
+    }
+
+    /**
+     * Converts legacy value to string that can be printed (e.g. in log)
+     * calls __toString on the object if it's defined
+     * otherwise print_r
+     * @param $obj
+     * @return string
+     */
+    private function getPrintableValue($obj)
+    {
+        $exists = method_exists($obj, "__toString");
+        if ($exists) {
+            return $obj;
+        }
+        return print_r($obj, true);
     }
 }
