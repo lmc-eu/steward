@@ -4,8 +4,8 @@
     bootstrap="bootstrap.php"
 >
     <listeners>
-        <listener class="Lmc\Steward\Listener\SnapshotListener" file="Listener/SnapshotListener.php" />
-        <listener class="Lmc\Steward\Listener\WebdriverListener" file="Listener/WebdriverListener.php" />
-        <listener class="Lmc\Steward\Listener\TestStatusListener" file="Listener/TestStatusListener.php" />
+        <listener class="Lmc\Steward\Listener\SnapshotListener" />
+        <listener class="Lmc\Steward\Listener\WebdriverListener" />
+        <listener class="Lmc\Steward\Listener\TestStatusListener" />
     </listeners>
 </phpunit>

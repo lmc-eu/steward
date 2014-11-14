@@ -29,7 +29,7 @@ final class CommandEvents
 
     /**
      * The RUN_TESTS_PROCESS event is dispatched right after instance of each Process has been created.
-     * It allows you to eg. pass addition arguments to the process.
+     * It allows you to eg. pass additional arguments to the process.
      *
      * The event listener method receives a Lmc\Steward\Console\Event\RunTestsProcessEvent instance.
      *
