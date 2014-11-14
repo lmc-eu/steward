@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\ProcessBuilder;
-use Symfony\Component\Process\Process;
 use Nette\Utils\Finder;
 use Nette\Reflection\AnnotationsParser;
 use Nette\Utils\Strings;
@@ -136,7 +135,8 @@ class RunTestsCommand extends Command
         }
 
         $this->getDispatcher()->dispatch(
-            CommandEvents::RUN_TESTS_INIT, new ExtendedConsoleEvent($this, $input, $output)
+            CommandEvents::RUN_TESTS_INIT,
+            new ExtendedConsoleEvent($this, $input, $output)
         );
 
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));

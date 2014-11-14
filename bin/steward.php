@@ -38,18 +38,8 @@ $application = new Application('Steward', '0.0.1');
 $application->setDispatcher($dispatcher);
 
 // Search for listeners
-$listenerDirs = [];
-// if custom EventListeners in this project exists
-if (is_dir(STEWARD_BASE_DIR . '/lib/Console/EventListener')) {
-    $listenerDirs[] = STEWARD_BASE_DIR . '/lib/Console/EventListener';
-}
-// if installed as dependency, use also default EventListeners
-if (realpath(STEWARD_BASE_DIR . '/lib/Console/EventListener') != realpath(__DIR__ . '/../lib/Console/EventListener')) {
-    $listenerDirs[] = __DIR__ . '/../lib/Console/EventListener';
-}
-
-$finder = new Finder();
-$files = $finder->files()->in($listenerDirs)->name('*Listener.php');
+$finder = (new Finder())->useBestAdapter();
+$files = $finder->files()->in(STEWARD_BASE_DIR)->path('lib/Console/EventListener')->name('*Listener.php');
 
 $listeners = [];
 foreach ($files as $file) {

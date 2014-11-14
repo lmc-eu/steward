@@ -27,3 +27,4 @@
 - Browser resolution is by default 1280x1024 and could easily be set eg. in AbstractTestCase using `$browserWidth` and `$browserHeight` properties.
 - The `--group` option could now be specified multiple times to select multiple values for `run-tests`.
 - Both `run-tests` and `install` commands now uses the project base directory as root path (for logs, test files, fixtures and as jar file installation) even if installed as dependency into vendor/ dir, so that it is not necessary to define the paths manually.
+- Commands are now triggering Events (see CommandEvents), which could be used to extend commands with custom features.
