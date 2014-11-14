@@ -1,10 +1,13 @@
 <?php
 
-namespace Lmc\Steward\Command;
+namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Event\BasicConsoleEvent;
+use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Test\ProcessSet;
 use Lmc\Steward\Publisher\XmlPublisher;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,15 +26,6 @@ use Nette\Utils\Strings;
  */
 class RunTestsCommand extends Command
 {
-    public function __construct($name = null)
-    {
-        parent::__construct($name);
-
-        if (!defined('STEWARD_BASE_DIR')) {
-            throw new \RuntimeException('The STEWARD_BASE_DIR constant is not defined');
-        }
-    }
-
     /**
      * Configure command
      */
@@ -101,6 +95,8 @@ class RunTestsCommand extends Command
                 InputOption::VALUE_NONE,
                 'Publish test results to test storage'
             );
+
+        $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
 
     /**
@@ -108,6 +104,7 @@ class RunTestsCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -137,6 +134,10 @@ class RunTestsCommand extends Command
             $output->writeln(sprintf('Path to logs: %s', $logsDir));
             $output->writeln(sprintf('Publish results: %s', ($publishResults) ? 'yes' : 'no'));
         }
+
+        $this->getDispatcher()->dispatch(
+            CommandEvents::RUN_TESTS_INIT, new ExtendedConsoleEvent($this, $input, $output)
+        );
 
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
 
@@ -216,7 +217,7 @@ class RunTestsCommand extends Command
                 '--log-junit=logs/'
                 . Strings::webalize(key($classes), null, $lower = false)
                 . '.xml',
-                '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
+                '--configuration=' . realpath(__DIR__ . '/../../phpunit.xml'), // TODO: use STEWARD_BASE_DIR if exists
             ];
 
             // If ANSI output is enabled, turn on colors on PHPUnit
@@ -225,7 +226,14 @@ class RunTestsCommand extends Command
             }
 
             // Prepare Processes for each testcase
-            $process = (new ProcessBuilder())
+            $processBuilder = new ProcessBuilder();
+
+            $this->getDispatcher()->dispatch(
+                CommandEvents::RUN_TESTS_PROCESS,
+                $processEvent = new RunTestsProcessEvent($this, $input, $output, $processBuilder, $phpunitArgs)
+            );
+
+            $process = $processBuilder
                 ->setEnv('BROWSER_NAME', $browsers)
                 ->setEnv('ENV', strtolower($environment))
                 ->setEnv('SERVER_URL', $serverUrl)
@@ -234,7 +242,7 @@ class RunTestsCommand extends Command
                 ->setEnv('LOGS_DIR', $logsDir)
                 ->setEnv('DEBUG', $output->isDebug())
                 ->setPrefix('vendor/bin/phpunit')
-                ->setArguments(array_merge($phpunitArgs, [$fileName]))
+                ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
                 ->getProcess();
 
             $processSet->add(

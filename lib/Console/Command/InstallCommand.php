@@ -1,8 +1,9 @@
 <?php
 
-namespace Lmc\Steward\Command;
+namespace Lmc\Steward\Console\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,15 +29,6 @@ class InstallCommand extends Command
      */
     protected $targetDir = '/vendor/bin';
 
-    public function __construct($name = null)
-    {
-        parent::__construct($name);
-
-        if (!defined('STEWARD_BASE_DIR')) {
-            throw new \RuntimeException('The STEWARD_BASE_DIR constant is not defined');
-        }
-    }
-
     /**
      * Configure command
      */
@@ -49,6 +41,8 @@ class InstallCommand extends Command
                 InputArgument::OPTIONAL,
                 'Specific Selenium version to install'
             );
+
+        $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
 
     /**

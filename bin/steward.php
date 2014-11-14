@@ -3,11 +3,10 @@
 
 namespace Lmc\Steward;
 
-use Lmc\Steward\Command\Commands;
 use Nette\Reflection\AnnotationsParser;
 use Symfony\Component\Console\Application;
-use Lmc\Steward\Command\InstallCommand;
-use Lmc\Steward\Command\RunTestsCommand;
+use Lmc\Steward\Console\Command\InstallCommand;
+use Lmc\Steward\Console\Command\RunTestsCommand;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 
@@ -41,12 +40,12 @@ $application->setDispatcher($dispatcher);
 // Search for listeners
 $listenerDirs = [];
 // if custom EventListeners in this project exists
-if (is_dir(STEWARD_BASE_DIR . '/lib/EventListener')) {
-    $listenerDirs[] = STEWARD_BASE_DIR . '/lib/EventListener';
+if (is_dir(STEWARD_BASE_DIR . '/lib/Console/EventListener')) {
+    $listenerDirs[] = STEWARD_BASE_DIR . '/lib/Console/EventListener';
 }
 // if installed as dependency, use also default EventListeners
-if (realpath(STEWARD_BASE_DIR . '/lib/EventListener') != realpath(__DIR__ . '/../lib/EventListener')) {
-    $listenerDirs[] = __DIR__ . '/../lib/EventListener';
+if (realpath(STEWARD_BASE_DIR . '/lib/Console/EventListener') != realpath(__DIR__ . '/../lib/Console/EventListener')) {
+    $listenerDirs[] = __DIR__ . '/../lib/Console/EventListener';
 }
 
 $finder = new Finder();
@@ -66,12 +65,11 @@ foreach ($listeners as $listener) {
     }
 }
 
-$application
-    ->addCommands(
-        [
-            new RunTestsCommand(),
-            new InstallCommand(),
-        ]
-    );
-
+// Add Commands with injected EventDispatcher to the main console Application
+$application->addCommands(
+    [
+        new RunTestsCommand($dispatcher),
+        new InstallCommand($dispatcher),
+    ]
+);
 $application->run();
