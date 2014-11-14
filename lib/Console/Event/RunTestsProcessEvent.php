@@ -81,4 +81,13 @@ class RunTestsProcessEvent extends ExtendedConsoleEvent
     {
         return $this->args;
     }
+
+    /**
+     * Allow to update args array
+     * @param array $args
+     */
+    public function setArgs($args)
+    {
+        $this->args = $args;
+    }
 }
