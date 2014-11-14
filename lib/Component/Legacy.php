@@ -129,8 +129,8 @@ class Legacy extends AbstractComponent
     public function saveWithName($data, $legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
-        $this->log('Saving data %s as legacy "%s" to file "%s"', $legacyName, $filename);
-        $this->log('Legacy data: %s' . $this->getPrintableValue($data));
+        $this->log('Saving data as legacy "%s" to file "%s"', $legacyName, $filename);
+        $this->log('Legacy data: %s', $this->getPrintableValue($data));
         if (file_put_contents($filename, serialize($data)) === false) {
             throw new LegacyException("Cannot save legacy to file " . $filename);
         }
@@ -191,7 +191,7 @@ class Legacy extends AbstractComponent
             throw new LegacyException("Cannot parse legacy form file " . $filename);
         }
 
-        $this->log('Legacy data: %s' . $this->getPrintableValue($legacy));
+        $this->log('Legacy data: %s', $this->getPrintableValue($legacy));
         return $legacy;
     }
 
