@@ -24,13 +24,6 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     /** @var string Log appended to output of this test */
     protected $appendedTestLog;
 
-    /**
-     * Names of existing LMC environments
-     * @todo TODO: remove - is LMC specific
-     * @var array
-     */
-    public static $lmcEnvs = ['dev1', 'dev2', 'dev3', 'devel', 'deploy', 'prod'];
-
     public function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
@@ -69,27 +62,6 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     {
         $output = $this->formatOutput(func_get_args());
         $this->appendedTestLog .= $output;
-    }
-
-    /**
-     * Prepend artifact's URL to given relative pat to make it clickable in Jenkins output.
-     * Won't affect output outside Jenkins.
-     * @todo TODO: remove - is LMC specific
-     * @param $path
-     * @return string
-     */
-    public function prependArtifactUrl($path)
-    {
-        if (getenv('JENKINS_URL') && getenv('BUILD_URL') && getenv('WORKSPACE')) {
-            $realPath = realpath($path);
-            if ($realPath) {
-                // from absolute path, remove workspace
-                $path = str_replace(getenv('WORKSPACE'), '', $realPath);
-                // prepend url to artifact
-                $path = getenv('BUILD_URL') . "artifact/" . $path;
-            }
-        }
-        return $path;
     }
 
     public function log($format, $args = null)
