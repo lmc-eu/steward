@@ -26,7 +26,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      * @param \Exception $e
      * @param $time
      */
-    private function takeSnapshot(AbstractTestCase $test, \Exception $e, $time)
+    protected function takeSnapshot(AbstractTestCase $test, \Exception $e, $time)
     {
         $savePath = LOGS_DIR . '/';
 
@@ -46,11 +46,33 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
         // Save PNG screenshot
         $screenshotPath = $savePath . $testIdentifier . '.png';
         $test->wd->takeScreenshot($screenshotPath);
-        $test->appendTestLog('Screenshot saved to file "%s" ', $test->prependArtifactUrl($screenshotPath));
+        $test->appendTestLog('Screenshot saved to file "%s" ', $this->getSnapshotUrl($screenshotPath));
 
         // Save HTML snapshot of page
         $htmlPath = $savePath . $testIdentifier . '.html';
         file_put_contents($htmlPath, $test->wd->getPageSource());
-        $test->appendTestLog('HTML snapshot saved to file "%s" ', $test->prependArtifactUrl($htmlPath));
+        $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
+    }
+
+    /**
+     * Get url based on relative path of specific snapshot.
+     * In our implementation we prepend artifact's URL to given relative path to make it clickable in Jenkins output.
+     *
+     * @param $path
+     * @return string
+     */
+    protected function getSnapshotUrl($path)
+    {
+        if (getenv('JENKINS_URL') && getenv('BUILD_URL') && getenv('WORKSPACE')) {
+            $realPath = realpath($path);
+            if ($realPath) {
+                // from absolute path, remove workspace
+                $path = str_replace(getenv('WORKSPACE'), '', $realPath);
+                // prepend url to artifact
+                $path = getenv('BUILD_URL') . "artifact/" . $path;
+            }
+        }
+
+        return $path;
     }
 }
