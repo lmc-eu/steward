@@ -243,7 +243,7 @@ class RunTestsCommand extends Command
                 ->setEnv('FIXTURES_DIR', $fixturesDir)
                 ->setEnv('LOGS_DIR', $logsDir)
                 ->setEnv('DEBUG', $output->isDebug())
-                ->setPrefix('vendor/bin/phpunit')
+                ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
                 ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
                 ->setTimeout(3600) // 1 hour timeout to end possibly stuck processes
                 ->getProcess();
