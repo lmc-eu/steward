@@ -62,7 +62,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
     /**
      * Setup browser-specific custom capabilities.
      * @param \DesiredCapabilities $capabilities
-     * @param $browser Browser name
+     * @param string $browser Browser name
      * @return \DesiredCapabilities
      */
     protected function setupCustomCapabilities(\DesiredCapabilities $capabilities, $browser)

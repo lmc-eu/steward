@@ -5,6 +5,9 @@ namespace Lmc\Steward\Console\Event;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Basic event dispatched from console commands, containing just instance of the Command itself.
+ */
 class BasicConsoleEvent extends Event
 {
     /** @var Command */

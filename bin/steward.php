@@ -39,7 +39,11 @@ $application->setDispatcher($dispatcher);
 
 // Search for listeners
 $finder = (new Finder())->useBestAdapter();
-$files = $finder->files()->in(STEWARD_BASE_DIR)->path('lib/Console/EventListener')->name('*Listener.php');
+$files = $finder
+    ->files()
+    ->in(STEWARD_BASE_DIR)
+    ->path('lib/Console/EventListener')
+    ->name('*Listener.php');
 
 $listeners = [];
 foreach ($files as $file) {

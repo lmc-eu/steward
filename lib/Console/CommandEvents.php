@@ -3,7 +3,7 @@
 namespace Lmc\Steward\Console;
 
 /**
- * Contains all events dispatched by an Command.
+ * Contains all events dispatched by a Command.
  */
 final class CommandEvents
 {

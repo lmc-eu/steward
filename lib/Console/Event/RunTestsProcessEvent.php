@@ -5,17 +5,14 @@ namespace Lmc\Steward\Console\Event;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * Event dispatched from run-tests command when initializing PHPUnit Processes.
+ * It allows you to eg. pass additional arguments to the process.
+ */
 class RunTestsProcessEvent extends ExtendedConsoleEvent
 {
-    /** @var Command */
-    protected $command;
-    /** @var InputInterface */
-    protected $input;
-    /** @var OutputInterface */
-    protected $output;
     /** @var ProcessBuilder */
     protected $processBuilder;
     /** @var array */
@@ -35,35 +32,10 @@ class RunTestsProcessEvent extends ExtendedConsoleEvent
         ProcessBuilder $processBuilder,
         array $args
     ) {
-        $this->command = $command;
-        $this->input = $input;
-        $this->output = $output;
+        parent::__construct($command, $input, $output);
+
         $this->processBuilder = $processBuilder;
         $this->args = $args;
-    }
-
-    /**
-     * @return Command A Command instance
-     */
-    public function getCommand()
-    {
-        return $this->command;
-    }
-
-    /**
-     * @return InputInterface
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @return OutputInterface
-     */
-    public function getOutput()
-    {
-        return $this->output;
     }
 
     /**
