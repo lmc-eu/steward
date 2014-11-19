@@ -4,8 +4,13 @@
     bootstrap="bootstrap.php"
 >
     <listeners>
-        <listener class="Lmc\Steward\Listener\SnapshotListener" />
-        <listener class="Lmc\Steward\Listener\WebdriverListener" />
-        <listener class="Lmc\Steward\Listener\TestStatusListener" />
+        <listener class="Lmc\Steward\Listener\SnapshotListener"/>
+        <listener class="Lmc\Steward\Listener\WebdriverListener"/>
+        <listener class="Lmc\Steward\Listener\TestStatusListener">
+            <arguments>
+                <array/>
+                <!-- A list of test publisher classes -->
+            </arguments>
+        </listener>
     </listeners>
 </phpunit>
