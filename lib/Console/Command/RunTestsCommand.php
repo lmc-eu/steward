@@ -243,6 +243,7 @@ class RunTestsCommand extends Command
                 ->setEnv('DEBUG', $output->isDebug())
                 ->setPrefix('vendor/bin/phpunit')
                 ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
+                ->setTimeout(3600) // 1 hour timeout to end possibly stuck processes
                 ->getProcess();
 
             $processSet->add(
@@ -331,6 +332,10 @@ class RunTestsCommand extends Command
                     continue;
                 }
 
+                // Check if process is not running longer then specified timeout
+                $processObject->process->checkTimeout();
+
+                // Print process output and error output
                 $processOutput = $processObject->process->getIncrementalOutput();
                 if ($processOutput) {
                     $processOutputLines = explode("\n", $processOutput);
@@ -343,9 +348,9 @@ class RunTestsCommand extends Command
                     }
                     $output->write(implode("\n", $processOutputLines));
                 }
-
                 $output->write('<error>' . $processObject->process->getIncrementalErrorOutput() . '</error>');
 
+                // Mark no longer running processes as finished
                 if (!$processObject->process->isRunning()) {
                     $output->writeln(sprintf('Process for class "%s" finished', $testClass));
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
