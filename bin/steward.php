@@ -33,6 +33,8 @@ if (strpos(__DIR__, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== fa
     define('STEWARD_BASE_DIR', realpath(__DIR__ . '/..'));
 }
 
+date_default_timezone_set('Europe/Prague');
+
 $dispatcher = new EventDispatcher();
 $application = new Application('Steward', '0.0.1');
 $application->setDispatcher($dispatcher);
