@@ -1,6 +1,19 @@
 # Changelog
 
 ## Unreleased
+### Added
+- Nothing.
+
+### Changed
+- Nothing.
+
+### Fixed
+- Nothing.
+
+### Removed
+- Nothing.
+
+## 0.9.0 - 2014-11-20
 
 ### Added
 - CHANGELOG.md file.
