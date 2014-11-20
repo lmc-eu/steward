@@ -12,6 +12,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 use Nette\Utils\Finder;
 use Nette\Reflection\AnnotationsParser;
@@ -332,8 +334,11 @@ class RunTestsCommand extends Command
                     continue;
                 }
 
-                // Check if process is not running longer then specified timeout
-                $processObject->process->checkTimeout();
+                $timeoutError = $this->checkProcessTimeout($processObject->process, $testClass);
+                if ($timeoutError) {
+                    $output->writeln('<error>' . $timeoutError . '</error>');
+                }
+
 
                 // Print process output and error output
                 $processOutput = $processObject->process->getIncrementalOutput();
@@ -396,6 +401,26 @@ class RunTestsCommand extends Command
             }
             $counterProcessesLast = $counterProcesses;
             sleep(1);
+        }
+    }
+
+    /**
+     * Check if process is not running longer then specified timeout, return error message if so.
+     * @param Process $process Process instance
+     * @param string $testClass Name of tested class
+     * @return string|null Error message if process timeout exceeded
+     */
+    protected function checkProcessTimeout(Process $process, $testClass)
+    {
+        try {
+            $process->checkTimeout();
+        } catch (ProcessTimedOutException $e) {
+            return sprintf(
+                '[%s]: Process for class "%s" exceeded the time out of %d seconds and was killed.',
+                date("Y-m-d H:i:s"),
+                $testClass,
+                $e->getExceededTimeout()
+            );
         }
     }
 }

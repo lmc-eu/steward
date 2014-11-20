@@ -164,6 +164,10 @@ class ProcessSet implements \Countable
                     $result = self::PROCESS_RESULT_PASSED;
                     // for passed process save just the status and result; end time was saved by TestStatusListener
                     break;
+                case 15: // Process killed because of timeout, or
+                case 9: // Process terminated because of timeout
+                    $result = self::PROCESS_RESULT_FATAL;
+                    break;
                 case 255: // PHP fatal error
                     $result = self::PROCESS_RESULT_FATAL;
                     break;
