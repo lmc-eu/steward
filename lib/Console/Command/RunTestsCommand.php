@@ -339,21 +339,10 @@ class RunTestsCommand extends Command
                     $output->writeln('<error>' . $timeoutError . '</error>');
                 }
 
-
-                // Print process output and error output
-                $processOutput = $processObject->process->getIncrementalOutput();
+                $processOutput = $this->getProcessOutput($processObject->process);
                 if ($processOutput) {
-                    $processOutputLines = explode("\n", $processOutput);
-
-                    // color output lines containing "[WARN]"
-                    foreach ($processOutputLines as &$processOutputLine) {
-                        if (strpos($processOutputLine, '[WARN]') !== false) {
-                            $processOutputLine = '<fg=black;bg=yellow>' . $processOutputLine . '</fg=black;bg=yellow>';
-                        }
-                    }
-                    $output->write(implode("\n", $processOutputLines));
+                    $output->write($processOutput);
                 }
-                $output->write('<error>' . $processObject->process->getIncrementalErrorOutput() . '</error>');
 
                 // Mark no longer running processes as finished
                 if (!$processObject->process->isRunning()) {
@@ -422,5 +411,36 @@ class RunTestsCommand extends Command
                 $e->getExceededTimeout()
             );
         }
+    }
+
+    /**
+     * Decorate and return Process output
+     * @param Process $process
+     * @return string
+     */
+    protected function getProcessOutput(Process $process)
+    {
+        $output = '';
+
+        // Add standard process output
+        if ($processOutput = $process->getIncrementalOutput()) {
+            $processOutputLines = explode("\n", $processOutput);
+
+            // color output lines containing "[WARN]"
+            foreach ($processOutputLines as &$processOutputLine) {
+                if (strpos($processOutputLine, '[WARN]') !== false) {
+                    $processOutputLine = '<fg=black;bg=yellow>' . $processOutputLine . '</fg=black;bg=yellow>';
+                }
+            }
+            $output .= implode("\n", $processOutputLines);
+        }
+
+        // Add error output
+        if ($errorOutput = $process->getIncrementalErrorOutput()) {
+            $output .= '<error>' . rtrim($errorOutput, PHP_EOL) . '</error>' . "\n";
+        }
+
+        return $output;
+
     }
 }
