@@ -5,7 +5,7 @@
 - Nothing.
 
 ### Changed
-- Nothing.
+- Test cases running longer than 1 hour are killed and their result is set as "Fatal" in `results.xml`.
 
 ### Fixed
 - Nothing.
