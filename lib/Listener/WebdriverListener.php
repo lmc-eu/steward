@@ -3,7 +3,9 @@
 namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
+use Nette\Reflection\AnnotationsParser;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
@@ -15,12 +17,29 @@ use Lmc\Steward\WebDriver\RemoteWebDriver;
  */
 class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 {
+    const NO_BROWSER_ANNOTATION = 'noBrowser';
+
     public function startTest(\PHPUnit_Framework_Test $test)
     {
         if (!$test instanceof AbstractTestCase) {
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
 
+        // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used
+        $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
+        if ($testCaseAnnotations[self::NO_BROWSER_ANNOTATION]) {
+            $test->wd = new NullWebDriver();
+            $test->log(
+                'Initializing Null webdriver for "%s::%s" (@%s annotation used)',
+                get_class($test),
+                $test->getName(),
+                self::NO_BROWSER_ANNOTATION
+            );
+
+            return;
+        }
+
+        // Initialize real WebDriver otherwise
         $test->log('Initializing "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName());
 
         $capabilities = new \DesiredCapabilities(

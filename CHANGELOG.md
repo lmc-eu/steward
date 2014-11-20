@@ -2,7 +2,7 @@
 
 ## Unreleased
 ### Added
-- Nothing.
+- `@noBrowser` annotation on your test case class could be used if you don't need to create new WebDriver (= browser window) instance.
 
 ### Changed
 - Test cases running longer than 1 hour are killed and their result is set as "Fatal" in `results.xml`.

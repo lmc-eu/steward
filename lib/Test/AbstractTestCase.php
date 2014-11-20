@@ -28,7 +28,11 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
 
-        $this->wd->manage()->window()->setSize(new \WebDriverDimension(static::$browserWidth, static::$browserHeight));
+        if ($this->wd instanceof \RemoteWebDriver) {
+            $this->wd->manage()->window()->setSize(
+                new \WebDriverDimension(static::$browserWidth, static::$browserHeight)
+            );
+        }
 
         $this->utils = new TestUtils($this);
     }
