@@ -52,29 +52,29 @@
 
 namespace Lmc\Steward\Component;
 
+use Lmc\Steward\Test\AbstractTestCaseBase;
 use Nette\Utils\Strings;
 
+/**
+ * Create instance of new Legacy.
+ * Legacy allows you to share data between test-cases and phases of tests.
+ */
 class Legacy extends AbstractComponent
 {
     const LEGACY_TYPE_CASE = "CASE";
     const LEGACY_TYPE_TEST = "TEST";
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $testClassName;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $extension = '.legacy';
-
 
     /**
      * Create Legacy instance
-     * @param \Lmc\Steward\Test\AbstractTestCaseBase $tc TestCase instance
+     * @param AbstractTestCaseBase $tc TestCase instance
      */
-    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $tc)
+    public function __construct(AbstractTestCaseBase $tc)
     {
         parent::__construct($tc);
         $this->testClassName = get_class($tc);
@@ -116,7 +116,7 @@ class Legacy extends AbstractComponent
      */
     protected function getLegacyFullPath($filename)
     {
-        return __DIR__ . '/../../../../../logs/' . $filename . $this->extension;
+        return realpath(__DIR__ . '/../../../../../logs/') . '/' . $filename . $this->extension;
     }
 
     /**
@@ -166,8 +166,7 @@ class Legacy extends AbstractComponent
     /**
      * Reads legacy specified by custom name
      * raises exception if it is not found
-     * @param string $legacyName filename to store the data
-     *      from the test class name
+     * @param string $legacyName filename to store the data from the test class name
      * @return mixed
      * @throws LegacyException
      */
@@ -192,13 +191,13 @@ class Legacy extends AbstractComponent
         }
 
         $this->log('Legacy data: %s', $this->getPrintableValue($legacy));
+
         return $legacy;
     }
 
     /**
      * Converts legacy value to string that can be printed (e.g. in log)
-     * calls __toString on the object if it's defined
-     * otherwise print_r
+     * calls __toString on the object if it's defined otherwise print_r()
      * @param $obj
      * @return string
      */
@@ -208,6 +207,7 @@ class Legacy extends AbstractComponent
         if ($exists) {
             return $obj;
         }
+
         return print_r($obj, true);
     }
 }

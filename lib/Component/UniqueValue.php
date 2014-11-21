@@ -2,8 +2,10 @@
 
 namespace Lmc\Steward\Component;
 
+use Lmc\Steward\Test\AbstractTestCaseBase;
+
 /**
- * Generating unique values for identifiers based on the name of running test-case and current time
+ * Generate unique values for identifiers based on the name of running test-case and current time
  */
 class UniqueValue extends AbstractComponent
 {
@@ -12,9 +14,9 @@ class UniqueValue extends AbstractComponent
 
     /**
      * Create UniqueValue instance
-     * @param \Lmc\Steward\Test\AbstractTestCaseBase $tc TestCase instance
+     * @param AbstractTestCaseBase $tc TestCase instance
      */
-    public function __construct(\Lmc\Steward\Test\AbstractTestCaseBase $tc)
+    public function __construct(AbstractTestCaseBase $tc)
     {
         parent::__construct($tc);
         $this->testClassName = get_class($tc);
@@ -48,7 +50,7 @@ class UniqueValue extends AbstractComponent
      *      generated part
      * @param string $readablePrefix pre-pended to the hashed value
      * @param string $readableSuffix appended to the hashed value
-     * @param null $distinguishingPrefix default uses the fully qualified class name of the test
+     * @param string $distinguishingPrefix default uses the fully qualified class name of the test
      * @return string
      */
     public function createTimestampValueHash(
