@@ -25,15 +25,20 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
 
-        // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used
+        // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
         $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
-        if (isset($testCaseAnnotations[self::NO_BROWSER_ANNOTATION])) {
+        $testAnnotations = AnnotationsParser::getAll(new \ReflectionMethod($test, $test->getName()));
+
+        if (isset($testCaseAnnotations[self::NO_BROWSER_ANNOTATION])
+            || isset($testAnnotations[self::NO_BROWSER_ANNOTATION])
+        ) {
             $test->wd = new NullWebDriver();
             $test->log(
-                'Initializing Null webdriver for "%s::%s" (@%s annotation used)',
+                'Initializing Null webdriver for "%s::%s" (@%s annotation used %s)',
                 get_class($test),
                 $test->getName(),
-                self::NO_BROWSER_ANNOTATION
+                self::NO_BROWSER_ANNOTATION,
+                isset($testCaseAnnotations[self::NO_BROWSER_ANNOTATION]) ? 'on class' : 'on method'
             );
 
             return;
