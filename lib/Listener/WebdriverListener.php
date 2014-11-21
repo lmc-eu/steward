@@ -27,7 +27,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used
         $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
-        if ($testCaseAnnotations[self::NO_BROWSER_ANNOTATION]) {
+        if (isset($testCaseAnnotations[self::NO_BROWSER_ANNOTATION])) {
             $test->wd = new NullWebDriver();
             $test->log(
                 'Initializing Null webdriver for "%s::%s" (@%s annotation used)',
