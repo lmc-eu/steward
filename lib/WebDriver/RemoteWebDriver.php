@@ -11,8 +11,23 @@ class RemoteWebDriver extends \RemoteWebDriver
     public function get($url)
     {
         $this->log('Loading URL "%s"', $url);
-        parent::get($url);
+
+        return parent::get($url);
     }
+
+    public function execute($command_name, $params = [])
+    {
+        if (DEBUG) {
+            $this->log(
+                'Executing command "%s" with params %s',
+                $command_name,
+                json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            );
+        }
+
+        return parent::execute($command_name, $params);
+    }
+
 
     /**
      * Log to output
