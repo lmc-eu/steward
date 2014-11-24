@@ -3,11 +3,11 @@
  * Allows sharing data between test-cases and phases of tests
  *
  * Two possible uses
- * 1. loadWithName and saveWithName - you must define a name for the legacy which will be used as a filename
+ * 1. loadWithName() and saveWithName() - you must define a name for the legacy which will be used as a filename
  * to store the data - beware - the name must be unique through all test-cases
  *
  * example:
- * class FooPhase1Test
+ * class FooFirstTest
  * {
  *      public function test()
  *      {
@@ -15,7 +15,7 @@
  *      }
  * }
  *
- * class FooPhase2Test
+ * class FooSecondTest
  * {
  *      public function test()
  *      {
@@ -24,7 +24,7 @@
  * }
  *
  *
- * 2. load and save - the name of the legacy (file) is generated from the name of the test case class and the name
+ * 2. load() and save() - the name of the legacy (file) is generated from the name of the test case class and the name
  * of the test running - the class must have PhaseN in the name where N is a digit - this because different phases
  * of the test-case will differ in the digit but the rest of the name will be the same
  * - and so different phases of the same test-case can access the same legacy
@@ -70,6 +70,9 @@ class Legacy extends AbstractComponent
     /** @var string */
     protected $extension = '.legacy';
 
+    /** @var string */
+    protected $fileDir;
+
     /**
      * Create Legacy instance
      * @param AbstractTestCaseBase $tc TestCase instance
@@ -77,9 +80,23 @@ class Legacy extends AbstractComponent
     public function __construct(AbstractTestCaseBase $tc)
     {
         parent::__construct($tc);
+
+        if (defined('LOGS_DIR')) { // if the constant is not defined, the setFileDir() must be called explicitly later
+            $this->setFileDir(LOGS_DIR);
+        }
+
         $this->testClassName = get_class($tc);
 
         $this->log('New legacy instantiated in class "%s"', $this->testClassName);
+    }
+
+    /**
+     * Set directory where results file should be stored. Usable eg. when LOGS_DIR constant was not set.
+     * @param string $dir
+     */
+    public function setFileDir($dir)
+    {
+        $this->fileDir = $dir;
     }
 
     /**
@@ -103,7 +120,7 @@ class Legacy extends AbstractComponent
         $name = Strings::webalize($name, null, $lower = false);
 
         if ($type == Legacy::LEGACY_TYPE_TEST) {
-            $name .= '#' . Strings::webalize($this->tc->getName(), null, $lower = false);
+            $name .= '#' . Strings::webalize($this->tc->getName(false), null, $lower = false);
         }
 
         return $name;
@@ -116,7 +133,7 @@ class Legacy extends AbstractComponent
      */
     protected function getLegacyFullPath($filename)
     {
-        return realpath(__DIR__ . '/../../../../../logs/') . '/' . $filename . $this->extension;
+        return $this->fileDir . '/' . $filename . $this->extension;
     }
 
     /**
@@ -134,7 +151,7 @@ class Legacy extends AbstractComponent
             $this->log('Legacy data: %s', $this->getPrintableValue($data));
         }
 
-        if (file_put_contents($filename, serialize($data)) === false) {
+        if (@file_put_contents($filename, serialize($data)) === false) {
             throw new LegacyException("Cannot save legacy to file " . $filename);
         }
     }
@@ -179,18 +196,14 @@ class Legacy extends AbstractComponent
 
         $this->log('Reading legacy "%s" from file "%s"', $legacyName, $filename);
 
-        if (!file_exists($filename)) {
-            throw new LegacyException("Cannot find legacy file " . $filename);
-        }
-
-        $data = file_get_contents($filename);
+        $data = @file_get_contents($filename);
         if ($data === false) {
             throw new LegacyException("Cannot read legacy file " . $filename);
         }
 
         $legacy = unserialize($data);
         if ($legacy === false) {
-            throw new LegacyException("Cannot parse legacy form file " . $filename);
+            throw new LegacyException("Cannot parse legacy from file " . $filename);
         }
 
         if (DEBUG) {
@@ -208,8 +221,7 @@ class Legacy extends AbstractComponent
      */
     private function getPrintableValue($obj)
     {
-        $exists = method_exists($obj, "__toString");
-        if ($exists) {
+        if (method_exists($obj, '__toString')) {
             return $obj;
         }
 
