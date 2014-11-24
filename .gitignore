@@ -1,8 +1,10 @@
 # Ignore libraries installed using Composer
 composer.phar
 vendor
-# Ignore test logs
+# Ignore test logs and unit-test logs
 logs
+lib-tests/logs/
+lib-tests/coverage/
 
 # Ignore composer.lock because when installed as dependency, it does not affect anything either
 composer.lock

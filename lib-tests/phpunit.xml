@@ -12,6 +12,16 @@
     <filter>
         <whitelist>
             <directory suffix=".php">../lib</directory>
+            <exclude>
+                <file>../lib/bootstrap.php</file>
+            </exclude>
         </whitelist>
     </filter>
+
+    <logging>
+        <log type="coverage-html" target="./coverage"/>
+        <log type="coverage-clover" target="./logs/clover.xml"/>
+        <log type="junit" target="./logs/junit.xml" logIncompleteSkipped="false"/>
+        <log type="testdox-html" target="./logs/testdox.html" />
+    </logging>
 </phpunit>
