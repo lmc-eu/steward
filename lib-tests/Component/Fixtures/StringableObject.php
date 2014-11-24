@@ -10,12 +10,12 @@ class StringableObject
     /** @var string */
     protected $string;
 
-    function __construct($string)
+    public function __construct($string)
     {
         $this->string = $string;
     }
 
-    function __toString()
+    public function __toString()
     {
         return '__toString() called: ' . $this->string;
     }
