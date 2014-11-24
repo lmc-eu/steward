@@ -27,7 +27,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
         $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
-        $testAnnotations = AnnotationsParser::getAll(new \ReflectionMethod($test, $test->getName()));
+        $testAnnotations = AnnotationsParser::getAll(new \ReflectionMethod($test, $test->getName(false)));
 
         if (isset($testCaseAnnotations[self::NO_BROWSER_ANNOTATION])
             || isset($testAnnotations[self::NO_BROWSER_ANNOTATION])
