@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
-use Nette\Utils\Finder;
+use Symfony\Component\Finder\Finder;
 use Nette\Reflection\AnnotationsParser;
 use Nette\Utils\Strings;
 
@@ -168,7 +168,11 @@ class RunTestsCommand extends Command
         $processSet = new ProcessSet($xmlPublisher);
 
         $testCasesNum = 0;
-        foreach (Finder::findFiles($pattern)->from($testsDir) as $fileName => $fileObject) {
+
+        $files = (new Finder())->useBestAdapter()->files()->in($testsDir)->name($pattern);
+
+        foreach ($files as $file) {
+            $fileName = $file->getRealpath();
             // Parse classes from the testcase file
             $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
 
