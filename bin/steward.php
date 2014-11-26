@@ -36,7 +36,7 @@ if (strpos(__DIR__, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== fa
 date_default_timezone_set('Europe/Prague');
 
 $dispatcher = new EventDispatcher();
-$application = new Application('Steward', '0.0.1');
+$application = new Application('Steward', '0.10.0');
 $application->setDispatcher($dispatcher);
 
 // Search for listeners

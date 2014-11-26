@@ -1,0 +1,38 @@
+{
+    "name": "lmc/steward",
+    "description": "Steward - PHP libraries that makes Selenium + PHPUnit testing easy",
+    "keywords": [
+        "selenium",
+        "webdriver",
+        "phpunit"
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Lmc\\Steward\\": "lib/"
+        }
+    },
+    "require": {
+        "php": ">=5.5.5",
+        "phpunit/phpunit": "4.1.*",
+        "ext-zip": "*",
+        "symfony/console": "~2.5.6",
+        "symfony/process": "~2.5.6",
+        "symfony/finder": "~2.5.6",
+        "symfony/event-dispatcher": "~2.5.6",
+        "nette/reflection": "~2.2",
+        "nette/utils": "~2.2",
+        "nette/finder": "~2.2",
+        "facebook/webdriver": "dev-master#46d14c74cf0851ff96178e691dada0f5bfa65988",
+        "doctrine/couchdb": "@dev"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "1.*"
+    },
+    "suggest": {
+        "ext-posix": "For colored output",
+        "ext-xdebug": "For remote tests debugging"
+    },
+    "bin": ["bin/steward.php"]
+}

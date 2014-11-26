@@ -1,6 +1,15 @@
 # Changelog
 
+<!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
+
 ## Unreleased
+### Added
+- Nothing.
+
+### Removed
+- Nothing.
+
+## 0.10.0 - 2014-11-26
 ### Added
 - `@noBrowser` annotation on either test case class or test method could be used if you don't need to create new WebDriver (= browser window) instance.
 - Legacy component (imported from separate repository). It allows you to share data between test-cases.
@@ -8,12 +17,6 @@
 
 ### Changed
 - Test cases running longer than 1 hour are killed and their result is set as "Fatal" in `results.xml`.
-
-### Fixed
-- Nothing.
-
-### Removed
-- Nothing.
 
 ## 0.9.0 - 2014-11-20
 
