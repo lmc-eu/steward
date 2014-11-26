@@ -55,7 +55,7 @@ class XdebugListener implements EventSubscriberInterface
             'xdebug',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Initialize Xdebug remote debugging on tests; use given IDE key',
+            'Start Xdebug debugger on tests; use given IDE key. Default value is used only if empty option is passed.',
             'phpstorm'
         );
     }
@@ -69,7 +69,12 @@ class XdebugListener implements EventSubscriberInterface
     {
         $input = $event->getInput();
         $output = $event->getOutput();
-        $this->xdebugIdeKey = $input->getOption('xdebug');
+
+        // Use the value of --xdebug only if the option was passed.
+        // Don't apply the default if the option was not passed at all.
+        if ($input->getParameterOption('--xdebug') !== false) {
+            $this->xdebugIdeKey = $input->getOption('xdebug');
+        }
 
         if ($this->xdebugIdeKey) {
             if (!extension_loaded('xdebug')) {

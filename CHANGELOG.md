@@ -9,11 +9,15 @@
 ### Removed
 - Nothing.
 
+### Fixed
+- Fix Xdebug being initialized even if the `--xdebug` option of `run-tests` command was not passed at all.
+
 ## 0.10.0 - 2014-11-26
 ### Added
 - `@noBrowser` annotation on either test case class or test method could be used if you don't need to create new WebDriver (= browser window) instance.
 - Legacy component (imported from separate repository). It allows you to share data between test-cases.
 - Verbose output of executed WebDriver commands is provided in debug mode of `run-tests` command (debug mode could be enabled using `-vvv`).
+- Added `--xdebug` option to `run-tests` command to allow simple remote debugging of tests using Xdebug.
 
 ### Changed
 - Test cases running longer than 1 hour are killed and their result is set as "Fatal" in `results.xml`.
