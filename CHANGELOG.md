@@ -9,6 +9,7 @@
 ### Removed
 - Nothing.
 
+## 0.10.1 - 2014-11-27
 ### Fixed
 - Fix Xdebug being initialized even if the `--xdebug` option of `run-tests` command was not passed at all.
 
