@@ -9,6 +9,9 @@
 ### Removed
 - Nothing.
 
+### Changed
+- Test-cases order is optimized before running tests, so that test-cases with the longest delay of theirs dependencies are run as first.
+
 ## 0.10.1 - 2014-11-27
 ### Fixed
 - Fix Xdebug being initialized even if the `--xdebug` option of `run-tests` command was not passed at all.

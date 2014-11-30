@@ -2,6 +2,9 @@
 
 namespace Lmc\Steward\Test;
 
+use Fhaculty\Graph\Algorithm\ShortestPath\Dijkstra;
+use Fhaculty\Graph\Algorithm\Tree\OutTree;
+use Fhaculty\Graph\Graph;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Symfony\Component\Process\Process;
 
@@ -18,6 +21,12 @@ class ProcessSet implements \Countable
 
     /** @var AbstractPublisher */
     protected $publisher;
+
+    /** @var Graph */
+    protected $graph;
+
+    /** @var OutTree */
+    protected $tree;
 
     /** Process prepared to be run */
     const PROCESS_STATUS_PREPARED = 'prepared';
@@ -55,6 +64,8 @@ class ProcessSet implements \Countable
     public function __construct(AbstractPublisher $publisher = null)
     {
         $this->publisher = $publisher;
+
+        $this->graph = new Graph();
     }
 
     /**
@@ -82,7 +93,7 @@ class ProcessSet implements \Countable
         if (!empty($delayAfter) && $delayMinutes === 0) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Test "%s" should run after "%s", but no delay was defined',
+                    'Testcase "%s" should run after "%s", but no delay was defined',
                     $className,
                     $delayAfter
                 )
@@ -91,7 +102,7 @@ class ProcessSet implements \Countable
         if ($delayMinutes !== 0 && empty($delayAfter)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Test "%s" has defined delay %d minutes, but does not have defined the task to run after',
+                    'Testcase "%s" has defined delay %d minutes, but does not have defined the testcase to run after',
                     $className,
                     $delayMinutes
                 )
@@ -105,6 +116,8 @@ class ProcessSet implements \Countable
             'delayMinutes' => $delayMinutes,
             'finishedTime' => null,
         ];
+
+        $this->graph->createVertex($className);
 
         $this->publisher->publishResults($className, self::PROCESS_STATUS_QUEUED, '');
     }
@@ -126,16 +139,6 @@ class ProcessSet implements \Countable
         }
 
         return $return;
-    }
-
-    /**
-     * Remove process from the set - no matter its status.
-     *
-     * @param string $className
-     */
-    public function remove($className)
-    {
-        unset($this->processes[$className]);
     }
 
     /**
@@ -182,24 +185,72 @@ class ProcessSet implements \Countable
     }
 
     /**
-     * Check dependencies of all queued processes and remove invalid ones from the set
-     * @return array Array of invalid dependencies removed from the set
+     * Build out-tree graph from defined Processes and their relations.
+     *
+     * @return OutTree
      */
-    public function checkDependencies()
+    public function buildTree()
     {
-        $invalidDependencies = [];
+        if (!$this->tree) {
+            $root = $this->graph->createVertex(0);
 
-        // Ensure dependencies links to existing classes
-        $queuedProcesses = $this->get(self::PROCESS_STATUS_QUEUED);
-        foreach ($queuedProcesses as $className => $processObject) {
-            if (!empty($processObject->delayAfter)
-                && !array_key_exists($processObject->delayAfter, $queuedProcesses)
-            ) {
-                $invalidDependencies[] = $className;
-                $this->remove($className);
+            // Create edges directed from the root node
+            foreach ($this->processes as $processClassName => $processObject) {
+                $vertex = $this->graph->getVertex($processClassName);
+
+                if (!$processObject->delayMinutes) { // process doesn't depend on anything => link it to the root node
+                    $root->createEdgeTo($vertex)->setWeight(0);
+                } else { // link process to its dependency
+                    // Throw error if dependency is to not existing vertex
+                    if (!$this->graph->hasVertex($processObject->delayAfter)) {
+                        throw new \InvalidArgumentException(
+                            sprintf(
+                                'Testcase "%s" has @delayAfter dependency on "%s", but this testcase was not defined.',
+                                $processClassName,
+                                $processObject->delayAfter
+                            )
+                        );
+                    }
+
+                    $this->graph->getVertex($processObject->delayAfter)
+                        ->createEdgeTo($vertex)
+                        ->setWeight($processObject->delayMinutes);
+                }
             }
         }
 
-        return $invalidDependencies;
+        $this->tree = new OutTree($this->graph);
+
+        return $this->tree;
+    }
+
+    /**
+     * Optimize order of processes based on defined delay.
+     * The aim is to run as first processes having the longest delay of their sub-dependencies.
+     */
+    public function optimizeOrder()
+    {
+        $tree = $this->buildTree();
+        $root = $tree->getVertexRoot();
+
+        $children = $tree->getVerticesDescendant($root);
+
+        // For each vertex (process) get maximum total weight of its subtree (longest distance)
+        $subTreeMaxDistances = [];
+        foreach ($children as $childVertex) {
+            $alg = new Dijkstra($childVertex);
+            $distanceMap = $alg->getDistanceMap();
+            arsort($distanceMap);
+            $subTreeMaxDistances[$childVertex->getId()] = reset($distanceMap);
+        }
+
+        // Create array to be used for process sorting (must have same order as processes in ProcessSet)
+        $sortingArray = [];
+        foreach ($this->processes as $processClassName => $processObject) {
+            $sortingArray[$processClassName] = $subTreeMaxDistances[$processClassName];
+        }
+
+        // Sort processes so that process are sorted by max. total weight of its subtree
+        array_multisort($sortingArray, SORT_DESC, SORT_NUMERIC, $this->processes);
     }
 }

@@ -266,16 +266,7 @@ class RunTestsCommand extends Command
             return 1;
         }
 
-        if ($invalidDependencies = $processSet->checkDependencies()) {
-            $output->writeln(
-                sprintf(
-                    '<fg=black;bg=yellow>'
-                    . 'Found invalid @delayAfter dependencies (in %s). These testcases were not queued.'
-                    . '</fg=black;bg=yellow>',
-                    implode(', ', $invalidDependencies)
-                )
-            );
-        }
+        $processSet->optimizeOrder();
 
         // Set tasks without delay as prepared in order to make them executed instantly
         $queuedProcesses = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
@@ -335,6 +326,8 @@ class RunTestsCommand extends Command
                         );
                     }
                     $processObject->process->start();
+                    usleep(50000); // wait for a while (0,05 sec) to let processes be started in indented order
+
                     continue;
                 }
 
