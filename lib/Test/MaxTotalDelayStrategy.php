@@ -1,0 +1,37 @@
+<?php
+
+namespace Lmc\Steward\Test;
+
+use Fhaculty\Graph\Algorithm\ShortestPath\Dijkstra;
+use Fhaculty\Graph\Algorithm\Tree\OutTree;
+
+class MaxTotalDelayStrategy implements OptimizeOrderInterface
+{
+    /**
+     * Optimize order of tests in given tree based on their defined delay.
+     * The aim is to run as first processes having the longest delay of their sub-dependencies.
+     *
+     * @param OutTree $tree
+     * @return array Array of [string key (= testclass fully qualified name) => int value (= test order)]
+     */
+    public function optimize(OutTree $tree)
+    {
+        // get root node of the tree
+        $root = $tree->getVertexRoot();
+
+        // get all root descendants vertices (without the root vertex itself)
+        $children = $tree->getVerticesDescendant($root);
+
+        // for each vertex (process) get maximum total weight of its subtree (longest distance)
+        $subTreeMaxDistances = [];
+        foreach ($children as $childVertex) {
+            $alg = new Dijkstra($childVertex);
+            // get map with distances to all linked reachable vertexes
+            $distanceMap = $alg->getDistanceMap();
+            // save the longest distance
+            $subTreeMaxDistances[$childVertex->getId()] = $distanceMap ? max($distanceMap) : 0;
+        }
+
+        return $subTreeMaxDistances;
+    }
+}

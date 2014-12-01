@@ -2,7 +2,6 @@
 
 namespace Lmc\Steward\Test;
 
-use Fhaculty\Graph\Algorithm\ShortestPath\Dijkstra;
 use Fhaculty\Graph\Algorithm\Tree\OutTree;
 use Fhaculty\Graph\Graph;
 use Lmc\Steward\Publisher\AbstractPublisher;
@@ -231,31 +230,22 @@ class ProcessSet implements \Countable
     }
 
     /**
-     * Optimize order of processes based on defined delay.
-     * The aim is to run as first processes having the longest delay of their sub-dependencies.
+     * Optimize order of processes using given strategy.
+     *
+     * @param OptimizeOrderInterface $optimizeStrategy
      */
-    public function optimizeOrder()
+    public function optimizeOrder(OptimizeOrderInterface $optimizeStrategy)
     {
-        $tree = $this->buildTree();
-        $root = $tree->getVertexRoot();
+        $optimizedOrder = $optimizeStrategy->optimize($this->buildTree());
 
-        $children = $tree->getVerticesDescendant($root);
-
-        // For each vertex (process) get maximum total weight of its subtree (longest distance)
-        $subTreeMaxDistances = [];
-        foreach ($children as $childVertex) {
-            $alg = new Dijkstra($childVertex);
-            $distanceMap = $alg->getDistanceMap();
-            $subTreeMaxDistances[$childVertex->getId()] = $distanceMap ? max($distanceMap) : 0;
-        }
-
-        // Create array to be used for process sorting (must have same order as processes in ProcessSet)
+        // Sort the $optimizedOrder array to have the same order as corresponding array of processes
+        // (so that the array could be passed to array_multisort())
         $sortingArray = [];
         foreach ($this->processes as $processClassName => $processObject) {
-            $sortingArray[$processClassName] = $subTreeMaxDistances[$processClassName];
+            $sortingArray[$processClassName] = $optimizedOrder[$processClassName];
         }
 
-        // Sort processes so that process are sorted by max. total weight of its subtree
+        // Sort processes descending according to corresponding values in $sortingArray
         array_multisort($sortingArray, SORT_DESC, SORT_NUMERIC, $this->processes);
     }
 }

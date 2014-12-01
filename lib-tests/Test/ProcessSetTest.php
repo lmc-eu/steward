@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Test;
 
 use Lmc\Steward\Test\Fixtures\DummyPublisher;
+use Lmc\Steward\Test\Fixtures\MockOrderStrategy;
 use Symfony\Component\Process\Process;
 
 class ProcessSetTest extends \PHPUnit_Framework_TestCase
@@ -183,55 +184,27 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(5, $verticesToB->getVertexId('D')->getEdgesIn()->getEdgeFirst()->getWeight());
     }
 
-    public function testShouldOptimizeOrder()
+    public function testShouldChangeOrderOfProcessesByGivenStrategy()
     {
-        //     -------ROOT-------
-        //    /     /      \     \
-        //   A      B      F     H
-        //       3 / \ 5   | 11  | 4
-        //        C   D    G     I
-        //     10 |
-        //        E
-
-        // The proper order should be:
-        // 1. B (because the longest dependency has 13 minutes)
-        // 2. F (11 minutes)
-        // 3. C (10 minutes, but from the moment it will be unqueued)
-        // 4. H (4 minutes)
-        // 5.-9. A, E, D, G, I (nothing depends on them)
+        //     ROOT
+        //    /    \
+        //   A      B
+        //       3 / \ 5
+        //        C   D
 
         $this->set->add(new Process(''), 'A');
-
         $this->set->add(new Process(''), 'B');
         $this->set->add(new Process(''), 'C', 'B', 3);
         $this->set->add(new Process(''), 'D', 'B', 5);
-        $this->set->add(new Process(''), 'E', 'C', 10);
 
-        $this->set->add(new Process(''), 'F');
-        $this->set->add(new Process(''), 'G', 'F', 11);
-
-        $this->set->add(new Process(''), 'H');
-        $this->set->add(new Process(''), 'I', 'H', 4);
-
-
+        // The MockOrderStrategy return processes with order values A - 0, B - 1, C - 2, D - 3.
+        // Thus after optimization the processes in processSet should be sorted descending
         $processesBefore = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
-        $this->assertSame(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'], array_keys($processesBefore));
+        $this->assertSame(['A', 'B', 'C', 'D'], array_keys($processesBefore));
 
-        $this->set->optimizeOrder();
+        $this->set->optimizeOrder(new MockOrderStrategy());
 
         $processesAfter = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
-        $orderAfter = array_keys($processesAfter);
-        $this->assertEquals('B', $orderAfter[0]);
-        $this->assertEquals('F', $orderAfter[1]);
-        $this->assertEquals('C', $orderAfter[2]);
-        $this->assertEquals('H', $orderAfter[3]);
-
-        // Order of other test is not stable
-        $remainingTests = [$orderAfter[4], $orderAfter[5], $orderAfter[6], $orderAfter[7], $orderAfter[8]];
-        $this->assertContains('A', $remainingTests);
-        $this->assertContains('E', $remainingTests);
-        $this->assertContains('D', $remainingTests);
-        $this->assertContains('G', $remainingTests);
-        $this->assertContains('I', $remainingTests);
+        $this->assertSame(['D', 'C', 'B', 'A'], array_keys($processesAfter));
     }
 }
