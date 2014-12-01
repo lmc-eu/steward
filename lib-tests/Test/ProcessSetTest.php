@@ -123,6 +123,21 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->set->buildTree();
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Cannot build tree graph from tests dependencies.
+     */
+    public function testShouldFailBuildingTreeIfCycleDetected()
+    {
+        //   ROOT
+        //
+        // A <--> B
+
+        $this->set->add(new Process(''), 'A', 'B', 1);
+        $this->set->add(new Process(''), 'B', 'A', 1);
+        $this->set->buildTree();
+    }
+
     public function testShouldBuildGraphTreeFromProcessDependencies()
     {
         //     ROOT

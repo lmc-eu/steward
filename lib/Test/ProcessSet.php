@@ -221,6 +221,12 @@ class ProcessSet implements \Countable
 
         $this->tree = new OutTree($this->graph);
 
+        if (!$this->tree->isTree()) {
+            throw new \InvalidArgumentException(
+                sprintf('Cannot build tree graph from tests dependencies. Probably some cyclic dependency is present.')
+            );
+        }
+
         return $this->tree;
     }
 
@@ -240,8 +246,7 @@ class ProcessSet implements \Countable
         foreach ($children as $childVertex) {
             $alg = new Dijkstra($childVertex);
             $distanceMap = $alg->getDistanceMap();
-            arsort($distanceMap);
-            $subTreeMaxDistances[$childVertex->getId()] = reset($distanceMap);
+            $subTreeMaxDistances[$childVertex->getId()] = $distanceMap ? max($distanceMap) : 0;
         }
 
         // Create array to be used for process sorting (must have same order as processes in ProcessSet)
