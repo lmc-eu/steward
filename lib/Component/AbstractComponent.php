@@ -38,7 +38,9 @@ abstract class AbstractComponent
         // Methods log() and warn() prepend componentName to message and call the same method on TestCase.
         if ($name == 'log' || $name == 'warn') {
             $arguments[0] = '[' . $this->componentName . '] ' . $arguments[0];
-            call_user_func_array([$this->tc, $name], $arguments);
+            return call_user_func_array([$this->tc, $name], $arguments);
         }
+
+        trigger_error('Call to undefined method ' . __CLASS__ . '::' . $name . '()', E_USER_ERROR);
     }
 }
