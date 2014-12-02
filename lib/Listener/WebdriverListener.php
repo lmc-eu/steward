@@ -56,7 +56,15 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $capabilities = $this->setupCustomCapabilities($capabilities, BROWSER_NAME);
 
-        $test->wd = RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
+        try {
+            $test->wd = RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $timeoutInMs = 2*60*1000);
+        } catch (\UnknownServerException $e) {
+            if (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
+                $test->warn("Cannot execute test on the node. Maybe you started just the hub and not the node?");
+            }
+            throw $e;
+        }
+
     }
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
