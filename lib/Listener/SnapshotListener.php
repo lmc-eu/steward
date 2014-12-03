@@ -41,7 +41,11 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
             return;
         }
 
-        $test->log('Taking snapshots of page "%s" because: "%s"', $test->wd->getCurrentURL(), $e->getMessage());
+        $test->appendTestLog(
+            'Taking snapshots of page "%s" because: "%s"',
+            $test->wd->getCurrentURL(),
+            $e->getMessage()
+        );
 
         // Save PNG screenshot
         $screenshotPath = $savePath . $testIdentifier . '.png';
