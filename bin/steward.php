@@ -3,12 +3,11 @@
 
 namespace Lmc\Steward;
 
-use Nette\Reflection\AnnotationsParser;
 use Symfony\Component\Console\Application;
 use Lmc\Steward\Console\Command\InstallCommand;
 use Lmc\Steward\Console\Command\RunTestsCommand;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Finder\Finder;
+use Lmc\Steward\Console\EventListener\ListenerInstantiator;
 
 function requireIfExists($file)
 {
@@ -39,27 +38,8 @@ $dispatcher = new EventDispatcher();
 $application = new Application('Steward', '0.10.1');
 $application->setDispatcher($dispatcher);
 
-// Search for listeners
-$finder = (new Finder())->useBestAdapter();
-$files = $finder
-    ->files()
-    ->in(STEWARD_BASE_DIR)
-    ->path('lib/Console/EventListener')
-    ->name('*Listener.php');
-
-$listeners = [];
-foreach ($files as $file) {
-    $listeners[] = key(AnnotationsParser::parsePhp(\file_get_contents($file->getRealpath())));
-}
-
-// Instantiate found Listeners and subscribe them to EventDispatcher
-foreach ($listeners as $listener) {
-    $r = new \ReflectionClass($listener);
-    if ($r->implementsInterface('Symfony\\Component\\EventDispatcher\\EventSubscriberInterface') && !$r->isAbstract()) {
-        $listenerInstance = $r->newInstance();
-        $dispatcher->addSubscriber($listenerInstance);
-    }
-}
+// Search for listeners and attach them to dispatcher
+(new ListenerInstantiator())->instantiate($dispatcher, STEWARD_BASE_DIR);
 
 // Add Commands with injected EventDispatcher to the main console Application
 $application->addCommands(
