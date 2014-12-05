@@ -6,7 +6,7 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
-use Lmc\Steward\Test\MaxTotalDelayStarategy;
+use Lmc\Steward\Test\MaxTotalDelayStrategy;
 use Lmc\Steward\Test\ProcessSet;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Input\InputInterface;
@@ -267,7 +267,7 @@ class RunTestsCommand extends Command
             return 1;
         }
 
-        $processSet->optimizeOrder(new MaxTotalDelayStarategy());
+        $processSet->optimizeOrder(new MaxTotalDelayStrategy());
 
         // Set tasks without delay as prepared in order to make them executed instantly
         $queuedProcesses = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
