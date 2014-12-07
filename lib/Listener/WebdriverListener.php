@@ -57,9 +57,13 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         $capabilities = $this->setupCustomCapabilities($capabilities, BROWSER_NAME);
 
         try {
-            $test->wd = RemoteWebDriver::create(SERVER_URL .  '/wd/hub', $capabilities, $connectTimeoutMs = 2*60*1000);
-            // Set how long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
-            $test->wd->getCommandExecutor()->setRequestTimeout(60*60*1000); // 1 hour (same as timeout for the process)
+            $test->wd = RemoteWebDriver::create(
+                SERVER_URL .  '/wd/hub',
+                $capabilities,
+                $connectTimeoutMs = 2*60*1000,
+                // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
+                $requestTimeoutMs = 60*60*1000 // 1 hour (same as timeout for the whole process)
+            );
 
         } catch (\UnknownServerException $e) {
             if (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
