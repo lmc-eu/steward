@@ -12,21 +12,20 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
 {
     public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
-        $this->takeSnapshot($test, $e, $time);
+        $this->takeSnapshot($test);
     }
 
     public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
     {
-        $this->takeSnapshot($test, $e, $time);
+        $this->takeSnapshot($test);
     }
 
     /**
      * Take screenshot and save it.
+     *
      * @param AbstractTestCase $test
-     * @param \Exception $e
-     * @param $time
      */
-    protected function takeSnapshot(AbstractTestCase $test, \Exception $e, $time)
+    protected function takeSnapshot(AbstractTestCase $test)
     {
         $savePath = LOGS_DIR . '/';
 
@@ -42,9 +41,8 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
         }
 
         $test->appendTestLog(
-            'Taking snapshots of page "%s" because: "%s"',
-            $test->wd->getCurrentURL(),
-            $e->getMessage()
+            'Test failed on page "%s", taking page snapshots:',
+            $test->wd->getCurrentURL()
         );
 
         // Save PNG screenshot
