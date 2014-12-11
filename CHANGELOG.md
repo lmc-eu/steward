@@ -12,6 +12,10 @@
 ### Changed
 - Test-cases order is optimized before running tests, so that test-cases with the longest delay of theirs dependencies are run as first.
 
+### Fixed
+- Error is thrown if not-existing method is called on AbstractComponent descendants.
+- Properly handle PHPUnit_Framework_Warning when eg. data provider is invalid.
+
 ## 0.10.1 - 2014-11-27
 ### Fixed
 - Fix Xdebug being initialized even if the `--xdebug` option of `run-tests` command was not passed at all.
@@ -31,14 +35,15 @@
 ### Added
 - CHANGELOG.md file.
 - Global `DEBUG` constant (is true if -vvv passed to run-tests), that could be used in tests to print some more verbose output.
-- The `install` command now checks for the latest version of Selenium server and interactively asks for confirmation
+- The `install` command now checks for the latest version of Selenium server and interactively asks for confirmation.
 - Possibility to add custom test Publishers (enabled by `--publish-results`). Pass it as argument of TestStatusListener in `phpunit.xml`.
 - During the `run-tests` execution, current test results are generated into `logs/results.xml`. This is useful eg. on long-lasting Jenkins jobs or if you want to know more precise status of the current (or last) test run.
-- Shortcut to WebDriver in components - it's now possible to write `$this->wd` instead of `$this->tc->wd`
+- Shortcut to WebDriver in components - it's now possible to write `$this->wd` instead of `$this->tc->wd`.
 - Possibility to set `--fixtures-dir` in `run-tests` command. This is handy eg. when tests are run on remote terminal and fixtures are located on network directory.
 - Possibility to set `--logs-dir` in `run-tests` command. Useful when Steward core is installed as dependency and is run from vendor/bin/.
-- Possibility to easily overload any browser-specific capability, using custom (overloaded) WebdriverListener
-- Specified group(s) could be excluded from the `run-tests`, using `--exclude-group` option
+- Possibility to set `--logs-dir` in `run-tests` command. Useful when Steward core is installed as dependency and is run from vendor/bin/.
+- Possibility to easily overload any browser-specific capability, using custom (overloaded) WebdriverListener.
+- Specified group(s) could be excluded from the `run-tests`, using `--exclude-group` option.
 
 ### Changed
 - The last argument of `run-tests` command (browser name) is now always required (as well as the environment name).
