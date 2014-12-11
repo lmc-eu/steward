@@ -4,7 +4,7 @@
 
 ## Unreleased
 ### Added
-- Nothing.
+- New `debug()` method that output to log only in debug mode. Could be used in both TestCases and Components.
 
 ### Removed
 - Nothing.

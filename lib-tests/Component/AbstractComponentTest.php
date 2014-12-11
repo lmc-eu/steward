@@ -35,6 +35,22 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @todo Replace DEBUG with configuration storage
+     * @todo Write test to opposite case (debug is disabled => no output is printed)
+     */
+    public function testShouldLogDebugInDebugMode()
+    {
+        if (!defined('DEBUG')) {
+            define('DEBUG', true);
+        }
+        if (!DEBUG) {
+            $this->markTestSkipped('Unable test if global DEBUG constant is set to false');
+        }
+        $this->expectOutputRegex('/.*\[DEBUG\]: \[MockComponent\] Foo bar.*/');
+        $this->component->debug('Foo %s', 'bar');
+    }
+
+    /**
      * @expectedException \PHPUnit_Framework_Error
      * @expectedExceptionMessage Call to undefined method Lmc\Steward\Component\AbstractComponent::notExisting()
      */

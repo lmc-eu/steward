@@ -9,6 +9,7 @@ use Lmc\Steward\Test\AbstractTestCaseBase;
  *
  * @method void log(string $message, $arguments = null)
  * @method void warn(string $message, $arguments = null)
+ * @method void debug(string $message, $arguments = null)
  */
 abstract class AbstractComponent
 {
@@ -35,8 +36,8 @@ abstract class AbstractComponent
 
     public function __call($name, $arguments)
     {
-        // Methods log() and warn() prepend componentName to message and call the same method on TestCase.
-        if ($name == 'log' || $name == 'warn') {
+        // Log methods prepend componentName to message and call the same method on TestCase.
+        if (in_array($name, ['log', 'warn', 'debug'])) {
             $arguments[0] = '[' . $this->componentName . '] ' . $arguments[0];
             return call_user_func_array([$this->tc, $name], $arguments);
         }

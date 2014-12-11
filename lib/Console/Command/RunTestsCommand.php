@@ -428,6 +428,8 @@ class RunTestsCommand extends Command
             foreach ($processOutputLines as &$processOutputLine) {
                 if (strpos($processOutputLine, '[WARN]') !== false) {
                     $processOutputLine = '<fg=black;bg=yellow>' . $processOutputLine . '</fg=black;bg=yellow>';
+                } elseif (strpos($processOutputLine, '[DEBUG]') !== false) {
+                    $processOutputLine = '<comment>' . $processOutputLine . '</comment>';
                 }
             }
             $output .= implode("\n", $processOutputLines);

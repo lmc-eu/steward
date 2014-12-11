@@ -12,9 +12,10 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        define('DEBUG', true);
+        if (!defined('DEBUG')) { // TODO: replace with configuration storage
+            define('DEBUG', true);
+        }
     }
-
 
     public function setUp()
     {

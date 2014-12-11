@@ -75,16 +75,23 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
 
     public function warn($format, $args = null)
     {
-        echo $this->formatOutput(func_get_args(), $isWarn = true);
+        echo $this->formatOutput(func_get_args(), 'WARN');
+    }
+
+    public function debug($format, $args = null)
+    {
+        if (DEBUG) {
+            echo $this->formatOutput(func_get_args(), 'DEBUG');
+        }
     }
 
     /**
      * Format output
      * @param array $args Array of arguments passed to original sprintf()-like function
-     * @param bool $isWarn OPTIONAL Is message warning? Default is false.
+     * @param string $type Specific log severity type (WARN, DEBUG) prefixed to output
      * @return string Formatted output
      */
-    protected function formatOutput(array $args, $isWarn = false)
+    protected function formatOutput(array $args, $type = '')
     {
         $format = array_shift($args);
 
@@ -94,7 +101,7 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         }
 
         return '[' . date("Y-m-d H:i:s") . ']'
-        . ($isWarn ? ' [WARN]' : '')
+        . ($type ? " [$type]" : '')
         . ': '
         . vsprintf($format, $args)
         . "\n";
