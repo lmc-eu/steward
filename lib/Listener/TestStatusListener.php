@@ -60,7 +60,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
 
     public function startTest(\PHPUnit_Framework_Test $test)
     {
-        if (!$test instanceof \PHPUnit_Framework_TestCase) {
+        if (!$test instanceof \PHPUnit_Framework_TestCase || $test instanceof \PHPUnit_Framework_Warning) {
             return;
         }
         // publish test status to all publishers
@@ -84,7 +84,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
     {
-        if (!$test instanceof \PHPUnit_Framework_TestCase) {
+        if (!$test instanceof \PHPUnit_Framework_TestCase || $test instanceof \PHPUnit_Framework_Warning) {
             return;
         }
         // publish test status to all publishers

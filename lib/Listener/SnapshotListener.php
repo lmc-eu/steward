@@ -17,6 +17,10 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
 
     public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
     {
+        if ($test instanceof \PHPUnit_Framework_Warning) {
+            return;
+        }
+
         $this->takeSnapshot($test);
     }
 

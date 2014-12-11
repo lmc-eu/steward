@@ -21,6 +21,10 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
     public function startTest(\PHPUnit_Framework_Test $test)
     {
+        if ($test instanceof \PHPUnit_Framework_Warning) {
+            return;
+        }
+
         if (!$test instanceof AbstractTestCase) {
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
@@ -76,6 +80,10 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
     {
+        if ($test instanceof \PHPUnit_Framework_Warning) {
+            return;
+        }
+
         if (!$test instanceof AbstractTestCase) {
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
