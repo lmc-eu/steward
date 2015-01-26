@@ -11,6 +11,7 @@
 
 ### Changed
 - Test-cases order is optimized before running tests, so that test-cases with the longest delay of theirs dependencies are run as first.
+- Improved error messages when Selenium server is not accessible or when any of required directory does not exist.
 
 ### Fixed
 - Error is thrown if not-existing method is called on AbstractComponent descendants.

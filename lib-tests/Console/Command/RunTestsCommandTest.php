@@ -81,7 +81,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testShouldExitIfNoTestcasesFound()
+    public function testShouldStopIfRespondingServerIsNotSelenium()
     {
         $this->tester->execute(
             [
@@ -92,6 +92,9 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertContains('No testcases matched given criteria, exiting.', $this->tester->getDisplay());
+        $this->assertContains(
+            'Looks like url "http://google.com:80" is occupied by something else than Selenium server.',
+            $this->tester->getDisplay()
+        );
     }
 }

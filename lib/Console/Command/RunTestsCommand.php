@@ -488,9 +488,10 @@ class RunTestsCommand extends Command
     {
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl));
 
-        $parsedUrl = parse_url($seleniumServerUrl);
-        // Try connection
-        $seleniumConnection = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $connectionErrorNo, $connectionError);
+        $urlParts = parse_url($seleniumServerUrl);
+
+        // Check connection to server is possible
+        $seleniumConnection = @fsockopen($urlParts['host'], $urlParts['port'], $connectionErrorNo, $connectionError, 5);
         if (!is_resource($seleniumConnection)) {
             $output->writeln(sprintf('<error>error (%s)</error>', $connectionError));
             $output->writeln(
@@ -503,6 +504,26 @@ class RunTestsCommand extends Command
 
             return false;
         }
+        fclose($seleniumConnection);
+
+        // Check server properly responds to http requests
+        $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]);
+        $responseData = @file_get_contents($seleniumServerUrl . '/wd/hub/status/', false, $context);
+
+        if (!$responseData || !json_decode($responseData)) {
+            $output->writeln('<error>error reading server response</error>');
+            $output->writeln(
+                sprintf(
+                    '<error>Looks like url "%s" is occupied by something else than Selenium server. '
+                    . 'Make Selenium server is really accessible on this url '
+                    . 'or change it using --server-url option</error>',
+                    $seleniumServerUrl
+                )
+            );
+
+            return false;
+        }
+
         $output->writeln('OK');
 
         return true;
