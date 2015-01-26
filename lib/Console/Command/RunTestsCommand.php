@@ -130,6 +130,20 @@ class RunTestsCommand extends Command
         $output->writeln(sprintf('Browser: %s', $browsers));
         $output->writeln(sprintf('Environment: %s', $environment));
 
+        // Tests directories exists
+        $testDirectoriesResult = $this->testDirectories(
+            $input,
+            $output,
+            [
+                $this->getDefinition()->getOption('tests-dir'),
+                $this->getDefinition()->getOption('logs-dir'),
+                $this->getDefinition()->getOption('fixtures-dir'),
+            ]
+        );
+        if (!$testDirectoriesResult) {
+            return 1;
+        }
+
         if ($output->isDebug()) {
             $output->writeln(sprintf('Base path to fixtures results: %s', $fixturesDir));
             $output->writeln(sprintf('Path to logs: %s', $logsDir));
@@ -434,6 +448,34 @@ class RunTestsCommand extends Command
 
         return $output;
 
+    }
+
+    /**
+     * Try that given options that define directories exists and are accessible.
+     *
+     * @param InputInterface $input
+     * @param InputOption[] $dirs Option defining directories
+     * @return bool
+     */
+    protected function testDirectories(InputInterface $input, OutputInterface $output, array $dirs)
+    {
+        /** @var $dirs InputOption[] */
+        foreach ($dirs as $dir) {
+            $currentValue = $input->getOption($dir->getName());
+
+            if ($currentValue === false || realpath($currentValue) === false) {
+                $output->writeln(sprintf(
+                    '<error>%s does not exist, make sure it is accessible or define your own path using %s'
+                    . ' option</error>',
+                    $dir->getDescription(),
+                    '--' . $dir->getName()
+                ));
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
