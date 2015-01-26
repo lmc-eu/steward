@@ -123,7 +123,6 @@ class RunTestsCommand extends Command
         $fixturesDir = $input->getOption('fixtures-dir');
         $logsDir = $input->getOption('logs-dir');
         $serverUrl = $input->getOption('server-url');
-        $parsedUrl = parse_url($serverUrl);
         $group = $input->getOption('group');
         $excludeGroup = $input->getOption('exclude-group');
         $publishResults = $input->getOption('publish-results');
@@ -142,16 +141,9 @@ class RunTestsCommand extends Command
             new ExtendedConsoleEvent($this, $input, $output)
         );
 
-        $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $serverUrl));
-
-        // Try connection
-        $seleniumConnection = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $connectionErrorNo, $connectionError);
-        if (!is_resource($seleniumConnection)) {
-            $output->writeln(sprintf('error (%s)', $connectionError));
-
+        if (!$this->testSeleniumConnection($output, $serverUrl)) {
             return 1;
         }
-        $output->writeln('OK');
 
         $output->writeln('Searching for testcases:');
         if ($group) {
@@ -442,5 +434,35 @@ class RunTestsCommand extends Command
 
         return $output;
 
+    }
+
+    /**
+     * Try connection to Selenium server
+     * @param OutputInterface $output
+     * @param string $seleniumServerUrl
+     * @return bool
+     */
+    protected function testSeleniumConnection(OutputInterface $output, $seleniumServerUrl)
+    {
+        $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl));
+
+        $parsedUrl = parse_url($seleniumServerUrl);
+        // Try connection
+        $seleniumConnection = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $connectionErrorNo, $connectionError);
+        if (!is_resource($seleniumConnection)) {
+            $output->writeln(sprintf('<error>error (%s)</error>', $connectionError));
+            $output->writeln(
+                sprintf(
+                    '<error>Make sure your Selenium server is really accessible on url "%s" '
+                    . 'or change it using --server-url option</error>',
+                    $seleniumServerUrl
+                )
+            );
+
+            return false;
+        }
+        $output->writeln('OK');
+
+        return true;
     }
 }

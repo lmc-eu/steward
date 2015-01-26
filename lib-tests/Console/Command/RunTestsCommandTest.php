@@ -75,6 +75,10 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('Environment: staging', $this->tester->getDisplay());
         $this->assertContains('Browser: firefox', $this->tester->getDisplay());
         $this->assertContains('trying connection...error (Connection refused)', $this->tester->getDisplay());
+        $this->assertContains(
+            'Make sure your Selenium server is really accessible on url "http://localhost:50000"',
+            $this->tester->getDisplay()
+        );
     }
 
     public function testShouldExitIfNoTestcasesFound()
