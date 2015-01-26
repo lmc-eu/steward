@@ -5,6 +5,7 @@
 ## Unreleased
 ### Added
 - New `debug()` method that output to log only in debug mode. Could be used in both TestCases and Components.
+- ext-curl requirement into composer.json (as CURL is needed by HttpCommandExecutor).
 
 ### Removed
 - Nothing.
