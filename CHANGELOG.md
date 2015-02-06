@@ -3,6 +3,9 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+- Nothing yet.
+
+## 0.11.0 - 2015-02-06
 ### Added
 - New `debug()` method that output to log only in debug mode. Could be used in both TestCases and Components.
 - ext-curl requirement into composer.json (as CURL is needed by HttpCommandExecutor).
