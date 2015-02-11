@@ -58,24 +58,14 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             ]
         );
 
-        $capabilities = $this->setupCustomCapabilities($capabilities, BROWSER_NAME);
-
-        try {
-            $test->wd = RemoteWebDriver::create(
-                SERVER_URL .  '/wd/hub',
-                $capabilities,
-                $connectTimeoutMs = 2*60*1000,
-                // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
-                $requestTimeoutMs = 60*60*1000 // 1 hour (same as timeout for the whole process)
-            );
-
-        } catch (\UnknownServerException $e) {
-            if (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
-                $test->warn("Cannot execute test on the node. Maybe you started just the hub and not the node?");
-            }
-            throw $e;
-        }
-
+        $this->createWebDriver(
+            $test,
+            SERVER_URL . '/wd/hub',
+            $this->setupCustomCapabilities($capabilities, BROWSER_NAME),
+            $connectTimeoutMs = 2*60*1000,
+            // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
+            $requestTimeoutMs = 60*60*1000 // 1 hour (same as timeout for the whole process)
+        );
     }
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
@@ -104,6 +94,51 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             $test->wd->close();
             $test->wd->quit();
         }
+    }
+
+    /**
+     * Subroutine to encapsulate creation of real WebDriver. Handles some exceptions that may occur etc.
+     * The WebDriver instance is stored to $test->wd when created.
+     *
+     * @param AbstractTestCase $test
+     * @param $remoteServerUrl
+     * @param \DesiredCapabilities $capabilities
+     * @param $connectTimeoutMs
+     * @param $requestTimeoutMs
+     */
+    protected function createWebDriver(
+        AbstractTestCase $test,
+        $remoteServerUrl,
+        \DesiredCapabilities $capabilities,
+        $connectTimeoutMs,
+        $requestTimeoutMs
+    ) {
+        for ($startAttempts = 0; $startAttempts < 4; $startAttempts++) {
+            try {
+                $test->wd =
+                    RemoteWebDriver::create($remoteServerUrl, $capabilities, $connectTimeoutMs, $requestTimeoutMs);
+                return;
+            } catch (\UnknownServerException $e) {
+                if (BROWSER_NAME == 'firefox' && strpos($e->getMessage(), 'Unable to bind to locking port') !== false) {
+                    // As a consequence of Selenium issue #5172 (cannot change locking port), Firefox may on CI server
+                    // collide with other FF instance. As a workaround, we try to start it again after a short delay.
+                    $test->warn(
+                        'Firefox locking port is occupied; beginning attempt #%d to start it ("%s")',
+                        $startAttempts + 2,
+                        $e->getMessage()
+                    );
+                    sleep(1);
+                    continue;
+
+                } elseif (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
+                    $test->warn("Cannot execute test on the node. Maybe you started just the hub and not the node?");
+                }
+                throw $e;
+            }
+        }
+
+        $test->warn('All %d attempts to instantiate Firefox WebDriver failed', $startAttempts + 1);
+        throw $e;
     }
 
     /**

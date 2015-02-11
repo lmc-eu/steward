@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet.
+### Changed
+- Workaround for Firefox locking port collisions (consequence of Selenium issue #5172) - if FF cannot be started, try it again up to five times
 
 ## 0.11.0 - 2015-02-06
 ### Added
