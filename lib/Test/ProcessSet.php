@@ -81,24 +81,36 @@ class ProcessSet implements \Countable
      *
      * @param Process $process PHPUnit process to run
      * @param string $className Tested class fully qualified name
-     * @param string $delayAfter OPTIONAL Other fully qualified class name after which this test should be run.
-     * If is set, $delayMinutes must be > 0
-     * @param int $delayMinutes OPTIONAL Delay execution for $delayMinutes after $delayAfter test
+     * @param string $delayAfter Other fully qualified class name after which this test should be run.
+     * If is set, $delayMinutes must also be specified.
+     * @param float|null $delayMinutes Delay execution for $delayMinutes after $delayAfter test.
      */
 
-    public function add(Process $process, $className, $delayAfter = '', $delayMinutes = 0)
+    public function add(Process $process, $className, $delayAfter = '', $delayMinutes = null)
     {
-        $delayMinutes = abs((int) $delayMinutes);
-        if (!empty($delayAfter) && $delayMinutes === 0) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Testcase "%s" should run after "%s", but no delay was defined',
-                    $className,
-                    $delayAfter
-                )
-            );
+        if (!empty($delayAfter)) {
+            if ($delayMinutes === null) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Testcase "%s" should run after "%s", but no delay was defined',
+                        $className,
+                        $delayAfter
+                    )
+                );
+            } elseif (!is_numeric($delayMinutes) || (float) $delayMinutes < 0) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Delay defined in testcase "%s" must be greater than or equal 0, but "%s" was given',
+                        $className,
+                        $delayMinutes
+                    )
+                );
+            }
+
+            $delayMinutes = (float) $delayMinutes;
         }
-        if ($delayMinutes !== 0 && empty($delayAfter)) {
+
+        if ($delayMinutes !== null && empty($delayAfter)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Testcase "%s" has defined delay %d minutes, but does not have defined the testcase to run after',

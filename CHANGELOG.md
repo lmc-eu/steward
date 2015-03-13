@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet.
+### Added
+- Possibility to specify zero as `@delayMinutes` (eg. if you want to force test order, but don't need to actually wait) or to use floating point number as delay.
 
 ## 0.12.0 - 2015-02-12
 ### Changed

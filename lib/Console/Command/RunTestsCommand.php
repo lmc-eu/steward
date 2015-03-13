@@ -263,8 +263,9 @@ class RunTestsCommand extends Command
                 $process,
                 key($classes),
                 $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '',
-                $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : 0
+                $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null
             );
+
         }
 
         if (!count($processSet)) {
@@ -278,7 +279,7 @@ class RunTestsCommand extends Command
         // Set tasks without delay as prepared in order to make them executed instantly
         $queuedProcesses = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
         foreach ($queuedProcesses as $className => $processObject) {
-            if (!$processObject->delayMinutes) {
+            if ($processObject->delayMinutes === null) {
                 if ($output->isDebug()) {
                     $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
                 }
@@ -287,7 +288,7 @@ class RunTestsCommand extends Command
                 if ($output->isDebug()) {
                     $output->writeln(
                         sprintf(
-                            'Testcase "%s" is queued to be run %d minutes after testcase "%s" is finished',
+                            'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
                             $className,
                             $processObject->delayMinutes,
                             $processObject->delayAfter

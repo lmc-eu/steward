@@ -33,7 +33,51 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldFailIfDependencyWasDefinedButWithoutDelay()
     {
+        $this->set->add(new Process(''), 'Bar');
         $this->set->add(new Process(''), 'Foo', 'Bar');
+    }
+
+    /**
+     * @dataProvider delayProvider
+     * @param mixed $delay
+     * @param string|null $expectedExceptionMessage Null if no exception should be raised
+     */
+    public function testShouldAcceptOnlyGreaterThanOrEqualToZeroNumbersAsDelay($delay, $expectedExceptionMessage)
+    {
+        if ($expectedExceptionMessage !== null) {
+            $this->setExpectedException('\InvalidArgumentException', $expectedExceptionMessage);
+        }
+
+        $this->set->add(new Process(''), 'Bar');
+        $this->set->add(new Process(''), 'Foo', 'Bar', $delay);
+
+        if ($expectedExceptionMessage === null) {
+            // delay retrieved from the set is same as when process was added
+            $this->assertEquals(
+                $delay,
+                $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED)['Foo']->delayMinutes,
+                '',
+                0.001
+            );
+        }
+    }
+
+    public function delayProvider()
+    {
+        return [
+            // delay, expected exception (null if no exception should be raised)
+            'integer value' => [1, null],
+            'zero value' => [0, null],
+            'float value' => [3.33, null],
+            'negative value' => [
+                -5,
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "-5" was given'
+            ],
+            'string value' => [
+                'omg',
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "omg" was given'
+            ],
+        ];
     }
 
     /**
@@ -69,7 +113,7 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(ProcessSet::PROCESS_STATUS_QUEUED, $process->status);
         $this->assertInstanceOf('Symfony\Component\Process\Process', $process->process);
         $this->assertEquals('Foo', $process->delayAfter);
-        $this->assertSame(5, $process->delayMinutes);
+        $this->assertEquals(5, $process->delayMinutes);
         $this->assertNull($process->finishedTime);
     }
 
@@ -180,8 +224,8 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($tree->isVertexLeaf($verticesToB->getVertexId('D')));
 
         // Check weights of edges to C (= 3) and D (= 5
-        $this->assertSame(3, $verticesToB->getVertexId('C')->getEdgesIn()->getEdgeFirst()->getWeight());
-        $this->assertSame(5, $verticesToB->getVertexId('D')->getEdgesIn()->getEdgeFirst()->getWeight());
+        $this->assertEquals(3, $verticesToB->getVertexId('C')->getEdgesIn()->getEdgeFirst()->getWeight());
+        $this->assertEquals(5, $verticesToB->getVertexId('D')->getEdgesIn()->getEdgeFirst()->getWeight());
     }
 
     public function testShouldChangeOrderOfProcessesByGivenStrategy()
