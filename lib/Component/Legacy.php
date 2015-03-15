@@ -53,6 +53,7 @@
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\ConfigProvider;
 use Nette\Utils\Strings;
 
 /**
@@ -81,8 +82,9 @@ class Legacy extends AbstractComponent
     {
         parent::__construct($tc);
 
-        if (defined('LOGS_DIR')) { // if the constant is not defined, the setFileDir() must be called explicitly later
-            $this->setFileDir(LOGS_DIR);
+        $logsDir = ConfigProvider::getInstance()->getConfig()->logsDir;
+        if ($logsDir) { // if the directory is not defined, the setFileDir() must be called explicitly later
+            $this->setFileDir($logsDir);
         }
 
         $this->testClassName = get_class($tc);
@@ -147,9 +149,7 @@ class Legacy extends AbstractComponent
     {
         $filename = $this->getLegacyFullPath($legacyName);
         $this->log('Saving data as legacy "%s" to file "%s"', $legacyName, $filename);
-        if (DEBUG) {
-            $this->log('Legacy data: %s', $this->getPrintableValue($data));
-        }
+        $this->debug('Legacy data: %s', $this->getPrintableValue($data));
 
         if (@file_put_contents($filename, serialize($data)) === false) {
             throw new LegacyException("Cannot save legacy to file " . $filename);
@@ -206,9 +206,7 @@ class Legacy extends AbstractComponent
             throw new LegacyException("Cannot parse legacy from file " . $filename);
         }
 
-        if (DEBUG) {
-            $this->log('Legacy data: %s', $this->getPrintableValue($legacy));
-        }
+        $this->debug('Legacy data: %s', $this->getPrintableValue($legacy));
 
         return $legacy;
     }

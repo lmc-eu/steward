@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Publisher;
 
+use Lmc\Steward\Test\ConfigProvider;
+
 class XmlPublisher extends AbstractPublisher
 {
     /** @var string */
@@ -14,8 +16,7 @@ class XmlPublisher extends AbstractPublisher
     protected $fileHandle;
 
     /**
-     * Create the publisher. If LOGS_DIR constant is not defined, remember to call setFileDir() and set full path to
-     * the file.
+     * Create the publisher.
      *
      * @param string $environment
      * @param string $jobName
@@ -23,13 +24,12 @@ class XmlPublisher extends AbstractPublisher
      */
     public function __construct($environment, $jobName, $buildNumber)
     {
-        if (defined('LOGS_DIR')) { // if the constant is not defined, the setFileDir() must be called explicitly later
-            $this->setFileDir(LOGS_DIR);
-        }
     }
 
     /**
-     * Set directory where results file should be stored. Usable eg. when LOGS_DIR constant was not set.
+     * Set directory where results file should be stored. Usable when config object is not available (when
+     * not called from PHPUnit testcase but from Command). If the file dir is not set, the value from Config object
+     * is used.
      * @param string $dir
      */
     public function setFileDir($dir)
@@ -52,6 +52,10 @@ class XmlPublisher extends AbstractPublisher
      */
     public function getFilePath()
     {
+        if (!$this->fileDir) {
+            $this->fileDir = ConfigProvider::getInstance()->getConfig()->logsDir;
+        }
+
         return $this->fileDir . '/' . $this->fileName;
     }
 
@@ -192,6 +196,7 @@ class XmlPublisher extends AbstractPublisher
     protected function readAndLock()
     {
         $file = $this->getFilePath();
+        $fileDir = dirname($file);
 
         if ($this->fileHandle) {
             throw new \RuntimeException(
@@ -199,14 +204,8 @@ class XmlPublisher extends AbstractPublisher
             );
         }
 
-        if (!is_writable($this->fileDir)) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Directory "%s" does not exist or is not writeable.'
-                    . ' Didn\'t you forget to either define LOGS_DIR constant or call setFileDir()?',
-                    $this->fileDir
-                )
-            );
+        if (!is_writable($fileDir)) {
+            throw new \RuntimeException(sprintf('Directory "%s" does not exist or is not writeable.', $fileDir));
         }
 
         // open (or create) the file and acquire exclusive lock (or wait until it is acquired)
@@ -217,7 +216,7 @@ class XmlPublisher extends AbstractPublisher
 
         if (fstat($this->fileHandle)['size'] == 0) { // new or empty file, create empty xml element
             $xslPath = '../lib/results.xsl';
-            if (is_readable($this->fileDir . '/../vendor/lmc/steward/lib/results.xsl')) {
+            if (is_readable($fileDir . '/../vendor/lmc/steward/lib/results.xsl')) {
                 $xslPath = '../vendor/lmc/steward/lib/results.xsl';
             }
 

@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\WebDriver;
 
+use Lmc\Steward\Test\ConfigProvider;
+
 /**
  * Extends RemoteWebDriver.
  * @copyright LMC s.r.o.
@@ -17,7 +19,7 @@ class RemoteWebDriver extends \RemoteWebDriver
 
     public function execute($command_name, $params = [])
     {
-        if (DEBUG) {
+        if (ConfigProvider::getInstance()->getConfig()->debug) {
             $this->log(
                 'Executing command "%s" with params %s',
                 $command_name,

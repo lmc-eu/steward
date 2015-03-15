@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\Test\ConfigProvider;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use Nette\Reflection\AnnotationsParser;
@@ -29,6 +30,8 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
 
+        $config = ConfigProvider::getInstance()->getConfig();
+
         // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
         $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
         $testAnnotations = AnnotationsParser::getAll(new \ReflectionMethod($test, $test->getName(false)));
@@ -49,19 +52,24 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         }
 
         // Initialize real WebDriver otherwise
-        $test->log('Initializing "%s" webdriver for "%s::%s"', BROWSER_NAME, get_class($test), $test->getName());
+        $test->log(
+            'Initializing "%s" WebDriver for "%s::%s"',
+            $config->browserName,
+            get_class($test),
+            $test->getName()
+        );
 
         $capabilities = new \DesiredCapabilities(
             [
-                \WebDriverCapabilityType::BROWSER_NAME => BROWSER_NAME,
+                \WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
                 \WebDriverCapabilityType::PLATFORM => \WebDriverPlatform::ANY,
             ]
         );
 
         $this->createWebDriver(
             $test,
-            SERVER_URL . '/wd/hub',
-            $this->setupCustomCapabilities($capabilities, BROWSER_NAME),
+            $config->serverUrl . '/wd/hub',
+            $this->setupCustomCapabilities($capabilities, $config->browserName),
             $connectTimeoutMs = 2*60*1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
             $requestTimeoutMs = 60*60*1000 // 1 hour (same as timeout for the whole process)
@@ -81,7 +89,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         if ($test->wd instanceof \RemoteWebDriver) {
             $test->log(
                 'Destroying "%s" webdriver for "%s::%s" (session %s)',
-                BROWSER_NAME,
+                ConfigProvider::getInstance()->getConfig()->browserName,
                 get_class($test),
                 $test->getName(),
                 $test->wd->getSessionID()
@@ -113,13 +121,14 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         $connectTimeoutMs,
         $requestTimeoutMs
     ) {
+        $browserName = ConfigProvider::getInstance()->getConfig()->browserName;
         for ($startAttempts = 0; $startAttempts < 4; $startAttempts++) {
             try {
                 $test->wd =
                     RemoteWebDriver::create($remoteServerUrl, $capabilities, $connectTimeoutMs, $requestTimeoutMs);
                 return;
             } catch (\UnknownServerException $e) {
-                if (BROWSER_NAME == 'firefox' && strpos($e->getMessage(), 'Unable to bind to locking port') !== false) {
+                if ($browserName == 'firefox' && strpos($e->getMessage(), 'Unable to bind to locking port') !== false) {
                     // As a consequence of Selenium issue #5172 (cannot change locking port), Firefox may on CI server
                     // collide with other FF instance. As a workaround, we try to start it again after a short delay.
                     $test->warn(

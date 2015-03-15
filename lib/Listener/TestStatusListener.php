@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Test\ConfigProvider;
 use Lmc\Steward\Test\ProcessSet;
 
 /**
@@ -21,11 +22,13 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
      */
     public function __construct(array $testPublishers)
     {
+        $config = ConfigProvider::getInstance()->getConfig();
+
         // always register XmlPublisher
         $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
 
-        // other publishers register only if PUBLISH_RESULTS is true
-        if (PUBLISH_RESULTS) {
+        // other publishers register only if $config->publishResults is true
+        if ($config->publishResults) {
             $publishersToRegister = array_merge($publishersToRegister, $testPublishers);
         }
 
@@ -36,7 +39,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 );
             }
 
-            $publisher = new $publisherClass(ENV, getenv('JOB_NAME'), (int) getenv('BUILD_NUMBER'));
+            $publisher = new $publisherClass($config->env, getenv('JOB_NAME'), (int) getenv('BUILD_NUMBER'));
             if (!$publisher instanceof AbstractPublisher) {
                 throw new \RuntimeException(
                     sprintf(
@@ -45,7 +48,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                     )
                 );
             }
-            if (DEBUG) {
+            if ($config->debug) {
                 printf('[%s]: Registering test results publisher "%s"' . "\n", date("Y-m-d H:i:s"), $publisherClass);
                 $publisher->setDebug(true);
             }

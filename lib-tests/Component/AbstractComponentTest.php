@@ -3,6 +3,9 @@
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Component\Fixtures\MockComponent;
+use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\Test\ConfigHelper;
+use Lmc\Steward\Test\Fixtures\DummyConfig;
 
 class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,19 +37,25 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
         $this->component->warn('Foo %s', 'bar');
     }
 
-    /**
-     * @todo Replace DEBUG with configuration storage
-     * @todo Write test to opposite case (debug is disabled => no output is printed)
-     */
     public function testShouldLogDebugInDebugMode()
     {
-        if (!defined('DEBUG')) {
-            define('DEBUG', true);
-        }
-        if (!DEBUG) {
-            $this->markTestSkipped('Unable test if global DEBUG constant is set to false');
-        }
+        $configValues = ConfigHelper::getDummyConfig();
+        $configValues['DEBUG'] = 1;
+        ConfigHelper::setEnvironmentVariables($configValues);
+        ConfigHelper::unsetConfigInstance();
+
         $this->expectOutputRegex('/.*\[DEBUG\]: \[MockComponent\] Foo bar.*/');
+        $this->component->debug('Foo %s', 'bar');
+    }
+
+    public function testShouldNotLogDebugMessagesIfDebugModeIsNotEnabled()
+    {
+        $configValues = ConfigHelper::getDummyConfig();
+        $configValues['DEBUG'] = 0;
+        ConfigHelper::setEnvironmentVariables($configValues);
+        ConfigHelper::unsetConfigInstance();
+
+        $this->expectOutputRegex('/^((?!\[DEBUG\]).)*$/'); // Output containing [DEBUG] should not be present
         $this->component->debug('Foo %s', 'bar');
     }
 

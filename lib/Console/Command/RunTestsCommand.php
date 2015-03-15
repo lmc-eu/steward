@@ -250,10 +250,10 @@ class RunTestsCommand extends Command
                 ->setEnv('BROWSER_NAME', $browsers)
                 ->setEnv('ENV', strtolower($environment))
                 ->setEnv('SERVER_URL', $serverUrl)
-                ->setEnv('PUBLISH_RESULTS', $publishResults)
+                ->setEnv('PUBLISH_RESULTS', $publishResults ? '1' : '0')
                 ->setEnv('FIXTURES_DIR', $fixturesDir)
                 ->setEnv('LOGS_DIR', $logsDir)
-                ->setEnv('DEBUG', $output->isDebug())
+                ->setEnv('DEBUG', $output->isDebug() ? '1' : '0')
                 ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
                 ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
                 ->setTimeout(3600) // 1 hour timeout to end possibly stuck processes
@@ -455,6 +455,7 @@ class RunTestsCommand extends Command
      * Try that given options that define directories exists and are accessible.
      *
      * @param InputInterface $input
+     * @param OutputInterface $output
      * @param InputOption[] $dirs Option defining directories
      * @return bool
      */

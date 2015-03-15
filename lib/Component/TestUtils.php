@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Component;
 
+use Lmc\Steward\Test\ConfigProvider;
+
 /**
  * Common test utils and syntax sugar for tests.
  * Should be accessible in all tests.
@@ -57,22 +59,22 @@ class TestUtils extends AbstractComponent
      */
     public function getFixturePath($fixture)
     {
+        $fixturesDir = ConfigProvider::getInstance()->getConfig()->fixturesDir;
         $directorySeparator = '/';
-        if (strpos(FIXTURES_DIR, '\\') !== false) { // if \ was used in the path, we are most probably on windows
+
+        if (strpos($fixturesDir, '\\') !== false) { // if \ was used in the path, we are most probably on windows
             $directorySeparator = '\\';
             $fixture = str_replace('/', $directorySeparator, $fixture);
         }
 
-        $fixturePath = rtrim(FIXTURES_DIR, $directorySeparator) . $directorySeparator .  $fixture;
+        $fixturePath = rtrim($fixturesDir, $directorySeparator) . $directorySeparator .  $fixture;
 
         // if relative path was provided and the file is accessible, resolve into absolute path
         if (realpath($fixturePath)) {
             $fixturePath = realpath($fixturePath);
         }
 
-        if (DEBUG) {
-            $this->log('Assembled path to fixture: "%s"', $fixturePath);
-        }
+        $this->debug('Assembled path to fixture: "%s"', $fixturePath);
 
         return $fixturePath;
     }

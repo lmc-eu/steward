@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\Test\ConfigProvider;
 use Nette\Utils\Strings;
 
 /**
@@ -31,7 +32,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      */
     protected function takeSnapshot(AbstractTestCase $test)
     {
-        $savePath = LOGS_DIR . '/';
+        $savePath = ConfigProvider::getInstance()->getConfig()->logsDir . '/';
 
         $testIdentifier = Strings::webalize(get_class($test), null, $lower = false)
             . '-'

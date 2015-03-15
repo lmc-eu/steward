@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Publisher;
 
+use Lmc\Steward\Test\ConfigHelper;
+
 class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 {
     /** @var XmlPublisher */
@@ -9,6 +11,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $configValues = ConfigHelper::getDummyConfig();
+        $configValues['LOGS_DIR'] = dirname(self::getFilePath());
+        ConfigHelper::setEnvironmentVariables($configValues);
+        ConfigHelper::unsetConfigInstance();
+
         $this->publisher = new XmlPublisher(null, null, null);
     }
 
@@ -39,13 +46,6 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('custom.xml', $this->publisher->getFilePath());
     }
 
-    public function testShouldAllowToSetCustomFilePath()
-    {
-        $this->assertNotContains('/custom', $this->publisher->getFilePath());
-        $this->publisher->setFileDir('/custom');
-        $this->assertEquals('/custom/results.xml', $this->publisher->getFilePath());
-    }
-
     public function testShouldCleanPreviousResults()
     {
         $fn = self::getFilePath('previous.xml');
@@ -54,7 +54,6 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($fn, 'Fixture file was not created'); // check preconditions
 
         $this->publisher->setFileName(basename($fn));
-        $this->publisher->setFileDir(dirname($fn));
 
         $this->publisher->clean();
 
@@ -115,7 +114,6 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $originalTestStartDate = $params[1];
 
         $this->publisher->setFileName(basename($fileName));
-        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'done', 'passed');
 
         /** @var \SimpleXMLElement $xml */
@@ -165,7 +163,6 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $fileName = $params[0];
 
         $this->publisher->setFileName(basename($fileName));
-        $this->publisher->setFileDir(dirname($fileName));
         $this->publisher->publishResults(
             'testCaseNameFoo',
             'done',
@@ -187,21 +184,17 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Directory "" does not exist or is not writeable.
-     */
-    public function testShouldFailIfLogsDirConstantIsNotDefined()
-    {
-        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
-    }
-
-    /**
-     * @expectedException \RuntimeException
      * @expectedExceptionMessage Directory "/notexisting" does not exist or is not writeable.
      */
     public function testShouldFailIfGivenDirectoryDoesNotExists()
     {
-        $this->publisher->setFileDir('/notexisting');
-        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+        $configValues = ConfigHelper::getDummyConfig();
+        $configValues['LOGS_DIR'] = '/notexisting';
+        ConfigHelper::setEnvironmentVariables($configValues);
+        ConfigHelper::unsetConfigInstance();
+
+        $publisher = new XmlPublisher(null, null, null);
+        $publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
     }
 
     public function testShouldNotOverwriteTestsWithSameName()
@@ -224,7 +217,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Create empty.xml file and sets is as Publisher file
-     * @return File name
+     * @return string File name
      */
     protected function createEmptyFile()
     {
@@ -236,7 +229,6 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         touch($fileName);
 
         $this->publisher->setFileName(basename($fileName));
-        $this->publisher->setFileDir(dirname($fileName));
 
         return $fileName;
     }

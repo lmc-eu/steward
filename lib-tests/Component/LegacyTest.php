@@ -4,18 +4,12 @@ namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Component\Fixtures\StringableObject;
 use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\Test\ConfigHelper;
 
 class LegacyTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AbstractTestCase */
     protected $testCase;
-
-    public static function setUpBeforeClass()
-    {
-        if (!defined('DEBUG')) { // TODO: replace with configuration storage
-            define('DEBUG', true);
-        }
-    }
 
     public function setUp()
     {
@@ -26,6 +20,8 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $this->testCase->expects($this->any())
             ->method('getName')
             ->willReturn('testFooMethod');
+
+        ConfigHelper::unsetConfigInstance();
     }
 
     /**
@@ -104,14 +100,34 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $legacy->saveWithName([], 'baz');
     }
 
-    public function testShouldSaveObjectAndDumpUsingToStringMethodIfObjectHasIt()
+    public function testShouldSaveObjectAndDumpUsingToStringMethodIfObjectHasItAndDebugModeIsEnabled()
     {
+        // enable debug mode
+        $configValues = ConfigHelper::getDummyConfig();
+        $configValues['DEBUG'] = 1;
+        ConfigHelper::setEnvironmentVariables($configValues);
+
         $object = new StringableObject('foobar string');
         $legacy = new Legacy($this->testCase);
         $legacy->setFileDir(sys_get_temp_dir());
         $legacy->saveWithName($object, 'object');
 
         $this->expectOutputRegex('/.*Legacy data: __toString\(\) called: foobar string.*/');
+    }
+
+    public function testShouldNotDumpDataIfDebugModeIsNotEnabled()
+    {
+        // disable debug mode
+        $configValues = ConfigHelper::getDummyConfig();
+        $configValues['DEBUG'] = 0;
+        ConfigHelper::setEnvironmentVariables($configValues);
+
+        $object = new StringableObject('foobar string');
+        $legacy = new Legacy($this->testCase);
+        $legacy->setFileDir(sys_get_temp_dir());
+        $legacy->saveWithName($object, 'object');
+
+        $this->expectOutputRegex('/^((?!foobar string).)*$/s'); // Output should not contain the string
     }
 
     /**

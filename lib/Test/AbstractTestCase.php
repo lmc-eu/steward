@@ -80,7 +80,7 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
 
     public function debug($format, $args = null)
     {
-        if (DEBUG) {
+        if (ConfigProvider::getInstance()->getConfig()->debug) {
             echo $this->formatOutput(func_get_args(), 'DEBUG');
         }
     }
