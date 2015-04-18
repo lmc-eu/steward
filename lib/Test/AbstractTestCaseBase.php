@@ -8,9 +8,7 @@ namespace Lmc\Steward\Test;
  */
 abstract class AbstractTestCaseBase extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \RemoteWebDriver
-     */
+    /** @var \RemoteWebDriver */
     public $wd;
 
     /**

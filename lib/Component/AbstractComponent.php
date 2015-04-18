@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\SyntaxSugarTrait;
 
 /**
  * AbstractComponent used as parent of all components to add some default functionality and interface .
@@ -13,10 +14,12 @@ use Lmc\Steward\Test\AbstractTestCaseBase;
  */
 abstract class AbstractComponent
 {
+    use SyntaxSugarTrait;
+
     /** @var AbstractTestCaseBase */
     protected $tc;
 
-    /** @var \WebDriver */
+    /** @var \RemoteWebDriver */
     protected $wd;
 
     /** @var string */

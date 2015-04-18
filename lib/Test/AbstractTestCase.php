@@ -10,6 +10,8 @@ use Lmc\Steward\Component\TestUtils;
  */
 abstract class AbstractTestCase extends AbstractTestCaseBase
 {
+    use SyntaxSugarTrait;
+
     /** @var int Width of browser window */
     public static $browserWidth = 1280;
 
