@@ -30,7 +30,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
 
-        $config = ConfigProvider::getInstance()->getConfig();
+        $config = ConfigProvider::getInstance();
 
         // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
         $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
@@ -89,7 +89,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         if ($test->wd instanceof \RemoteWebDriver) {
             $test->log(
                 'Destroying "%s" webdriver for "%s::%s" (session %s)',
-                ConfigProvider::getInstance()->getConfig()->browserName,
+                ConfigProvider::getInstance()->browserName,
                 get_class($test),
                 $test->getName(),
                 $test->wd->getSessionID()
@@ -121,7 +121,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         $connectTimeoutMs,
         $requestTimeoutMs
     ) {
-        $browserName = ConfigProvider::getInstance()->getConfig()->browserName;
+        $browserName = ConfigProvider::getInstance()->browserName;
         for ($startAttempts = 0; $startAttempts < 4; $startAttempts++) {
             try {
                 $test->wd =

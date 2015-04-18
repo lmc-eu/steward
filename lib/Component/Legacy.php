@@ -82,7 +82,7 @@ class Legacy extends AbstractComponent
     {
         parent::__construct($tc);
 
-        $logsDir = ConfigProvider::getInstance()->getConfig()->logsDir;
+        $logsDir = ConfigProvider::getInstance()->logsDir;
         if ($logsDir) { // if the directory is not defined, the setFileDir() must be called explicitly later
             $this->setFileDir($logsDir);
         }

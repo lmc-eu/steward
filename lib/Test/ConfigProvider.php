@@ -21,8 +21,19 @@ class ConfigProvider
     /** @var array Array of custom configuration options that should be added to the default ones */
     private $customConfigurationOptions = [];
 
+    public function __get($name)
+    {
+        $value = $this->getInstance()->getConfig()->getItem($name, null);
+
+        if ($value !== null) {
+            return $value;
+        }
+
+        throw new \DomainException(sprintf('Configuration option "%s" was not defined', $name));
+    }
+
     /**
-     * Add custom configuration options that should be added to the default ones.  Can be set only before first call of
+     * Add custom configuration options that should be added to the default ones. Can be set only before first call of
      * getConfig(), as the values must be given to the Config object upon initialization.
      * Note you cannot override the default configuration options.
      *
@@ -87,11 +98,10 @@ class ConfigProvider
     }
 
     /**
-     * Retrieve given configuration options values from environment (or use default if values is not required and
-     * its value was not found). If value is not optional and is not found, throw and exception.
+     * Retrieve given configuration options values from environment If value is not found, throw and exception.
      *
-     * @param array $options
      * @throws \RuntimeException
+     * @param array $options
      * @return array Option => value option name is converted from CAPS_WITH_UNDERSCORES to camelCase
      */
     private function retrieveConfigurationValues($options)

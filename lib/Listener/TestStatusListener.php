@@ -22,7 +22,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
      */
     public function __construct(array $testPublishers)
     {
-        $config = ConfigProvider::getInstance()->getConfig();
+        $config = ConfigProvider::getInstance();
 
         // always register XmlPublisher
         $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';

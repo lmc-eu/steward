@@ -19,7 +19,7 @@ class RemoteWebDriver extends \RemoteWebDriver
 
     public function execute($command_name, $params = [])
     {
-        if (ConfigProvider::getInstance()->getConfig()->debug) {
+        if (ConfigProvider::getInstance()->debug) {
             $this->log(
                 'Executing command "%s" with params %s',
                 $command_name,

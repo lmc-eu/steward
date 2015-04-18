@@ -16,7 +16,7 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
     }
 
-    public function testShouldRetrieveConfigurationValuesAndUseCamelCaseKeysForThem()
+    public function testShouldRetrieveConfigurationValuesFromEnvironmentAndUseCamelCaseKeysForThem()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         $config = ConfigProvider::getInstance()->getConfig();
@@ -27,6 +27,24 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://server.tld:port', $config->getItem('serverUrl'));
         // all items retrieval
         $this->assertInternalType('array', $config->getItems());
+    }
+
+    public function testShouldMakeConfigOptionsAccessibleDirectlyThroughConfigProvider()
+    {
+        ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+
+        $this->assertEquals('http://server.tld:port', ConfigProvider::getInstance()->serverUrl);
+    }
+
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Configuration option "notExisting" was not defined
+     */
+    public function testShouldThrowExceptionWhenAccessingNotExistingConfigOptionThroughConfigProvider()
+    {
+        ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+
+        ConfigProvider::getInstance()->notExisting;
     }
 
     public function testShouldOnlyHoldOneInstanceOfConfigObject()

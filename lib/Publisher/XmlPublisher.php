@@ -53,7 +53,7 @@ class XmlPublisher extends AbstractPublisher
     public function getFilePath()
     {
         if (!$this->fileDir) {
-            $this->fileDir = ConfigProvider::getInstance()->getConfig()->logsDir;
+            $this->fileDir = ConfigProvider::getInstance()->logsDir;
         }
 
         return $this->fileDir . '/' . $this->fileName;

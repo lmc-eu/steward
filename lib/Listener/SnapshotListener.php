@@ -32,7 +32,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      */
     protected function takeSnapshot(AbstractTestCase $test)
     {
-        $savePath = ConfigProvider::getInstance()->getConfig()->logsDir . '/';
+        $savePath = ConfigProvider::getInstance()->logsDir . '/';
 
         $testIdentifier = Strings::webalize(get_class($test), null, $lower = false)
             . '-'
