@@ -7,8 +7,6 @@ use Lmc\Steward\Component\TestUtils;
 /**
  * Abstract test case to be used by all test cases.
  * It adds logging, some common logic and assertions.
- *
- * @copyright LMC s.r.o.
  */
 abstract class AbstractTestCase extends AbstractTestCaseBase
 {

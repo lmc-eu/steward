@@ -23,8 +23,6 @@ use Nette\Utils\Strings;
 /**
  * Run tests command is used to start Steward test planner and execute tests one by one,
  * optionally with defined delay and relations.
- *
- * @copyright LMC s.r.o.
  */
 class RunTestsCommand extends Command
 {

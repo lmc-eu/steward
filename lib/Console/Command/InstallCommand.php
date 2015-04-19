@@ -12,8 +12,6 @@ use Symfony\Component\Console\Question\Question;
 
 /**
  * Install (download) Selenium standalone server.
- *
- * @copyright LMC s.r.o.
  */
 class InstallCommand extends Command
 {
