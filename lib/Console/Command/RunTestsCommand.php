@@ -113,20 +113,8 @@ class RunTestsCommand extends Command
             . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
         );
 
-        $browsers = $input->getArgument('browser');
-        $environment = $input->getArgument('environment');
-
-        $pattern = $input->getOption('pattern');
-        $testsDir = $input->getOption('tests-dir');
-        $fixturesDir = $input->getOption('fixtures-dir');
-        $logsDir = $input->getOption('logs-dir');
-        $serverUrl = $input->getOption('server-url');
-        $group = $input->getOption('group');
-        $excludeGroup = $input->getOption('exclude-group');
-        $publishResults = $input->getOption('publish-results');
-
-        $output->writeln(sprintf('Browser: %s', $browsers));
-        $output->writeln(sprintf('Environment: %s', $environment));
+        $output->writeln(sprintf('Browser: %s', $input->getArgument('browser')));
+        $output->writeln(sprintf('Environment: %s', $input->getArgument('environment')));
 
         // Tests directories exists
         $testDirectoriesResult = $this->testDirectories(
@@ -143,9 +131,9 @@ class RunTestsCommand extends Command
         }
 
         if ($output->isDebug()) {
-            $output->writeln(sprintf('Base path to fixtures results: %s', $fixturesDir));
-            $output->writeln(sprintf('Path to logs: %s', $logsDir));
-            $output->writeln(sprintf('Publish results: %s', ($publishResults) ? 'yes' : 'no'));
+            $output->writeln(sprintf('Base path to fixtures results: %s', $input->getOption('fixtures-dir')));
+            $output->writeln(sprintf('Path to logs: %s', $input->getOption('logs-dir')));
+            $output->writeln(sprintf('Publish results: %s', ($input->getOption('publish-results')) ? 'yes' : 'no'));
         }
 
         $this->getDispatcher()->dispatch(
@@ -153,29 +141,67 @@ class RunTestsCommand extends Command
             new ExtendedConsoleEvent($this, $input, $output)
         );
 
-        if (!$this->testSeleniumConnection($output, $serverUrl)) {
+        if (!$this->testSeleniumConnection($output, $input->getOption('server-url'))) {
             return 1;
         }
 
-        $output->writeln('Searching for testcases:');
-        if ($group) {
-            $output->writeln(sprintf(' - in group(s): %s', implode(', ', $group)));
-        }
-        if ($excludeGroup) {
-            $output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroup)));
-        }
-        $output->writeln(sprintf(' - in directory "%s"', $testsDir));
-        $output->writeln(sprintf(' - by pattern "%s"', $pattern));
+        // Find all files holding test-cases
+        $files = (new Finder())
+            ->useBestAdapter()
+            ->files()
+            ->in($input->getOption('tests-dir'))
+            ->name($input->getOption('pattern'));
 
-        $xmlPublisher = new XmlPublisher($environment, null, null);
-        $xmlPublisher->setFileDir($logsDir);
+        // Build set of processes prepared to be run
+        $processSet = $this->prepareProcessSet(
+            $input,
+            $output,
+            $files
+        );
+
+        if (!count($processSet)) {
+            $output->writeln('No testcases matched given criteria, exiting.');
+
+            return 1;
+        }
+
+        // Optimize processes order
+        $processSet->optimizeOrder(new MaxTotalDelayStrategy());
+
+        // Initialize first processes that should be run
+        $this->initializeTests($output, $processSet);
+
+        // Start execution loop
+        $this->executionLoop($output, $processSet);
+    }
+
+    /**
+     * Fill ProcessSet with test-cases from $files
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param Finder $files
+     * @return ProcessSet
+     */
+    protected function prepareProcessSet(InputInterface $input, OutputInterface $output, $files)
+    {
+        $output->writeln('Searching for testcases:');
+        if ($input->getOption('group')) {
+            $output->writeln(sprintf(' - in group(s): %s', implode(', ', $input->getOption('group'))));
+        }
+        if ($input->getOption('exclude-group')) {
+            $output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $input->getOption('exclude-group'))));
+        }
+        $output->writeln(sprintf(' - in directory "%s"', $input->getOption('tests-dir')));
+        $output->writeln(sprintf(' - by pattern "%s"', $input->getOption('pattern')));
+
+        $xmlPublisher = new XmlPublisher($input->getArgument('environment'), null, null);
+        $xmlPublisher->setFileDir($input->getOption('logs-dir'));
         $xmlPublisher->clean();
+
         $processSet = new ProcessSet($xmlPublisher);
 
         $testCasesNum = 0;
-
-        $files = (new Finder())->useBestAdapter()->files()->in($testsDir)->name($pattern);
-
         foreach ($files as $file) {
             $fileName = $file->getRealpath();
             // Parse classes from the testcase file
@@ -185,8 +211,8 @@ class RunTestsCommand extends Command
             $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
 
             // Filter out test-cases having any of excluded groups
-            if ($excludeGroup && array_key_exists('group', $annotations)
-                && count($excludingGroups = array_intersect($excludeGroup, $annotations['group']))
+            if ($input->getOption('exclude-group') && array_key_exists('group', $annotations)
+                && count($excludingGroups = array_intersect($input->getOption('exclude-group'), $annotations['group']))
             ) {
                 if ($output->isDebug()) {
                     $output->writeln(
@@ -201,9 +227,9 @@ class RunTestsCommand extends Command
             }
 
             // Filter out test-cases without any matching group
-            if ($group) {
+            if ($input->getOption('group')) {
                 if (!array_key_exists('group', $annotations)
-                    || !count($matchingGroups = array_intersect($group, $annotations['group']))
+                    || !count($matchingGroups = array_intersect($input->getOption('group'), $annotations['group']))
                 ) {
                     continue;
                 }
@@ -231,7 +257,7 @@ class RunTestsCommand extends Command
                 '--configuration=' . realpath(__DIR__ . '/../../phpunit.xml'),
             ];
 
-            // If ANSI output is enabled, turn on colors on PHPUnit
+            // If ANSI output is enabled, turn on colors in PHPUnit
             if ($output->isDecorated()) {
                 $phpunitArgs[] = '--colors';
             }
@@ -245,12 +271,12 @@ class RunTestsCommand extends Command
             );
 
             $process = $processBuilder
-                ->setEnv('BROWSER_NAME', $browsers)
-                ->setEnv('ENV', strtolower($environment))
-                ->setEnv('SERVER_URL', $serverUrl)
-                ->setEnv('PUBLISH_RESULTS', $publishResults ? '1' : '0')
-                ->setEnv('FIXTURES_DIR', $fixturesDir)
-                ->setEnv('LOGS_DIR', $logsDir)
+                ->setEnv('BROWSER_NAME', $input->getArgument('browser'))
+                ->setEnv('ENV', strtolower($input->getArgument('environment')))
+                ->setEnv('SERVER_URL', $input->getOption('server-url'))
+                ->setEnv('PUBLISH_RESULTS', $input->getOption('publish-results') ? '1' : '0')
+                ->setEnv('FIXTURES_DIR', $input->getOption('fixtures-dir'))
+                ->setEnv('LOGS_DIR', $input->getOption('logs-dir'))
                 ->setEnv('DEBUG', $output->isDebug() ? '1' : '0')
                 ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
                 ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
@@ -263,18 +289,18 @@ class RunTestsCommand extends Command
                 $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '',
                 $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null
             );
-
         }
 
-        if (!count($processSet)) {
-            $output->writeln('No testcases matched given criteria, exiting.');
+        return $processSet;
+    }
 
-            return 1;
-        }
-
-        $processSet->optimizeOrder(new MaxTotalDelayStrategy());
-
-        // Set tasks without delay as prepared in order to make them executed instantly
+    /**
+     * Set tests without delay as prepared in order to make them executed instantly
+     * @param OutputInterface $output
+     * @param ProcessSet $processSet
+     */
+    protected function initializeTests(OutputInterface $output, ProcessSet $processSet)
+    {
         $queuedProcesses = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
         foreach ($queuedProcesses as $className => $processObject) {
             if ($processObject->delayMinutes === null) {
@@ -295,8 +321,6 @@ class RunTestsCommand extends Command
                 }
             }
         }
-
-        $this->executionLoop($output, $processSet);
     }
 
     /**
@@ -332,7 +356,7 @@ class RunTestsCommand extends Command
                         );
                     }
                     $processObject->process->start();
-                    usleep(50000); // wait for a while (0,05 sec) to let processes be started in indented order
+                    usleep(50000); // wait for a while (0,05 sec) to let processes be started in intended order
 
                     continue;
                 }
