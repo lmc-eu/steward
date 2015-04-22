@@ -1,11 +1,13 @@
 {
     "name": "lmc/steward",
-    "description": "Steward - PHP libraries that makes Selenium + PHPUnit testing easy",
+    "description": "Steward - makes Selenium WebDriver + PHPUnit testing easy and robust",
     "keywords": [
         "selenium",
         "webdriver",
-        "phpunit"
+        "phpunit",
+        "testing"
     ],
+    "license": "MIT",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
@@ -25,9 +27,7 @@
         "nette/reflection": "~2.2",
         "nette/utils": "~2.2",
         "facebook/webdriver": "dev-master",
-        "doctrine/couchdb": "@dev",
-        "clue/graph": "~0.7.1",
-        "doctrine/couchdb": "@dev"
+        "clue/graph": "~0.7.1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "1.*"
