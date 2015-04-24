@@ -27,7 +27,10 @@
         "nette/reflection": "~2.2",
         "nette/utils": "~2.2",
         "facebook/webdriver": "dev-master",
-        "clue/graph": "~0.7.1"
+        "clue/graph": "~0.7.1",
+        "florianwolters/component-util-singleton": "0.3.2",
+        "caseyamcl/configula": "~2.3",
+        "doctrine/inflector": "~1.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "1.*"

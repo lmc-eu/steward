@@ -6,6 +6,7 @@
 ### Added
 - Possibility to specify zero as `@delayMinutes` (eg. if you want to force test order, but don't need to actually wait) or to use floating point number as delay.
 - BC: Global configuration constants replaced with Config object accessed through ConfigProvider. Thus all the global constants (BROWSER_NAME, ENV, SERVER_URL, PUBLISH_RESULTS, FIXTURES_DIR, LOGS_DIR, DEBUG) are no longer available, use the Config object instead.
+- SyntaxSugarTrait with shortcuts for element locating and waiting (`$this->findBy...()`, `$this->findMultipleBy...()` and `$this->waitFor...()`) usable in TestCases and Components.
 
 ## 0.12.0 - 2015-02-12
 ### Changed
