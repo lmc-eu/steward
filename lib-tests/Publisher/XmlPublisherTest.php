@@ -46,6 +46,13 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('custom.xml', $this->publisher->getFilePath());
     }
 
+    public function testShouldAllowToOverrideConfigObjectFileDirWithCustomDir()
+    {
+        $this->publisher->setFileDir('foo/bar');
+
+        $this->assertEquals('foo/bar/results.xml', $this->publisher->getFilePath());
+    }
+
     public function testShouldCleanPreviousResults()
     {
         $fn = self::getFilePath('previous.xml');
