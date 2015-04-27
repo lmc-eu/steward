@@ -93,22 +93,4 @@ abstract class AbstractPublisher
      * @param string $message
      */
     abstract public function publishResult($testCaseName, $testName, $status, $result = null, $message = null);
-
-    /**
-     * Is debug mode enabled?
-     * @return bool
-     */
-    public function isDebug()
-    {
-        return $this->debug;
-    }
-
-    /**
-     * Enable debug mode
-     * @param bool $debug
-     */
-    public function setDebug($debug)
-    {
-        $this->debug = $debug;
-    }
 }

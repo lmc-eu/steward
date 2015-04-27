@@ -11,7 +11,7 @@ use Lmc\Steward\Test\ProcessSet;
  */
 class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
 {
-    /** @var array $publishers */
+    /** @var AbstractPublisher[] $publishers */
     protected $publishers = [];
 
     /** @var string $startDate */
@@ -50,7 +50,6 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             }
             if ($config->debug) {
                 printf('[%s]: Registering test results publisher "%s"' . "\n", date("Y-m-d H:i:s"), $publisherClass);
-                $publisher->setDebug(true);
             }
             $this->publishers[] = $publisher;
         }
