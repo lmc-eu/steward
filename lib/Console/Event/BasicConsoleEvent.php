@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Console\Event;
 
-use Symfony\Component\Console\Command\Command;
+use Lmc\Steward\Console\Command\Command;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
