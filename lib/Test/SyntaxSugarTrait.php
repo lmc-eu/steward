@@ -64,7 +64,7 @@ trait SyntaxSugarTrait
      */
     public function findMultipleByCss($cssSelector)
     {
-        return $this->wd->findElement(\WebDriverBy::cssSelector($cssSelector));
+        return $this->wd->findElements(\WebDriverBy::cssSelector($cssSelector));
     }
 
     /**
@@ -99,7 +99,7 @@ trait SyntaxSugarTrait
      */
     public function findMultipleById($id)
     {
-        return $this->wd->findElement(\WebDriverBy::id($id));
+        return $this->wd->findElements(\WebDriverBy::id($id));
     }
 
     /**
@@ -134,7 +134,7 @@ trait SyntaxSugarTrait
      */
     public function findMultipleByName($name)
     {
-        return $this->wd->findElement(\WebDriverBy::name($name));
+        return $this->wd->findElements(\WebDriverBy::name($name));
     }
 
     /**
@@ -169,7 +169,7 @@ trait SyntaxSugarTrait
      */
     public function findMultipleByLinkText($linkText)
     {
-        return $this->wd->findElement(\WebDriverBy::linkText($linkText));
+        return $this->wd->findElements(\WebDriverBy::linkText($linkText));
     }
 
     /**
@@ -204,7 +204,7 @@ trait SyntaxSugarTrait
      */
     public function findMultipleByPartialLinkText($partialLinkText)
     {
-        return $this->wd->findElement(\WebDriverBy::partialLinkText($partialLinkText));
+        return $this->wd->findElements(\WebDriverBy::partialLinkText($partialLinkText));
     }
 
     /**
@@ -239,7 +239,7 @@ trait SyntaxSugarTrait
      */
     public function findMultipleByTag($tagName)
     {
-        return $this->wd->findElement(\WebDriverBy::tagName($tagName));
+        return $this->wd->findElements(\WebDriverBy::tagName($tagName));
     }
 
     /**
@@ -274,7 +274,7 @@ trait SyntaxSugarTrait
      */
     public function findMultipleByXpath($xpath)
     {
-        return $this->wd->findElement(\WebDriverBy::xpath($xpath));
+        return $this->wd->findElements(\WebDriverBy::xpath($xpath));
     }
 
     /**
