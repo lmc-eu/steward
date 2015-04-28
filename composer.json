@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=5.5.5",
-        "phpunit/phpunit": "4.3.*",
+        "phpunit/phpunit": "4.6.*",
         "ext-zip": "*",
         "ext-curl": "*",
         "symfony/console": "~2.6",
@@ -33,7 +33,8 @@
         "doctrine/inflector": "~1.0"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "1.*"
+        "squizlabs/php_codesniffer": "~2.0",
+        "php-mock/php-mock-phpunit": "^0.3"
     },
     "suggest": {
         "ext-posix": "For colored output",
