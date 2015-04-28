@@ -9,6 +9,7 @@ use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Test\MaxTotalDelayStrategy;
 use Lmc\Steward\Test\ProcessSet;
 use Lmc\Steward\Publisher\XmlPublisher;
+use Lmc\Steward\Test\SeleniumAdapter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -26,6 +27,29 @@ use Nette\Utils\Strings;
  */
 class RunTestsCommand extends Command
 {
+    /** @var SeleniumAdapter */
+    protected $seleniumAdapter;
+
+    /**
+     * @param SeleniumAdapter $seleniumAdapter
+     */
+    public function setSeleniumAdapter(SeleniumAdapter $seleniumAdapter)
+    {
+        $this->seleniumAdapter = $seleniumAdapter;
+    }
+
+    /**
+     * @return SeleniumAdapter
+     */
+    public function getSeleniumAdapter()
+    {
+        if (!$this->seleniumAdapter) {
+            $this->seleniumAdapter = new SeleniumAdapter();
+        }
+
+        return $this->seleniumAdapter;
+    }
+
     /**
      * Configure command
      */
@@ -510,14 +534,11 @@ class RunTestsCommand extends Command
      */
     protected function testSeleniumConnection(OutputInterface $output, $seleniumServerUrl)
     {
+        $seleniumAdapter = $this->getSeleniumAdapter();
         $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl));
 
-        $urlParts = parse_url($seleniumServerUrl);
-
-        // Check connection to server is possible
-        $seleniumConnection = @fsockopen($urlParts['host'], $urlParts['port'], $connectionErrorNo, $connectionError, 5);
-        if (!is_resource($seleniumConnection)) {
-            $output->writeln(sprintf('<error>error (%s)</error>', $connectionError));
+        if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
+            $output->writeln(sprintf('<error>connection error (%s)</error>', $seleniumAdapter->getLastError()));
             $output->writeln(
                 sprintf(
                     '<error>Make sure your Selenium server is really accessible on url "%s" '
@@ -528,14 +549,9 @@ class RunTestsCommand extends Command
 
             return false;
         }
-        fclose($seleniumConnection);
 
-        // Check server properly responds to http requests
-        $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]);
-        $responseData = @file_get_contents($seleniumServerUrl . '/wd/hub/status/', false, $context);
-
-        if (!$responseData || !json_decode($responseData)) {
-            $output->writeln('<error>error reading server response</error>');
+        if (!$seleniumAdapter->isSeleniumServer($seleniumServerUrl)) {
+            $output->writeln(sprintf('<error>response error (%s)</error>', $seleniumAdapter->getLastError()));
             $output->writeln(
                 sprintf(
                     '<error>Looks like url "%s" is occupied by something else than Selenium server. '
