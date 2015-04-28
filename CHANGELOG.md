@@ -5,20 +5,19 @@
 ## Unreleased
 ### Added
 - Possibility to specify zero as `@delayMinutes` (eg. if you want to force test order, but don't need to actually wait) or to use floating point number as delay.
-- BC: Global configuration constants replaced with Config object accessed through ConfigProvider. Thus all the global constants (BROWSER_NAME, ENV, SERVER_URL, PUBLISH_RESULTS, FIXTURES_DIR, LOGS_DIR, DEBUG) are no longer available, use the Config object instead.
 - SyntaxSugarTrait with shortcuts for element locating and waiting (`$this->findBy...()`, `$this->findMultipleBy...()` and `$this->waitFor...()`) usable in TestCases and Components.
+
+### Changed
+- BC: Global configuration constants replaced with Config object accessed through ConfigProvider. Thus all the global constants (BROWSER_NAME, ENV, SERVER_URL, PUBLISH_RESULTS, FIXTURES_DIR, LOGS_DIR, DEBUG) are no longer available, use the Config object instead.
 
 ## 0.12.0 - 2015-02-12
 ### Changed
-- Workaround for Firefox locking port collisions (consequence of Selenium issue #5172) - if FF cannot be started, try it again up to five times
+- Workaround for Firefox locking port collisions (consequence of Selenium issue [#5172](https://code.google.com/p/selenium/issues/detail?id=5172)) - if FF cannot be started, try it again up to five times
 
 ## 0.11.0 - 2015-02-06
 ### Added
 - New `debug()` method that output to log only in debug mode. Could be used in both TestCases and Components.
 - ext-curl requirement into composer.json (as CURL is needed by HttpCommandExecutor).
-
-### Removed
-- Nothing.
 
 ### Changed
 - Test-cases order is optimized before running tests, so that test-cases with the longest delay of theirs dependencies are run as first.
@@ -52,7 +51,6 @@
 - During the `run-tests` execution, current test results are generated into `logs/results.xml`. This is useful eg. on long-lasting Jenkins jobs or if you want to know more precise status of the current (or last) test run.
 - Shortcut to WebDriver in components - it's now possible to write `$this->wd` instead of `$this->tc->wd`.
 - Possibility to set `--fixtures-dir` in `run-tests` command. This is handy eg. when tests are run on remote terminal and fixtures are located on network directory.
-- Possibility to set `--logs-dir` in `run-tests` command. Useful when Steward core is installed as dependency and is run from vendor/bin/.
 - Possibility to set `--logs-dir` in `run-tests` command. Useful when Steward core is installed as dependency and is run from vendor/bin/.
 - Possibility to easily overload any browser-specific capability, using custom (overloaded) WebdriverListener.
 - Specified group(s) could be excluded from the `run-tests`, using `--exclude-group` option.
