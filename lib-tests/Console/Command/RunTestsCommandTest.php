@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Console\Command;
 
-use Lmc\Steward\Test\SeleniumAdapter;
+use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -108,7 +108,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldStopIfServerIsNotResponding()
     {
-        $seleniumAdapterMock = $this->getMockBuilder(SeleniumAdapter::class)
+        $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
             ->getMock();
 
         $seleniumAdapterMock->expects($this->once())
@@ -140,7 +140,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldStopIfServerIsRespondingButIsNotSelenium()
     {
-        $seleniumAdapterMock = $this->getMockBuilder(SeleniumAdapter::class)
+        $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
             ->getMock();
 
         $seleniumAdapterMock->expects($this->once())
@@ -195,11 +195,12 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Get Selenium adapter mocking connection as OK
-     * @return SeleniumAdapter|\PHPUnit_Framework_MockObject_MockObject
+     *
+*@return SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getSeleniumAdapterMock()
     {
-        $seleniumAdapterMock = $this->getMockBuilder(SeleniumAdapter::class)
+        $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
             ->getMock();
 
         $seleniumAdapterMock->expects($this->any())

@@ -1,24 +1,21 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Selenium;
 
 use phpmock\phpunit\PHPMock;
 
-/**
- * @group omg
- */
-class SeleniumAdapterTest extends \PHPUnit_Framework_TestCase
+class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
 {
     use PHPMock;
 
-    /** @var SeleniumAdapter */
+    /** @var SeleniumServerAdapter */
     protected $adapter;
     /** @var string */
     protected $serverUrl = 'http://selenium.local:1337';
 
     protected function setUp()
     {
-        $this->adapter = new SeleniumAdapter();
+        $this->adapter = new SeleniumServerAdapter();
     }
 
     public function testShouldReturnTrueIfUrlIsAccessible()
@@ -49,8 +46,8 @@ class SeleniumAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturnFalseIfTheServerDoesNotRespondToStatusUrl()
     {
-        $fileFetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileFetContentsMock->expects($this->once())
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/wd/hub/status/')
             ->willReturn(false);
 
@@ -60,8 +57,8 @@ class SeleniumAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturnJsonErrorDescriptionIfTheServerResponseIsNotJson()
     {
-        $fileFetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileFetContentsMock->expects($this->once())
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/wd/hub/status/')
             ->willReturn('THIS IS NOT JSON');
 
@@ -71,8 +68,8 @@ class SeleniumAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturnTrueIfServerRespondsWithJsonInNoGridMode()
     {
-        $fileFetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileFetContentsMock->expects($this->once())
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/wd/hub/status/')
             ->willReturn(
                 '{"sessionId":null,"status":0,"state":"success",'
@@ -87,8 +84,8 @@ class SeleniumAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturnTrueIfServerRespondsWithJsonInGridMode()
     {
-        $fileFetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileFetContentsMock->expects($this->once())
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/wd/hub/status/')
             ->willReturn(
                 '{"status":13,"value":{"message":"Session [(null externalkey)] not available and is not among the'

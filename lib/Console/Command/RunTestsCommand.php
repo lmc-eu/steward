@@ -9,7 +9,7 @@ use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Test\MaxTotalDelayStrategy;
 use Lmc\Steward\Test\ProcessSet;
 use Lmc\Steward\Publisher\XmlPublisher;
-use Lmc\Steward\Test\SeleniumAdapter;
+use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,24 +27,24 @@ use Nette\Utils\Strings;
  */
 class RunTestsCommand extends Command
 {
-    /** @var SeleniumAdapter */
+    /** @var SeleniumServerAdapter */
     protected $seleniumAdapter;
 
     /**
-     * @param SeleniumAdapter $seleniumAdapter
+     * @param SeleniumServerAdapter $seleniumAdapter
      */
-    public function setSeleniumAdapter(SeleniumAdapter $seleniumAdapter)
+    public function setSeleniumAdapter(SeleniumServerAdapter $seleniumAdapter)
     {
         $this->seleniumAdapter = $seleniumAdapter;
     }
 
     /**
-     * @return SeleniumAdapter
+     * @return SeleniumServerAdapter
      */
     public function getSeleniumAdapter()
     {
         if (!$this->seleniumAdapter) {
-            $this->seleniumAdapter = new SeleniumAdapter();
+            $this->seleniumAdapter = new SeleniumServerAdapter();
         }
 
         return $this->seleniumAdapter;
