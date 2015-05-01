@@ -17,11 +17,6 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
     /** @var CommandTester */
     protected $tester;
 
-    public static function setUpBeforeClass()
-    {
-        define('STEWARD_BASE_DIR', __DIR__ . '/Fixtures');
-    }
-
     protected function setUp()
     {
         $dispatcher = new EventDispatcher();
