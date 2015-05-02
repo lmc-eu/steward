@@ -14,6 +14,7 @@
             <directory suffix=".php">../src</directory>
             <exclude>
                 <file>../src/bootstrap.php</file>
+                <file>../src/Console/Command/Command.php</file>
             </exclude>
         </whitelist>
     </filter>

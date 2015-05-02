@@ -10,7 +10,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @covers Lmc\Steward\Console\Command\InstallCommand
- * @group omg
  */
 class InstallCommandTest extends \PHPUnit_Framework_TestCase
 {

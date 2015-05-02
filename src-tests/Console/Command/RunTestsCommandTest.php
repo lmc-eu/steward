@@ -191,7 +191,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
     /**
      * Get Selenium adapter mocking connection as OK
      *
-*@return SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject
+     * @return SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getSeleniumAdapterMock()
     {

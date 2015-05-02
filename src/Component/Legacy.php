@@ -121,7 +121,7 @@ class Legacy extends AbstractComponent
         $name = preg_replace('/Phase\d/', '', $name); // remove 'PhaseX' from the name
         $name = Strings::webalize($name, null, $lower = false);
 
-        if ($type == Legacy::LEGACY_TYPE_TEST) {
+        if ($type == self::LEGACY_TYPE_TEST) {
             $name .= '#' . Strings::webalize($this->tc->getName(false), null, $lower = false);
         }
 
@@ -164,7 +164,7 @@ class Legacy extends AbstractComponent
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @throws LegacyException
      */
-    public function save($data, $type = Legacy::LEGACY_TYPE_CASE)
+    public function save($data, $type = self::LEGACY_TYPE_CASE)
     {
         $this->saveWithName($data, $this->getLegacyName($type));
     }
@@ -178,7 +178,7 @@ class Legacy extends AbstractComponent
      * @return mixed
      * @throws LegacyException
      */
-    public function load($type = Legacy::LEGACY_TYPE_CASE)
+    public function load($type = self::LEGACY_TYPE_CASE)
     {
         return $this->loadWithName($this->getLegacyName($type));
     }
