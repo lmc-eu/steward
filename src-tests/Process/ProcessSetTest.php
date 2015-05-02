@@ -4,6 +4,7 @@ namespace Lmc\Steward\Process;
 
 use Lmc\Steward\Process\Fixtures\DummyPublisher;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\Process;
 
 class ProcessSetTest extends \PHPUnit_Framework_TestCase
@@ -156,6 +157,37 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
     {
         $this->set->add(new Process(''), 'Foo');
         $this->set->setStatus('Foo', 'WrongStatus');
+    }
+
+    public function testShouldDequeueProcessesWithoutDelay()
+    {
+        $this->set->add(new Process(''), 'NoDelay'); // process without delay
+        $this->set->add(new Process(''), 'Delayed', 'NoDelay', 3.3); // process with delay
+
+        // Both processes should be queued after being added
+        $processes = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        $this->assertCount(2, $processes);
+
+        $outputBuffer = new BufferedOutput();
+        // Dequeue process without delay
+        $this->set->dequeueProcessesWithoutDelay($outputBuffer);
+
+        // The process without delay should be prapared now
+        $prepared = $this->set->get(ProcessSet::PROCESS_STATUS_PREPARED);
+        $this->assertCount(1, $prepared);
+        $this->assertArrayHasKey('NoDelay', $prepared);
+
+        // The other process with delay should be kept as queued
+        $queued = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        $this->assertCount(1, $queued);
+        $this->assertArrayHasKey('Delayed', $queued);
+
+        $output = $outputBuffer->fetch();
+        $this->assertContains('Testcase "NoDelay" is prepared to be run', $output);
+        $this->assertContains(
+            'Testcase "Delayed" is queued to be run 3.3 minutes after testcase "NoDelay" is finished',
+            $output
+        );
     }
 
     /**

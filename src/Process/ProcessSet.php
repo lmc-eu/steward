@@ -5,6 +5,7 @@ namespace Lmc\Steward\Process;
 use Fhaculty\Graph\Algorithm\Tree\OutTree;
 use Fhaculty\Graph\Graph;
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -193,6 +194,34 @@ class ProcessSet implements \Countable
             }
         }
         $this->publisher->publishResults($className, $status, $result);
+    }
+
+    /**
+     * Set queued processes without delay as prepared
+     * @param OutputInterface $output If provided, list of dequeued and queued processes will be printed
+     */
+    public function dequeueProcessesWithoutDelay(OutputInterface $output = null)
+    {
+        $queuedProcesses = $this->get(self::PROCESS_STATUS_QUEUED);
+        foreach ($queuedProcesses as $className => $processObject) {
+            if ($processObject->delayMinutes === null) {
+                if ($output) {
+                    $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
+                }
+                $this->setStatus($className, self::PROCESS_STATUS_PREPARED);
+            } else {
+                if ($output) {
+                    $output->writeln(
+                        sprintf(
+                            'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
+                            $className,
+                            $processObject->delayMinutes,
+                            $processObject->delayAfter
+                        )
+                    );
+                }
+            }
+        }
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Event\BasicConsoleEvent;
+use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -169,7 +172,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldStopIfNoTestcasesFoundByGivenPatternAnd()
+    public function testShouldStopIfNoTestcasesFoundByGivenPattern()
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
@@ -186,6 +189,51 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('by pattern "NotExisting.foo"', $this->tester->getDisplay());
         $this->assertContains('No testcases matched given criteria, exiting.', $this->tester->getDisplay());
         $this->assertSame(1, $this->tester->getStatusCode());
+    }
+
+    public function testShouldDispatchConfigureEvent()
+    {
+        $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
+            ->setMethods(['dispatch'])
+            ->getMock();
+
+        $dispatcherMock->expects($this->at(0))
+            ->method('dispatch')
+            ->with($this->equalTo(CommandEvents::CONFIGURE), $this->isInstanceOf(BasicConsoleEvent::class));
+
+        $application = new Application();
+        $application->add(new RunTestsCommand($dispatcherMock));
+        $command = $application->find('run-tests');
+        $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
+
+        (new CommandTester($command))->execute(
+            ['command' => $command->getName(), 'environment' => 'staging', 'browser' => 'firefox']
+        );
+    }
+
+    public function testShouldDispatchInitEvent()
+    {
+        $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
+            ->setMethods(['dispatch'])
+            ->getMock();
+
+        $dispatcherMock->expects($this->at(1))
+            ->method('dispatch')
+            ->with($this->equalTo(CommandEvents::RUN_TESTS_INIT), $this->isInstanceOf(ExtendedConsoleEvent::class));
+
+        $application = new Application();
+        $application->add(new RunTestsCommand($dispatcherMock));
+        $command = $application->find('run-tests');
+        $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
+
+        (new CommandTester($command))->execute(
+            ['command' => $command->getName(), 'environment' => 'staging', 'browser' => 'firefox']
+        );
+    }
+
+    public function testShouldDispatchProcessEvent()
+    {
+        $this->markTestIncomplete();
     }
 
     /**

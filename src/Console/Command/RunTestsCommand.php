@@ -193,7 +193,7 @@ class RunTestsCommand extends Command
         $processSet->optimizeOrder(new MaxTotalDelayStrategy());
 
         // Initialize first processes that should be run
-        $this->initializeTests($output, $processSet);
+        $processSet->dequeueProcessesWithoutDelay($output->isDebug() ? $output : null);
 
         // Start execution loop
         $this->executionLoop($output, $processSet);
@@ -316,35 +316,6 @@ class RunTestsCommand extends Command
         }
 
         return $processSet;
-    }
-
-    /**
-     * Set tests without delay as prepared in order to make them executed instantly
-     * @param OutputInterface $output
-     * @param ProcessSet $processSet
-     */
-    protected function initializeTests(OutputInterface $output, ProcessSet $processSet)
-    {
-        $queuedProcesses = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-        foreach ($queuedProcesses as $className => $processObject) {
-            if ($processObject->delayMinutes === null) {
-                if ($output->isDebug()) {
-                    $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
-                }
-                $processSet->setStatus($className, ProcessSet::PROCESS_STATUS_PREPARED);
-            } else {
-                if ($output->isDebug()) {
-                    $output->writeln(
-                        sprintf(
-                            'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
-                            $className,
-                            $processObject->delayMinutes,
-                            $processObject->delayAfter
-                        )
-                    );
-                }
-            }
-        }
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
 use Symfony\Component\Console\Application;
@@ -162,6 +164,24 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
             $this->tester->getDisplay()
         );
         $this->assertSame(0, $this->tester->getStatusCode());
+    }
+
+    public function testShouldDispatchConfigureEvent()
+    {
+        $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
+            ->setMethods(['dispatch'])
+            ->getMock();
+
+        $dispatcherMock->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(CommandEvents::CONFIGURE), $this->isInstanceOf(BasicConsoleEvent::class));
+
+        $application = new Application();
+        $application->add(new InstallCommand($dispatcherMock));
+        $command = $application->find('install');
+        $command->setDownloader($this->getDownloadMock());
+
+        (new CommandTester($command))->execute(['command' => $command->getName(), 'version' => '6.3.6']);
     }
 
     /**
