@@ -11,9 +11,9 @@
 
     <filter>
         <whitelist>
-            <directory suffix=".php">../lib</directory>
+            <directory suffix=".php">../src</directory>
             <exclude>
-                <file>../lib/bootstrap.php</file>
+                <file>../src/bootstrap.php</file>
             </exclude>
         </whitelist>
     </filter>

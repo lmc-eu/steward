@@ -215,9 +215,9 @@ class XmlPublisher extends AbstractPublisher
         }
 
         if (fstat($this->fileHandle)['size'] == 0) { // new or empty file, create empty xml element
-            $xslPath = '../lib/results.xsl';
-            if (is_readable($fileDir . '/../vendor/lmc/steward/lib/results.xsl')) {
-                $xslPath = '../vendor/lmc/steward/lib/results.xsl';
+            $xslPath = '../src/results.xsl';
+            if (is_readable($fileDir . '/../vendor/lmc/steward/src/results.xsl')) {
+                $xslPath = '../vendor/lmc/steward/src/results.xsl';
             }
 
             $xml = new \SimpleXMLElement(

@@ -13,7 +13,7 @@ use Symfony\Component\Finder\Finder;
 class ListenerInstantiator
 {
     /** @var string Searched pattern for listeners, used to exclude all other paths and speed up the search */
-    protected $searchPathPattern = 'lib/Console/EventListener';
+    protected $searchPathPattern = 'src/Console/EventListener';
 
     /**
      * Instantiate listeners in given directory and register them to given dispatcher

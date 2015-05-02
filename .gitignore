@@ -3,8 +3,8 @@ composer.phar
 vendor
 # Ignore test logs and unit-test logs
 logs
-lib-tests/logs/
-lib-tests/coverage/
+src-tests/logs/
+src-tests/coverage/
 
 # Ignore composer.lock because when installed as dependency, it does not affect anything either
 composer.lock

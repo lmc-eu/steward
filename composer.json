@@ -12,7 +12,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Lmc\\Steward\\": "lib/"
+            "Lmc\\Steward\\": "src/"
         }
     },
     "require": {
