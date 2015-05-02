@@ -6,6 +6,10 @@ use Lmc\Steward\Component\Fixtures\StringableObject;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigHelper;
 
+/**
+ * @covers Lmc\Steward\Component\Legacy
+ * @covers Lmc\Steward\Component\LegacyException
+ */
 class LegacyTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AbstractTestCase */
@@ -21,6 +25,7 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
             ->method('getName')
             ->willReturn('testFooMethod');
 
+        ConfigHelper::setEnvironmentVariables(ConfigHelper::getDummyConfig());
         ConfigHelper::unsetConfigInstance();
     }
 
@@ -106,6 +111,7 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = 1;
         ConfigHelper::setEnvironmentVariables($configValues);
+        ConfigHelper::unsetConfigInstance();
 
         $object = new StringableObject('foobar string');
         $legacy = new Legacy($this->testCase);
@@ -121,6 +127,7 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = 0;
         ConfigHelper::setEnvironmentVariables($configValues);
+        ConfigHelper::unsetConfigInstance();
 
         $object = new StringableObject('foobar string');
         $legacy = new Legacy($this->testCase);
@@ -136,9 +143,9 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldFailIfTryingToAutomaticallySaveLegacyIfTestDoesntHavePhaseInItsName()
     {
-        $testCasePhase1 = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
-            ->setMethods([])
-            ->setMockClassName('Mock_TestCaseWithoutPhaseNumerInName')
+        $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)
+            ->setMethods(['log']) // override log method to prevent unwanted output
+            ->setMockClassName('Mock_TestCaseWithoutPhaseNumberInName')
             ->getMock();
 
         $legacy = new Legacy($testCasePhase1);
@@ -151,9 +158,9 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
     public function testShouldAutomaticallySaveAndLoadLegacyIfTestsHavePhaseInItsName()
     {
         // save data in first test case
-        $testCasePhase1 = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
-            ->setMethods([])
-            ->setMockClassName('Mock_TestCasePhase1')
+        $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)
+            ->setMethods(['log']) // override log method to prevent unwanted output
+            ->setMockClassName('Mock_TestCaseFooPhase1')
             ->getMock();
 
         $legacy1 = new Legacy($testCasePhase1);
@@ -161,9 +168,9 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $legacy1->save('data');
 
         // load data in second test case
-        $testCasePhase2 = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
-            ->setMethods([])
-            ->setMockClassName('Mock_TestCasePhase2')
+        $testCasePhase2 = $this->getMockBuilder(AbstractTestCase::class)
+            ->setMethods(['log'])
+            ->setMockClassName('Mock_TestCaseFooPhase2')
             ->getMock();
 
         $legacy2 = new Legacy($testCasePhase2);
@@ -175,9 +182,9 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
     public function testShouldAutomaticallySaveAndLoadLegacyForMethodsWithSameNameInTestsWithPhaseInItsName()
     {
         // save data in first test case in method 'testMethodFoo'
-        $testCasePhase1 = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
-            ->setMethods(['getName'])
-            ->setMockClassName('Mock_TestCasePhase1')
+        $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)
+            ->setMethods(['getName', 'log']) // override log method to prevent unwanted output
+            ->setMockClassName('Mock_TestCaseBarPhase1')
             ->getMock();
 
         $testCasePhase1->expects($this->any())
@@ -189,9 +196,9 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $legacy1->save('data', Legacy::LEGACY_TYPE_TEST);
 
         // load data in second test case, also in method 'testMethodFoo'
-        $testCasePhase2 = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
-            ->setMethods(['getName'])
-            ->setMockClassName('Mock_TestCasePhase2')
+        $testCasePhase2 = $this->getMockBuilder(AbstractTestCase::class)
+            ->setMethods(['getName', 'log'])
+            ->setMockClassName('Mock_TestCaseBarPhase2')
             ->getMock();
 
         $testCasePhase2->expects($this->any())
@@ -204,9 +211,9 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('data', $legacy2->load(Legacy::LEGACY_TYPE_TEST));
 
         // try to load the data in method with different name => it should not be accessible
-        $testCasePhase2Method2 = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
-            ->setMethods(['getName'])
-            ->setMockClassName('Mock_TestCasePhase2')
+        $testCasePhase2Method2 = $this->getMockBuilder(AbstractTestCase::class)
+            ->setMethods(['getName', 'log'])
+            ->setMockClassName('Mock_TestCaseBarPhase2')
             ->getMock();
         $testCasePhase2Method2->expects($this->any())
             ->method('getName')
