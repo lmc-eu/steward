@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward;
 
 use Configula\Config;
 

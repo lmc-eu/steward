@@ -1,9 +1,9 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Process;
 
-use Lmc\Steward\Test\Fixtures\DummyPublisher;
-use Lmc\Steward\Test\Fixtures\MockOrderStrategy;
+use Lmc\Steward\Process\Fixtures\DummyPublisher;
+use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
 use Symfony\Component\Process\Process;
 
 class ProcessSetTest extends \PHPUnit_Framework_TestCase

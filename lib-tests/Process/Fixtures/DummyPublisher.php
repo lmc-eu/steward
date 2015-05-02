@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Test\Fixtures;
+namespace Lmc\Steward\Process\Fixtures;
 
 use Lmc\Steward\Publisher\AbstractPublisher;
 

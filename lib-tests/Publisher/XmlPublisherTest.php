@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Publisher;
 
-use Lmc\Steward\Test\ConfigHelper;
+use Lmc\Steward\ConfigHelper;
 
 class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 {

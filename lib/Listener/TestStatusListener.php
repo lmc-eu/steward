@@ -3,7 +3,7 @@
 namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\Publisher\AbstractPublisher;
-use Lmc\Steward\Test\ConfigProvider;
+use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\ProcessSet;
 
 /**

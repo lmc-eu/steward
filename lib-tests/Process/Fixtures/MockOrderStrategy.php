@@ -1,9 +1,9 @@
 <?php
 
-namespace Lmc\Steward\Test\Fixtures;
+namespace Lmc\Steward\Process\Fixtures;
 
 use Fhaculty\Graph\Algorithm\Tree\OutTree;
-use Lmc\Steward\Test\OptimizeOrderInterface;
+use Lmc\Steward\Process\OptimizeOrderInterface;
 
 class MockOrderStrategy implements OptimizeOrderInterface
 {

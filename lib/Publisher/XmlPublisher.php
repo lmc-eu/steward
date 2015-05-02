@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Publisher;
 
-use Lmc\Steward\Test\ConfigProvider;
+use Lmc\Steward\ConfigProvider;
 
 class XmlPublisher extends AbstractPublisher
 {

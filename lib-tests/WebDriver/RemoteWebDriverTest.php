@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\WebDriver;
 
-use Lmc\Steward\Test\ConfigHelper;
+use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\WebDriver\Fixtures\DummyCommandExecutor;
 
 class RemoteWebDriverTest extends \PHPUnit_Framework_TestCase

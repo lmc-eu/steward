@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Test;
 
 use Lmc\Steward\Component\TestUtils;
+use Lmc\Steward\ConfigProvider;
 
 /**
  * Abstract test case to be used by all test cases.

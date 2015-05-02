@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Component;
 
-use Lmc\Steward\Test\ConfigProvider;
+use Lmc\Steward\ConfigProvider;
 
 /**
  * Common test utils and syntax sugar for tests.

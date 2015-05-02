@@ -3,7 +3,7 @@
 namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\Test\AbstractTestCase;
-use Lmc\Steward\Test\ConfigProvider;
+use Lmc\Steward\ConfigProvider;
 use Nette\Utils\Strings;
 
 /**

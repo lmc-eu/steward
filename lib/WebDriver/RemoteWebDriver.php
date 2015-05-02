@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\WebDriver;
 
-use Lmc\Steward\Test\ConfigProvider;
+use Lmc\Steward\ConfigProvider;
 
 /**
  * Extends RemoteWebDriver with some extra logic, ie. more verbose logging.

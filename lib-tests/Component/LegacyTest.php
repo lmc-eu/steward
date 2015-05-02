@@ -4,7 +4,7 @@ namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Component\Fixtures\StringableObject;
 use Lmc\Steward\Test\AbstractTestCase;
-use Lmc\Steward\Test\ConfigHelper;
+use Lmc\Steward\ConfigHelper;
 
 class LegacyTest extends \PHPUnit_Framework_TestCase
 {

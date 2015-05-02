@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Test;
+namespace Lmc\Steward\Process;
 
 use Fhaculty\Graph\Algorithm\Tree\OutTree;
 use Fhaculty\Graph\Graph;
