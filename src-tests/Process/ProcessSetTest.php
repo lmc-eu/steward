@@ -2,8 +2,8 @@
 
 namespace Lmc\Steward\Process;
 
-use Lmc\Steward\Process\Fixtures\DummyPublisher;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
+use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\Process;
 
@@ -14,8 +14,7 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $publisher = new DummyPublisher(null, null, null);
-        $this->set = new ProcessSet($publisher);
+        $this->set = new ProcessSet();
     }
 
     public function testShouldBeCountable()
@@ -100,6 +99,48 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $this->set->get(ProcessSet::PROCESS_STATUS_PREPARED));
     }
 
+    public function testShouldPublishProcessWhenAdded()
+    {
+        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $publisherMock->expects($this->once())
+            ->method('publishResults')
+            ->with(
+                'FooClassName',
+                ProcessSet::PROCESS_STATUS_QUEUED,
+                $this->identicalTo(null),
+                $this->identicalTo(null),
+                $this->identicalTo(null)
+            );
+
+        $set = new ProcessSet($publisherMock);
+        $set->add(new Process(''), 'FooClassName');
+    }
+
+    public function testShouldAllowToDefinePublisherUsingSetter()
+    {
+        $set = new ProcessSet();
+
+        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $publisherMock->expects($this->once())
+            ->method('publishResults')
+            ->with(
+                'FooClassName',
+                ProcessSet::PROCESS_STATUS_QUEUED,
+                $this->identicalTo(null),
+                $this->identicalTo(null),
+                $this->identicalTo(null)
+            );
+
+        $set->setPublisher($publisherMock);
+        $set->add(new Process(''), 'FooClassName');
+    }
+
     public function testShouldAddAndGetProcess()
     {
         $this->set->add(new Process(''), 'Foo');
@@ -147,6 +188,27 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
 
         // no queued process left
         $this->assertCount(0, $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED));
+    }
+
+    public function testShouldPublishProcessStatusWhenStatusWasSet()
+    {
+        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $publisherMock->expects($this->at(1))
+            ->method('publishResults')
+            ->with(
+                'FooClassName',
+                ProcessSet::PROCESS_STATUS_DONE,
+                'passed',
+                $this->identicalTo(null),
+                $this->identicalTo(null)
+            );
+
+        $set = new ProcessSet($publisherMock);
+        $set->add(new Process(''), 'FooClassName');
+        $set->setStatus('FooClassName', ProcessSet::PROCESS_STATUS_DONE);
     }
 
     /**

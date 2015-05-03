@@ -69,6 +69,14 @@ class ProcessSet implements \Countable
     }
 
     /**
+     * @param AbstractPublisher $publisher
+     */
+    public function setPublisher(AbstractPublisher $publisher)
+    {
+        $this->publisher = $publisher;
+    }
+
+    /**
      * Get count of all processes in the set
      * @return int
      */
@@ -131,7 +139,9 @@ class ProcessSet implements \Countable
 
         $this->graph->createVertex($className);
 
-        $this->publisher->publishResults($className, self::PROCESS_STATUS_QUEUED, '');
+        if ($this->publisher) {
+            $this->publisher->publishResults($className, self::PROCESS_STATUS_QUEUED, null);
+        }
     }
 
     /**
@@ -193,7 +203,10 @@ class ProcessSet implements \Countable
                     break;
             }
         }
-        $this->publisher->publishResults($className, $status, $result);
+
+        if ($this->publisher) {
+            $this->publisher->publishResults($className, $status, $result);
+        }
     }
 
     /**
