@@ -187,7 +187,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertContains('by pattern "NotExisting.foo"', $this->tester->getDisplay());
-        $this->assertContains('No testcases matched given criteria, exiting.', $this->tester->getDisplay());
+        $this->assertContains('No testcases found, exiting.', $this->tester->getDisplay());
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
@@ -231,13 +231,8 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testShouldDispatchProcessEvent()
-    {
-        $this->markTestIncomplete();
-    }
-
     /**
-     * Get Selenium adapter mocking connection as OK
+     * Mock Selenium adapter as if connection is OK
      *
      * @return SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject
      */

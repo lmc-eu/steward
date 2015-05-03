@@ -34,8 +34,8 @@ class InstallCommand extends Command
     }
 
     /**
-     * @return Downloader
      * @codeCoverageIgnore
+     * @return Downloader
      */
     public function getDownloader()
     {

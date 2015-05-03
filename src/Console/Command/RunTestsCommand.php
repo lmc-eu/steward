@@ -5,9 +5,9 @@ namespace Lmc\Steward\Console\Command;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
-use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Process\MaxTotalDelayStrategy;
 use Lmc\Steward\Process\ProcessSet;
+use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,10 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Finder\Finder;
-use Nette\Reflection\AnnotationsParser;
-use Nette\Utils\Strings;
 
 /**
  * Run tests command is used to start Steward test planner and execute tests one by one,
@@ -29,7 +26,6 @@ class RunTestsCommand extends Command
 {
     /** @var SeleniumServerAdapter */
     protected $seleniumAdapter;
-
     /**
      * @param SeleniumServerAdapter $seleniumAdapter
      */
@@ -39,6 +35,7 @@ class RunTestsCommand extends Command
     }
 
     /**
+     * @codeCoverageIgnore
      * @return SeleniumServerAdapter
      */
     public function getSeleniumAdapter()
@@ -50,6 +47,17 @@ class RunTestsCommand extends Command
         return $this->seleniumAdapter;
     }
 
+    const ARGUMENT_ENVIRONMENT = 'environment';
+    const ARGUMENT_BROWSER = 'browser';
+    const OPTION_SERVER_URL = 'server-url';
+    const OPTION_TESTS_DIR = 'tests-dir';
+    const OPTION_FIXTURES_DIR = 'fixtures-dir';
+    const OPTION_LOGS_DIR = 'logs-dir';
+    const OPTION_PATTERN = 'pattern';
+    const OPTION_GROUP = 'group';
+    const OPTION_EXCLUDE_GROUP = 'exclude-group';
+    const OPTION_PUBLISH_RESULTS = 'publish-results';
+
     /**
      * Configure command
      */
@@ -58,63 +66,63 @@ class RunTestsCommand extends Command
         $this->setName('run-tests')
             ->setDescription('Run tests planner and execute tests')
             ->addArgument(
-                'environment',
+                self::ARGUMENT_ENVIRONMENT,
                 InputArgument::REQUIRED,
                 'Environment name (must be specified to avoid unintentional run against production)'
             )
             ->addArgument(
-                'browser',
+                self::ARGUMENT_BROWSER,
                 InputArgument::REQUIRED,
                 'Browser in which tests should be run'
             )
             ->addOption(
-                'server-url',
+                self::OPTION_SERVER_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Selenium server (hub) hub hostname and port',
                 'http://localhost:4444'
             )
             ->addOption(
-                'tests-dir',
+                self::OPTION_TESTS_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with tests',
                 realpath(STEWARD_BASE_DIR . '/tests')
             )
             ->addOption(
-                'fixtures-dir',
+                self::OPTION_FIXTURES_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Base path to directory with fixture files',
                 realpath(STEWARD_BASE_DIR . '/tests')
             )->addOption(
-                'logs-dir',
+                self::OPTION_LOGS_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with logs',
                 realpath(STEWARD_BASE_DIR . '/logs')
             )
             ->addOption(
-                'pattern',
+                self::OPTION_PATTERN,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Pattern for test files to be run',
                 '*Test.php'
             )
             ->addOption(
-                'group',
+                self::OPTION_GROUP,
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Only run testcases with specified @group of this name'
             )
             ->addOption(
-                'exclude-group',
+                self::OPTION_EXCLUDE_GROUP,
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Exclude testcases with specified @group from being run'
             )
             ->addOption(
-                'publish-results',
+                self::OPTION_PUBLISH_RESULTS,
                 null,
                 InputOption::VALUE_NONE,
                 'Publish test results to test storage'
@@ -137,17 +145,17 @@ class RunTestsCommand extends Command
             . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
         );
 
-        $output->writeln(sprintf('Browser: %s', $input->getArgument('browser')));
-        $output->writeln(sprintf('Environment: %s', $input->getArgument('environment')));
+        $output->writeln(sprintf('Browser: %s', $input->getArgument(self::ARGUMENT_BROWSER)));
+        $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
 
         // Tests directories exists
         $testDirectoriesResult = $this->testDirectories(
             $input,
             $output,
             [
-                $this->getDefinition()->getOption('tests-dir'),
-                $this->getDefinition()->getOption('logs-dir'),
-                $this->getDefinition()->getOption('fixtures-dir'),
+                $this->getDefinition()->getOption(self::OPTION_TESTS_DIR),
+                $this->getDefinition()->getOption(self::OPTION_LOGS_DIR),
+                $this->getDefinition()->getOption(self::OPTION_FIXTURES_DIR),
             ]
         );
         if (!$testDirectoriesResult) {
@@ -155,9 +163,15 @@ class RunTestsCommand extends Command
         }
 
         if ($output->isDebug()) {
-            $output->writeln(sprintf('Base path to fixtures results: %s', $input->getOption('fixtures-dir')));
-            $output->writeln(sprintf('Path to logs: %s', $input->getOption('logs-dir')));
-            $output->writeln(sprintf('Publish results: %s', ($input->getOption('publish-results')) ? 'yes' : 'no'));
+            $output->writeln(
+                sprintf('Base path to fixtures results: %s', $input->getOption(self::OPTION_FIXTURES_DIR))
+            );
+            $output->writeln(
+                sprintf('Path to logs: %s', $input->getOption(self::OPTION_LOGS_DIR))
+            );
+            $output->writeln(
+                sprintf('Publish results: %s', ($input->getOption(self::OPTION_PUBLISH_RESULTS)) ? 'yes' : 'no')
+            );
         }
 
         $this->getDispatcher()->dispatch(
@@ -165,26 +179,40 @@ class RunTestsCommand extends Command
             new ExtendedConsoleEvent($this, $input, $output)
         );
 
-        if (!$this->testSeleniumConnection($output, $input->getOption('server-url'))) {
+        if (!$this->testSeleniumConnection($output, $input->getOption(self::OPTION_SERVER_URL))) {
             return 1;
         }
 
         // Find all files holding test-cases
+        $output->writeln('Searching for testcases:');
+        $output->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
+        $output->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
+
         $files = (new Finder())
             ->useBestAdapter()
             ->files()
-            ->in($input->getOption('tests-dir'))
-            ->name($input->getOption('pattern'));
+            ->in($input->getOption(self::OPTION_TESTS_DIR))
+            ->name($input->getOption(self::OPTION_PATTERN));
 
-        // Build set of processes prepared to be run
-        $processSet = $this->prepareProcessSet(
-            $input,
-            $output,
-            $files
+        if (!count($files)) {
+            $output->writeln('No testcases found, exiting.');
+
+            return 1;
+        }
+
+        $xmlPublisher = new XmlPublisher($input->getArgument(self::ARGUMENT_ENVIRONMENT), null, null);
+        $xmlPublisher->setFileDir($input->getOption(self::OPTION_LOGS_DIR));
+        $xmlPublisher->clean();
+
+        $processSetCreator = new ProcessSetCreator($this, $input, $output, $xmlPublisher);
+        $processSet = $processSetCreator->createFromFiles(
+            $files,
+            $input->getOption(self::OPTION_GROUP),
+            $input->getOption(self::OPTION_EXCLUDE_GROUP)
         );
 
         if (!count($processSet)) {
-            $output->writeln('No testcases matched given criteria, exiting.');
+            $output->writeln('No testcases matched given groups, exiting.');
 
             return 1;
         }
@@ -197,125 +225,6 @@ class RunTestsCommand extends Command
 
         // Start execution loop
         $this->executionLoop($output, $processSet);
-    }
-
-    /**
-     * Fill ProcessSet with test-cases from $files
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param Finder $files
-     * @return ProcessSet
-     */
-    protected function prepareProcessSet(InputInterface $input, OutputInterface $output, $files)
-    {
-        $output->writeln('Searching for testcases:');
-        if ($input->getOption('group')) {
-            $output->writeln(sprintf(' - in group(s): %s', implode(', ', $input->getOption('group'))));
-        }
-        if ($input->getOption('exclude-group')) {
-            $output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $input->getOption('exclude-group'))));
-        }
-        $output->writeln(sprintf(' - in directory "%s"', $input->getOption('tests-dir')));
-        $output->writeln(sprintf(' - by pattern "%s"', $input->getOption('pattern')));
-
-        $xmlPublisher = new XmlPublisher($input->getArgument('environment'), null, null);
-        $xmlPublisher->setFileDir($input->getOption('logs-dir'));
-        $xmlPublisher->clean();
-
-        $processSet = new ProcessSet($xmlPublisher);
-
-        $testCasesNum = 0;
-        foreach ($files as $file) {
-            $fileName = $file->getRealpath();
-            // Parse classes from the testcase file
-            $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
-
-            // Get annotations for the first class in testcase (one file = one class)
-            $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
-
-            // Filter out test-cases having any of excluded groups
-            if ($input->getOption('exclude-group') && array_key_exists('group', $annotations)
-                && count($excludingGroups = array_intersect($input->getOption('exclude-group'), $annotations['group']))
-            ) {
-                if ($output->isDebug()) {
-                    $output->writeln(
-                        sprintf(
-                            'Excluding testcase file %s with group %s',
-                            $fileName,
-                            implode(', ', $excludingGroups)
-                        )
-                    );
-                }
-                continue;
-            }
-
-            // Filter out test-cases without any matching group
-            if ($input->getOption('group')) {
-                if (!array_key_exists('group', $annotations)
-                    || !count($matchingGroups = array_intersect($input->getOption('group'), $annotations['group']))
-                ) {
-                    continue;
-                }
-
-                if ($output->isDebug()) {
-                    $output->writeln(
-                        sprintf(
-                            'Found testcase file #%d in group %s: %s',
-                            ++$testCasesNum,
-                            implode(', ', $matchingGroups),
-                            $fileName
-                        )
-                    );
-                }
-            } else {
-                if ($output->isDebug()) {
-                    $output->writeln(sprintf('Found testcase file #%d: %s', ++$testCasesNum, $fileName));
-                }
-            }
-
-            $phpunitArgs = [
-                '--log-junit=logs/'
-                . Strings::webalize(key($classes), null, $lower = false)
-                . '.xml',
-                '--configuration=' . realpath(__DIR__ . '/../../phpunit.xml'),
-            ];
-
-            // If ANSI output is enabled, turn on colors in PHPUnit
-            if ($output->isDecorated()) {
-                $phpunitArgs[] = '--colors';
-            }
-
-            // Prepare Processes for each testcase
-            $processBuilder = new ProcessBuilder();
-
-            $this->getDispatcher()->dispatch(
-                CommandEvents::RUN_TESTS_PROCESS,
-                $processEvent = new RunTestsProcessEvent($this, $input, $output, $processBuilder, $phpunitArgs)
-            );
-
-            $process = $processBuilder
-                ->setEnv('BROWSER_NAME', $input->getArgument('browser'))
-                ->setEnv('ENV', strtolower($input->getArgument('environment')))
-                ->setEnv('SERVER_URL', $input->getOption('server-url'))
-                ->setEnv('PUBLISH_RESULTS', $input->getOption('publish-results') ? '1' : '0')
-                ->setEnv('FIXTURES_DIR', $input->getOption('fixtures-dir'))
-                ->setEnv('LOGS_DIR', $input->getOption('logs-dir'))
-                ->setEnv('DEBUG', $output->isDebug() ? '1' : '0')
-                ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
-                ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
-                ->setTimeout(3600) // 1 hour timeout to end possibly stuck processes
-                ->getProcess();
-
-            $processSet->add(
-                $process,
-                key($classes),
-                $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '',
-                $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null
-            );
-        }
-
-        return $processSet;
     }
 
     /**

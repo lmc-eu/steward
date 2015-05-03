@@ -1,0 +1,2 @@
+This directory is the default where RunTests command looks for tests. Thus it needs to be kept empty, so the command
+will stop without executing any tests.
