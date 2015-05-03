@@ -8,6 +8,7 @@
     <testsuite name="Steward">
         <directory>./</directory>
         <exclude>./Process/Fixtures</exclude>
+        <exclude>./Console/Command/Fixtures</exclude>
     </testsuite>
 
     <filter>

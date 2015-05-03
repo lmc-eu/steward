@@ -5,10 +5,13 @@ namespace Lmc\Steward\Console\Command;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use Lmc\Steward\Process\ProcessSet;
+use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Finder\Finder;
 
 /**
  * @covers Lmc\Steward\Console\Command\RunTestsCommand
@@ -172,7 +175,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldStopIfNoTestcasesFoundByGivenPattern()
+    public function testShouldStopIfNoTestcasesFoundByGivenFilePattern()
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
@@ -229,6 +232,79 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         (new CommandTester($command))->execute(
             ['command' => $command->getName(), 'environment' => 'staging', 'browser' => 'firefox']
         );
+    }
+
+    public function testShouldStopIfNoTestcasesWereFoundInTheFiles()
+    {
+        $seleniumAdapterMock = $this->getSeleniumAdapterMock();
+        $creatorMock = $this->getMockBuilder(ProcessSetCreator::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createFromFiles'])
+            ->getMock();
+
+        // Mock createFromFiles() to return empty processSet, and also ensure groups are passed to the processSetCreator
+        $creatorMock->expects($this->once())
+            ->method('createFromFiles')
+            ->with(
+                $this->logicalAnd($this->isInstanceOf(Finder::class), $this->countOf(1)),
+                ['included'],
+                ['excluded']
+            )
+            ->willReturn(new ProcessSet());
+
+        $this->command->setSeleniumAdapter($seleniumAdapterMock);
+        $this->command->setProcessSetCreator($creatorMock);
+
+        $this->tester->execute(
+            [
+                'command' => $this->command->getName(),
+                'environment' => 'staging',
+                'browser' => 'firefox',
+                '--group' => ['included'],
+                '--exclude-group' => ['excluded'],
+                '--tests-dir' => __DIR__ . '/Fixtures/DummyTests', // There should by only one test class
+            ]
+        );
+
+        $this->assertContains('No testcases matched given groups, exiting.', $this->tester->getDisplay());
+        $this->assertSame(1, $this->tester->getStatusCode());
+    }
+
+    /**
+     * @todo Separate to tests for ExecutionLoop
+     */
+    public function testShouldExitSuccessfullyIfNoProcessArePreparedOrQueued()
+    {
+        $seleniumAdapterMock = $this->getSeleniumAdapterMock();
+
+        $processSetMock = $this->getMockBuilder(ProcessSet::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $processSetMock->expects($this->any())
+            ->method('count')
+            ->willReturn(333);
+
+        $creatorMock = $this->getMockBuilder(ProcessSetCreator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $creatorMock->expects($this->once())
+            ->method('createFromFiles')
+            ->willReturn($processSetMock);
+
+        $this->command->setSeleniumAdapter($seleniumAdapterMock);
+        $this->command->setProcessSetCreator($creatorMock);
+
+        $this->tester->execute(
+            [
+                'command' => $this->command->getName(),
+                'environment' => 'staging',
+                'browser' => 'firefox',
+                '--tests-dir' => __DIR__ . '/Fixtures/DummyTests',
+            ]
+        );
+
+        $this->assertContains('No tasks left, exiting the execution loop...', $this->tester->getDisplay());
+        $this->assertSame(0, $this->tester->getStatusCode());
     }
 
     /**

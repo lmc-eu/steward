@@ -26,26 +26,8 @@ class RunTestsCommand extends Command
 {
     /** @var SeleniumServerAdapter */
     protected $seleniumAdapter;
-    /**
-     * @param SeleniumServerAdapter $seleniumAdapter
-     */
-    public function setSeleniumAdapter(SeleniumServerAdapter $seleniumAdapter)
-    {
-        $this->seleniumAdapter = $seleniumAdapter;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     * @return SeleniumServerAdapter
-     */
-    public function getSeleniumAdapter()
-    {
-        if (!$this->seleniumAdapter) {
-            $this->seleniumAdapter = new SeleniumServerAdapter();
-        }
-
-        return $this->seleniumAdapter;
-    }
+    /** @var ProcessSetCreator */
+    protected $processSetCreator;
 
     const ARGUMENT_ENVIRONMENT = 'environment';
     const ARGUMENT_BROWSER = 'browser';
@@ -57,6 +39,22 @@ class RunTestsCommand extends Command
     const OPTION_GROUP = 'group';
     const OPTION_EXCLUDE_GROUP = 'exclude-group';
     const OPTION_PUBLISH_RESULTS = 'publish-results';
+
+    /**
+     * @param SeleniumServerAdapter $seleniumAdapter
+     */
+    public function setSeleniumAdapter(SeleniumServerAdapter $seleniumAdapter)
+    {
+        $this->seleniumAdapter = $seleniumAdapter;
+    }
+
+    /**
+     * @param ProcessSetCreator $processSetCreator
+     */
+    public function setProcessSetCreator(ProcessSetCreator $processSetCreator)
+    {
+        $this->processSetCreator = $processSetCreator;
+    }
 
     /**
      * Configure command
@@ -200,11 +198,7 @@ class RunTestsCommand extends Command
             return 1;
         }
 
-        $xmlPublisher = new XmlPublisher($input->getArgument(self::ARGUMENT_ENVIRONMENT), null, null);
-        $xmlPublisher->setFileDir($input->getOption(self::OPTION_LOGS_DIR));
-        $xmlPublisher->clean();
-
-        $processSetCreator = new ProcessSetCreator($this, $input, $output, $xmlPublisher);
+        $processSetCreator = $this->getProcessSetCreator($input, $output);
         $processSet = $processSetCreator->createFromFiles(
             $files,
             $input->getOption(self::OPTION_GROUP),
@@ -225,6 +219,38 @@ class RunTestsCommand extends Command
 
         // Start execution loop
         $this->executionLoop($output, $processSet);
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @return SeleniumServerAdapter
+     */
+    protected function getSeleniumAdapter()
+    {
+        if (!$this->seleniumAdapter) {
+            $this->seleniumAdapter = new SeleniumServerAdapter();
+        }
+
+        return $this->seleniumAdapter;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return ProcessSetCreator
+     */
+    protected function getProcessSetCreator(InputInterface $input, OutputInterface $output)
+    {
+        if (!$this->processSetCreator) {
+            $xmlPublisher = new XmlPublisher($input->getArgument(self::ARGUMENT_ENVIRONMENT), null, null);
+            $xmlPublisher->setFileDir($input->getOption(self::OPTION_LOGS_DIR));
+            $xmlPublisher->clean();
+
+            $this->processSetCreator = new ProcessSetCreator($this, $input, $output, $xmlPublisher);
+        }
+
+        return $this->processSetCreator;
     }
 
     /**
