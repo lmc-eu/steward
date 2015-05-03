@@ -85,6 +85,9 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult('testCaseName', 'testName', 'started', 'unknownResult');
     }
 
+    /**
+     * @return array
+     */
     public function testShouldAddTestResultToEmptyFile()
     {
         $fileName = $this->createEmptyFile();
@@ -92,7 +95,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
 
         /** @var \SimpleXMLElement $xml */
-        $xml = simplexml_load_file($fileName)[0];
+        $fullXml = simplexml_load_file($fileName);
+        $xml = $fullXml[0];
 
         $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
@@ -105,10 +109,10 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($xml->testcase->test['result']);
 
         $this->assertNotEmpty($xml->testcase->test['start']);
-        $startDate = $xml->testcase->test['start'];
+        $startDate = (string) $xml->testcase->test['start']; // convert to string so it could be serialized by PHPUnit
         $this->assertEmpty($xml->testcase->test['end']);
 
-        return [$fileName, $startDate];
+        return [$fileName, $fullXml->asXML(), $startDate];
     }
 
     /**
@@ -118,7 +122,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     public function testShouldUpdateTestStatusWhenTestIsDone($params)
     {
         $fileName = $params[0];
-        $originalTestStartDate = $params[1];
+        $xml = $params[1];
+        $originalTestStartDate = $params[2];
+
+        // Restore file contents (in process isolation the tearDownAfterClass would be called and file would be empty)
+        file_put_contents($fileName, $xml);
 
         $this->publisher->setFileName(basename($fileName));
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'done', 'passed');
