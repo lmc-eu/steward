@@ -1,10 +1,13 @@
 <?php
 
-namespace Lmc\Steward\Console\EventListener;
+namespace Lmc\Steward\Console\EventListener\ListenerInstantiator;
 
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+/**
+ * @covers Lmc\Steward\Console\EventListener\ListenerInstantiator
+ */
 class ListenerInstantiatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ListenerInstantiator */
