@@ -85,18 +85,11 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], []);
 
-        $this->assertInstanceOf(ProcessSet::class, $processSet);
-        $this->assertCount(3, $processSet);
-
-        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-
-        $this->assertArrayHasKey(self::NAME_DUMMY_TEST, $processes);
-        $this->assertArrayHasKey(self::NAME_BAR_TEST, $processes);
-        $this->assertArrayHasKey(self::NAME_FOO_TEST, $processes);
+        $this->assertQueuedTests([self::NAME_DUMMY_TEST, self::NAME_BAR_TEST, self::NAME_FOO_TEST], $processSet);
 
         // Test properties of DummyTest
-
         /** @var Process $dummyTestProcess */
+        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
         $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->process;
         $testCommand = $dummyTestProcess->getCommandLine();
         $testEnv = $dummyTestProcess->getEnv();
@@ -123,12 +116,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), ['bar', 'foo'], []);
 
-        $this->assertInstanceOf(ProcessSet::class, $processSet);
-        $this->assertCount(2, $processSet);
-        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-
-        $this->assertArrayHasKey(self::NAME_BAR_TEST, $processes);
-        $this->assertArrayHasKey(self::NAME_FOO_TEST, $processes);
+        $this->assertQueuedTests([self::NAME_BAR_TEST, self::NAME_FOO_TEST], $processSet);
 
         $output = $this->bufferedOutput->fetch();
         $this->assertContains('by group(s): bar, foo', $output);
@@ -140,11 +128,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], ['bar', 'foo']);
 
-        $this->assertInstanceOf(ProcessSet::class, $processSet);
-        $this->assertCount(1, $processSet);
-        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-
-        $this->assertArrayHasKey(self::NAME_DUMMY_TEST, $processes);
+        $this->assertQueuedTests([self::NAME_DUMMY_TEST], $processSet);
 
         $output = $this->bufferedOutput->fetch();
         $this->assertContains('excluding group(s): bar, foo', $output);
@@ -157,11 +141,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         // group "both" gets included (incl. GroupFooTest and GroupBarTest), but "GroupBarTest" gets excluded
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), ['both'], ['bar']);
 
-        $this->assertInstanceOf(ProcessSet::class, $processSet);
-        $this->assertCount(1, $processSet);
-        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-
-        $this->assertArrayHasKey(self::NAME_FOO_TEST, $processes);
+        $this->assertQueuedTests([self::NAME_FOO_TEST], $processSet);
 
         $output = $this->bufferedOutput->fetch();
         $this->assertContains('by group(s): both', $output);
@@ -258,5 +238,21 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             ->files()
             ->in(__DIR__ . '/Fixtures/DummyTests')
             ->name($pattern);
+    }
+
+    /**
+     * Assert ProcessSet consists only of tests of expected names
+     * @param array $expectedTestNames
+     * @param ProcessSet $processSet
+     */
+    protected function assertQueuedTests(array $expectedTestNames, $processSet)
+    {
+        $this->assertInstanceOf(ProcessSet::class, $processSet);
+        $this->assertCount(count($expectedTestNames), $processSet);
+        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
+
+        foreach ($expectedTestNames as $expectedTestName) {
+            $this->assertArrayHasKey($expectedTestName, $processes);
+        }
     }
 }
