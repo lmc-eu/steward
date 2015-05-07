@@ -9,6 +9,8 @@
 
 ### Changed
 - BC: Global configuration constants replaced with Config object accessed through ConfigProvider. Thus all the global constants (BROWSER_NAME, ENV, SERVER_URL, PUBLISH_RESULTS, FIXTURES_DIR, LOGS_DIR, DEBUG) are no longer available, use the Config object instead.
+- BC: `lib/` and `lib-tests/` directories renamed to `src/` and `src-tests/` respectively.
+- BC: Changed namespaces of eg. `ConfigProvider` and `ProcessSet`.
 
 ## 0.12.0 - 2015-02-12
 ### Changed
