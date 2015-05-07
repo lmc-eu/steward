@@ -1,4 +1,4 @@
-# Steward - makes Selenium WebDriver + PHPUnit testing easy and robust
+# Steward: easy and robust testing with Selenium WebDriver + PHPUnit
 
 Steward is set of libraries made to simplify writing and running robust functional system tests in
 [PHPUnit](https://phpunit.de/) using [Selenium WebDriver](http://www.seleniumhq.org/). 
@@ -12,9 +12,10 @@ Steward is set of libraries made to simplify writing and running robust function
 - If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all.
 - You can extend it easily by eg. registering custom events to EventDispatcher. Thus you can ie. add custom configuration options or change parameters passed to PHPUnit processes.
 - Status of the tests could be clearly watched during tests execution, so you will easily know, how many test were already finished and what was their result.
-- It is field tested - we use it daily in our company to maintain quality of our various products thanks to hundreds of test-cases.
+- It is field tested - we use it daily in our company to maintain quality of our various products thanks to hundreds of test-cases. The library itself is also extensively covered with unit tests.
 - Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser browser automation,
 [php-webdriver](https://github.com/facebook/php-webdriver) is the most used and developed Selenium language binding for PHP,
+[PHPUnit](https://phpunit.de/) is well known and widely used testing framework and
 [Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) is industry standard for PHP CLI applications.
 
 ## Changelog
@@ -53,8 +54,8 @@ download the Selenium without any interaction and print absolute path to the jar
 To provide you the Steward functionality, your tests have to extend the `Lmc\Steward\Test\AbstractTestCase` class.
 
 You must also configure [PSR-4 autoloading](http://www.php-fig.org/psr/psr-4/) so that your tests could be found by
-Steward. For to following example it is as easy as adding following to your `composer.json`:
- 
+Steward. For the following example it is as easy as adding following to your `composer.json`:
+
 ```json
     "autoload": {
         "psr-4": {
@@ -139,9 +140,8 @@ The log is printed to the console where you run the `run-tests` command. But thi
 So for each testcase there is separate file in JUnit XML format, placed in `logs/` directory. Also screenshots and HTML snapsnots are saved into this directory (they are automatically generated on failed assertion or if some WebDriver command fails).
 
 During the tests execution check file `logs/results.xml` (you must access it through webserver, as the XSLT won't work and you will see plain XML) to see current status of tests.
- 
-## How Steward works
-Read more about Steward's theory of operation in project wiki (TBD).
+
+![Example output as displayed in logs/results.xml file](https://lmc-eu.github.io/steward/images/results-output-example.png)
 
 ## License
 Steward is open source software licensed under the [MIT license](LICENCE.md).
