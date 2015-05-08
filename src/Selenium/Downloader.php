@@ -28,7 +28,7 @@ class Downloader
      */
     public static function getLatestVersion()
     {
-        $data = file_get_contents(self::$storageUrl);
+        $data = @file_get_contents(self::$storageUrl);
         if (!$data) {
             return false;
         }

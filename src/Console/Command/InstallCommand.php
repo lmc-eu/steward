@@ -85,11 +85,31 @@ class InstallCommand extends Command
             /** @var QuestionHelper $questionHelper */
             $questionHelper = $this->getHelper('question');
 
-            $question = new Question(
-                '<question>Enter Selenium server version to install:</question> '
-                . ($latestVersion ? "[$latestVersion] " : ''),
-                $latestVersion
-            );
+            $questionText = '<question>Enter Selenium server version to install:</question> ';
+
+            if ($latestVersion) {
+                $question = new Question($questionText . "[$latestVersion] ", $latestVersion);
+            } else { // Error auto-detecting latest version
+                $latestVersionErrorMsg = 'Please provide version to download (latest version auto-detect failed)';
+
+                if ($input->isInteractive()) { // in interactive mode require version to be specified
+                    $question = new Question($questionText);
+                    $question->setValidator(
+                        function ($answer) use ($latestVersionErrorMsg) {
+                            if (empty($answer)) {
+                                throw new \RuntimeException($latestVersionErrorMsg);
+                            }
+
+                            return $answer;
+                        }
+                    );
+                } else { // in non-interactive mode fail, as we have nowhere to get the version number
+                    $output->writeln('<error>' . $latestVersionErrorMsg . '</error>');
+
+                    return 1;
+                }
+            }
+
             $version = $questionHelper->ask($input, $output, $question);
         }
 
