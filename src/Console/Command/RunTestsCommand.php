@@ -139,8 +139,11 @@ class RunTestsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(
-            'Steward is running the tests...'
-            . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
+            sprintf(
+                '<info>Steward</info> <comment>%s</comment> is running the tests...%s',
+                $this->getApplication()->getVersion(),
+                (!getenv('JOB_NAME') ? ' Just for you <fg=red><3</fg=red>!' : '') // in jenkins it is not just for you
+            )
         );
 
         $output->writeln(sprintf('Browser: %s', $input->getArgument(self::ARGUMENT_BROWSER)));

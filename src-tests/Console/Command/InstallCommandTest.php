@@ -7,6 +7,7 @@ use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -40,7 +41,8 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
             [
                 'command' => $this->command->getName(),
                 'version' => '6.3.6',
-            ]
+            ],
+            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
 
         $this->assertContains(
@@ -58,12 +60,12 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
         $this->mockLatestVersionCheck();
         $this->mockUserInput("\n"); // just press enter when asking for version to install to confirm default
 
-        $this->tester->execute(['command' => $this->command->getName()]);
-
-        $this->assertContains(
-            'Enter Selenium server version to install: [5.67.8]',
-            $this->tester->getDisplay()
+        $this->tester->execute(
+            ['command' => $this->command->getName()],
+            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
+
+        $this->assertContains('Enter Selenium server version to install: [5.67.8]', $this->tester->getDisplay());
 
         // Check latest version was downloaded
         $this->assertContains(
@@ -79,7 +81,10 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
         $this->mockLatestVersionCheck();
         $this->mockUserInput("1.33.7\n");
 
-        $this->tester->execute(['command' => $this->command->getName()]);
+        $this->tester->execute(
+            ['command' => $this->command->getName()],
+            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
+        );
 
         // Check custom version was downloaded
         $this->assertContains(
