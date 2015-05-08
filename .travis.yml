@@ -8,13 +8,12 @@ install:
   - composer install --no-interaction
 
 before_script:
-  - cd src-tests/
-  - mkdir -p logs/
-  - mkdir -p coverage/
+  - mkdir -p src-tests/logs/
+  - mkdir -p src-tests/coverage/
 
 script:
-  ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml
+  - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml
+  - cd .. && vendor/bin/phpcs --standard=ruleset.xml
 
 after_script:
-  - cd ../
-  - php vendor/bin/coveralls -v -c .coveralls.yml
+  - vendor/bin/coveralls -v -c .coveralls.yml
