@@ -34,7 +34,8 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "~2.0",
-        "php-mock/php-mock-phpunit": "^0.3"
+        "php-mock/php-mock-phpunit": "^0.3",
+        "satooshi/php-coveralls": "dev-master"
     },
     "suggest": {
         "ext-posix": "For colored output",
