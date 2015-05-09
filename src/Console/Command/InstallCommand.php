@@ -73,7 +73,7 @@ class InstallCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $verboseOutput = false;
-        if ($input->isInteractive() || $output->isVeryVerbose()) {
+        if ($input->isInteractive() || $output->isVerbose()) {
             $verboseOutput = true;
         }
 
@@ -85,25 +85,48 @@ class InstallCommand extends Command
             /** @var QuestionHelper $questionHelper */
             $questionHelper = $this->getHelper('question');
 
-            $question = new Question(
-                '<question>Enter Selenium server version to install:</question> '
-                . ($latestVersion ? "[$latestVersion] " : ''),
-                $latestVersion
-            );
+            $questionText = '<question>Enter Selenium server version to install:</question> ';
+
+            if ($latestVersion) {
+                $question = new Question($questionText . "[$latestVersion] ", $latestVersion);
+            } else { // Error auto-detecting latest version
+                $latestVersionErrorMsg = 'Please provide version to download (latest version auto-detect failed)';
+
+                if ($input->isInteractive()) { // in interactive mode require version to be specified
+                    $question = new Question($questionText);
+                    $question->setValidator(
+                        function ($answer) use ($latestVersionErrorMsg) {
+                            if (empty($answer)) {
+                                throw new \RuntimeException($latestVersionErrorMsg);
+                            }
+
+                            return $answer;
+                        }
+                    );
+                } else { // in non-interactive mode fail, as we have nowhere to get the version number
+                    $output->writeln('<error>' . $latestVersionErrorMsg . '</error>');
+
+                    return 1;
+                }
+            }
+
             $version = $questionHelper->ask($input, $output, $question);
         }
 
         if ($verboseOutput) {
             $output->writeln(
-                'Steward is now downloading Selenium standalone server...'
-                . (!getenv('JOB_NAME') ? ' Just for you <3!' : '') // in jenkins it is not just for you, sorry
+                sprintf(
+                    '<info>Steward</info> <comment>%s</comment> is now downloading the Selenium standalone server...%s',
+                    $this->getApplication()->getVersion(),
+                    (!getenv('JOB_NAME') ? ' Just for you <fg=red><3</fg=red>!' : '')
+                )
             );
         }
 
         $downloader = $this->getDownloader();
         $downloader->setVersion($version);
 
-        if ($verboseOutput) {
+        if ($output->isVerbose()) {
             $output->writeln(sprintf('Version: %s', $version));
             $output->writeln(sprintf('File URL: %s', $downloader->getFileUrl()));
             $output->writeln(sprintf('Target file path: %s', $downloader->getFilePath()));
@@ -132,7 +155,7 @@ class InstallCommand extends Command
         $downloadedSize = $downloader->download();
 
         if (!$downloadedSize) {
-            $output->writeln('Error downloading file :-(');
+            $output->writeln('<error>Error downloading file :-(</error>');
             return 1;
         }
 
