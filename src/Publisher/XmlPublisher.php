@@ -214,17 +214,16 @@ class XmlPublisher extends AbstractPublisher
             throw new \RuntimeException(sprintf('Cannot obtain lock for file "%s"', $file));
         }
 
-        if (fstat($this->fileHandle)['size'] == 0) { // new or empty file, create empty xml element
-            $xslPath = '../src/results.xsl';
-            if (is_readable($fileDir . '/../vendor/lmc/steward/src/results.xsl')) {
-                $xslPath = '../vendor/lmc/steward/src/results.xsl';
-            }
-
+        if (fstat($this->fileHandle)['size'] == 0) { // new or empty file => create empty xml element and add stylesheet
             $xml = new \SimpleXMLElement(
                 '<?xml version="1.0" encoding="utf-8" ?>'
-                . '<?xml-stylesheet type="text/xsl" href="' . $xslPath . '"?>'
-                . '<testcases />'
+                . '<?xml-stylesheet type="text/xsl" href="#stylesheet"?>'
+                . '<!DOCTYPE testcases [<!ATTLIST xsl:stylesheet id ID #REQUIRED>]>'
+                . '<testcases>'
+                . $this->getStylesheet()
+                . '</testcases>'
             );
+
         } else { // file already exists, load current xml
             $fileContents = fread($this->fileHandle, fstat($this->fileHandle)['size']);
             $xml = simplexml_load_string($fileContents);
@@ -262,5 +261,16 @@ class XmlPublisher extends AbstractPublisher
         flock($this->fileHandle, LOCK_UN);
         fclose($this->fileHandle);
         $this->fileHandle = null;
+    }
+
+    /**
+     * @return string
+     */
+    private function getStylesheet()
+    {
+        $xslPath = __DIR__ . '/../results.xsl';
+        $xsl = file_get_contents($xslPath);
+
+        return $xsl;
     }
 }
