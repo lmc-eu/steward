@@ -44,7 +44,7 @@ In the root directory of your tests (eg. `selenium-tests/`)  simply run:
 $ ./vendor/bin/steward.php install
 ```
 
-This will check for latest released version of Selenium standalone server and download it for you (the jar file will
+This will check for the latest released version of Selenium standalone server and download it for you (the jar file will
 be placed into `./vendor/bin` directory).
 
 You may want to run this command as part of your CI server build - then simply use the `--no-interaction` option to
@@ -85,15 +85,16 @@ class TitlePageTest extends AbstractTestCase
         // Do some assertion
         $this->assertContains('W3C', $this->wd->getTitle());
 
-        // You can use $this->log() or $this->warn() with sprintf-like syntax
+        // You can use $this->log(), $this->warn() or $this->debug() with sprintf-like syntax
         $this->log('Current page "%s" has title "%s"', $this->wd->getCurrentURL(), $this->wd->getTitle());
 
         // Make sure search input is present
-        $searchInput = $this->wd->findElement(\WebDriverBy::cssSelector("#search-form input"));
+        $searchInput = $this->wd->findElement(\WebDriverBy::cssSelector('#search-form input'));
+        // Or you can use syntax sugar provided by Steward (this is equivalent of previous line)
+        $searchInput = $this->findByCss('#search-form input');
 
         // Assert title of the search input
         $this->assertEquals('Search', $searchInput->getAttribute('title'));
-
     }
 }
 
@@ -104,12 +105,13 @@ class TitlePageTest extends AbstractTestCase
 Now you need to start Selenium server, which will listen and execute commands send from your tests.
 
 ```sh
-$ java -jar ./vendor/bin/selenium-server-standalone-2.45.0.jar
+$ java -jar ./vendor/bin/selenium-server-standalone-2.45.0.jar # the version may differ
 ```
 
 This will start single Selenium server instance (listening on port 4444) in "no-grid" mode (meaning the server receives 
 and also executes the commands itself). You may want to run the Selenium  server in a grid mode (when the hub is 
-receiving the commands and multiple nodes are executing them) - please consult help and especially the `-role` option.
+receiving the commands and multiple nodes are executing them) - please consult help and especially the `-role` option
+of the Selenium server.
 
 #### Run Steward!
 Having your Selenium server listening, let's launch your test! Use the  `run-tests` command:
