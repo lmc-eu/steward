@@ -10,6 +10,13 @@ use FlorianWolters\Component\Util\Singleton\SingletonTrait;
  * Provide access to Configuration object instance or create its instance if not yet instantiated.
  *
  * @method static ConfigProvider getInstance()
+ * @property-read string browserName
+ * @property-read string env
+ * @property-read string serverUrl
+ * @property-read string publishResults
+ * @property-read string fixturesDir
+ * @property-read string logsDir
+ * @property-read string debug
  */
 class ConfigProvider
 {
