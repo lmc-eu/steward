@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" id="stylesheet">
 
     <xsl:output method="xml" doctype-system="about:legacy-compat" indent="yes" encoding="UTF-8"/>
 
@@ -7,7 +6,7 @@
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
                 <title>Steward results</title>
-                <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
+                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
             </head>
             <body>
                 <div class="container">
@@ -108,7 +107,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <xsl:for-each select="/testcases/testcase">
+                            <xsl:for-each select="//testcases/testcase">
                                 <tr class="testcase-row">
                                     <td colspan="2">
                                         <xsl:value-of select="@name"/>
@@ -198,8 +197,8 @@
                         </tbody>
                     </table>
                 </div>
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-            <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
             <script>
                 <![CDATA[
                 $(function () {
@@ -232,6 +231,10 @@
             </script>
             </body>
         </html>
+    </xsl:template>
+
+    <xsl:template match="xsl:stylesheet">
+        <!-- ignore the stylesheet from being processed -->
     </xsl:template>
 
 </xsl:stylesheet>

@@ -141,8 +141,7 @@ The log is printed to the console where you run the `run-tests` command. But thi
 
 So for each testcase there is separate file in JUnit XML format, placed in `logs/` directory. Also screenshots and HTML snapsnots are saved into this directory (they are automatically generated on failed assertion or if some WebDriver command fails).
 
-During the tests execution check file `logs/results.xml` (you must access it through webserver, as the XSLT won't work and you will see plain XML) to see current status of tests.
-
+During the tests execution check file `logs/results.xml` to see current status of tests:
 ![Example output as displayed in logs/results.xml file](https://lmc-eu.github.io/steward/images/results-output-example.png)
 
 ## License
