@@ -215,7 +215,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         /** @var Process $process */
         $process = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->process;
         $commandWithColors = $process->getCommandLine();
-        $this->assertContains('--colors', $commandWithColors);
+        $this->assertContains('--colors=always', $commandWithColors);
     }
 
     public function testShouldDispatchProcessEvent()
