@@ -8,8 +8,7 @@
         "testing"
     ],
     "license": "MIT",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "Lmc\\Steward\\": "src/"
@@ -26,7 +25,7 @@
         "symfony/event-dispatcher": "~2.6",
         "nette/reflection": "~2.2",
         "nette/utils": "~2.2",
-        "facebook/webdriver": "dev-master",
+        "facebook/webdriver": "~0.6.0",
         "clue/graph": "~0.7.1",
         "florianwolters/component-util-singleton": "0.3.2",
         "caseyamcl/configula": "~2.3",
