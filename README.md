@@ -26,7 +26,6 @@ For latest changes see [CHANGELOG.md](CHANGELOG.md) file. We follow [Semantic Ve
 We recommend to have functional tests in the same repository as your application.
 So let's suggest we put them in `selenium-tests/` directory. **In this directory** create a new composer.json file
 (you can use `composer init` command). You will need to have [Composer](http://getcomposer.org/) installed to do this.
-You may also need to set [minimum stability](https://getcomposer.org/doc/04-schema.md#minimum-stability) flag to dev.
 
 Then simply install Steward and add it as a dependency:
 
