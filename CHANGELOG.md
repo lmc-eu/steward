@@ -7,6 +7,9 @@
 - The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems).
 - Use tagged version 0.6.0 of [php-webdriver](https://github.com/facebook/php-webdriver)
 
+### Fixed
+- Properly trigger PHPUnit colored (ANSI) mode when Steward itself is in ANSI mode.
+
 ## 1.0.0 - 2015-05-09
 ### Added
 - Possibility to specify zero as `@delayMinutes` (eg. if you want to force test order, but don't need to actually wait) or to use floating point number as delay.

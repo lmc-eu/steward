@@ -128,7 +128,7 @@ class ProcessSetCreator
 
             // If ANSI output is enabled, turn on colors in PHPUnit
             if ($this->output->isDecorated()) {
-                $phpunitArgs[] = '--colors';
+                $phpunitArgs[] = '--colors=always';
             }
 
             $processSet->add(
