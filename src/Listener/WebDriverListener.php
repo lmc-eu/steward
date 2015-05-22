@@ -16,7 +16,7 @@ use Nette\Reflection\AnnotationsParser;
  * If taking screenshot using addFailure(), tearDown() would have already been called and the
  * browser would be closed.
  */
-class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
+class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 {
     const NO_BROWSER_ANNOTATION = 'noBrowser';
 
@@ -32,7 +32,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $config = ConfigProvider::getInstance();
 
-        // Initialize NullWebdriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
+        // Initialize NullWebDriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
         $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
         $testAnnotations = AnnotationsParser::getAll(new \ReflectionMethod($test, $test->getName(false)));
 
@@ -41,7 +41,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
         ) {
             $test->wd = new NullWebDriver();
             $test->log(
-                'Initializing Null webdriver for "%s::%s" (@%s annotation used %s)',
+                'Initializing Null WebDriver for "%s::%s" (@%s annotation used %s)',
                 get_class($test),
                 $test->getName(),
                 self::NO_BROWSER_ANNOTATION,
@@ -88,7 +88,7 @@ class WebdriverListener extends \PHPUnit_Framework_BaseTestListener
 
         if ($test->wd instanceof \RemoteWebDriver) {
             $test->log(
-                'Destroying "%s" webdriver for "%s::%s" (session %s)',
+                'Destroying "%s" WebDriver for "%s::%s" (session %s)',
                 ConfigProvider::getInstance()->browserName,
                 get_class($test),
                 $test->getName(),

@@ -5,7 +5,7 @@
 >
     <listeners>
         <listener class="Lmc\Steward\Listener\SnapshotListener"/>
-        <listener class="Lmc\Steward\Listener\WebdriverListener"/>
+        <listener class="Lmc\Steward\Listener\WebDriverListener"/>
         <listener class="Lmc\Steward\Listener\TestStatusListener">
             <arguments>
                 <array/>
