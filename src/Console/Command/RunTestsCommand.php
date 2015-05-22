@@ -142,7 +142,7 @@ class RunTestsCommand extends Command
             sprintf(
                 '<info>Steward</info> <comment>%s</comment> is running the tests...%s',
                 $this->getApplication()->getVersion(),
-                (!getenv('JOB_NAME') ? ' Just for you <fg=red><3</fg=red>!' : '') // in jenkins it is not just for you
+                (!$this->isCi() ? ' Just for you <fg=red><3</fg=red>!' : '') // on CI server it is not just for you
             )
         );
 

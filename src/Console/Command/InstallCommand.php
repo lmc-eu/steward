@@ -118,7 +118,7 @@ class InstallCommand extends Command
                 sprintf(
                     '<info>Steward</info> <comment>%s</comment> is now downloading the Selenium standalone server...%s',
                     $this->getApplication()->getVersion(),
-                    (!getenv('JOB_NAME') ? ' Just for you <fg=red><3</fg=red>!' : '')
+                    (!$this->isCi() ? ' Just for you <fg=red><3</fg=red>!' : '')
                 )
             );
         }
