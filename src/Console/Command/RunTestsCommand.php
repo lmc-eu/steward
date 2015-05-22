@@ -28,6 +28,14 @@ class RunTestsCommand extends Command
     protected $seleniumAdapter;
     /** @var ProcessSetCreator */
     protected $processSetCreator;
+    /** @var array */
+    protected $supportedBrowsers = [
+        \WebDriverBrowserType::FIREFOX,
+        \WebDriverBrowserType::CHROME,
+        \WebDriverBrowserType::IE,
+        \WebDriverBrowserType::SAFARI,
+        \WebDriverBrowserType::PHANTOMJS,
+    ];
 
     const ARGUMENT_ENVIRONMENT = 'environment';
     const ARGUMENT_BROWSER = 'browser';
@@ -147,10 +155,32 @@ class RunTestsCommand extends Command
             )
         );
 
-        $output->writeln(sprintf('Browser: %s', $input->getArgument(self::ARGUMENT_BROWSER)));
+        // If browser name or env is empty, ends initialization and let the Console/Command fail on input validation
+        if (empty($input->getArgument(self::ARGUMENT_BROWSER))
+            || empty($input->getArgument(self::ARGUMENT_ENVIRONMENT))
+        ) {
+            return;
+        }
+
+        // Browser name is case insensitive, normalize it to lower case
+        $input->setArgument(self::ARGUMENT_BROWSER, strtolower($input->getArgument(self::ARGUMENT_BROWSER)));
+        $browser = $input->getArgument(self::ARGUMENT_BROWSER);
+
+        // Check if browser is supported
+        if (!in_array($browser, $this->supportedBrowsers)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Browser "%s" is not supported (use one of: %s)',
+                    $browser,
+                    implode(', ', $this->supportedBrowsers)
+                )
+            );
+        }
+
+        $output->writeln(sprintf('Browser: %s', $browser));
         $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
 
-        // Tests directories exists
+        // Check if directories exists
         $this->testDirectories(
             $input,
             $output,

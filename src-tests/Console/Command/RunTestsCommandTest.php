@@ -105,6 +105,47 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider browserNameProvider
+     * @param string $browserName
+     * @param bool $shouldThrowException
+     */
+    public function testShouldThrowExceptionIfUnsupportedBrowserSelected($browserName, $shouldThrowException)
+    {
+        if ($shouldThrowException) {
+            $this->setExpectedException('\RuntimeException', 'Browser "' . $browserName . '" is not supported');
+        }
+
+        $seleniumAdapterMock = $this->getSeleniumAdapterMock();
+        $this->command->setSeleniumAdapter($seleniumAdapterMock);
+
+        $this->tester->execute(
+            ['command' => $this->command->getName(), 'environment' => 'prod', 'browser' => $browserName]
+        );
+
+        if (!$shouldThrowException) {
+            $output = $this->tester->getDisplay();
+            $this->assertContains('Browser: ' . strtolower($browserName), $output);
+            $this->assertContains('No testcases found, exiting.', $output);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function browserNameProvider()
+    {
+        return [
+            // $browserName, $shouldThrowException
+            'firefox is supported' => ['firefox', false],
+            'chrome is supported' => ['chrome', false],
+            'phantomjs is supported' => ['phantomjs', false],
+            'browser name is case insensitive' => ['FIREFOX', false],
+            'not supported browser' => ['mosaic', true],
+            'unprintable character in browser name' => ['firefox​', true],
+        ];
+    }
+
     public function testShouldStopIfServerIsNotResponding()
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
