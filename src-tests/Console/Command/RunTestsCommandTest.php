@@ -9,6 +9,7 @@ use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
@@ -103,6 +104,29 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
             ['logs-dir', 'Path to directory with logs does not exist'],
             ['fixtures-dir', 'Base path to directory with fixture files does not exist'],
         ];
+    }
+
+    public function testShouldOutputAssembledPathsToDirectoriesInDebugMode()
+    {
+        $seleniumAdapterMock = $this->getSeleniumAdapterMock();
+        $this->command->setSeleniumAdapter($seleniumAdapterMock);
+
+        $this->tester->execute(
+            [
+                'command' => $this->command->getName(),
+                'environment' => 'staging',
+                'browser' => 'firefox',
+                '--tests-dir' => __DIR__ . '/Fixtures/DummyTests',
+                '--pattern' => 'NotExisting.foo' // so the test stops execution
+            ],
+            ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
+        );
+
+        $output = $this->tester->getDisplay();
+        $this->assertContains('Base path to fixtures results: ' . realpath(__DIR__) . '/Fixtures/tests', $output);
+        $this->assertContains('Path to logs: ' . realpath(__DIR__) . '/Fixtures/logs', $output);
+        $this->assertContains(' - in directory "' . realpath(__DIR__) . '/Fixtures/DummyTests"', $output);
+        $this->assertSame(1, $this->tester->getStatusCode());
     }
 
     /**
