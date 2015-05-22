@@ -69,12 +69,19 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider directoryOptionsProvider
      * @param string $directoryOption Passed path type option
-     * @param string $errorBeginning Beginning of error message
+     * @param string $errorBeginning Beginning of exception message
      */
-    public function testShouldStopIfAnyRequiredDirectoryIsNotAccessible($directoryOption, $errorBeginning)
+    public function testShouldThrowExceptionIfAnyRequiredDirectoryIsNotAccessible($directoryOption, $errorBeginning)
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
+
+        $expectedError = sprintf(
+            '%s, make sure it is accessible or define your own path using --%s option',
+            $errorBeginning,
+            $directoryOption
+        );
+        $this->setExpectedException('\RuntimeException', $expectedError);
 
         $this->tester->execute(
             [
@@ -84,15 +91,6 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
                 '--' . $directoryOption => '/not/accessible'
             ]
         );
-
-        $expectedError = sprintf(
-            '%s, make sure it is accessible or define your own path using --%s option',
-            $errorBeginning,
-            $directoryOption
-        );
-
-        $this->assertContains($expectedError, $this->tester->getDisplay());
-        $this->assertSame(1, $this->tester->getStatusCode());
     }
 
     /**
