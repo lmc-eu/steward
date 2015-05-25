@@ -28,6 +28,14 @@ class RunTestsCommand extends Command
     protected $seleniumAdapter;
     /** @var ProcessSetCreator */
     protected $processSetCreator;
+    /** @var array */
+    protected $supportedBrowsers = [
+        \WebDriverBrowserType::FIREFOX,
+        \WebDriverBrowserType::CHROME,
+        \WebDriverBrowserType::IE,
+        \WebDriverBrowserType::SAFARI,
+        \WebDriverBrowserType::PHANTOMJS,
+    ];
 
     const ARGUMENT_ENVIRONMENT = 'environment';
     const ARGUMENT_BROWSER = 'browser';
@@ -130,14 +138,15 @@ class RunTestsCommand extends Command
     }
 
     /**
-     * Execute command
+     * Initialize, check arguments and options values etc.
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        parent::initialize($input, $output);
+
         $output->writeln(
             sprintf(
                 '<info>Steward</info> <comment>%s</comment> is running the tests...%s',
@@ -146,11 +155,33 @@ class RunTestsCommand extends Command
             )
         );
 
-        $output->writeln(sprintf('Browser: %s', $input->getArgument(self::ARGUMENT_BROWSER)));
+        // If browser name or env is empty, ends initialization and let the Console/Command fail on input validation
+        if (empty($input->getArgument(self::ARGUMENT_BROWSER))
+            || empty($input->getArgument(self::ARGUMENT_ENVIRONMENT))
+        ) {
+            return;
+        }
+
+        // Browser name is case insensitive, normalize it to lower case
+        $input->setArgument(self::ARGUMENT_BROWSER, strtolower($input->getArgument(self::ARGUMENT_BROWSER)));
+        $browser = $input->getArgument(self::ARGUMENT_BROWSER);
+
+        // Check if browser is supported
+        if (!in_array($browser, $this->supportedBrowsers)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Browser "%s" is not supported (use one of: %s)',
+                    $browser,
+                    implode(', ', $this->supportedBrowsers)
+                )
+            );
+        }
+
+        $output->writeln(sprintf('Browser: %s', $browser));
         $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
 
-        // Tests directories exists
-        $testDirectoriesResult = $this->testDirectories(
+        // Check if directories exists
+        $this->testDirectories(
             $input,
             $output,
             [
@@ -159,9 +190,6 @@ class RunTestsCommand extends Command
                 $this->getDefinition()->getOption(self::OPTION_FIXTURES_DIR),
             ]
         );
-        if (!$testDirectoriesResult) {
-            return 1;
-        }
 
         if ($output->isDebug()) {
             $output->writeln(
@@ -174,7 +202,17 @@ class RunTestsCommand extends Command
                 sprintf('Publish results: %s', ($input->getOption(self::OPTION_PUBLISH_RESULTS)) ? 'yes' : 'no')
             );
         }
+    }
 
+    /**
+     * Execute command
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $this->getDispatcher()->dispatch(
             CommandEvents::RUN_TESTS_INIT,
             new ExtendedConsoleEvent($this, $input, $output)
@@ -412,7 +450,7 @@ class RunTestsCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param InputOption[] $dirs Option defining directories
-     * @return bool
+     * @throws \RuntimeException Thrown when directory is not accessible
      */
     protected function testDirectories(InputInterface $input, OutputInterface $output, array $dirs)
     {
@@ -421,18 +459,15 @@ class RunTestsCommand extends Command
             $currentValue = $input->getOption($dir->getName());
 
             if ($currentValue === false || realpath($currentValue) === false) {
-                $output->writeln(sprintf(
-                    '<error>%s does not exist, make sure it is accessible or define your own path using %s'
-                    . ' option</error>',
-                    $dir->getDescription(),
-                    '--' . $dir->getName()
-                ));
-
-                return false;
+                throw new \RuntimeException(
+                    sprintf(
+                        '%s does not exist, make sure it is accessible or define your own path using %s option',
+                        $dir->getDescription(),
+                        '--' . $dir->getName()
+                    )
+                );
             }
         }
-
-        return true;
     }
 
     /**

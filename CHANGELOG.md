@@ -3,9 +3,12 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Added
+- Check if browser given to `run-tests` command is supported (this helps avoiding typos, interchange of browser and environment etc.).
+
 ### Changed
 - The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems).
-- Use tagged version 0.6.0 of [php-webdriver](https://github.com/facebook/php-webdriver)
+- Use tagged version 0.6.0 of [php-webdriver](https://github.com/facebook/php-webdriver).
 
 ### Fixed
 - Properly trigger PHPUnit colored (ANSI) mode when Steward itself is in ANSI mode.

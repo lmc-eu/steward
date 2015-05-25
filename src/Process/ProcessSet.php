@@ -39,7 +39,7 @@ class ProcessSet implements \Countable
     const PROCESS_RESULT_PASSED = 'passed';
     /** Process failed - some tests have failed or are broken */
     const PROCESS_RESULT_FAILED = 'failed';
-    /** Process fatally failed (PHP fatal error occurred - eg. no webdriver available) */
+    /** Process fatally failed (PHP fatal error occurred - eg. no WebDriver available) */
     const PROCESS_RESULT_FATAL = 'fatal';
 
     /** @var array List of possible process statuses */
