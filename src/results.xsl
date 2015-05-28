@@ -109,7 +109,7 @@
                         <tbody>
                             <xsl:for-each select="//testcases/testcase">
                                 <tr class="testcase-row">
-                                    <td colspan="2">
+                                    <td colspan="2" style="word-break: break-all;">
                                         <xsl:value-of select="@name"/>
                                     </td>
                                     <td>
@@ -155,7 +155,7 @@
                                     <xsl:for-each select="test">
                                         <tr class="test-row">
                                             <td></td>
-                                            <td>
+                                            <td style="word-break: break-all;">
                                                 <xsl:value-of select="@name"/>
                                             </td>
                                             <td>
