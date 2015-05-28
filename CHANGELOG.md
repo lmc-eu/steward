@@ -12,6 +12,7 @@
 
 ### Fixed
 - Properly trigger PHPUnit colored (ANSI) mode when Steward itself is in ANSI mode.
+- Stop counting test's running time (shown in `results.xml`), if the test ended with fatal error (#6).
 
 ## 1.0.0 - 2015-05-09
 ### Added
