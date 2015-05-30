@@ -2,7 +2,8 @@
 
 namespace Lmc\Steward\Process\Fixtures;
 
-use Fhaculty\Graph\Algorithm\Tree\OutTree;
+use Fhaculty\Graph\Vertex;
+use Graphp\Algorithms\Tree\OutTree;
 use Lmc\Steward\Process\OptimizeOrderInterface;
 
 class MockOrderStrategy implements OptimizeOrderInterface
@@ -19,6 +20,7 @@ class MockOrderStrategy implements OptimizeOrderInterface
 
         $i = 0;
         $output = [];
+        /** @var Vertex $vertex */
         foreach ($vertices as $vertex) {
             $output[$vertex->getId()] = $i++;
         }

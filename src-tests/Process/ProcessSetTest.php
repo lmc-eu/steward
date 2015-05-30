@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Process;
 
+use Graphp\Algorithms\Tree\OutTree;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -294,7 +295,7 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
 
 
         $tree = $this->set->buildTree();
-        $this->assertInstanceOf('Fhaculty\Graph\Algorithm\Tree\OutTree', $tree);
+        $this->assertInstanceOf(OutTree::class, $tree);
 
         $this->assertEquals(2, $tree->getHeight()); // 2, because single vertex graph has height 0
         $root = $tree->getVertexRoot();

@@ -2,8 +2,9 @@
 
 namespace Lmc\Steward\Process;
 
-use Fhaculty\Graph\Algorithm\ShortestPath\Dijkstra;
-use Fhaculty\Graph\Algorithm\Tree\OutTree;
+use Graphp\Algorithms\ShortestPath\Dijkstra;
+use Graphp\Algorithms\Tree\OutTree;
+use Fhaculty\Graph\Vertex;
 
 class MaxTotalDelayStrategy implements OptimizeOrderInterface
 {
@@ -24,6 +25,7 @@ class MaxTotalDelayStrategy implements OptimizeOrderInterface
 
         // for each vertex (process) get maximum total weight of its subtree (longest distance)
         $subTreeMaxDistances = [];
+        /** @var Vertex $childVertex */
         foreach ($children as $childVertex) {
             $alg = new Dijkstra($childVertex);
             // get map with distances to all linked reachable vertexes

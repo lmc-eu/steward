@@ -26,7 +26,8 @@
         "nette/reflection": "~2.2",
         "nette/utils": "~2.2",
         "facebook/webdriver": "~0.6.0",
-        "clue/graph": "~0.7.1",
+        "clue/graph": "~0.9.0",
+        "graphp/algorithms": "^0.8.1",
         "florianwolters/component-util-singleton": "0.3.2",
         "caseyamcl/configula": "~2.3",
         "doctrine/inflector": "~1.0"
