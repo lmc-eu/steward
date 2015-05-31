@@ -98,10 +98,10 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $fullXml = simplexml_load_file($fileName);
         $xml = $fullXml[0];
 
-        $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
 
-        $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase->test);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
         $this->assertEquals(1, count($xml->testcase->test));
 
         $this->assertEquals('testNameBar', $xml->testcase->test['name']);
@@ -135,7 +135,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $xml = simplexml_load_file($fileName)[0];
 
         // still only one test result is present
-        $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase->test);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
         $this->assertEquals(1, count($xml->testcase->test));
 
         // the status is now updated and result is set
@@ -159,7 +159,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName)[0];
 
-        $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
         $this->assertEquals('queued', $xml->testcase['status']);
         $this->assertEmpty($xml->testcase->test['result']);
@@ -189,7 +189,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName)[0];
 
-        $this->assertInstanceOf('\SimpleXMLElement', $xml->testcase);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
         $this->assertEquals('done', $xml->testcase['status']);
         $this->assertEquals('passed', $xml->testcase['result']);

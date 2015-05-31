@@ -16,7 +16,7 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->testCase = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
+        $this->testCase = $this->getMockBuilder(AbstractTestCase::class)
             ->setMethods(null)
             ->getMock();
 

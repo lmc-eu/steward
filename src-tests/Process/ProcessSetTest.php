@@ -152,9 +152,9 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('Baz', $processes);
 
         $process = $processes['Baz'];
-        $this->assertInstanceOf('stdClass', $process);
+        $this->assertInstanceOf(\stdClass::class, $process);
         $this->assertEquals(ProcessSet::PROCESS_STATUS_QUEUED, $process->status);
-        $this->assertInstanceOf('Symfony\Component\Process\Process', $process->process);
+        $this->assertInstanceOf(Process::class, $process->process);
         $this->assertEquals('Foo', $process->delayAfter);
         $this->assertEquals(5, $process->delayMinutes);
         $this->assertNull($process->finishedTime);
