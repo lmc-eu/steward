@@ -134,6 +134,9 @@ class RunTestsCommand extends Command
                 'Publish test results to test storage'
             );
 
+        $this->addUsage('staging firefox');
+        $this->addUsage('--group=foo --group=bar --exclude-group=baz -vvv development phantomjs');
+
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
 

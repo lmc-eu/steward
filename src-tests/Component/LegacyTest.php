@@ -17,7 +17,7 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->testCase = $this->getMockBuilder('Lmc\Steward\Test\AbstractTestCase')
+        $this->testCase = $this->getMockBuilder(AbstractTestCase::class)
             ->setMethods(['getName'])
             ->getMock();
 

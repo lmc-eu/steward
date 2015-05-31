@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Process;
 
-use Fhaculty\Graph\Algorithm\Tree\OutTree;
+use Graphp\Algorithms\Tree\OutTree;
 
 /**
  * Interface for optimizers of tests order.

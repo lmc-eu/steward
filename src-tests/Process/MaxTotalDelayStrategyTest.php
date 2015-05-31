@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Process;
 
-use Fhaculty\Graph\Algorithm\Tree\OutTree;
+use Graphp\Algorithms\Tree\OutTree;
 use Fhaculty\Graph\Graph;
 
 class MaxTotalDelayStrategyTest extends \PHPUnit_Framework_TestCase
