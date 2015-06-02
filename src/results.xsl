@@ -6,7 +6,7 @@
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
                 <title>Steward results</title>
-                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
+                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
             </head>
             <body>
                 <div class="container">
@@ -109,7 +109,7 @@
                         <tbody>
                             <xsl:for-each select="//testcases/testcase">
                                 <tr class="testcase-row">
-                                    <td colspan="2">
+                                    <td colspan="2" style="word-break: break-all;">
                                         <xsl:value-of select="@name"/>
                                     </td>
                                     <td>
@@ -155,38 +155,53 @@
                                     <xsl:for-each select="test">
                                         <tr class="test-row">
                                             <td></td>
-                                            <td>
+                                            <td style="word-break: break-all;">
                                                 <xsl:value-of select="@name"/>
                                             </td>
                                             <td>
-                                                <xsl:value-of select="@status"/>
+                                                <!-- If the parent testcase ended with "fatal" and this one is still in "started" status, that
+                                                this must be the one that "fatal"-ed, so we won't print its confusing "started" status -->
+                                                <xsl:if test="not(@status = 'started' and ../@result = 'fatal')">
+                                                    <xsl:value-of select="@status"/>
+                                                </xsl:if>
                                             </td>
                                             <td>
-                                                <xsl:attribute name="class">
-                                                    <xsl:choose>
-                                                        <xsl:when test="@result = 'passed'">success</xsl:when>
-                                                        <xsl:when test="@result = 'failed' or @result = 'broken'">danger</xsl:when>
-                                                        <xsl:when test="@result = 'skipped' or @result = 'incomplete'">info</xsl:when>
-                                                    </xsl:choose>
-                                                </xsl:attribute>
-                                                <span>
-                                                    <xsl:attribute name="class">
-                                                        glyphicon
-                                                        <xsl:choose>
-                                                            <xsl:when test="@result = 'passed'">glyphicon-ok</xsl:when>
-                                                            <xsl:when test="@result = 'failed' or @result = 'broken'">glyphicon-remove</xsl:when>
-                                                            <xsl:when test="@result = 'skipped' or @result = 'incomplete'">glyphicon-question-sign</xsl:when>
-                                                        </xsl:choose>
-                                                    </xsl:attribute>
-                                                </span>
-                                                <xsl:text>&#160;&#160;</xsl:text>
-                                                <xsl:value-of select="@result"/>
+                                                <xsl:choose>
+                                                    <xsl:when test="@status = 'started' and ../@result = 'fatal'">
+                                                        <xsl:attribute name="class">warning</xsl:attribute>
+                                                        <span class="glyphicon glyphicon-warning-sign"></span>&#160;&#160;fatal
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:attribute name="class">
+                                                            <xsl:choose>
+                                                                <xsl:when test="@result = 'passed'">success</xsl:when>
+                                                                <xsl:when test="@result = 'failed' or @result = 'broken'">danger</xsl:when>
+                                                                <xsl:when test="@result = 'skipped' or @result = 'incomplete'">info</xsl:when>
+                                                            </xsl:choose>
+                                                        </xsl:attribute>
+                                                        <span>
+                                                            <xsl:attribute name="class">
+                                                                glyphicon
+                                                                <xsl:choose>
+                                                                    <xsl:when test="@result = 'passed'">glyphicon-ok</xsl:when>
+                                                                    <xsl:when test="@result = 'failed' or @result = 'broken'">glyphicon-remove</xsl:when>
+                                                                    <xsl:when test="@result = 'skipped' or @result = 'incomplete'">glyphicon-question-sign</xsl:when>
+                                                                </xsl:choose>
+                                                            </xsl:attribute>
+                                                        </span>
+                                                        <xsl:text>&#160;&#160;</xsl:text>
+                                                        <xsl:value-of select="@result"/>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
                                             </td>
                                             <td class="date date-start">
                                                 <xsl:value-of select="@start"/>
                                             </td>
                                             <td class="date date-end">
-                                                <xsl:value-of select="@end"/>
+                                                <xsl:choose>
+                                                    <xsl:when test="@status = 'started' and ../@result = 'fatal'">-</xsl:when>
+                                                    <xsl:otherwise><xsl:value-of select="@end"/></xsl:otherwise>
+                                                </xsl:choose>
                                             </td>
                                             <td class="duration">
                                             </td>
@@ -197,17 +212,18 @@
                         </tbody>
                     </table>
                 </div>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
             <script>
                 <![CDATA[
                 $(function () {
-                    // caluclate and print test duration
+                    // calculate and print test duration
                     $('table tr.test-row').each(function() {
                         var startDate = moment($('td.date-start', this).text());
-                        var endDate = moment($('td.date-end', this).text());
+                        var endValue = $('td.date-end', this).text();
+                        var endDate = moment(endValue);
                         var isPending = false;
-                        if (startDate.isValid()) {
+                        if (startDate.isValid() && endValue != '-') { // do not calculate when test fatal-ed
                             if (!endDate.isValid()) { // still running, add current time
                                 isPending = true;
                                 endDate = moment();
@@ -220,9 +236,10 @@
                             );
                         }
                     });
+
                     // convert ISO-8601 dates to more readable ones
                     $("td.date").each(function () {
-                        if ($(this).text().length) {
+                        if ($(this).text().length && $(this).text() != '-') {
                             $(this).text(moment($(this).text()).format('YYYY-MM-DD H:mm:ss'));
                         }
                     });
