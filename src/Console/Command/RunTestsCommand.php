@@ -126,7 +126,7 @@ class RunTestsCommand extends Command
                 self::OPTION_FILTER,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Run only test cases matching this filter'
+                'Run only tests whose name is matching this filter'
             )
             ->addOption(
                 self::OPTION_EXCLUDE_GROUP,
