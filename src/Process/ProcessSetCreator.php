@@ -69,7 +69,7 @@ class ProcessSetCreator
             $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
         }
         if ($filter) {
-            $this->output->writeln(sprintf(' - filtering tests by name: %s', $filter));
+            $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
         }
 
         $processSet = $this->getProcessSet();

@@ -45,8 +45,8 @@ class RunTestsCommand extends Command
     const OPTION_LOGS_DIR = 'logs-dir';
     const OPTION_PATTERN = 'pattern';
     const OPTION_GROUP = 'group';
-    const OPTION_FILTER = 'filter';
     const OPTION_EXCLUDE_GROUP = 'exclude-group';
+    const OPTION_FILTER = 'filter';
     const OPTION_PUBLISH_RESULTS = 'publish-results';
 
     /**
@@ -123,16 +123,16 @@ class RunTestsCommand extends Command
                 'Only run testcases with specified @group of this name'
             )
             ->addOption(
-                self::OPTION_FILTER,
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Run only tests whose name is matching this filter'
-            )
-            ->addOption(
                 self::OPTION_EXCLUDE_GROUP,
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Exclude testcases with specified @group from being run'
+            )
+            ->addOption(
+                self::OPTION_FILTER,
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Run only testcases/tests with name matching this filter'
             )
             ->addOption(
                 self::OPTION_PUBLISH_RESULTS,
