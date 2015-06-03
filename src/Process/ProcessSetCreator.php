@@ -59,7 +59,7 @@ class ProcessSetCreator
      */
     public function createFromFiles(Finder $files, array $groups = null, array $excludeGroups = null, $filter = null)
     {
-        if ($groups || $excludeGroups) {
+        if ($groups || $excludeGroups || $filter) {
             $this->output->writeln('Filtering testcases:');
         }
         if ($groups) {
