@@ -54,11 +54,12 @@ class ProcessSetCreator
      * @param Finder $files
      * @param array $groups Groups to be run
      * @param array $excludeGroups Groups to be excluded
+     * @param string $filter filter test cases by name
      * @return ProcessSet
      */
-    public function createFromFiles(Finder $files, array $groups = null, array $excludeGroups = null)
+    public function createFromFiles(Finder $files, array $groups = null, array $excludeGroups = null, $filter = null)
     {
-        if ($groups || $excludeGroups) {
+        if ($groups || $excludeGroups || $filter) {
             $this->output->writeln('Filtering testcases:');
         }
         if ($groups) {
@@ -66,6 +67,9 @@ class ProcessSetCreator
         }
         if ($excludeGroups) {
             $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
+        }
+        if ($filter) {
+            $this->output->writeln(sprintf(' - filtering tests by name: %s', $filter));
         }
 
         $processSet = $this->getProcessSet();
@@ -125,6 +129,10 @@ class ProcessSetCreator
                 . '.xml',
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
             ];
+
+            if ($filter) {
+                $phpunitArgs[] = '--filter=' . $filter;
+            }
 
             // If ANSI output is enabled, turn on colors in PHPUnit
             if ($this->output->isDecorated()) {

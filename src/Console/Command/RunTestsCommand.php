@@ -45,6 +45,7 @@ class RunTestsCommand extends Command
     const OPTION_LOGS_DIR = 'logs-dir';
     const OPTION_PATTERN = 'pattern';
     const OPTION_GROUP = 'group';
+    const OPTION_FILTER = 'filter';
     const OPTION_EXCLUDE_GROUP = 'exclude-group';
     const OPTION_PUBLISH_RESULTS = 'publish-results';
 
@@ -120,6 +121,12 @@ class RunTestsCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Only run testcases with specified @group of this name'
+            )
+            ->addOption(
+                self::OPTION_FILTER,
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Run only tests whose name is matching this filter'
             )
             ->addOption(
                 self::OPTION_EXCLUDE_GROUP,
@@ -246,7 +253,8 @@ class RunTestsCommand extends Command
         $processSet = $processSetCreator->createFromFiles(
             $files,
             $input->getOption(self::OPTION_GROUP),
-            $input->getOption(self::OPTION_EXCLUDE_GROUP)
+            $input->getOption(self::OPTION_EXCLUDE_GROUP),
+            $input->getOption(self::OPTION_FILTER)
         );
 
         if (!count($processSet)) {
