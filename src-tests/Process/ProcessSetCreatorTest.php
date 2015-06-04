@@ -83,13 +83,13 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCreateProcessSetFromGivenFiles()
     {
-        $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], []);
+        $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], [], '');
 
         $this->assertQueuedTests([self::NAME_DUMMY_TEST, self::NAME_BAR_TEST, self::NAME_FOO_TEST], $processSet);
 
         // Test properties of DummyTest
-        /** @var Process $dummyTestProcess */
         $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        /** @var Process $dummyTestProcess */
         $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->process;
         $testCommand = $dummyTestProcess->getCommandLine();
         $testEnv = $dummyTestProcess->getEnv();
@@ -97,6 +97,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('phpunit', $testCommand);
         $this->assertContains('--log-junit=logs/Lmc-Steward-Process-Fixtures-DummyTests-DummyTest.xml', $testCommand);
         $this->assertNotContains('--colors', $testCommand); // Decorated output is disabled in setUp()
+        $this->assertNotContains('--filter', $testCommand);
         $this->assertRegExp('/--configuration=.*\/src\/phpunit\.xml/', $testCommand);
 
         // Check defaults were passed to the Processes
@@ -148,6 +149,21 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('excluding group(s): bar', $output);
         $this->assertRegExp('/Found testcase file #1 in group both: .*\/GroupFooTest\.php/', $output);
         $this->assertRegExp('/Excluding testcase file .*\/GroupBarTest\.php with group bar/', $output);
+    }
+
+    public function testShouldPassFilterOptionToPhpunitProcess()
+    {
+        $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], [], 'testCase::testName');
+
+        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        /** @var Process $dummyTestProcess */
+        $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->process;
+        $testCommand = $dummyTestProcess->getCommandLine();
+        $output = $this->bufferedOutput->fetch();
+
+        $this->assertContains('Filtering testcases:', $output);
+        $this->assertContains('by testcase/test name: testCase::testName', $output);
+        $this->assertContains('--filter=testCase::testName', $testCommand);
     }
 
     public function testShouldPropagateCustomOptionsIntoProcess()

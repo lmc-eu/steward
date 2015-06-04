@@ -5,6 +5,7 @@
 ## Unreleased
 ### Added
 - Check if browser given to `run-tests` command is supported (this helps avoiding typos, interchange of browser and environment etc.).
+- Option `--filter` which allows filtering tests/testcases by name (@ziizii)
 
 ### Changed
 - The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems).
