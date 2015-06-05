@@ -33,7 +33,7 @@ So let's suggest we put them in `selenium-tests/` directory. **In this directory
 Then simply install Steward and add it as a dependency:
 
 ```sh
-$ composer require lmc/steward:~1.0
+$ composer require lmc/steward
 ```
 
 Next necessary step is to create `tests/` and `logs/` directory inside the `selenium-tests/` directory.
