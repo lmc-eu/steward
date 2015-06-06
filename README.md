@@ -1,4 +1,6 @@
 # Steward: easy and robust testing with Selenium WebDriver + PHPUnit
+ 
+[![Build Status](https://travis-ci.org/lmc-eu/steward.svg?branch=master)](https://travis-ci.org/lmc-eu/steward) [![Latest Stable Version](https://poser.pugx.org/lmc/steward/version.png)](https://packagist.org/packages/lmc/steward) [![Total Downloads](https://poser.pugx.org/lmc/steward/downloads.png)](https://packagist.org/packages/lmc/steward) [![License](https://poser.pugx.org/lmc/steward/license.svg)](https://packagist.org/packages/lmc/steward) [![Coverage Status](https://coveralls.io/repos/lmc-eu/steward/badge.svg?branch=master)](https://coveralls.io/r/lmc-eu/steward?branch=master)
 
 Steward is set of libraries made to simplify writing and running robust functional system tests in
 [PHPUnit](https://phpunit.de/) using [Selenium WebDriver](http://www.seleniumhq.org/). 
