@@ -41,5 +41,5 @@
         "ext-posix": "For colored output",
         "ext-xdebug": "For remote tests debugging"
     },
-    "bin": ["bin/steward.php"]
+    "bin": ["bin/steward"]
 }
