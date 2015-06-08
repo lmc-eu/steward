@@ -16,9 +16,9 @@
     },
     "require": {
         "php": ">=5.5.5",
-        "phpunit/phpunit": "4.6.*",
         "ext-zip": "*",
         "ext-curl": "*",
+        "phpunit/phpunit": "~4.7",
         "symfony/console": "~2.7",
         "symfony/process": "~2.7",
         "symfony/finder": "~2.7",
