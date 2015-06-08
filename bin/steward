@@ -1,0 +1,51 @@
+#!/usr/bin/env php
+<?php
+
+namespace Lmc\Steward;
+
+use Symfony\Component\Console\Application;
+use Lmc\Steward\Console\Command\InstallCommand;
+use Lmc\Steward\Console\Command\RunTestsCommand;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Lmc\Steward\Console\EventListener\ListenerInstantiator;
+
+function requireIfExists($file)
+{
+    if (file_exists($file)) {
+        return require_once $file;
+    }
+}
+
+if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when used directly
+    && !requireIfExists(__DIR__ . '/../../../autoload.php') // when installed as dependency
+) {
+    die(
+        'You must set up the project dependencies, run the following commands:' . PHP_EOL .
+        'curl -sS https://getcomposer.org/installer | php' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL
+    );
+}
+
+if (strpos(__DIR__, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== false) { // when installed as dependency
+    define('STEWARD_BASE_DIR', realpath(__DIR__ . '/../../../..'));
+} else { // when used directly
+    define('STEWARD_BASE_DIR', realpath(__DIR__ . '/..'));
+}
+
+date_default_timezone_set('Europe/Prague');
+
+$dispatcher = new EventDispatcher();
+$application = new Application('Steward', '1.0.0');
+$application->setDispatcher($dispatcher);
+
+// Search for listeners and attach them to dispatcher
+(new ListenerInstantiator())->instantiate($dispatcher, STEWARD_BASE_DIR);
+
+// Add Commands with injected EventDispatcher to the main console Application
+$application->addCommands(
+    [
+        new RunTestsCommand($dispatcher),
+        new InstallCommand($dispatcher),
+    ]
+);
+$application->run();

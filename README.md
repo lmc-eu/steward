@@ -43,7 +43,7 @@ You need Selenium server installed to execute commands in the specified browser.
 In the root directory of your tests (e.g. `selenium-tests/`)  simply run:
  
 ```sh
-$ ./vendor/bin/steward.php install
+$ ./vendor/bin/steward install
 ```
 
 This will check for the latest released version of Selenium standalone server and download it for you (the jar file will
@@ -119,7 +119,7 @@ of the Selenium server.
 Having your Selenium server listening, let's launch your test! Use the  `run-tests` command:
 
 ```sh
-./vendor/bin/steward.php run-tests staging firefox
+./vendor/bin/steward run-tests staging firefox
 ```
 
 In few moments you should see Firefox window appearing, then the http://www.w3.org/ site (as defined in the example tests)

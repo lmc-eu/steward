@@ -48,6 +48,7 @@ class RunTestsCommand extends Command
     const OPTION_EXCLUDE_GROUP = 'exclude-group';
     const OPTION_FILTER = 'filter';
     const OPTION_PUBLISH_RESULTS = 'publish-results';
+    const OPTION_NO_EXIT = 'no-exit';
 
     /**
      * @param SeleniumServerAdapter $seleniumAdapter
@@ -139,6 +140,12 @@ class RunTestsCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Publish test results to test storage'
+            )
+            ->addOption(
+                self::OPTION_NO_EXIT,
+                null,
+                InputOption::VALUE_NONE,
+                'Always exit with code 0 <comment>(by default any failed test causes the command to return 1)</comment>'
             );
 
         $this->addUsage('staging firefox');
@@ -270,7 +277,13 @@ class RunTestsCommand extends Command
         $processSet->dequeueProcessesWithoutDelay($output->isDebug() ? $output : null);
 
         // Start execution loop
-        $this->executionLoop($output, $processSet);
+        $allTestsPassed = $this->executionLoop($output, $processSet);
+
+        if ($input->getOption(self::OPTION_NO_EXIT)) {
+            return 0;
+        } else {
+            return $allTestsPassed ? 0 : 1;
+        }
     }
 
     /**
@@ -310,11 +323,13 @@ class RunTestsCommand extends Command
      *
      * @param OutputInterface $output
      * @param ProcessSet $processSet
+     * @return bool Return true if all test returned exit code 0 (or if none test was run)
      */
     protected function executionLoop(OutputInterface $output, ProcessSet $processSet)
     {
         $counterWaitingOutput = 1;
         $counterProcessesLast = 0;
+        $allTestsPassed = true;
         // Iterate over prepared and queued until everything is done
         while (true) {
             $prepared = $processSet->get(ProcessSet::PROCESS_STATUS_PREPARED);
@@ -355,6 +370,9 @@ class RunTestsCommand extends Command
 
                 // Mark no longer running processes as finished
                 if (!$processObject->process->isRunning()) {
+                    if ($processObject->process->getExitCode()) { // non-zero exit code (= failed/exception)
+                        $allTestsPassed = false;
+                    }
                     $output->writeln(sprintf('Process for class "%s" finished', $testClass));
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
                     $processObject->finishedTime = time();
@@ -400,6 +418,8 @@ class RunTestsCommand extends Command
             $counterProcessesLast = $counterProcesses;
             sleep(1);
         }
+
+        return $allTestsPassed;
     }
 
     /**
