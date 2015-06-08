@@ -11,6 +11,7 @@
 - The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems).
 - Use tagged version 0.6.0 of [php-webdriver](https://github.com/facebook/php-webdriver).
 - Upgraded to Symfony 2.7 (causing eg. the `--help` format to change a bit - according to [docopt](http://docopt.org/) standard)
+- If any test fails, the `run-tests` command now exits with code `1`. This behavior could be altered using new `--no-exit` option, which forces the command to exit `0` even if some test fails.
 
 ### Fixed
 - Properly trigger PHPUnit colored (ANSI) mode when Steward itself is in ANSI mode.
