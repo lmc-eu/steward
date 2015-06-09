@@ -2,21 +2,24 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
-## Unreleased
+## Unreleased.
+- Nothing yet
+
+## 1.1.0 - 2015-06-09
 ### Added
-- Check if browser given to `run-tests` command is supported (this helps avoiding typos, interchange of browser and environment etc.).
-- Option `--filter` which allows filtering tests/testcases by name (@ziizii)
+- Check if browser given to `run-tests` command is supported (this helps avoiding typos, interchange of browser and environment etc.). ([#9](https://github.com/lmc-eu/steward/issues/9), [#15](https://github.com/lmc-eu/steward/pull/15))
+- Option `--filter` which allows filtering tests/testcases by name ([#20](https://github.com/lmc-eu/steward/pull/20)) - @ziizii
 
 ### Changed
-- The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems).
-- Use tagged version 0.6.0 of [php-webdriver](https://github.com/facebook/php-webdriver).
-- Upgraded to Symfony 2.7 (causing eg. the `--help` format to change a bit - according to [docopt](http://docopt.org/) standard)
-- If any test fails, the `run-tests` command now exits with code `1`. This behavior could be altered using new `--no-exit` option, which forces the command to exit `0` even if some test fails.
-- Steward executable was renamed from `steward.php` to just `steward`, which should work on both Unix and Windows (@mhujer)
+- The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems). ([25d73a4](https://github.com/lmc-eu/steward/commit/25d73a4f7e4db348836c4d1f9357d734f9b1c627))
+- Use tagged version 0.6.0 of [php-webdriver](https://github.com/facebook/php-webdriver). ([#11](https://github.com/lmc-eu/steward/pull/11))
+- Upgraded to Symfony 2.7 (causing eg. the `--help` format to change a bit - according to [docopt](http://docopt.org/) standard) ([#18](https://github.com/lmc-eu/steward/pull/18))
+- If any test fails, the `run-tests` command now exits with code `1`. This behavior could be altered using new `--no-exit` option, which forces the command to exit `0` even if some test fails. ([#13](https://github.com/lmc-eu/steward/issues/13), [#16](https://github.com/lmc-eu/steward/pull/16))
+- Steward executable was renamed from `steward.php` to just `steward`, which should work on both Unix and Windows ([#21](https://github.com/lmc-eu/steward/issues/21), [#25](https://github.com/lmc-eu/steward/pull/25)) - @mhujer
 
 ### Fixed
-- Properly trigger PHPUnit colored (ANSI) mode when Steward itself is in ANSI mode.
-- Stop counting test's running time (shown in `results.xml`), if the test ended with fatal error (#6).
+- Properly trigger PHPUnit colored (ANSI) mode when Steward itself is in ANSI mode. ([#10](https://github.com/lmc-eu/steward/pull/10))
+- Stop counting test's running time (shown in `results.xml`), if the test ended with fatal error. ([#6](https://github.com/lmc-eu/steward/issues/6), [#17](https://github.com/lmc-eu/steward/pull/17))
 
 ## 1.0.0 - 2015-05-09
 ### Added
