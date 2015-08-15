@@ -3,12 +3,13 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased.
-- Nothing yet
+### Fixed
+- Tests having @dataProvider and named data-sets were not properly logged with XmlPublisher and exceptions were thrown. ([#28](https://github.com/lmc-eu/steward/issues/28), [#29](https://github.com/lmc-eu/steward/pull/29))
 
 ## 1.1.0 - 2015-06-09
 ### Added
 - Check if browser given to `run-tests` command is supported (this helps avoiding typos, interchange of browser and environment etc.). ([#9](https://github.com/lmc-eu/steward/issues/9), [#15](https://github.com/lmc-eu/steward/pull/15))
-- Option `--filter` which allows filtering tests/testcases by name ([#20](https://github.com/lmc-eu/steward/pull/20)) - @ziizii
+- Option `--filter` which allows filtering tests/testcases by name ([#20](https://github.com/lmc-eu/steward/pull/20)). - @ziizii
 
 ### Changed
 - The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems). ([25d73a4](https://github.com/lmc-eu/steward/commit/25d73a4f7e4db348836c4d1f9357d734f9b1c627))
