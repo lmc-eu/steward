@@ -7,14 +7,14 @@
 [![License](https://img.shields.io/packagist/l/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
 
 Steward is set of libraries made to simplify writing and running robust functional system tests in
-[PHPUnit](https://phpunit.de/) using [Selenium WebDriver](http://www.seleniumhq.org/). 
+[PHPUnit](https://phpunit.de/) using [Selenium WebDriver](http://www.seleniumhq.org/).
 
 ## [We](http://www.lmc.eu/english) use Steward, and why could you?
 - It allows you to start writing complex test cases in a minute.
 - It makes a lot of work for you: download and install Selenium server with one command; automatically take screenshot on failed assertion; produce test results in JUnit format (easily processable e.g. by Jenkins and other tools) and more!
 - Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/facebook/php-webdriver/wiki/Example-command-reference) can help you shorten your tests and make them more readable.
 - Allows you to plan tests dependencies - need to wait 2 minutes until some event gets through your message queue so you could test the result? No problem! The tests order is even optimized to minimize the total execution time.
-- Your tests are run in a parallel, so the bottleneck is just the amount of Selenium nodes you start simultaneously. 
+- Your tests are run in a parallel, so the bottleneck is just the amount of Selenium nodes you start simultaneously.
 - If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all.
 - You can extend it easily by e.g. registering custom events to EventDispatcher. Thus you can for example add custom configuration options or change parameters passed to PHPUnit processes.
 - Status of the tests could be clearly watched during tests execution, so you will easily know, how many test were already finished and what was their result.
@@ -47,7 +47,7 @@ Next necessary step is to create `tests/` and `logs/` directory inside the `sele
 ### 2. Install Selenium
 You need Selenium server installed to execute commands in the specified browser.
 In the root directory of your tests (e.g. `selenium-tests/`)  simply run:
- 
+
 ```sh
 $ ./vendor/bin/steward install
 ```
@@ -116,8 +116,8 @@ Now you need to start Selenium server, which will listen and execute commands se
 $ java -jar ./vendor/bin/selenium-server-standalone-2.45.0.jar # the version may differ
 ```
 
-This will start single Selenium server instance (listening on port 4444) in "no-grid" mode (meaning the server receives 
-and also executes the commands itself). You may want to run the Selenium  server in a grid mode (when the hub is 
+This will start single Selenium server instance (listening on port 4444) in "no-grid" mode (meaning the server receives
+and also executes the commands itself). You may want to run the Selenium  server in a grid mode (when the hub is
 receiving the commands and multiple nodes are executing them) - please consult help and especially the `-role` option
 of the Selenium server.
 
@@ -145,7 +145,7 @@ There is also bunch of useful options of `run-tests` command:
 - `--help` - see all other options and default values
 
 ### 5. See the results and screenshots
-The log is printed to the console where you run the `run-tests` command. But this could be a bit confusing, especially if you run multiple tests in parallel. 
+The log is printed to the console where you run the `run-tests` command. But this could be a bit confusing, especially if you run multiple tests in parallel.
 
 So for each testcase there is separate file in JUnit XML format, placed in `logs/` directory. Also screenshots and HTML snapsnots are saved into this directory (they are automatically generated on failed assertion or if some WebDriver command fails).
 
