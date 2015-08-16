@@ -97,6 +97,15 @@ class ProcessSet implements \Countable
 
     public function add(Process $process, $className, $delayAfter = '', $delayMinutes = null)
     {
+        if (isset($this->processes[$className])) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Testcase with name "%s" was already added, make sure you don\'t have duplicate class name.',
+                    $className
+                )
+            );
+        }
+
         if (!empty($delayAfter)) {
             if ($delayMinutes === null) {
                 throw new \InvalidArgumentException(
