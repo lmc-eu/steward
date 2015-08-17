@@ -157,7 +157,7 @@ class XmlPublisher extends AbstractPublisher
      */
     protected function getTestCaseNode(\SimpleXMLElement $xml, $testCaseName)
     {
-        $testcaseNode = $xml->xpath('//testcase[@name="' . $testCaseName . '"]');
+        $testcaseNode = $xml->xpath(sprintf('//testcase[@name=%s]', $this->quoteXpathAttribute($testCaseName)));
 
         if (!$testcaseNode) {
             $testcaseNode = $xml->addChild('testcase');
@@ -178,7 +178,13 @@ class XmlPublisher extends AbstractPublisher
      */
     protected function getTestNode(\SimpleXMLElement $xml, $testCaseName, $testName)
     {
-        $testNode = $xml->xpath('//testcase[@name="' . $testCaseName . '"]/test[@name="' . $testName . '"]');
+        $testNode = $xml->xpath(
+            sprintf(
+                '//testcase[@name=%s]/test[@name=%s]',
+                $this->quoteXpathAttribute($testCaseName),
+                $this->quoteXpathAttribute($testName)
+            )
+        );
 
         if (!$testNode) {
             $testNode = $xml->addChild('test');
@@ -272,5 +278,22 @@ class XmlPublisher extends AbstractPublisher
         $xsl = file_get_contents($xslPath);
 
         return $xsl;
+    }
+
+    /**
+     * Encapsulate given attribute value into valid xpath expression.
+     * @param string $input Value of an xpath attribute selector
+     * @return string
+     */
+    protected function quoteXpathAttribute($input)
+    {
+        if (strpos($input, '\'') === false) { // Selector does not contain single quotes
+            return "'$input'"; // Encapsulate with double quotes
+        } elseif (strpos($input, '"') === false) { // Selector contain single quotes but not double quotes
+            return "\"$input\""; // Encapsulate with single quotes
+        }
+
+        // When both single and double quotes are contained, escape each part individually and concat() all parts
+        return "concat('" . strtr($input, ['\'' => '\', "\'", \'']) . "')";
     }
 }

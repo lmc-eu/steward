@@ -231,6 +231,78 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Check processing of tests with special characters in name which could appear when test have dataProvider and
+     * its name is appended by PHPUnit.
+     *
+     * @dataProvider nameProvider
+     * @param string $testCaseName
+     * @param string $testName
+     */
+    public function testShouldProperlyHandleTestsWithDataProvider($testCaseName, $testName)
+    {
+        $fileName = $this->createEmptyFile();
+
+        // Add "started" record of the test
+        $this->publisher->publishResult($testCaseName, $testName, XmlPublisher::TEST_STATUS_STARTED);
+
+        /** @var \SimpleXMLElement $xml */
+        $xml = simplexml_load_file($fileName)[0];
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
+        $this->assertEquals(1, count($xml->testcase));
+        $this->assertEquals($testCaseName, $xml->testcase['name']);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
+        $this->assertEquals(1, count($xml->testcase->test));
+        $this->assertEquals($testName, $xml->testcase->test['name']);
+        $this->assertEquals(XmlPublisher::TEST_STATUS_STARTED, $xml->testcase->test['status']);
+
+        // Update the test status to "done"
+        $this->publisher->publishResult(
+            $testCaseName,
+            $testName,
+            XmlPublisher::TEST_STATUS_DONE,
+            XmlPublisher::TEST_RESULT_PASSED
+        );
+
+        /** @var \SimpleXMLElement $xml */
+        $xml = simplexml_load_file($fileName)[0];
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
+        $this->assertEquals(1, count($xml->testcase));
+        $this->assertEquals($testCaseName, $xml->testcase['name']);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
+        $this->assertEquals(1, count($xml->testcase->test));
+        $this->assertEquals($testName, $xml->testcase->test['name']);
+        $this->assertEquals(XmlPublisher::TEST_STATUS_DONE, $xml->testcase->test['status']);
+        $this->assertEquals(XmlPublisher::TEST_RESULT_PASSED, $xml->testcase->test['result']);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function nameProvider()
+    {
+        return [
+            // Testcases
+            'Testcase with single quotes' => ['test \' case', 'testName'],
+            'Testcase with double quotes' => ['test " case', 'testName'],
+            'Testcase with quotes combination' => ['test " ca\'se', 'testName'],
+            'Testcase with other special chars' => ['test Fů Bař &amp; <Baž>', 'testName'],
+
+            // Tests
+            'Un-named dataset' => ['testCase', 'testBar with data set #1'],
+            'Named dataset' => ['testCase', 'testBar with data set "foo"'],
+            'Dataset with double quotes in name' => [
+                'testCase',
+                'testBar with data set "Really <weird> chara&amp;cters"'
+            ],
+            'Dataset with apostrophe in name (double quotes and apostrophes are combined in the whole name)' => [
+                'testCase',
+                'testBar with data set "Apostrophe \' in dataset name"'
+            ],
+            'Only apostrophes used in test name' => ['testCase', 'testBar with data set \'Foo\''],
+        ];
+    }
+
+    /**
      * Create empty.xml file and sets is as Publisher file
      * @return string File name
      */
