@@ -39,6 +39,16 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Testcase with name "Foo\Bar" was already added
+     */
+    public function testShouldFailWhenAddingTestWithNonUniqueName()
+    {
+        $this->set->add(new Process(''), 'Foo\Bar');
+        $this->set->add(new Process(''), 'Foo\Bar');
+    }
+
+    /**
      * @dataProvider delayProvider
      * @param mixed $delay
      * @param string|null $expectedExceptionMessage Null if no exception should be raised
