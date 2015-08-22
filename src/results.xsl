@@ -217,6 +217,12 @@
             <script>
                 <![CDATA[
                 $(function () {
+                    // Ensure the script was not yet initialized (see Firefox bug #380828)
+                    if (typeof window.wasInitialized != 'undefined') {
+                        return;
+                    }
+                    window.wasInitialized = true;
+
                     // calculate and print test duration
                     $('table tr.test-row').each(function() {
                         var startDate = moment($('td.date-start', this).text());

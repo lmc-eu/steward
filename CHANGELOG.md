@@ -5,6 +5,7 @@
 ## Unreleased.
 ### Fixed
 - Tests having @dataProvider and named data-sets were not properly logged with XmlPublisher and exceptions were thrown. ([#28](https://github.com/lmc-eu/steward/issues/28), [#29](https://github.com/lmc-eu/steward/pull/29))
+- Start and end dates of tests were sometimes not properly displayed when viewing results.xml file in Firefox.
 
 ## 1.1.0 - 2015-06-09
 ### Added
