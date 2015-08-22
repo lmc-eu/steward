@@ -6,7 +6,7 @@
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
                 <title>Steward results</title>
-                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
+                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
             </head>
             <body>
                 <div class="container">
@@ -213,7 +213,7 @@
                     </table>
                 </div>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
             <script>
                 <![CDATA[
                 $(function () {
