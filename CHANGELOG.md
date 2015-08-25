@@ -2,13 +2,16 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
-## Unreleased.
+## Unreleased
+- Nothing yet - everything is released.
+
+## 1.1.1 - 2015-08-25
 ### Changed
-- Require PHPUnit 4.8.6 to fix incorrect test status being reported (see [phpunit#1835](https://github.com/sebastianbergmann/phpunit/issues/1835)).
+- Require PHPUnit 4.8.6 to fix incorrect test status being reported (see [phpunit#1835](https://github.com/sebastianbergmann/phpunit/issues/1835)). ([#34](https://github.com/lmc-eu/steward/pull/34))
 
 ### Fixed
 - Tests having @dataProvider and named data-sets were not properly logged with XmlPublisher and exceptions were thrown. ([#28](https://github.com/lmc-eu/steward/issues/28), [#29](https://github.com/lmc-eu/steward/pull/29))
-- Start and end dates of tests were sometimes not properly displayed when viewing results.xml file in Firefox.
+- Start and end dates of tests were sometimes not properly displayed when viewing results.xml file in Firefox. ([#33](https://github.com/lmc-eu/steward/pull/33))
 
 ## 1.1.0 - 2015-06-09
 ### Added
