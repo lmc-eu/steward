@@ -95,12 +95,18 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
                 $test->wd->getSessionID()
             );
 
-            // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
-            // Should be removed with PhantomJS 2
-            $test->wd->execute('deleteAllCookies');
+            try {
+                // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
+                // Should be removed with PhantomJS 2
+                if (ConfigProvider::getInstance()->browserName == \WebDriverBrowserType::PHANTOMJS) {
+                    $test->wd->execute('deleteAllCookies');
+                }
 
-            $test->wd->close();
-            $test->wd->quit();
+                $test->wd->close();
+                $test->wd->quit();
+            } catch (\WebDriverException $e) {
+                $test->warn('Error closing the session, browser may died.');
+            }
         }
     }
 

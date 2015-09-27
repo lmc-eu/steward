@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet - everything is released.
+### Fixed
+- When exception from WebDriver occurs (ie. browser dies or times out), prevent throwing another exception when attempting to closes the session (which leads to PHPUnit not generating any report). ([#7](https://github.com/lmc-eu/steward/issues/7))
 
 ## 1.1.1 - 2015-08-25
 ### Changed
