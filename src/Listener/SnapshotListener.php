@@ -26,7 +26,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
     }
 
     /**
-     * Take screenshot and save it.
+     * Take screenshot and HTML snapshot of the page and save it.
      *
      * @param AbstractTestCase $test
      */
@@ -41,24 +41,29 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
             . date('Y-m-d-H-i-s');
 
         if (!$test->wd instanceof \RemoteWebDriver) {
-            $test->warn('WebDriver instance not found, cannot take screenshot.');
+            $test->warn('WebDriver instance not found, cannot take snapshot.');
             return;
         }
 
-        $test->appendTestLog(
-            'Test failed on page "%s", taking page snapshots:',
-            $test->wd->getCurrentURL()
-        );
+        try {
+            $test->appendTestLog(
+                'Test failed on page "%s", taking page snapshots:',
+                $test->wd->getCurrentURL()
+            );
 
-        // Save PNG screenshot
-        $screenshotPath = $savePath . $testIdentifier . '.png';
-        $test->wd->takeScreenshot($screenshotPath);
-        $test->appendTestLog('Screenshot saved to file "%s" ', $this->getSnapshotUrl($screenshotPath));
+            // Save PNG screenshot
+            $screenshotPath = $savePath . $testIdentifier . '.png';
+            $test->wd->takeScreenshot($screenshotPath);
+            $test->appendTestLog('Screenshot saved to file "%s" ', $this->getSnapshotUrl($screenshotPath));
 
-        // Save HTML snapshot of page
-        $htmlPath = $savePath . $testIdentifier . '.html';
-        file_put_contents($htmlPath, $test->wd->getPageSource());
-        $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
+            // Save HTML snapshot of page
+            $htmlPath = $savePath . $testIdentifier . '.html';
+            file_put_contents($htmlPath, $test->wd->getPageSource());
+            $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
+        } catch (\WebDriverException $e) {
+            $test->appendTestLog('Error taking page snapshot, perhaps browser is not accessible?');
+            return;
+        }
     }
 
     /**
