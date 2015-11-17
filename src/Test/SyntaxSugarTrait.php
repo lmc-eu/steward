@@ -6,6 +6,7 @@ namespace Lmc\Steward\Test;
  * Adds WebDriver syntax sugar methods.
  * Needs to be used in context where $wd property holding instance of \RemoteWebDriver is present (like
  * AbstractTestCaseBase or AbstractComponent).
+ * @property \RemoteWebDriver $wd
  */
 trait SyntaxSugarTrait
 {
