@@ -6,6 +6,9 @@
 ### Fixed
 - When exception from WebDriver occurs (ie. browser dies or times out), prevent throwing another exception when attempting to closes the session (which leads to PHPUnit not generating any report). ([#7](https://github.com/lmc-eu/steward/issues/7))
 
+### Changed
+- Sort testcases alphabetically so that the order is same regardless the filesystem
+
 ## 1.1.1 - 2015-08-25
 ### Changed
 - Require PHPUnit 4.8.6 to fix incorrect test status being reported (see [phpunit#1835](https://github.com/sebastianbergmann/phpunit/issues/1835)). ([#34](https://github.com/lmc-eu/steward/pull/34))
