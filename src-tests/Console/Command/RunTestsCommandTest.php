@@ -36,7 +36,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments.
+     * @expectedExceptionMessage Not enough arguments (missing: "environment, browser").
      */
     public function testShouldFailWithoutArguments()
     {
@@ -47,7 +47,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments.
+     * @expectedExceptionMessage Not enough arguments (missing: "browser").
      */
     public function testShouldFailWithoutBrowserSpecified()
     {
@@ -58,7 +58,7 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments.
+     * @expectedExceptionMessage Not enough arguments (missing: "environment").
      */
     public function testShouldFailWithoutEnvironmentSpecified()
     {
