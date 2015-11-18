@@ -59,6 +59,9 @@ class ProcessSetCreator
      */
     public function createFromFiles(Finder $files, array $groups = null, array $excludeGroups = null, $filter = null)
     {
+        $files->sortByName();
+        $processSet = $this->getProcessSet();
+
         if ($groups || $excludeGroups || $filter) {
             $this->output->writeln('Filtering testcases:');
         }
@@ -71,8 +74,6 @@ class ProcessSetCreator
         if ($filter) {
             $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
         }
-
-        $processSet = $this->getProcessSet();
 
         $testCasesNum = 0;
         foreach ($files as $file) {
