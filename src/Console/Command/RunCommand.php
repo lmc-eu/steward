@@ -22,7 +22,7 @@ use Symfony\Component\Finder\Finder;
  * Run tests command is used to start Steward test planner and execute tests one by one,
  * optionally with defined delay and relations.
  */
-class RunTestsCommand extends Command
+class RunCommand extends Command
 {
     /** @var SeleniumServerAdapter */
     protected $seleniumAdapter;
@@ -71,7 +71,8 @@ class RunTestsCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('run-tests')
+        $this->setName('run')
+            ->setAliases(['run-tests'])
             ->setDescription('Run tests planner and execute tests')
             ->addArgument(
                 self::ARGUMENT_ENVIRONMENT,

@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Process;
 
-use Lmc\Steward\Console\Command\RunTestsCommand;
+use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
@@ -19,7 +19,7 @@ use Symfony\Component\Process\ProcessBuilder;
  */
 class ProcessSetCreator
 {
-    /** @var RunTestsCommand */
+    /** @var RunCommand */
     protected $command;
     /** @var InputInterface */
     protected $input;
@@ -31,13 +31,13 @@ class ProcessSetCreator
     protected $publisher;
 
     /**
-     * @param RunTestsCommand $command
+     * @param RunCommand $command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param AbstractPublisher $publisher
      */
     public function __construct(
-        RunTestsCommand $command,
+        RunCommand $command,
         InputInterface $input,
         OutputInterface $output,
         AbstractPublisher $publisher

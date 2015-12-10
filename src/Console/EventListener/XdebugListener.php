@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * (see http://xdebug.org/docs/remote for docs)
  *
  * Your IDE must then listen for incoming Xdebug connections on the same port and use the same IDE key.
- * Then start the run-tests command with --xdebug option. For PHPStorm just use the default value ("phpstorm"),
+ * Then start the `run` command with --xdebug option. For PHPStorm just use the default value ("phpstorm"),
  * for eg. NetBeans you must pass "--xdebug=netbeans". See docs of you IDE for more information.
  *
  */
@@ -41,13 +41,13 @@ class XdebugListener implements EventSubscriberInterface
     }
 
     /**
-     * Add option to run-tests command configuration.
+     * Add option to `run` command configuration.
      *
      * @param BasicConsoleEvent $event
      */
     public function onCommandConfigure(BasicConsoleEvent $event)
     {
-        if ($event->getCommand()->getName() != 'run-tests') {
+        if ($event->getCommand()->getName() != 'run') {
             return;
         }
 

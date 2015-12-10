@@ -15,11 +15,11 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 
 /**
- * @covers Lmc\Steward\Console\Command\RunTestsCommand
+ * @covers Lmc\Steward\Console\Command\RunCommand
  */
-class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
+class RunCommandTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var RunTestsCommand */
+    /** @var RunCommand */
     protected $command;
     /** @var CommandTester */
     protected $tester;
@@ -28,9 +28,9 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
-        $application->add(new RunTestsCommand($dispatcher));
+        $application->add(new RunCommand($dispatcher));
 
-        $this->command = $application->find('run-tests');
+        $this->command = $application->find('run');
         $this->tester = new CommandTester($this->command);
     }
 
@@ -268,8 +268,8 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(CommandEvents::CONFIGURE), $this->isInstanceOf(BasicConsoleEvent::class));
 
         $application = new Application();
-        $application->add(new RunTestsCommand($dispatcherMock));
-        $command = $application->find('run-tests');
+        $application->add(new RunCommand($dispatcherMock));
+        $command = $application->find('run');
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
         (new CommandTester($command))->execute(
@@ -288,8 +288,8 @@ class RunTestsCommandTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(CommandEvents::RUN_TESTS_INIT), $this->isInstanceOf(ExtendedConsoleEvent::class));
 
         $application = new Application();
-        $application->add(new RunTestsCommand($dispatcherMock));
-        $command = $application->find('run-tests');
+        $application->add(new RunCommand($dispatcherMock));
+        $command = $application->find('run');
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
         (new CommandTester($command))->execute(

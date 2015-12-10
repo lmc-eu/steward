@@ -5,7 +5,7 @@ namespace Lmc\Steward;
 
 use Symfony\Component\Console\Application;
 use Lmc\Steward\Console\Command\InstallCommand;
-use Lmc\Steward\Console\Command\RunTestsCommand;
+use Lmc\Steward\Console\Command\RunCommand;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
 
@@ -44,7 +44,7 @@ $application->setDispatcher($dispatcher);
 // Add Commands with injected EventDispatcher to the main console Application
 $application->addCommands(
     [
-        new RunTestsCommand($dispatcher),
+        new RunCommand($dispatcher),
         new InstallCommand($dispatcher),
     ]
 );

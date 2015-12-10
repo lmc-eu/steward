@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\ProcessBuilder;
 
 /**
- * Event dispatched from run-tests command when initializing PHPUnit Processes.
+ * Event dispatched from `run` command when initializing PHPUnit Processes.
  * It allows you to eg. pass additional arguments to the process.
  */
 class RunTestsProcessEvent extends ExtendedConsoleEvent
