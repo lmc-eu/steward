@@ -13,6 +13,7 @@
 ## 1.1.1 - 2015-08-25
 ### Changed
 - Require PHPUnit 4.8.6 to fix incorrect test status being reported (see [phpunit#1835](https://github.com/sebastianbergmann/phpunit/issues/1835)). ([#34](https://github.com/lmc-eu/steward/pull/34))
+- Upgrade to Symfony 3.0
 
 ### Fixed
 - Tests having @dataProvider and named data-sets were not properly logged with XmlPublisher and exceptions were thrown. ([#28](https://github.com/lmc-eu/steward/issues/28), [#29](https://github.com/lmc-eu/steward/pull/29))
@@ -26,7 +27,7 @@
 ### Changed
 - The `logs/results.xml` could now be also accessed locally (the XSLT is now embedded right into the file, so we don't encounter same-origin policy problems). ([25d73a4](https://github.com/lmc-eu/steward/commit/25d73a4f7e4db348836c4d1f9357d734f9b1c627))
 - Use tagged version 0.6.0 of [php-webdriver](https://github.com/facebook/php-webdriver). ([#11](https://github.com/lmc-eu/steward/pull/11))
-- Upgraded to Symfony 2.7 (causing eg. the `--help` format to change a bit - according to [docopt](http://docopt.org/) standard) ([#18](https://github.com/lmc-eu/steward/pull/18))
+- Upgrade to Symfony 2.7 (causing eg. the `--help` format to change a bit - according to [docopt](http://docopt.org/) standard) ([#18](https://github.com/lmc-eu/steward/pull/18))
 - If any test fails, the `run-tests` command now exits with code `1`. This behavior could be altered using new `--no-exit` option, which forces the command to exit `0` even if some test fails. ([#13](https://github.com/lmc-eu/steward/issues/13), [#16](https://github.com/lmc-eu/steward/pull/16))
 - Steward executable was renamed from `steward.php` to just `steward`, which should work on both Unix and Windows ([#21](https://github.com/lmc-eu/steward/issues/21), [#25](https://github.com/lmc-eu/steward/pull/25)) - @mhujer
 

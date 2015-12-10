@@ -42,8 +42,7 @@ class ListenerInstantiator
      */
     protected function searchListeners($dir)
     {
-        $finder = (new Finder())->useBestAdapter();
-        $files = $finder
+        $files = (new Finder())
             ->files()
             ->in($dir)
             ->path($this->searchPathPattern)

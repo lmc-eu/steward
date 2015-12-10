@@ -249,8 +249,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function findDummyTests($pattern = '*Test.php')
     {
-        return $files = (new Finder())
-            ->useBestAdapter()
+        return (new Finder())
             ->files()
             ->in(__DIR__ . '/Fixtures/DummyTests')
             ->name($pattern);
