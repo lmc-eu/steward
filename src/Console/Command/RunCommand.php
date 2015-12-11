@@ -246,7 +246,6 @@ class RunCommand extends Command
         $output->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
 
         $files = (new Finder())
-            ->useBestAdapter()
             ->files()
             ->in($input->getOption(self::OPTION_TESTS_DIR))
             ->name($input->getOption(self::OPTION_PATTERN));
