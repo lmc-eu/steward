@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Process;
 
-use Lmc\Steward\Console\Command\RunTestsCommand;
+use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
@@ -22,7 +22,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcherMock;
-    /** @var RunTestsCommand|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RunCommand|\PHPUnit_Framework_MockObject_MockObject */
     protected $command;
     /** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $input;
@@ -44,7 +44,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['dispatch'])
             ->getMock();
 
-        $this->command = new RunTestsCommand($this->dispatcherMock);
+        $this->command = new RunCommand($this->dispatcherMock);
 
         $this->input = new StringInput('staging firefox');
         $this->input->bind($this->command->getDefinition());
@@ -105,10 +105,10 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $expectedEnv = [
             'BROWSER_NAME' => 'firefox',
             'ENV' => 'staging',
-            'SERVER_URL' => $definition->getOption(RunTestsCommand::OPTION_SERVER_URL)->getDefault(),
+            'SERVER_URL' => $definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(),
             'PUBLISH_RESULTS' => 0,
-            'FIXTURES_DIR' => $definition->getOption(RunTestsCommand::OPTION_FIXTURES_DIR)->getDefault(),
-            'LOGS_DIR' =>  $definition->getOption(RunTestsCommand::OPTION_LOGS_DIR)->getDefault(),
+            'FIXTURES_DIR' => $definition->getOption(RunCommand::OPTION_FIXTURES_DIR)->getDefault(),
+            'LOGS_DIR' =>  $definition->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault(),
         ];
         $this->assertArraySubset($expectedEnv, $testEnv);
     }
@@ -170,10 +170,10 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->input = new StringInput(
             'trolling chrome'
-            . ' --' . RunTestsCommand::OPTION_SERVER_URL .'=http://foo.bar:1337'
-            . ' --' . RunTestsCommand::OPTION_FIXTURES_DIR .'=custom-fixtures-dir/'
-            . ' --' . RunTestsCommand::OPTION_LOGS_DIR .'=custom-logs-dir/'
-            . ' --' . RunTestsCommand::OPTION_PUBLISH_RESULTS
+            . ' --' . RunCommand::OPTION_SERVER_URL .'=http://foo.bar:1337'
+            . ' --' . RunCommand::OPTION_FIXTURES_DIR .'=custom-fixtures-dir/'
+            . ' --' . RunCommand::OPTION_LOGS_DIR .'=custom-logs-dir/'
+            . ' --' . RunCommand::OPTION_PUBLISH_RESULTS
         );
 
         $this->input->bind($this->command->getDefinition());

@@ -122,20 +122,20 @@ receiving the commands and multiple nodes are executing them) - please consult h
 of the Selenium server.
 
 #### Run Steward!
-Having your Selenium server listening, let's launch your test! Use the  `run-tests` command:
+Having your Selenium server listening, let's launch your test! Use the  `run` command:
 
 ```sh
-./vendor/bin/steward run-tests staging firefox
+./vendor/bin/steward run staging firefox
 ```
 
 In few moments you should see Firefox window appearing, then the http://www.w3.org/ site (as defined in the example tests)
 should be loaded and the window will be instantly closed. See output of the command to check the test result.
 
-The `run-tests` command has two required arguments - the name of environment and browser:
+The `run` command has two required arguments - the name of environment and browser:
 - The environment argument has no effect by default, but it is accessible in your tests making it easy to e.g. change the base URL of your tested site - for example your local server or staging environment
 - The browser name could be any name of browser supported by Selenium. Most common are "firefox", "chrome", "phantomjs", "safari" and "internet explorer". Except Firefox some additional steps are needed to run tests in specified browser.
 
-There is also bunch of useful options of `run-tests` command:
+There is also bunch of useful options of `run` command:
 
 - `-vvv` - enable verbose (debug) mode
 - `--group` - run just specific group(s) of tests
@@ -145,7 +145,7 @@ There is also bunch of useful options of `run-tests` command:
 - `--help` - see all other options and default values
 
 ### 5. See the results and screenshots
-The log is printed to the console where you run the `run-tests` command. But this could be a bit confusing, especially if you run multiple tests in parallel.
+The log is printed to the console where you run the `run` command. But this could be a bit confusing, especially if you run multiple tests in parallel.
 
 So for each testcase there is separate file in JUnit XML format, placed in `logs/` directory. Also screenshots and HTML snapsnots are saved into this directory (they are automatically generated on failed assertion or if some WebDriver command fails).
 

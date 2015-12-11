@@ -3,7 +3,7 @@
 namespace Lmc\Steward\Console\EventListener;
 
 use Lmc\Steward\Console\Command\Command;
-use Lmc\Steward\Console\Command\RunTestsCommand;
+use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
@@ -42,7 +42,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAddXdebugOptionToRunTestsCommand()
     {
-        $command = new RunTestsCommand(new EventDispatcher());
+        $command = new RunCommand(new EventDispatcher());
 
         // Save original options
         $optionsOriginal = $command->getDefinition()->getOptions();
@@ -59,7 +59,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldNotAddXdebugOptionToDifferentCommand()
     {
-        $renamedCommand = new RunTestsCommand(new EventDispatcher());
+        $renamedCommand = new RunCommand(new EventDispatcher());
         $renamedCommand->setName('foo-bar');
 
         // Save original options
@@ -81,7 +81,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
     public function testShouldGetIdeKeyFromCommandOptionOnCommandInitialization($stringInput, $expectedIdeKey)
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
-        $command = new RunTestsCommand(new EventDispatcher());
+        $command = new RunCommand(new EventDispatcher());
 
         $input = new StringInput($stringInput);
         $output = new BufferedOutput();
@@ -108,9 +108,9 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
     public function inputProvider()
     {
         return [
-            'use default idekey when no specific value is passed' => ['run-tests --xdebug', 'phpstorm'],
-            'use custom idekey passed as option' => ['run-tests --xdebug=custom', 'custom'],
-            'do nothing if xdebug option not passed' => ['run-tests', null],
+            'use default idekey when no specific value is passed' => ['run --xdebug', 'phpstorm'],
+            'use custom idekey passed as option' => ['run --xdebug=custom', 'custom'],
+            'do nothing if xdebug option not passed' => ['run', null],
         ];
     }
 
@@ -122,7 +122,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockXdebugExtension($isExtensionLoaded = false, $isRemoteEnabled = false);
 
-        $command = new RunTestsCommand(new EventDispatcher());
+        $command = new RunCommand(new EventDispatcher());
         $event = $this->prepareExtendedConsoleEvent(
             $command,
             new StringInput('env firefox --xdebug'),
@@ -140,7 +140,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = false);
 
-        $command = new RunTestsCommand(new EventDispatcher());
+        $command = new RunCommand(new EventDispatcher());
         $event = $this->prepareExtendedConsoleEvent(
             $command,
             new StringInput('env firefox --xdebug'),
@@ -154,7 +154,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
 
-        $command = new RunTestsCommand(new EventDispatcher());
+        $command = new RunCommand(new EventDispatcher());
         $input = new StringInput('env firefox --xdebug');
         $output = new BufferedOutput();
 
@@ -178,7 +178,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
 
-        $command = new RunTestsCommand(new EventDispatcher());
+        $command = new RunCommand(new EventDispatcher());
         $input = new StringInput('env firefox');
         $output = new BufferedOutput();
 

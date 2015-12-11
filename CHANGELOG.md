@@ -8,6 +8,7 @@
 
 ### Changed
 - Sort testcases alphabetically so that the order is same regardless the filesystem
+- `run-tests` command renamed to just `run`, keeping the original name as alias to maintain backward compatibility
 
 ## 1.1.1 - 2015-08-25
 ### Changed

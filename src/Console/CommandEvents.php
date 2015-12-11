@@ -18,7 +18,7 @@ final class CommandEvents
     const CONFIGURE = 'command.configure';
 
     /**
-     * The RUN_TESTS_INIT event is dispatched after basic initialization of RunTests Command.
+     * The RUN_TESTS_INIT event is dispatched after basic initialization of Run Command.
      * It allows you to eg. adjust the output on command initialization.
      *
      * The event listener method receives a Lmc\Steward\Console\Event\ExtendedConsoleEvent instance.
