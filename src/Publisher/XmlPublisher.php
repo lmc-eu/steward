@@ -229,7 +229,6 @@ class XmlPublisher extends AbstractPublisher
                 . $this->getStylesheet()
                 . '</testcases>'
             );
-
         } else { // file already exists, load current xml
             $fileContents = fread($this->fileHandle, fstat($this->fileHandle)['size']);
             $xml = simplexml_load_string($fileContents);

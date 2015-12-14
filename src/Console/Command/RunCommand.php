@@ -473,7 +473,6 @@ class RunCommand extends Command
         }
 
         return $output;
-
     }
 
     /**

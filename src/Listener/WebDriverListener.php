@@ -152,7 +152,6 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
                     );
                     sleep(1);
                     continue;
-
                 } elseif (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
                     $test->warn("Cannot execute test on the node. Maybe you started just the hub and not the node?");
                 }

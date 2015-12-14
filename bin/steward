@@ -32,6 +32,8 @@ if (strpos(__DIR__, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== fa
     define('STEWARD_BASE_DIR', realpath(__DIR__ . '/..'));
 }
 
+require_once __DIR__ . '/../src/init_webdriver_aliases.php';
+
 date_default_timezone_set('Europe/Prague');
 
 $dispatcher = new EventDispatcher();
