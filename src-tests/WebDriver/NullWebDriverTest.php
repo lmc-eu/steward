@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\WebDriver;
 
+use Facebook\WebDriver\WebDriverBy;
+
 class NullWebDriverTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -27,7 +29,7 @@ class NullWebDriverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Return method names of \WebDriver interface
+     * Return method names of WebDriver interface
      *
      * @return array
      */
@@ -36,8 +38,8 @@ class NullWebDriverTest extends \PHPUnit_Framework_TestCase
         return [
             ['close', []],
             ['execute', ['name', []]],
-            ['findElement', [\WebDriverBy::id('foo')]],
-            ['findElements', [\WebDriverBy::id('foo')]],
+            ['findElement', [WebDriverBy::id('foo')]],
+            ['findElements', [WebDriverBy::id('foo')]],
             ['get', ['http://lmc.eu']],
             ['getCurrentURL', []],
             ['getPageSource', []],

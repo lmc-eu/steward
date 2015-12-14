@@ -2,6 +2,9 @@
 
 namespace Lmc\Steward\Test;
 
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\WebDriverWait;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 
 class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
@@ -21,7 +24,7 @@ class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider findElementProvider
      * @param string $methodPostfix Shortcut method postfix to call (prefix 'find' is omitted)
-     * @param string $expectedWebDriverByStrategy Method of \WebDriverBy that is expected to be called
+     * @param string $expectedWebDriverByStrategy Method of WebDriverBy that is expected to be called
      */
     public function testFindByMethodsShouldCallFindElement($methodPostfix, $expectedWebDriverByStrategy)
     {
@@ -29,7 +32,7 @@ class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
         $wd->expects($this->once())
             ->method('findElement')
-            ->with(\WebDriverBy::$expectedWebDriverByStrategy('foobar'));
+            ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'));
 
         $method = 'find' . $methodPostfix;
 
@@ -39,7 +42,7 @@ class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider findElementProvider
      * @param string $methodPostfix Shortcut method postfix to call (prefix 'findMultiple' is omitted)
-     * @param string $expectedWebDriverByStrategy Method of \WebDriverBy that is expected to be called
+     * @param string $expectedWebDriverByStrategy Method of WebDriverBy that is expected to be called
      */
     public function testFindMultipleByMethodsShouldCallFindElements($methodPostfix, $expectedWebDriverByStrategy)
     {
@@ -47,7 +50,7 @@ class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
         $wd->expects($this->once())
             ->method('findElements')
-            ->with(\WebDriverBy::$expectedWebDriverByStrategy('foobar'));
+            ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'));
 
         $method = 'findMultiple' . $methodPostfix;
 
@@ -73,8 +76,8 @@ class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that waitFor...() methods waits for instance of \WebDriverExpectedCondition. Note we only test the
-     * \WebDriverExpectedCondition instance type but not its content, because they return callback
+     * Test that waitFor...() methods waits for instance of WebDriverExpectedCondition. Note we only test the
+     * WebDriverExpectedCondition instance type but not its content, because they return callback
      * which we cannot compare.
      * @dataProvider waitForMethodProvider
      * @param string $method
@@ -82,16 +85,16 @@ class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testWaitForMethodsShouldWaitUntilWebDriverExpectedCondition($method, $isElementMethod = true)
     {
-        /** @var \WebDriverWait|\PHPUnit_Framework_MockObject_MockObject $waitMock */
-        $waitMock = $this->getMockBuilder(\WebDriverWait::class)
+        /** @var WebDriverWait|\PHPUnit_Framework_MockObject_MockObject $waitMock */
+        $waitMock = $this->getMockBuilder(WebDriverWait::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Note the \WebDriverExpectedCondition instances are not comparable (as they return callbacks), so we can
+        // Note the WebDriverExpectedCondition instances are not comparable (as they return callbacks), so we can
         // only check for instance type.
         $waitMock->expects($this->exactly($isElementMethod ? 2 : 1))
             ->method('until')
-            ->with($this->isInstanceOf('\WebDriverExpectedCondition'));
+            ->with($this->isInstanceOf(WebDriverExpectedCondition::class));
 
         $this->trait->wd->expects($this->exactly($isElementMethod ? 2 : 1))
             ->method('wait')

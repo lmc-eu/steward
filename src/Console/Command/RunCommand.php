@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
@@ -30,11 +31,11 @@ class RunCommand extends Command
     protected $processSetCreator;
     /** @var array */
     protected $supportedBrowsers = [
-        \WebDriverBrowserType::FIREFOX,
-        \WebDriverBrowserType::CHROME,
-        \WebDriverBrowserType::IE,
-        \WebDriverBrowserType::SAFARI,
-        \WebDriverBrowserType::PHANTOMJS,
+        WebDriverBrowserType::FIREFOX,
+        WebDriverBrowserType::CHROME,
+        WebDriverBrowserType::IE,
+        WebDriverBrowserType::SAFARI,
+        WebDriverBrowserType::PHANTOMJS,
     ];
 
     const ARGUMENT_ENVIRONMENT = 'environment';

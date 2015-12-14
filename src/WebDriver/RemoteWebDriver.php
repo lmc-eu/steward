@@ -7,7 +7,7 @@ use Lmc\Steward\ConfigProvider;
 /**
  * Extends RemoteWebDriver with some extra logic, ie. more verbose logging.
  */
-class RemoteWebDriver extends \RemoteWebDriver
+class RemoteWebDriver extends \Facebook\WebDriver\Remote\RemoteWebDriver
 {
     public function get($url)
     {

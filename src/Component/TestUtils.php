@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Component;
 
+use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 use Lmc\Steward\ConfigProvider;
 
 /**
@@ -23,8 +25,8 @@ class TestUtils extends AbstractComponent
 
         // Wait for select2 to appear
         $select2link = $this->tc->wd->wait()->until(
-            \WebDriverExpectedCondition::presenceOfElementLocated(
-                \WebDriverBy::cssSelector($select2selector . ' ' . ($multiSelect ? 'input' : 'a'))
+            WebDriverExpectedCondition::presenceOfElementLocated(
+                WebDriverBy::cssSelector($select2selector . ' ' . ($multiSelect ? 'input' : 'a'))
             )
         );
 
@@ -35,13 +37,13 @@ class TestUtils extends AbstractComponent
 
         // Insert searched term into s2 generated input
         $this->tc->wd
-            ->findElement(\WebDriverBy::cssSelector($multiSelect ? $select2selector . ' input' : '#select2-drop input'))
+            ->findElement(WebDriverBy::cssSelector($multiSelect ? $select2selector . ' input' : '#select2-drop input'))
             ->sendKeys($value);
 
         // Wait until result are rendered (or maybe loaded with ajax)
         $firstResult = $this->tc->wd->wait()->until(
-            \WebDriverExpectedCondition::presenceOfElementLocated(
-                \WebDriverBy::cssSelector('.select2-drop .select2-result.select2-highlighted')
+            WebDriverExpectedCondition::presenceOfElementLocated(
+                WebDriverBy::cssSelector('.select2-drop .select2-result.select2-highlighted')
             )
         );
 

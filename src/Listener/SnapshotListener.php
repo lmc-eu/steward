@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Listener;
 
+use Facebook\WebDriver\Exception\WebDriverException;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigProvider;
 use Nette\Utils\Strings;
@@ -40,7 +42,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
             . '-'
             . date('Y-m-d-H-i-s');
 
-        if (!$test->wd instanceof \RemoteWebDriver) {
+        if (!$test->wd instanceof RemoteWebDriver) {
             $test->warn('WebDriver instance not found, cannot take snapshot.');
             return;
         }
@@ -60,7 +62,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
             $htmlPath = $savePath . $testIdentifier . '.html';
             file_put_contents($htmlPath, $test->wd->getPageSource());
             $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
-        } catch (\WebDriverException $e) {
+        } catch (WebDriverException $e) {
             $test->appendTestLog('Error taking page snapshot, perhaps browser is not accessible?');
             return;
         }
