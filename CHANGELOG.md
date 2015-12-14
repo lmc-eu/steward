@@ -10,6 +10,9 @@
 - Sort testcases alphabetically so that the order is same regardless the filesystem
 - `run-tests` command renamed to just `run`, keeping the original name as alias to maintain backward compatibility
 
+### Added
+- Property annotation added to `SyntaxSugarTrait` to know `$wd` property meaning in IDE
+
 ## 1.1.1 - 2015-08-25
 ### Changed
 - Require PHPUnit 4.8.6 to fix incorrect test status being reported (see [phpunit#1835](https://github.com/sebastianbergmann/phpunit/issues/1835)). ([#34](https://github.com/lmc-eu/steward/pull/34))
