@@ -2,6 +2,14 @@
 
 namespace Lmc\Steward\Listener;
 
+use Facebook\WebDriver\Exception\UnknownServerException;
+use Facebook\WebDriver\Exception\WebDriverException;
+use Facebook\WebDriver\Firefox\FirefoxDriver;
+use Facebook\WebDriver\Firefox\FirefoxProfile;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\Remote\WebDriverBrowserType;
+use Facebook\WebDriver\Remote\WebDriverCapabilityType;
+use Facebook\WebDriver\WebDriverPlatform;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\WebDriver\NullWebDriver;
@@ -59,10 +67,10 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             $test->getName()
         );
 
-        $capabilities = new \DesiredCapabilities(
+        $capabilities = new DesiredCapabilities(
             [
-                \WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
-                \WebDriverCapabilityType::PLATFORM => \WebDriverPlatform::ANY,
+                WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
+                WebDriverCapabilityType::PLATFORM => WebDriverPlatform::ANY,
             ]
         );
 
@@ -86,7 +94,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
 
-        if ($test->wd instanceof \RemoteWebDriver) {
+        if ($test->wd instanceof RemoteWebDriver) {
             $test->log(
                 'Destroying "%s" WebDriver for "%s::%s" (session %s)',
                 ConfigProvider::getInstance()->browserName,
@@ -98,13 +106,13 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             try {
                 // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
                 // Should be removed with PhantomJS 2
-                if (ConfigProvider::getInstance()->browserName == \WebDriverBrowserType::PHANTOMJS) {
+                if (ConfigProvider::getInstance()->browserName == WebDriverBrowserType::PHANTOMJS) {
                     $test->wd->execute('deleteAllCookies');
                 }
 
                 $test->wd->close();
                 $test->wd->quit();
-            } catch (\WebDriverException $e) {
+            } catch (WebDriverException $e) {
                 $test->warn('Error closing the session, browser may died.');
             }
         }
@@ -116,14 +124,14 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
      *
      * @param AbstractTestCase $test
      * @param $remoteServerUrl
-     * @param \DesiredCapabilities $capabilities
+     * @param DesiredCapabilities $capabilities
      * @param $connectTimeoutMs
      * @param $requestTimeoutMs
      */
     protected function createWebDriver(
         AbstractTestCase $test,
         $remoteServerUrl,
-        \DesiredCapabilities $capabilities,
+        DesiredCapabilities $capabilities,
         $connectTimeoutMs,
         $requestTimeoutMs
     ) {
@@ -133,7 +141,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
                 $test->wd =
                     RemoteWebDriver::create($remoteServerUrl, $capabilities, $connectTimeoutMs, $requestTimeoutMs);
                 return;
-            } catch (\UnknownServerException $e) {
+            } catch (UnknownServerException $e) {
                 if ($browserName == 'firefox' && strpos($e->getMessage(), 'Unable to bind to locking port') !== false) {
                     // As a consequence of Selenium issue #5172 (cannot change locking port), Firefox may on CI server
                     // collide with other FF instance. As a workaround, we try to start it again after a short delay.
@@ -144,7 +152,6 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
                     );
                     sleep(1);
                     continue;
-
                 } elseif (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
                     $test->warn("Cannot execute test on the node. Maybe you started just the hub and not the node?");
                 }
@@ -158,26 +165,26 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 
     /**
      * Setup browser-specific custom capabilities.
-     * @param \DesiredCapabilities $capabilities
+     * @param DesiredCapabilities $capabilities
      * @param string $browser Browser name
-     * @return \DesiredCapabilities
+     * @return DesiredCapabilities
      */
-    protected function setupCustomCapabilities(\DesiredCapabilities $capabilities, $browser)
+    protected function setupCustomCapabilities(DesiredCapabilities $capabilities, $browser)
     {
         switch ($browser) {
-            case \WebDriverBrowserType::FIREFOX:
+            case WebDriverBrowserType::FIREFOX:
                 $capabilities = $this->setupFirefoxCapabilities($capabilities);
                 break;
-            case \WebDriverBrowserType::CHROME:
+            case WebDriverBrowserType::CHROME:
                 $capabilities = $this->setupChromeCapabilities($capabilities);
                 break;
-            case \WebDriverBrowserType::IE:
+            case WebDriverBrowserType::IE:
                 $capabilities = $this->setupInternetExplorerCapabilities($capabilities);
                 break;
-            case \WebDriverBrowserType::SAFARI:
+            case WebDriverBrowserType::SAFARI:
                 $capabilities = $this->setupSafariCapabilities($capabilities);
                 break;
-            case \WebDriverBrowserType::PHANTOMJS:
+            case WebDriverBrowserType::PHANTOMJS:
                 $capabilities = $this->setupPhantomjsCapabilities($capabilities);
                 break;
         }
@@ -187,41 +194,41 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 
     /**
      * Set up Firefox-specific capabilities
-     * @param \DesiredCapabilities $capabilities
-     * @return \DesiredCapabilities
+     * @param DesiredCapabilities $capabilities
+     * @return DesiredCapabilities
      */
-    protected function setupFirefoxCapabilities(\DesiredCapabilities $capabilities)
+    protected function setupFirefoxCapabilities(DesiredCapabilities $capabilities)
     {
         // Firefox does not (as a intended feature) trigger "change" and "focus" events in javascript if not in active
         // (focused) window. This would be a problem for concurrent testing - solution is to use focusmanager.testmode.
         // See https://code.google.com/p/selenium/issues/detail?id=157
-        $profile = new \FirefoxProfile(); // see https://github.com/facebook/php-webdriver/wiki/FirefoxProfile
+        $profile = new FirefoxProfile(); // see https://github.com/facebook/php-webdriver/wiki/FirefoxProfile
         $profile->setPreference(
             'focusmanager.testmode',
             true
         );
 
-        $capabilities->setCapability(\FirefoxDriver::PROFILE, $profile);
+        $capabilities->setCapability(FirefoxDriver::PROFILE, $profile);
 
         return $capabilities;
     }
 
     /**
      * Set up Chrome/Chromium-specific capabilities
-     * @param \DesiredCapabilities $capabilities
-     * @return \DesiredCapabilities
+     * @param DesiredCapabilities $capabilities
+     * @return DesiredCapabilities
      */
-    protected function setupChromeCapabilities(\DesiredCapabilities $capabilities)
+    protected function setupChromeCapabilities(DesiredCapabilities $capabilities)
     {
         return $capabilities;
     }
 
     /**
      * Set up Internet Explorer-specific capabilities
-     * @param \DesiredCapabilities $capabilities
-     * @return \DesiredCapabilities
+     * @param DesiredCapabilities $capabilities
+     * @return DesiredCapabilities
      */
-    protected function setupInternetExplorerCapabilities(\DesiredCapabilities $capabilities)
+    protected function setupInternetExplorerCapabilities(DesiredCapabilities $capabilities)
     {
         // Clears cache, cookies, history, and saved form data of MSIE.
         $capabilities->setCapability('ie.ensureCleanSession', true);
@@ -231,20 +238,20 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 
     /**
      * Set up Safari-specific capabilities
-     * @param \DesiredCapabilities $capabilities
-     * @return \DesiredCapabilities
+     * @param DesiredCapabilities $capabilities
+     * @return DesiredCapabilities
      */
-    protected function setupSafariCapabilities(\DesiredCapabilities $capabilities)
+    protected function setupSafariCapabilities(DesiredCapabilities $capabilities)
     {
         return $capabilities;
     }
 
     /**
      * Set up PhantomJS-specific capabilities
-     * @param \DesiredCapabilities $capabilities
-     * @return \DesiredCapabilities
+     * @param DesiredCapabilities $capabilities
+     * @return DesiredCapabilities
      */
-    protected function setupPhantomjsCapabilities(\DesiredCapabilities $capabilities)
+    protected function setupPhantomjsCapabilities(DesiredCapabilities $capabilities)
     {
         return $capabilities;
     }

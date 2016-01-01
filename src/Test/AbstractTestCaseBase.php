@@ -2,13 +2,15 @@
 
 namespace Lmc\Steward\Test;
 
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+
 /**
  * Abstract test case base.
  * It holds RemoteWebDriver and defines function templates.
  */
 abstract class AbstractTestCaseBase extends \PHPUnit_Framework_TestCase
 {
-    /** @var \RemoteWebDriver */
+    /** @var RemoteWebDriver */
     public $wd;
 
     /**

@@ -86,7 +86,7 @@ class Downloader
      */
     public function getFilePath()
     {
-        return $this->targetDir . '/' . $this->getFileName($this->getVersion());
+        return $this->targetDir . '/' . $this->getFileName();
     }
 
     /**

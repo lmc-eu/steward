@@ -2,11 +2,14 @@
 
 namespace Lmc\Steward\WebDriver;
 
+use Facebook\WebDriver\WebDriver;
+use Facebook\WebDriver\WebDriverBy;
+
 /**
  * Null webdriver is used as replacement of RemoteWebDriver in situations when we don't need to create browser instance.
- * It keeps API of \WebDriver, however, it is not possible to interact with this NullWebDriver.
+ * It keeps API of WebDriver, however, it is not possible to interact with this NullWebDriver.
  */
-class NullWebDriver implements \WebDriver
+class NullWebDriver implements WebDriver
 {
     protected function throwException()
     {
@@ -83,12 +86,12 @@ class NullWebDriver implements \WebDriver
         $this->throwException();
     } // @codeCoverageIgnore
 
-    public function findElement(\WebDriverBy $locator)
+    public function findElement(WebDriverBy $locator)
     {
         $this->throwException();
     } // @codeCoverageIgnore
 
-    public function findElements(\WebDriverBy $locator)
+    public function findElements(WebDriverBy $locator)
     {
         $this->throwException();
     } // @codeCoverageIgnore

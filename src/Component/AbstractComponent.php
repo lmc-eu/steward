@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Component;
 
+use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\Test\AbstractTestCaseBase;
 use Lmc\Steward\Test\SyntaxSugarTrait;
 
@@ -19,7 +20,7 @@ abstract class AbstractComponent
     /** @var AbstractTestCaseBase */
     protected $tc;
 
-    /** @var \RemoteWebDriver */
+    /** @var RemoteWebDriver */
     protected $wd;
 
     /** @var string */

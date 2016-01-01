@@ -2,9 +2,11 @@
 
 namespace Lmc\Steward\WebDriver\Fixtures;
 
-use WebDriverCommand;
+use Facebook\WebDriver\Remote\WebDriverResponse;
+use Facebook\WebDriver\WebDriverCommandExecutor;
+use Facebook\WebDriver\Remote\WebDriverCommand;
 
-class DummyCommandExecutor implements \WebDriverCommandExecutor
+class DummyCommandExecutor implements WebDriverCommandExecutor
 {
     /** @var WebDriverCommand[] Array of executed commands */
     public $executionLog = [];
@@ -17,6 +19,6 @@ class DummyCommandExecutor implements \WebDriverCommandExecutor
     {
         $this->executionLog[] = $command;
 
-        return new \WebDriverResponse();
+        return new WebDriverResponse();
     }
 }

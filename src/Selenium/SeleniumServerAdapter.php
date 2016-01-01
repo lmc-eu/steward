@@ -4,7 +4,7 @@ namespace Lmc\Steward\Selenium;
 
 /**
  * Selenium server API adapter, used mainly to check connection (communication with Selenium server handles the
- * \WebDriverCommandExecutor, not this adapter).
+ * WebDriverCommandExecutor, not this adapter).
  */
 class SeleniumServerAdapter
 {

@@ -7,6 +7,7 @@
 - When exception from WebDriver occurs (ie. browser dies or times out), prevent throwing another exception when attempting to closes the session (which leads to PHPUnit not generating any report). ([#7](https://github.com/lmc-eu/steward/issues/7))
 
 ### Changed
+- [php-webdriver](https://github.com/facebook/php-webdriver) upgraded to version 1.1, which moves all WebDriver classes from root namespace to `Facebook\WebDriver` namespace. Aliases for the old classes are provided in Steward 1.x, but will be removed in future, so you should update your tests to use the namespaced version.
 - Sort testcases alphabetically so that the order is same regardless the filesystem
 - `run-tests` command renamed to just `run`, keeping the original name as alias to maintain backward compatibility
 - PHPUnit 5.x could now be installed so that Steward fully supports PHP 7

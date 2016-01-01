@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\WebDriver;
 
+use Facebook\WebDriver\WebDriverBy;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\WebDriver\Fixtures\DummyCommandExecutor;
 
@@ -34,7 +35,7 @@ class RemoteWebDriverTest extends \PHPUnit_Framework_TestCase
     {
         $this->setDebugMode(true); // Enable debug mode
 
-        $this->driver->findElement(\WebDriverBy::className('foo'));
+        $this->driver->findElement(WebDriverBy::className('foo'));
         $this->driver->getTitle();
 
         $this->expectOutputRegex(
@@ -47,7 +48,7 @@ class RemoteWebDriverTest extends \PHPUnit_Framework_TestCase
     {
         $this->setDebugMode(false); // Make debug mode disabled
 
-        $this->driver->findElement(\WebDriverBy::className('foo'));
+        $this->driver->findElement(WebDriverBy::className('foo'));
         $this->driver->getTitle();
 
         $this->expectOutputString('');

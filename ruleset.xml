@@ -53,6 +53,7 @@
     <file>./tests/</file>
 
     <exclude-pattern>bootstrap.php</exclude-pattern>
+    <exclude-pattern>init_webdriver_aliases.php</exclude-pattern>
     <exclude-pattern>src-tests/coverage/*</exclude-pattern>
 
     <arg value="p"/>

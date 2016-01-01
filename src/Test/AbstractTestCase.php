@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Test;
 
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Facebook\WebDriver\WebDriverDimension;
 use Lmc\Steward\Component\TestUtils;
 use Lmc\Steward\ConfigProvider;
 
@@ -29,9 +31,9 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
 
-        if ($this->wd instanceof \RemoteWebDriver) {
+        if ($this->wd instanceof RemoteWebDriver) {
             $this->wd->manage()->window()->setSize(
-                new \WebDriverDimension(static::$browserWidth, static::$browserHeight)
+                new WebDriverDimension(static::$browserWidth, static::$browserHeight)
             );
         }
 
