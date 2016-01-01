@@ -9,6 +9,7 @@
 ### Changed
 - Sort testcases alphabetically so that the order is same regardless the filesystem
 - `run-tests` command renamed to just `run`, keeping the original name as alias to maintain backward compatibility
+- PHPUnit 5.x could now be installed so that Steward fully supports PHP 7
 
 ### Added
 - Property annotation added to `SyntaxSugarTrait` to know `$wd` property meaning in IDE
