@@ -3,22 +3,25 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-### Fixed
-- When exception from WebDriver occurs (ie. browser dies or times out), prevent throwing another exception when attempting to closes the session (which leads to PHPUnit not generating any report). ([#7](https://github.com/lmc-eu/steward/issues/7))
+- Nothing yet - everything is released.
+
+## 1.2.0 - 2016-01-11
+### Added
+- Property annotation added to `SyntaxSugarTrait` to know `$wd` property meaning in IDE. ([#36](https://github.com/lmc-eu/steward/pull/36))
 
 ### Changed
-- [php-webdriver](https://github.com/facebook/php-webdriver) upgraded to version 1.1, which moves all WebDriver classes from root namespace to `Facebook\WebDriver` namespace. Aliases for the old classes are provided in Steward 1.x, but will be removed in future, so you should update your tests to use the namespaced version.
-- Sort testcases alphabetically so that the order is same regardless the filesystem
-- `run-tests` command renamed to just `run`, keeping the original name as alias to maintain backward compatibility
-- PHPUnit 5.x could now be installed so that Steward fully supports PHP 7
+- [php-webdriver](https://github.com/facebook/php-webdriver) upgraded to version 1.1, which moves all WebDriver classes from root namespace to `Facebook\WebDriver` namespace. Aliases for the old classes are provided in Steward 1.x, but **will be removed in future**, so you should **update your tests to use the namespaced version**. ([#31](https://github.com/lmc-eu/steward/issues/31))
+- Sort testcases alphabetically so that the order is same regardless the filesystem. ([#38](https://github.com/lmc-eu/steward/pull/38))
+- `run-tests` command renamed to just `run`, keeping the original name as alias to maintain backward compatibility. ([#40](https://github.com/lmc-eu/steward/pull/40))
+- Upgrade to Symfony 3.0. ([#41](https://github.com/lmc-eu/steward/pull/41))
+- PHPUnit 5.x could now be installed so that Steward fully supports PHP 7. ([#43](https://github.com/lmc-eu/steward/pull/43))
 
-### Added
-- Property annotation added to `SyntaxSugarTrait` to know `$wd` property meaning in IDE
+### Fixed
+- When exception from WebDriver occurs (ie. browser dies or times out), prevent throwing another exception when attempting to closes the session (which leads to PHPUnit not generating any report). ([#7](https://github.com/lmc-eu/steward/issues/7))
 
 ## 1.1.1 - 2015-08-25
 ### Changed
 - Require PHPUnit 4.8.6 to fix incorrect test status being reported (see [phpunit#1835](https://github.com/sebastianbergmann/phpunit/issues/1835)). ([#34](https://github.com/lmc-eu/steward/pull/34))
-- Upgrade to Symfony 3.0
 
 ### Fixed
 - Tests having @dataProvider and named data-sets were not properly logged with XmlPublisher and exceptions were thrown. ([#28](https://github.com/lmc-eu/steward/issues/28), [#29](https://github.com/lmc-eu/steward/pull/29))

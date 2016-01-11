@@ -37,7 +37,7 @@ require_once __DIR__ . '/../src/init_webdriver_aliases.php';
 date_default_timezone_set('Europe/Prague');
 
 $dispatcher = new EventDispatcher();
-$application = new Application('Steward', '1.1.1');
+$application = new Application('Steward', '1.2.0');
 $application->setDispatcher($dispatcher);
 
 // Search for listeners and attach them to dispatcher
