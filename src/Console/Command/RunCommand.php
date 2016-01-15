@@ -380,12 +380,19 @@ class RunCommand extends Command
                 }
             }
 
-            // Add queued tasks to prepared if their dependent task is done and delay has passed
             $done = $processSet->get(ProcessSet::PROCESS_STATUS_DONE);
             $doneClasses = [];
+            $resultsCount = [
+                ProcessSet::PROCESS_RESULT_PASSED => 0,
+                ProcessSet::PROCESS_RESULT_FAILED => 0,
+                ProcessSet::PROCESS_RESULT_FATAL => 0,
+            ];
+            // Retrieve names of done tests and count their results
             foreach ($done as $testClass => $processObject) {
                 $doneClasses[] = $testClass;
+                $resultsCount[$processObject->result]++;
             }
+            // Add queued tasks to prepared if their dependent task is done and delay has passed
             foreach ($queued as $testClass => $processObject) {
                 $delaySeconds = $processObject->delayMinutes * 60;
 
@@ -405,13 +412,29 @@ class RunCommand extends Command
             if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
                 $counterWaitingOutput++;
             } else {
+                // prepare information about results of finished processes
+                $resultsInfo = [];
+                if ($output->isVerbose() && $countProcessesDone > 0) {
+                    foreach (ProcessSet::$processResults as $resultType) {
+                        if ($resultsCount[$resultType] > 0) {
+                            $resultsInfo[] = sprintf(
+                                '%s: <fg=%s>%d</>',
+                                $resultType,
+                                $resultType == ProcessSet::PROCESS_RESULT_PASSED ? 'green' : 'red',
+                                $resultsCount[$resultType]
+                            );
+                        }
+                    }
+                }
+
                 $output->writeln(
                     sprintf(
-                        "[%s]: waiting (running: %d, queued: %d, done: %d)",
+                        "[%s]: waiting (running: %d, queued: %d, done: %d%s)",
                         date("Y-m-d H:i:s"),
                         $countProcessesPrepared,
                         $countProcessesQueued,
-                        $countProcessesDone
+                        $countProcessesDone,
+                        count($resultsInfo) ? ' [' . implode(', ', $resultsInfo) . ']' : ''
                     )
                 );
                 $counterWaitingOutput = 1;
