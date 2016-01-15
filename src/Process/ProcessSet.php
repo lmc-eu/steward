@@ -140,6 +140,7 @@ class ProcessSet implements \Countable
 
         $this->processes[$className] = (object) [
             'status' => self::PROCESS_STATUS_QUEUED,
+            'result' => null,
             'process' => $process,
             'delayAfter' => $delayAfter,
             'delayMinutes' => $delayMinutes,
@@ -191,26 +192,10 @@ class ProcessSet implements \Countable
         }
         $this->processes[$className]->status = $status;
 
-        $result = '';
+        $result = null;
         if ($status == self::PROCESS_STATUS_DONE) {
-            switch ($this->processes[$className]->process->getExitCode()) {
-                case \PHPUnit_TextUI_TestRunner::STATUS_PASSED: // all tests passed
-                    $result = self::PROCESS_RESULT_PASSED;
-                    // for passed process save just the status and result; end time was saved by TestStatusListener
-                    break;
-                case 15: // Process killed because of timeout, or
-                case 9: // Process terminated because of timeout
-                    $result = self::PROCESS_RESULT_FATAL;
-                    break;
-                case 255: // PHP fatal error
-                    $result = self::PROCESS_RESULT_FATAL;
-                    break;
-                case \PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT: // exception thrown from phpunit
-                case \PHPUnit_TextUI_TestRunner::FAILURE_EXIT: // some test failed
-                default:
-                    $result = self::PROCESS_RESULT_FAILED;
-                    break;
-            }
+            $result = $this->resolveResult($className);
+            $this->processes[$className]->result = $result;
         }
 
         if ($this->publisher) {
@@ -310,5 +295,35 @@ class ProcessSet implements \Countable
 
         // Sort processes descending according to corresponding values in $sortingArray
         array_multisort($sortingArray, SORT_DESC, SORT_NUMERIC, $this->processes);
+    }
+
+    /**
+     * Resolve result of finished process of given class
+     *
+     * @param string $className
+     * @return string
+     */
+    private function resolveResult($className)
+    {
+        switch ($this->processes[$className]->process->getExitCode()) {
+            case \PHPUnit_TextUI_TestRunner::SUCCESS_EXIT: // all tests passed
+                $result = self::PROCESS_RESULT_PASSED;
+                // for passed process save just the status and result; end time was saved by TestStatusListener
+                break;
+            case 15: // Process killed because of timeout, or
+            case 9: // Process terminated because of timeout
+                $result = self::PROCESS_RESULT_FATAL;
+                break;
+            case 255: // PHP fatal error
+                $result = self::PROCESS_RESULT_FATAL;
+                break;
+            case \PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT: // exception thrown from phpunit
+            case \PHPUnit_TextUI_TestRunner::FAILURE_EXIT: // some test failed
+            default:
+                $result = self::PROCESS_RESULT_FAILED;
+                break;
+        }
+
+        return $result;
     }
 }

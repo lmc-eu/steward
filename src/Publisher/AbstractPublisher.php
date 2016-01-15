@@ -3,7 +3,8 @@
 namespace Lmc\Steward\Publisher;
 
 /**
- * Abstract test results publisher.
+ * Abstract test results publisher could be extended and used for reporting test results into some custom system.
+ * Any ancestor class must be registered to TestStatusListener (using phpunit.xml).
  */
 abstract class AbstractPublisher
 {
