@@ -201,6 +201,57 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED));
     }
 
+    /**
+     * @dataProvider processResultProvider
+     * @param int $exitCode
+     * @param string $expectedResult
+     */
+    public function testShouldResolveAndStoreResultOfFinishedProcess($exitCode, $expectedResult)
+    {
+        $processMock = $this->getMockBuilder(Process::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $processMock->expects($this->once())
+            ->method('getExitCode')
+            ->willReturn($exitCode);
+
+        $this->set->add($processMock, 'DoneTest');
+        $this->set->setStatus('DoneTest', ProcessSet::PROCESS_STATUS_DONE);
+
+        $doneProcesses = $this->set->get(ProcessSet::PROCESS_STATUS_DONE);
+
+        $this->assertSame($expectedResult, $doneProcesses['DoneTest']->result);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function processResultProvider()
+    {
+        return [
+            // $exitCode, $expectedResult
+            'Testcase succeeded' => [\PHPUnit_TextUI_TestRunner::SUCCESS_EXIT, ProcessSet::PROCESS_RESULT_PASSED],
+            'Exception thrown from PHPUnit' =>
+                [\PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT, ProcessSet::PROCESS_RESULT_FAILED],
+            'Some test failed' =>
+                [\PHPUnit_TextUI_TestRunner::FAILURE_EXIT, ProcessSet::PROCESS_RESULT_FAILED],
+            'PHP fatal error' => [255, ProcessSet::PROCESS_RESULT_FATAL],
+            'Process was killed' => [9, ProcessSet::PROCESS_RESULT_FATAL],
+            'Process was terminated' => [9, ProcessSet::PROCESS_RESULT_FATAL],
+            'Unrecognized exit error code should mark result as failed' => [66, ProcessSet::PROCESS_RESULT_FAILED],
+        ];
+    }
+
+    public function testShouldNotStoreResultOfUnfinishedProcess()
+    {
+        $this->set->add(new Process(''), 'PreparedTest');
+        $this->set->setStatus('PreparedTest', ProcessSet::PROCESS_STATUS_PREPARED);
+
+        $preparedProcesses = $this->set->get(ProcessSet::PROCESS_STATUS_PREPARED);
+        $this->assertNull($preparedProcesses['PreparedTest']->result);
+    }
+
     public function testShouldPublishProcessStatusWhenStatusWasSet()
     {
         $publisherMock = $this->getMockBuilder(XmlPublisher::class)
@@ -212,7 +263,7 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'FooClassName',
                 ProcessSet::PROCESS_STATUS_DONE,
-                'passed',
+                ProcessSet::PROCESS_RESULT_PASSED,
                 $this->identicalTo(null),
                 $this->identicalTo(null)
             );

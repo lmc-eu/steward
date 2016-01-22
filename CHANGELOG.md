@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet - everything is released.
+### Added
+- Provide information about results of finished processes (verbose (`-v`) mode of `run` command must be enabled)
 
 ## 1.2.0 - 2016-01-11
 ### Added

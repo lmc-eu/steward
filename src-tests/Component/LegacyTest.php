@@ -152,7 +152,6 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $legacy->setFileDir(sys_get_temp_dir());
 
         $legacy->save('data');
-
     }
 
     public function testShouldAutomaticallySaveAndLoadLegacyIfTestsHavePhaseInItsName()
