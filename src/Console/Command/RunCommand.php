@@ -196,8 +196,10 @@ class RunCommand extends Command
             );
         }
 
-        $output->writeln(sprintf('Browser: %s', $browser));
-        $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
+        if ($output->isVerbose()) {
+            $output->writeln(sprintf('Browser: %s', $browser));
+            $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
+        }
 
         // Check if directories exists
         $this->testDirectories(
@@ -210,7 +212,7 @@ class RunCommand extends Command
             ]
         );
 
-        if ($output->isDebug()) {
+        if ($output->isVeryVerbose()) {
             $output->writeln(
                 sprintf('Base path to fixtures results: %s', $input->getOption(self::OPTION_FIXTURES_DIR))
             );
@@ -242,9 +244,11 @@ class RunCommand extends Command
         }
 
         // Find all files holding test-cases
-        $output->writeln('Searching for testcases:');
-        $output->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
-        $output->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
+        if ($output->isVeryVerbose()) {
+            $output->writeln('Searching for testcases:');
+            $output->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
+            $output->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
+        }
 
         $files = (new Finder())
             ->files()
@@ -252,7 +256,12 @@ class RunCommand extends Command
             ->name($input->getOption(self::OPTION_PATTERN));
 
         if (!count($files)) {
-            $output->writeln('No testcases found, exiting.');
+            $output->writeln(
+                sprintf(
+                    '<error>No testcases found, exiting.%s</error>',
+                    !$output->isVeryVerbose() ? ' (use -vv or -vvv option for more information)' : ''
+                )
+            );
 
             return 1;
         }
@@ -266,7 +275,7 @@ class RunCommand extends Command
         );
 
         if (!count($processSet)) {
-            $output->writeln('No testcases matched given groups, exiting.');
+            $output->writeln('<error>No testcases matched given groups, exiting.</error>');
 
             return 1;
         }
@@ -275,7 +284,7 @@ class RunCommand extends Command
         $processSet->optimizeOrder(new MaxTotalDelayStrategy());
 
         // Initialize first processes that should be run
-        $processSet->dequeueProcessesWithoutDelay($output->isDebug() ? $output : null);
+        $processSet->dequeueProcessesWithoutDelay($output);
 
         // Start execution loop
         $allTestsPassed = $this->executionLoop($output, $processSet);
@@ -335,21 +344,22 @@ class RunCommand extends Command
         while (true) {
             $prepared = $processSet->get(ProcessSet::PROCESS_STATUS_PREPARED);
             $queued = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
+            $done = $processSet->get(ProcessSet::PROCESS_STATUS_DONE);
 
             if (count($prepared) == 0 && count($queued) == 0) {
-                $output->writeln('No tasks left, exiting the execution loop...');
+                $output->writeln(sprintf('Testcases executed: %d', count($done)));
                 break;
             }
 
             // Start all prepared tasks and set status of not running as finished
             foreach ($prepared as $testClass => $processObject) {
                 if (!$processObject->process->isStarted()) {
-                    if ($output->isDebug()) {
+                    if ($output->isVeryVerbose()) {
                         $output->writeln(
                             sprintf(
-                                'Running command for class "%s":' . "\n" . '%s',
+                                'Execution of testcase "%s" started%s',
                                 $testClass,
-                                $processObject->process->getCommandLine()
+                                $output->isDebug() ? " with command:\n" . $processObject->process->getCommandLine() : ''
                             )
                         );
                     }
@@ -360,13 +370,15 @@ class RunCommand extends Command
                 }
 
                 $timeoutError = $this->checkProcessTimeout($processObject->process, $testClass);
-                if ($timeoutError) {
+                if ($timeoutError && $output->isVeryVerbose()) {
                     $output->writeln('<error>' . $timeoutError . '</error>');
                 }
 
-                $processOutput = $this->getProcessOutput($processObject->process);
-                if ($processOutput) {
-                    $output->write($processOutput);
+                if ($output->isDebug()) {
+                    $processOutput = $this->getProcessOutput($processObject->process);
+                    if ($processOutput) {
+                        $output->write($processOutput);
+                    }
                 }
 
                 // Mark no longer running processes as finished
@@ -374,9 +386,36 @@ class RunCommand extends Command
                     if ($processObject->process->getExitCode()) { // non-zero exit code (= failed/exception)
                         $allTestsPassed = false;
                     }
-                    $output->writeln(sprintf('Process for class "%s" finished', $testClass));
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
                     $processObject->finishedTime = time();
+                    $hasProcessPassed = $processObject->result == ProcessSet::PROCESS_RESULT_PASSED;
+
+                    if ($output->isVeryVerbose()) {
+                        $output->writeln(
+                            sprintf(
+                                '<fg=%s>Finished execution of testcase "%s" (result: %s)%s</>',
+                                $hasProcessPassed ? 'green' : 'red',
+                                $testClass,
+                                $processObject->result,
+                                !$hasProcessPassed ? ', output:' : ''
+                            )
+                        );
+                        // Print output of not-successful testcase
+                        if (!$hasProcessPassed) {
+                            $processOutput = $this->getProcessOutput($processObject->process);
+                            if ($processOutput) {
+                                $output->write($processOutput);
+                            }
+                        }
+                    } elseif ($output->isVerbose() && $processObject->result != ProcessSet::PROCESS_RESULT_PASSED) {
+                        $output->writeln(
+                            sprintf(
+                                '<fg=red>Testcase "%s" %s</>',
+                                $testClass,
+                                $processObject->result
+                            )
+                        );
+                    }
                 }
             }
 
@@ -392,14 +431,16 @@ class RunCommand extends Command
                 $doneClasses[] = $testClass;
                 $resultsCount[$processObject->result]++;
             }
-            // Add queued tasks to prepared if their dependent task is done and delay has passed
+            // Set queued tasks as prepared if their dependent task is done and delay has passed
             foreach ($queued as $testClass => $processObject) {
                 $delaySeconds = $processObject->delayMinutes * 60;
 
                 if (in_array($processObject->delayAfter, $doneClasses)
                     && (time() - $done[$processObject->delayAfter]->finishedTime) > $delaySeconds
                 ) {
-                    $output->writeln(sprintf('Unqueing class "%s"', $testClass));
+                    if ($output->isVeryVerbose()) {
+                        $output->writeln(sprintf('Unqueing testcase "%s"', $testClass));
+                    }
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_PREPARED);
                 }
             }
@@ -533,10 +574,18 @@ class RunCommand extends Command
     protected function testSeleniumConnection(OutputInterface $output, $seleniumServerUrl)
     {
         $seleniumAdapter = $this->getSeleniumAdapter();
-        $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl));
+        if ($output->isVeryVerbose()) {
+            $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl));
+        }
 
         if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
-            $output->writeln(sprintf('<error>connection error (%s)</error>', $seleniumAdapter->getLastError()));
+            $output->writeln(
+                sprintf(
+                    '<error>%s (%s)</error>',
+                    $output->isVeryVerbose() ? 'connection error' : 'Error connecting to Selenium server',
+                    $seleniumAdapter->getLastError()
+                )
+            );
             $output->writeln(
                 sprintf(
                     '<error>Make sure your Selenium server is really accessible on url "%s" '
@@ -549,7 +598,13 @@ class RunCommand extends Command
         }
 
         if (!$seleniumAdapter->isSeleniumServer($seleniumServerUrl)) {
-            $output->writeln(sprintf('<error>response error (%s)</error>', $seleniumAdapter->getLastError()));
+            $output->writeln(
+                sprintf(
+                    '<error>%s (%s)</error>',
+                    $output->isVeryVerbose() ? 'unexpected response' : 'Unexpected response from Selenium server',
+                    $seleniumAdapter->getLastError()
+                )
+            );
             $output->writeln(
                 sprintf(
                     '<error>Looks like url "%s" is occupied by something else than Selenium server. '
@@ -562,7 +617,9 @@ class RunCommand extends Command
             return false;
         }
 
-        $output->writeln('OK');
+        if ($output->isVeryVerbose()) {
+            $output->writeln('OK');
+        }
 
         return true;
     }

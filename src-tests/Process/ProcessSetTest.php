@@ -6,6 +6,7 @@ use Graphp\Algorithms\Tree\OutTree;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Process\Process;
 
 class ProcessSetTest extends \PHPUnit_Framework_TestCase
@@ -292,7 +293,7 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $processes = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
         $this->assertCount(2, $processes);
 
-        $outputBuffer = new BufferedOutput();
+        $outputBuffer = new BufferedOutput(Output::VERBOSITY_DEBUG);
         // Dequeue process without delay
         $this->set->dequeueProcessesWithoutDelay($outputBuffer);
 

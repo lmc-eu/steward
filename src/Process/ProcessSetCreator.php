@@ -62,17 +62,19 @@ class ProcessSetCreator
         $files->sortByName();
         $processSet = $this->getProcessSet();
 
-        if ($groups || $excludeGroups || $filter) {
-            $this->output->writeln('Filtering testcases:');
-        }
-        if ($groups) {
-            $this->output->writeln(sprintf(' - by group(s): %s', implode(', ', $groups)));
-        }
-        if ($excludeGroups) {
-            $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
-        }
-        if ($filter) {
-            $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
+        if ($this->output->isVeryVerbose()) {
+            if ($groups || $excludeGroups || $filter) {
+                $this->output->writeln('Filtering testcases:');
+            }
+            if ($groups) {
+                $this->output->writeln(sprintf(' - by group(s): %s', implode(', ', $groups)));
+            }
+            if ($excludeGroups) {
+                $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
+            }
+            if ($filter) {
+                $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
+            }
         }
 
         $testCasesNum = 0;
