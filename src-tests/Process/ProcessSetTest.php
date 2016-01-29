@@ -253,6 +253,55 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($preparedProcesses['PreparedTest']->result);
     }
 
+    public function testShouldCountProcessStatuses()
+    {
+        $this->set->add(new Process(''), 'DoneTest1');
+        $this->set->add(new Process(''), 'QueuedTest');
+        $this->set->add(new Process(''), 'PreparedTest');
+        $this->set->add(new Process(''), 'DoneTest2');
+
+        $this->set->setStatus('DoneTest1', ProcessSet::PROCESS_STATUS_DONE);
+        $this->set->setStatus('PreparedTest', ProcessSet::PROCESS_STATUS_PREPARED);
+        $this->set->setStatus('DoneTest2', ProcessSet::PROCESS_STATUS_DONE);
+
+        $this->assertEquals(
+            [
+                ProcessSet::PROCESS_STATUS_PREPARED => 1,
+                ProcessSet::PROCESS_STATUS_QUEUED => 1,
+                ProcessSet::PROCESS_STATUS_DONE => 2,
+            ],
+            $this->set->countStatuses()
+        );
+    }
+
+    public function testShouldCountResultsOfDoneProcesses()
+    {
+        $doneProcessMock = $this->getMockBuilder(Process::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $doneProcessMock->expects($this->exactly(4))
+            ->method('getExitCode')
+            ->willReturnOnConsecutiveCalls(0, 255, 2, 0);
+
+        $this->set->add($doneProcessMock, 'DoneTestPassed1');
+        $this->set->add($doneProcessMock, 'DoneTestFatal');
+        $this->set->add($doneProcessMock, 'DoneTestFailed');
+        $this->set->add($doneProcessMock, 'DoneTestPassed2');
+        $this->set->setStatus('DoneTestPassed1', ProcessSet::PROCESS_STATUS_DONE);
+        $this->set->setStatus('DoneTestFatal', ProcessSet::PROCESS_STATUS_DONE);
+        $this->set->setStatus('DoneTestFailed', ProcessSet::PROCESS_STATUS_DONE);
+        $this->set->setStatus('DoneTestPassed2', ProcessSet::PROCESS_STATUS_DONE);
+
+        $this->assertEquals(
+            [
+                ProcessSet::PROCESS_RESULT_PASSED => 2,
+                ProcessSet::PROCESS_RESULT_FAILED => 1,
+                ProcessSet::PROCESS_RESULT_FATAL => 1,
+            ],
+            $this->set->countResults()
+        );
+    }
+
     public function testShouldPublishProcessStatusWhenStatusWasSet()
     {
         $publisherMock = $this->getMockBuilder(XmlPublisher::class)

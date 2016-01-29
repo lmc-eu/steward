@@ -287,6 +287,7 @@ class RunCommand extends Command
         $processSet->dequeueProcessesWithoutDelay($output);
 
         // Start execution loop
+        $output->writeln('');
         $allTestsPassed = $this->executionLoop($output, $processSet);
 
         if ($input->getOption(self::OPTION_NO_EXIT)) {
@@ -338,16 +339,13 @@ class RunCommand extends Command
     protected function executionLoop(OutputInterface $output, ProcessSet $processSet)
     {
         $counterWaitingOutput = 1;
-        $counterProcessesLast = 0;
-        $allTestsPassed = true;
+        $statusesCountLast = [];
         // Iterate over prepared and queued until everything is done
         while (true) {
             $prepared = $processSet->get(ProcessSet::PROCESS_STATUS_PREPARED);
             $queued = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-            $done = $processSet->get(ProcessSet::PROCESS_STATUS_DONE);
 
             if (count($prepared) == 0 && count($queued) == 0) {
-                $output->writeln(sprintf('Testcases executed: %d', count($done)));
                 break;
             }
 
@@ -383,9 +381,6 @@ class RunCommand extends Command
 
                 // Mark no longer running processes as finished
                 if (!$processObject->process->isRunning()) {
-                    if ($processObject->process->getExitCode()) { // non-zero exit code (= failed/exception)
-                        $allTestsPassed = false;
-                    }
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
                     $processObject->finishedTime = time();
                     $hasProcessPassed = $processObject->result == ProcessSet::PROCESS_RESULT_PASSED;
@@ -421,15 +416,9 @@ class RunCommand extends Command
 
             $done = $processSet->get(ProcessSet::PROCESS_STATUS_DONE);
             $doneClasses = [];
-            $resultsCount = [
-                ProcessSet::PROCESS_RESULT_PASSED => 0,
-                ProcessSet::PROCESS_RESULT_FAILED => 0,
-                ProcessSet::PROCESS_RESULT_FATAL => 0,
-            ];
-            // Retrieve names of done tests and count their results
+            // Retrieve names of done tests
             foreach ($done as $testClass => $processObject) {
                 $doneClasses[] = $testClass;
-                $resultsCount[$processObject->result]++;
             }
             // Set queued tasks as prepared if their dependent task is done and delay has passed
             foreach ($queued as $testClass => $processObject) {
@@ -445,17 +434,15 @@ class RunCommand extends Command
                 }
             }
 
-            $countProcessesPrepared = count($processSet->get(ProcessSet::PROCESS_STATUS_PREPARED));
-            $countProcessesQueued = count($processSet->get(ProcessSet::PROCESS_STATUS_QUEUED));
-            $countProcessesDone = count($processSet->get(ProcessSet::PROCESS_STATUS_DONE));
-            $counterProcesses = [$countProcessesPrepared, $countProcessesQueued, $countProcessesDone];
+            $statusesCount = $processSet->countStatuses();
             // if the output didn't change, wait 10 seconds before printing it again
-            if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
+            if ($statusesCount === $statusesCountLast && $counterWaitingOutput % 10 !== 0) {
                 $counterWaitingOutput++;
             } else {
                 // prepare information about results of finished processes
                 $resultsInfo = [];
-                if ($output->isVerbose() && $countProcessesDone > 0) {
+                $resultsCount = $processSet->countResults();
+                if ($output->isVerbose() && $statusesCount[ProcessSet::PROCESS_STATUS_DONE] > 0) {
                     foreach (ProcessSet::$processResults as $resultType) {
                         if ($resultsCount[$resultType] > 0) {
                             $resultsInfo[] = sprintf(
@@ -472,17 +459,36 @@ class RunCommand extends Command
                     sprintf(
                         "[%s]: waiting (running: %d, queued: %d, done: %d%s)",
                         date("Y-m-d H:i:s"),
-                        $countProcessesPrepared,
-                        $countProcessesQueued,
-                        $countProcessesDone,
+                        $statusesCount[ProcessSet::PROCESS_STATUS_PREPARED],
+                        $statusesCount[ProcessSet::PROCESS_STATUS_QUEUED],
+                        $statusesCount[ProcessSet::PROCESS_STATUS_DONE],
                         count($resultsInfo) ? ' [' . implode(', ', $resultsInfo) . ']' : ''
                     )
                 );
                 $counterWaitingOutput = 1;
             }
-            $counterProcessesLast = $counterProcesses;
+            $statusesCountLast = $statusesCount;
             sleep(1);
         }
+
+        $doneCount = count($processSet->get(ProcessSet::PROCESS_STATUS_DONE));
+        $resultsCount = $processSet->countResults();
+        $allTestsPassed = ($resultsCount[ProcessSet::PROCESS_RESULT_PASSED] == $doneCount);
+        $resultsInfo = [];
+        foreach (ProcessSet::$processResults as $resultType) {
+            if ($resultsCount[$resultType] > 0) {
+                $resultsInfo[] = sprintf('%s: %d', $resultType, $resultsCount[$resultType]);
+            }
+        }
+
+        $output->writeln(
+            sprintf(
+                "\n<%s>Testcases executed: %d (%s)</>",
+                $allTestsPassed ? 'fg=black;bg=green' : 'error',
+                $doneCount,
+                implode(', ', $resultsInfo)
+            )
+        );
 
         return $allTestsPassed;
     }

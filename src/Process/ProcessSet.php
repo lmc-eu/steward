@@ -298,6 +298,45 @@ class ProcessSet implements \Countable
     }
 
     /**
+     * Get count of processes status
+     *
+     * @return array
+     */
+    public function countStatuses()
+    {
+        $statusesCount = [];
+        foreach (self::$processStatuses as $status) {
+            $statusesCount[$status] = count($this->get($status));
+        }
+
+        return $statusesCount;
+    }
+
+    /**
+     * Get result counts of done processes
+     *
+     * @return array
+     */
+    public function countResults()
+    {
+        $done = $this->get(self::PROCESS_STATUS_DONE);
+        $doneClasses = [];
+        $resultsCount = [
+            self::PROCESS_RESULT_PASSED => 0,
+            self::PROCESS_RESULT_FAILED => 0,
+            self::PROCESS_RESULT_FATAL => 0,
+        ];
+
+        // Retrieve names of done processes and count their results
+        foreach ($done as $className => $processObject) {
+            $doneClasses[] = $className;
+            $resultsCount[$processObject->result]++;
+        }
+
+        return $resultsCount;
+    }
+
+    /**
      * Resolve result of finished process of given class
      *
      * @param string $className
