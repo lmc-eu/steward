@@ -7,6 +7,7 @@ use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -87,9 +88,10 @@ class XdebugListener implements EventSubscriberInterface
                 );
             }
 
-            if ($output->isDebug()) {
-                $output->writeln(sprintf('Xdebug remote debugging initialized with IDE key: %s', $this->xdebugIdeKey));
-            }
+            $output->writeln(
+                sprintf('Xdebug remote debugging initialized with IDE key: %s', $this->xdebugIdeKey),
+                OutputInterface::VERBOSITY_DEBUG
+            );
         }
     }
 

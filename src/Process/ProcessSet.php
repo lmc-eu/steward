@@ -212,21 +212,21 @@ class ProcessSet implements \Countable
         $queuedProcesses = $this->get(self::PROCESS_STATUS_QUEUED);
         foreach ($queuedProcesses as $className => $processObject) {
             if ($processObject->delayMinutes === null) {
-                if ($output->isDebug()) {
-                    $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
-                }
+                $output->writeln(
+                    sprintf('Testcase "%s" is prepared to be run', $className),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
                 $this->setStatus($className, self::PROCESS_STATUS_PREPARED);
             } else {
-                if ($output->isDebug()) {
-                    $output->writeln(
-                        sprintf(
-                            'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
-                            $className,
-                            $processObject->delayMinutes,
-                            $processObject->delayAfter
-                        )
-                    );
-                }
+                $output->writeln(
+                    sprintf(
+                        'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
+                        $className,
+                        $processObject->delayMinutes,
+                        $processObject->delayAfter
+                    ),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
             }
         }
     }

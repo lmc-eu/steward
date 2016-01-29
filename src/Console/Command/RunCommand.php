@@ -352,15 +352,14 @@ class RunCommand extends Command
             // Start all prepared tasks and set status of not running as finished
             foreach ($prepared as $testClass => $processObject) {
                 if (!$processObject->process->isStarted()) {
-                    if ($output->isVeryVerbose()) {
-                        $output->writeln(
-                            sprintf(
-                                'Execution of testcase "%s" started%s',
-                                $testClass,
-                                $output->isDebug() ? " with command:\n" . $processObject->process->getCommandLine() : ''
-                            )
-                        );
-                    }
+                    $output->writeln(
+                        sprintf(
+                            'Execution of testcase "%s" started%s',
+                            $testClass,
+                            $output->isDebug() ? " with command:\n" . $processObject->process->getCommandLine() : ''
+                        ),
+                        OutputInterface::VERBOSITY_VERY_VERBOSE
+                    );
                     $processObject->process->start();
                     usleep(50000); // wait for a while (0,05 sec) to let processes be started in intended order
 
@@ -368,8 +367,8 @@ class RunCommand extends Command
                 }
 
                 $timeoutError = $this->checkProcessTimeout($processObject->process, $testClass);
-                if ($timeoutError && $output->isVeryVerbose()) {
-                    $output->writeln('<error>' . $timeoutError . '</error>');
+                if ($timeoutError) {
+                    $output->writeln('<error>' . $timeoutError . '</error>', OutputInterface::VERBOSITY_VERY_VERBOSE);
                 }
 
                 if ($output->isDebug()) {
@@ -402,13 +401,14 @@ class RunCommand extends Command
                                 $output->write($processOutput);
                             }
                         }
-                    } elseif ($output->isVerbose() && $processObject->result != ProcessSet::PROCESS_RESULT_PASSED) {
+                    } elseif ($processObject->result != ProcessSet::PROCESS_RESULT_PASSED) {
                         $output->writeln(
                             sprintf(
                                 '<fg=red>Testcase "%s" %s</>',
                                 $testClass,
                                 $processObject->result
-                            )
+                            ),
+                            OutputInterface::VERBOSITY_VERBOSE
                         );
                     }
                 }
@@ -427,9 +427,10 @@ class RunCommand extends Command
                 if (in_array($processObject->delayAfter, $doneClasses)
                     && (time() - $done[$processObject->delayAfter]->finishedTime) > $delaySeconds
                 ) {
-                    if ($output->isVeryVerbose()) {
-                        $output->writeln(sprintf('Unqueing testcase "%s"', $testClass));
-                    }
+                    $output->writeln(
+                        sprintf('Unqueing testcase "%s"', $testClass),
+                        OutputInterface::VERBOSITY_VERY_VERBOSE
+                    );
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_PREPARED);
                 }
             }
@@ -580,9 +581,10 @@ class RunCommand extends Command
     protected function testSeleniumConnection(OutputInterface $output, $seleniumServerUrl)
     {
         $seleniumAdapter = $this->getSeleniumAdapter();
-        if ($output->isVeryVerbose()) {
-            $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl));
-        }
+        $output->write(
+            sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl),
+            OutputInterface::VERBOSITY_VERY_VERBOSE
+        );
 
         if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
             $output->writeln(
@@ -623,9 +625,7 @@ class RunCommand extends Command
             return false;
         }
 
-        if ($output->isVeryVerbose()) {
-            $output->writeln('OK');
-        }
+        $output->writeln('OK', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
         return true;
     }
