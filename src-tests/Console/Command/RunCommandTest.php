@@ -195,7 +195,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertContains('Error connecting to Selenium server (Foo Bar Error)', $this->tester->getDisplay());
+        $this->assertContains('Error connecting to Selenium server ("Foo Bar Error")', $this->tester->getDisplay());
         $this->assertContains(
             'Make sure your Selenium server is really accessible on url "http://foo.bar:1337"',
             $this->tester->getDisplay()

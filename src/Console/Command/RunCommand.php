@@ -371,45 +371,40 @@ class RunCommand extends Command
                     $output->writeln('<error>' . $timeoutError . '</error>', OutputInterface::VERBOSITY_VERY_VERBOSE);
                 }
 
-                if ($output->isDebug()) {
+                if ($output->isDebug()) { // In debug mode print all output as it comes
                     $processOutput = $this->getProcessOutput($processObject->process);
                     if ($processOutput) {
                         $output->write($processOutput);
                     }
                 }
 
-                // Mark no longer running processes as finished
                 if (!$processObject->process->isRunning()) {
+                    // Mark no longer running processes as finished
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
                     $processObject->finishedTime = time();
                     $hasProcessPassed = $processObject->result == ProcessSet::PROCESS_RESULT_PASSED;
 
                     if ($output->isVeryVerbose()) {
+                        $processOutput = '';
+                        if (!$hasProcessPassed) {
+                            $processOutput = $this->getProcessOutput($processObject->process);
+                        }
+
                         $output->writeln(
                             sprintf(
                                 '<fg=%s>Finished execution of testcase "%s" (result: %s)%s</>',
                                 $hasProcessPassed ? 'green' : 'red',
                                 $testClass,
                                 $processObject->result,
-                                !$hasProcessPassed ? ', output:' : ''
+                                $processOutput ? ', output:' : ''
                             )
                         );
-                        // Print output of not-successful testcase
-                        if (!$hasProcessPassed) {
-                            $processOutput = $this->getProcessOutput($processObject->process);
-                            if ($processOutput) {
-                                $output->write($processOutput);
-                            }
+
+                        if ($processOutput) { // Eg. in debug mode the output was already printed
+                            $output->write($processOutput);
                         }
-                    } elseif ($processObject->result != ProcessSet::PROCESS_RESULT_PASSED) {
-                        $output->writeln(
-                            sprintf(
-                                '<fg=red>Testcase "%s" %s</>',
-                                $testClass,
-                                $processObject->result
-                            ),
-                            OutputInterface::VERBOSITY_VERBOSE
-                        );
+                    } elseif ($output->isVerbose() && !$hasProcessPassed) {
+                        $output->writeln(sprintf('<fg=red>Testcase "%s" %s</>', $testClass, $processObject->result));
                     }
                 }
             }
@@ -583,13 +578,14 @@ class RunCommand extends Command
         $seleniumAdapter = $this->getSeleniumAdapter();
         $output->write(
             sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl),
+            false,
             OutputInterface::VERBOSITY_VERY_VERBOSE
         );
 
         if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
             $output->writeln(
                 sprintf(
-                    '<error>%s (%s)</error>',
+                    '<error>%s ("%s")</error>',
                     $output->isVeryVerbose() ? 'connection error' : 'Error connecting to Selenium server',
                     $seleniumAdapter->getLastError()
                 )
