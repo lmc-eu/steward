@@ -350,44 +350,44 @@ class RunCommand extends Command
             }
 
             // Start all prepared tasks and set status of not running as finished
-            foreach ($prepared as $testClass => $processObject) {
-                if (!$processObject->process->isStarted()) {
+            foreach ($prepared as $testClass => $processWrapper) {
+                if (!$processWrapper->process->isStarted()) {
                     $output->writeln(
                         sprintf(
                             'Execution of testcase "%s" started%s',
                             $testClass,
-                            $output->isDebug() ? " with command:\n" . $processObject->process->getCommandLine() : ''
+                            $output->isDebug() ? " with command:\n" . $processWrapper->process->getCommandLine() : ''
                         ),
                         OutputInterface::VERBOSITY_VERY_VERBOSE
                     );
-                    $processObject->process->start();
+                    $processWrapper->process->start();
                     usleep(50000); // wait for a while (0,05 sec) to let processes be started in intended order
 
                     continue;
                 }
 
-                $timeoutError = $this->checkProcessTimeout($processObject->process, $testClass);
+                $timeoutError = $this->checkProcessTimeout($processSet, $processWrapper, $testClass);
                 if ($timeoutError) {
                     $output->writeln('<error>' . $timeoutError . '</error>', OutputInterface::VERBOSITY_VERY_VERBOSE);
                 }
 
                 if ($output->isDebug()) { // In debug mode print all output as it comes
-                    $processOutput = $this->getProcessOutput($processObject->process);
+                    $processOutput = $this->getProcessOutput($processWrapper->process);
                     if ($processOutput) {
                         $output->write($processOutput);
                     }
                 }
 
-                if (!$processObject->process->isRunning()) {
+                if (!$processWrapper->process->isRunning()) {
                     // Mark no longer running processes as finished
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
-                    $processObject->finishedTime = time();
-                    $hasProcessPassed = $processObject->result == ProcessSet::PROCESS_RESULT_PASSED;
+                    $processWrapper->finishedTime = time();
+                    $hasProcessPassed = $processWrapper->result == ProcessSet::PROCESS_RESULT_PASSED;
 
                     if ($output->isVeryVerbose()) {
                         $processOutput = '';
                         if (!$hasProcessPassed) {
-                            $processOutput = $this->getProcessOutput($processObject->process);
+                            $processOutput = $this->getProcessOutput($processWrapper->process);
                         }
 
                         $output->writeln(
@@ -395,7 +395,7 @@ class RunCommand extends Command
                                 '<fg=%s>Finished execution of testcase "%s" (result: %s)%s</>',
                                 $hasProcessPassed ? 'green' : 'red',
                                 $testClass,
-                                $processObject->result,
+                                $processWrapper->result,
                                 $processOutput ? ', output:' : ''
                             )
                         );
@@ -404,7 +404,7 @@ class RunCommand extends Command
                             $output->write($processOutput);
                         }
                     } elseif ($output->isVerbose() && !$hasProcessPassed) {
-                        $output->writeln(sprintf('<fg=red>Testcase "%s" %s</>', $testClass, $processObject->result));
+                        $output->writeln(sprintf('<fg=red>Testcase "%s" %s</>', $testClass, $processWrapper->result));
                     }
                 }
             }
@@ -412,15 +412,15 @@ class RunCommand extends Command
             $done = $processSet->get(ProcessSet::PROCESS_STATUS_DONE);
             $doneClasses = [];
             // Retrieve names of done tests
-            foreach ($done as $testClass => $processObject) {
+            foreach ($done as $testClass => $processWrapper) {
                 $doneClasses[] = $testClass;
             }
             // Set queued tasks as prepared if their dependent task is done and delay has passed
-            foreach ($queued as $testClass => $processObject) {
-                $delaySeconds = $processObject->delayMinutes * 60;
+            foreach ($queued as $testClass => $processWrapper) {
+                $delaySeconds = $processWrapper->delayMinutes * 60;
 
-                if (in_array($processObject->delayAfter, $doneClasses)
-                    && (time() - $done[$processObject->delayAfter]->finishedTime) > $delaySeconds
+                if (in_array($processWrapper->delayAfter, $doneClasses)
+                    && (time() - $done[$processWrapper->delayAfter]->finishedTime) > $delaySeconds
                 ) {
                     $output->writeln(
                         sprintf('Unqueing testcase "%s"', $testClass),
@@ -491,17 +491,19 @@ class RunCommand extends Command
 
     /**
      * Check if process is not running longer then specified timeout, return error message if so.
-     * @param Process $process Process instance
+     * @param ProcessSet $processSet
+     * @param array $processWrapper Wrapper of process instance
      * @param string $testClass Name of tested class
-     * @return string|null Error message if process timeout exceeded
+     * @return null|string Error message if process timeout exceeded
      */
-    protected function checkProcessTimeout(Process $process, $testClass)
+    protected function checkProcessTimeout(ProcessSet $processSet, $processWrapper, $testClass)
     {
         try {
-            $process->checkTimeout();
+            $processWrapper->process->checkTimeout();
         } catch (ProcessTimedOutException $e) {
+            $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
             return sprintf(
-                '[%s]: Process for class "%s" exceeded the time out of %d seconds and was killed.',
+                '[%s]: Process for class "%s" exceeded the timeout of %d seconds and was killed.',
                 date("Y-m-d H:i:s"),
                 $testClass,
                 $e->getExceededTimeout()

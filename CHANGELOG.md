@@ -12,6 +12,7 @@
     - Use verbose mode (`-v`) to see name of failed tests during execution.
     - Use very verbose mode (`-vv`) to see detailed progress information during execution and also output of failed tests.
     - Debug level (`-vvv`) should be used when you want to know all available information about the run or when you run the tests on CI server. The tests output is printed incrementally.
+- Set status of timeouted tests as done and their result as failed
 
 ## 1.2.0 - 2016-01-11
 ### Added
