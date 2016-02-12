@@ -438,7 +438,7 @@ class RunCommand extends Command
                 // prepare information about results of finished processes
                 $resultsInfo = [];
                 $resultsCount = $processSet->countResults();
-                if ($output->isVerbose() && $statusesCount[ProcessSet::PROCESS_STATUS_DONE] > 0) {
+                if ($statusesCount[ProcessSet::PROCESS_STATUS_DONE] > 0) {
                     foreach (ProcessSet::$processResults as $resultType) {
                         if ($resultsCount[$resultType] > 0) {
                             $resultsInfo[] = sprintf(

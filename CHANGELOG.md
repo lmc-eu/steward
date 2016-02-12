@@ -4,7 +4,7 @@
 
 ## Unreleased
 ### Added
-- Provide information about results of finished processes (verbose (`-v`) mode of `run` command must be enabled)
+- Provide information about results of finished processes in output of the `run` command
 
 ### Changed
 - Adjust output verbosity for different verbosity levels to improve clarity of the output mainly when running the tests locally.
