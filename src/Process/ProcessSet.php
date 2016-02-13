@@ -207,26 +207,26 @@ class ProcessSet implements \Countable
      * Set queued processes without delay as prepared
      * @param OutputInterface $output If provided, list of dequeued and queued processes will be printed
      */
-    public function dequeueProcessesWithoutDelay(OutputInterface $output = null)
+    public function dequeueProcessesWithoutDelay(OutputInterface $output)
     {
         $queuedProcesses = $this->get(self::PROCESS_STATUS_QUEUED);
         foreach ($queuedProcesses as $className => $processObject) {
             if ($processObject->delayMinutes === null) {
-                if ($output) {
-                    $output->writeln(sprintf('Testcase "%s" is prepared to be run', $className));
-                }
+                $output->writeln(
+                    sprintf('Testcase "%s" is prepared to be run', $className),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
                 $this->setStatus($className, self::PROCESS_STATUS_PREPARED);
             } else {
-                if ($output) {
-                    $output->writeln(
-                        sprintf(
-                            'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
-                            $className,
-                            $processObject->delayMinutes,
-                            $processObject->delayAfter
-                        )
-                    );
-                }
+                $output->writeln(
+                    sprintf(
+                        'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
+                        $className,
+                        $processObject->delayMinutes,
+                        $processObject->delayAfter
+                    ),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
             }
         }
     }
@@ -295,6 +295,45 @@ class ProcessSet implements \Countable
 
         // Sort processes descending according to corresponding values in $sortingArray
         array_multisort($sortingArray, SORT_DESC, SORT_NUMERIC, $this->processes);
+    }
+
+    /**
+     * Get count of processes status
+     *
+     * @return array
+     */
+    public function countStatuses()
+    {
+        $statusesCount = [];
+        foreach (self::$processStatuses as $status) {
+            $statusesCount[$status] = count($this->get($status));
+        }
+
+        return $statusesCount;
+    }
+
+    /**
+     * Get result counts of done processes
+     *
+     * @return array
+     */
+    public function countResults()
+    {
+        $done = $this->get(self::PROCESS_STATUS_DONE);
+        $doneClasses = [];
+        $resultsCount = [
+            self::PROCESS_RESULT_PASSED => 0,
+            self::PROCESS_RESULT_FAILED => 0,
+            self::PROCESS_RESULT_FATAL => 0,
+        ];
+
+        // Retrieve names of done processes and count their results
+        foreach ($done as $className => $processObject) {
+            $doneClasses[] = $className;
+            $resultsCount[$processObject->result]++;
+        }
+
+        return $resultsCount;
     }
 
     /**

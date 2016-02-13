@@ -144,7 +144,8 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
 
         $this->tester->execute(
-            ['command' => $this->command->getName(), 'environment' => 'prod', 'browser' => $browserName]
+            ['command' => $this->command->getName(), 'environment' => 'prod', 'browser' => $browserName],
+            ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
         if (!$shouldThrowException) {
@@ -194,7 +195,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertContains('trying connection...connection error (Foo Bar Error)', $this->tester->getDisplay());
+        $this->assertContains('Error connecting to Selenium server ("Foo Bar Error")', $this->tester->getDisplay());
         $this->assertContains(
             'Make sure your Selenium server is really accessible on url "http://foo.bar:1337"',
             $this->tester->getDisplay()
@@ -230,7 +231,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertContains('trying connection...response error (This is teapot)', $this->tester->getDisplay());
+        $this->assertContains('Unexpected response from Selenium server (This is teapot)', $this->tester->getDisplay());
         $this->assertContains(
             'Looks like url "http://foo.bar:1337" is occupied by something else than Selenium server.',
             $this->tester->getDisplay()
@@ -249,7 +250,8 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--pattern' => 'NotExisting.foo'
-            ]
+            ],
+            ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
         $this->assertContains('by pattern "NotExisting.foo"', $this->tester->getDisplay());
@@ -366,7 +368,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertContains('No tasks left, exiting the execution loop...', $this->tester->getDisplay());
+        $this->assertContains('Testcases executed: 0', $this->tester->getDisplay());
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 

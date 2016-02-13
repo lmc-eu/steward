@@ -62,17 +62,19 @@ class ProcessSetCreator
         $files->sortByName();
         $processSet = $this->getProcessSet();
 
-        if ($groups || $excludeGroups || $filter) {
-            $this->output->writeln('Filtering testcases:');
-        }
-        if ($groups) {
-            $this->output->writeln(sprintf(' - by group(s): %s', implode(', ', $groups)));
-        }
-        if ($excludeGroups) {
-            $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
-        }
-        if ($filter) {
-            $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
+        if ($this->output->isVeryVerbose()) {
+            if ($groups || $excludeGroups || $filter) {
+                $this->output->writeln('Filtering testcases:');
+            }
+            if ($groups) {
+                $this->output->writeln(sprintf(' - by group(s): %s', implode(', ', $groups)));
+            }
+            if ($excludeGroups) {
+                $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
+            }
+            if ($filter) {
+                $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
+            }
         }
 
         $testCasesNum = 0;
@@ -88,15 +90,10 @@ class ProcessSetCreator
             if ($excludeGroups && array_key_exists('group', $annotations)
                 && count($excludingGroups = array_intersect($excludeGroups, $annotations['group']))
             ) {
-                if ($this->output->isDebug()) {
-                    $this->output->writeln(
-                        sprintf(
-                            'Excluding testcase file %s with group %s',
-                            $fileName,
-                            implode(', ', $excludingGroups)
-                        )
-                    );
-                }
+                $this->output->writeln(
+                    sprintf('Excluding testcase file %s with group %s', $fileName, implode(', ', $excludingGroups)),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
                 continue;
             }
 
@@ -108,20 +105,20 @@ class ProcessSetCreator
                     continue;
                 }
 
-                if ($this->output->isDebug()) {
-                    $this->output->writeln(
-                        sprintf(
-                            'Found testcase file #%d in group %s: %s',
-                            ++$testCasesNum,
-                            implode(', ', $matchingGroups),
-                            $fileName
-                        )
-                    );
-                }
+                $this->output->writeln(
+                    sprintf(
+                        'Found testcase file #%d in group %s: %s',
+                        ++$testCasesNum,
+                        implode(', ', $matchingGroups),
+                        $fileName
+                    ),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
             } else {
-                if ($this->output->isDebug()) {
-                    $this->output->writeln(sprintf('Found testcase file #%d: %s', ++$testCasesNum, $fileName));
-                }
+                $this->output->writeln(
+                    sprintf('Found testcase file #%d: %s', ++$testCasesNum, $fileName),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
             }
 
             $phpunitArgs = [

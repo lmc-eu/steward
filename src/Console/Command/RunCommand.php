@@ -196,8 +196,10 @@ class RunCommand extends Command
             );
         }
 
-        $output->writeln(sprintf('Browser: %s', $browser));
-        $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
+        if ($output->isVerbose()) {
+            $output->writeln(sprintf('Browser: %s', $browser));
+            $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
+        }
 
         // Check if directories exists
         $this->testDirectories(
@@ -210,7 +212,7 @@ class RunCommand extends Command
             ]
         );
 
-        if ($output->isDebug()) {
+        if ($output->isVeryVerbose()) {
             $output->writeln(
                 sprintf('Base path to fixtures results: %s', $input->getOption(self::OPTION_FIXTURES_DIR))
             );
@@ -242,9 +244,11 @@ class RunCommand extends Command
         }
 
         // Find all files holding test-cases
-        $output->writeln('Searching for testcases:');
-        $output->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
-        $output->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
+        if ($output->isVeryVerbose()) {
+            $output->writeln('Searching for testcases:');
+            $output->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
+            $output->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
+        }
 
         $files = (new Finder())
             ->files()
@@ -252,7 +256,12 @@ class RunCommand extends Command
             ->name($input->getOption(self::OPTION_PATTERN));
 
         if (!count($files)) {
-            $output->writeln('No testcases found, exiting.');
+            $output->writeln(
+                sprintf(
+                    '<error>No testcases found, exiting.%s</error>',
+                    !$output->isVeryVerbose() ? ' (use -vv or -vvv option for more information)' : ''
+                )
+            );
 
             return 1;
         }
@@ -266,7 +275,7 @@ class RunCommand extends Command
         );
 
         if (!count($processSet)) {
-            $output->writeln('No testcases matched given groups, exiting.');
+            $output->writeln('<error>No testcases matched given groups, exiting.</error>');
 
             return 1;
         }
@@ -275,9 +284,10 @@ class RunCommand extends Command
         $processSet->optimizeOrder(new MaxTotalDelayStrategy());
 
         // Initialize first processes that should be run
-        $processSet->dequeueProcessesWithoutDelay($output->isDebug() ? $output : null);
+        $processSet->dequeueProcessesWithoutDelay($output);
 
         // Start execution loop
+        $output->writeln('');
         $allTestsPassed = $this->executionLoop($output, $processSet);
 
         if ($input->getOption(self::OPTION_NO_EXIT)) {
@@ -329,92 +339,106 @@ class RunCommand extends Command
     protected function executionLoop(OutputInterface $output, ProcessSet $processSet)
     {
         $counterWaitingOutput = 1;
-        $counterProcessesLast = 0;
-        $allTestsPassed = true;
+        $statusesCountLast = [];
         // Iterate over prepared and queued until everything is done
         while (true) {
             $prepared = $processSet->get(ProcessSet::PROCESS_STATUS_PREPARED);
             $queued = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
 
             if (count($prepared) == 0 && count($queued) == 0) {
-                $output->writeln('No tasks left, exiting the execution loop...');
                 break;
             }
 
             // Start all prepared tasks and set status of not running as finished
-            foreach ($prepared as $testClass => $processObject) {
-                if (!$processObject->process->isStarted()) {
-                    if ($output->isDebug()) {
-                        $output->writeln(
-                            sprintf(
-                                'Running command for class "%s":' . "\n" . '%s',
-                                $testClass,
-                                $processObject->process->getCommandLine()
-                            )
-                        );
-                    }
-                    $processObject->process->start();
+            foreach ($prepared as $testClass => $processWrapper) {
+                if (!$processWrapper->process->isStarted()) {
+                    $output->writeln(
+                        sprintf(
+                            'Execution of testcase "%s" started%s',
+                            $testClass,
+                            $output->isDebug() ? " with command:\n" . $processWrapper->process->getCommandLine() : ''
+                        ),
+                        OutputInterface::VERBOSITY_VERY_VERBOSE
+                    );
+                    $processWrapper->process->start();
                     usleep(50000); // wait for a while (0,05 sec) to let processes be started in intended order
 
                     continue;
                 }
 
-                $timeoutError = $this->checkProcessTimeout($processObject->process, $testClass);
+                $timeoutError = $this->checkProcessTimeout($processSet, $processWrapper, $testClass);
                 if ($timeoutError) {
-                    $output->writeln('<error>' . $timeoutError . '</error>');
+                    $output->writeln('<error>' . $timeoutError . '</error>', OutputInterface::VERBOSITY_VERY_VERBOSE);
                 }
 
-                $processOutput = $this->getProcessOutput($processObject->process);
-                if ($processOutput) {
-                    $output->write($processOutput);
-                }
-
-                // Mark no longer running processes as finished
-                if (!$processObject->process->isRunning()) {
-                    if ($processObject->process->getExitCode()) { // non-zero exit code (= failed/exception)
-                        $allTestsPassed = false;
+                if ($output->isDebug()) { // In debug mode print all output as it comes
+                    $processOutput = $this->getProcessOutput($processWrapper->process);
+                    if ($processOutput) {
+                        $output->write($processOutput);
                     }
-                    $output->writeln(sprintf('Process for class "%s" finished', $testClass));
+                }
+
+                if (!$processWrapper->process->isRunning()) {
+                    // Mark no longer running processes as finished
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
-                    $processObject->finishedTime = time();
+                    $processWrapper->finishedTime = time();
+                    $hasProcessPassed = $processWrapper->result == ProcessSet::PROCESS_RESULT_PASSED;
+
+                    if ($output->isVeryVerbose()) {
+                        $processOutput = '';
+                        if (!$hasProcessPassed) {
+                            $processOutput = $this->getProcessOutput($processWrapper->process);
+                        }
+
+                        $output->writeln(
+                            sprintf(
+                                '<fg=%s>Finished execution of testcase "%s" (result: %s)%s</>',
+                                $hasProcessPassed ? 'green' : 'red',
+                                $testClass,
+                                $processWrapper->result,
+                                $processOutput ? ', output:' : ''
+                            )
+                        );
+
+                        if ($processOutput) { // Eg. in debug mode the output was already printed
+                            $output->write($processOutput);
+                        }
+                    } elseif ($output->isVerbose() && !$hasProcessPassed) {
+                        $output->writeln(sprintf('<fg=red>Testcase "%s" %s</>', $testClass, $processWrapper->result));
+                    }
                 }
             }
 
             $done = $processSet->get(ProcessSet::PROCESS_STATUS_DONE);
             $doneClasses = [];
-            $resultsCount = [
-                ProcessSet::PROCESS_RESULT_PASSED => 0,
-                ProcessSet::PROCESS_RESULT_FAILED => 0,
-                ProcessSet::PROCESS_RESULT_FATAL => 0,
-            ];
-            // Retrieve names of done tests and count their results
-            foreach ($done as $testClass => $processObject) {
+            // Retrieve names of done tests
+            foreach ($done as $testClass => $processWrapper) {
                 $doneClasses[] = $testClass;
-                $resultsCount[$processObject->result]++;
             }
-            // Add queued tasks to prepared if their dependent task is done and delay has passed
-            foreach ($queued as $testClass => $processObject) {
-                $delaySeconds = $processObject->delayMinutes * 60;
+            // Set queued tasks as prepared if their dependent task is done and delay has passed
+            foreach ($queued as $testClass => $processWrapper) {
+                $delaySeconds = $processWrapper->delayMinutes * 60;
 
-                if (in_array($processObject->delayAfter, $doneClasses)
-                    && (time() - $done[$processObject->delayAfter]->finishedTime) > $delaySeconds
+                if (in_array($processWrapper->delayAfter, $doneClasses)
+                    && (time() - $done[$processWrapper->delayAfter]->finishedTime) > $delaySeconds
                 ) {
-                    $output->writeln(sprintf('Unqueing class "%s"', $testClass));
+                    $output->writeln(
+                        sprintf('Unqueing testcase "%s"', $testClass),
+                        OutputInterface::VERBOSITY_VERY_VERBOSE
+                    );
                     $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_PREPARED);
                 }
             }
 
-            $countProcessesPrepared = count($processSet->get(ProcessSet::PROCESS_STATUS_PREPARED));
-            $countProcessesQueued = count($processSet->get(ProcessSet::PROCESS_STATUS_QUEUED));
-            $countProcessesDone = count($processSet->get(ProcessSet::PROCESS_STATUS_DONE));
-            $counterProcesses = [$countProcessesPrepared, $countProcessesQueued, $countProcessesDone];
+            $statusesCount = $processSet->countStatuses();
             // if the output didn't change, wait 10 seconds before printing it again
-            if ($counterProcesses === $counterProcessesLast && $counterWaitingOutput % 10 !== 0) {
+            if ($statusesCount === $statusesCountLast && $counterWaitingOutput % 10 !== 0) {
                 $counterWaitingOutput++;
             } else {
                 // prepare information about results of finished processes
                 $resultsInfo = [];
-                if ($output->isVerbose() && $countProcessesDone > 0) {
+                $resultsCount = $processSet->countResults();
+                if ($statusesCount[ProcessSet::PROCESS_STATUS_DONE] > 0) {
                     foreach (ProcessSet::$processResults as $resultType) {
                         if ($resultsCount[$resultType] > 0) {
                             $resultsInfo[] = sprintf(
@@ -431,34 +455,55 @@ class RunCommand extends Command
                     sprintf(
                         "[%s]: waiting (running: %d, queued: %d, done: %d%s)",
                         date("Y-m-d H:i:s"),
-                        $countProcessesPrepared,
-                        $countProcessesQueued,
-                        $countProcessesDone,
+                        $statusesCount[ProcessSet::PROCESS_STATUS_PREPARED],
+                        $statusesCount[ProcessSet::PROCESS_STATUS_QUEUED],
+                        $statusesCount[ProcessSet::PROCESS_STATUS_DONE],
                         count($resultsInfo) ? ' [' . implode(', ', $resultsInfo) . ']' : ''
                     )
                 );
                 $counterWaitingOutput = 1;
             }
-            $counterProcessesLast = $counterProcesses;
+            $statusesCountLast = $statusesCount;
             sleep(1);
         }
+
+        $doneCount = count($processSet->get(ProcessSet::PROCESS_STATUS_DONE));
+        $resultsCount = $processSet->countResults();
+        $allTestsPassed = ($resultsCount[ProcessSet::PROCESS_RESULT_PASSED] == $doneCount);
+        $resultsInfo = [];
+        foreach (ProcessSet::$processResults as $resultType) {
+            if ($resultsCount[$resultType] > 0) {
+                $resultsInfo[] = sprintf('%s: %d', $resultType, $resultsCount[$resultType]);
+            }
+        }
+
+        $output->writeln(
+            sprintf(
+                "\n<%s>Testcases executed: %d (%s)</>",
+                $allTestsPassed ? 'fg=black;bg=green' : 'error',
+                $doneCount,
+                implode(', ', $resultsInfo)
+            )
+        );
 
         return $allTestsPassed;
     }
 
     /**
      * Check if process is not running longer then specified timeout, return error message if so.
-     * @param Process $process Process instance
+     * @param ProcessSet $processSet
+     * @param array $processWrapper Wrapper of process instance
      * @param string $testClass Name of tested class
-     * @return string|null Error message if process timeout exceeded
+     * @return null|string Error message if process timeout exceeded
      */
-    protected function checkProcessTimeout(Process $process, $testClass)
+    protected function checkProcessTimeout(ProcessSet $processSet, $processWrapper, $testClass)
     {
         try {
-            $process->checkTimeout();
+            $processWrapper->process->checkTimeout();
         } catch (ProcessTimedOutException $e) {
+            $processSet->setStatus($testClass, ProcessSet::PROCESS_STATUS_DONE);
             return sprintf(
-                '[%s]: Process for class "%s" exceeded the time out of %d seconds and was killed.',
+                '[%s]: Process for class "%s" exceeded the timeout of %d seconds and was killed.',
                 date("Y-m-d H:i:s"),
                 $testClass,
                 $e->getExceededTimeout()
@@ -533,10 +578,20 @@ class RunCommand extends Command
     protected function testSeleniumConnection(OutputInterface $output, $seleniumServerUrl)
     {
         $seleniumAdapter = $this->getSeleniumAdapter();
-        $output->write(sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl));
+        $output->write(
+            sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl),
+            false,
+            OutputInterface::VERBOSITY_VERY_VERBOSE
+        );
 
         if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
-            $output->writeln(sprintf('<error>connection error (%s)</error>', $seleniumAdapter->getLastError()));
+            $output->writeln(
+                sprintf(
+                    '<error>%s ("%s")</error>',
+                    $output->isVeryVerbose() ? 'connection error' : 'Error connecting to Selenium server',
+                    $seleniumAdapter->getLastError()
+                )
+            );
             $output->writeln(
                 sprintf(
                     '<error>Make sure your Selenium server is really accessible on url "%s" '
@@ -549,7 +604,13 @@ class RunCommand extends Command
         }
 
         if (!$seleniumAdapter->isSeleniumServer($seleniumServerUrl)) {
-            $output->writeln(sprintf('<error>response error (%s)</error>', $seleniumAdapter->getLastError()));
+            $output->writeln(
+                sprintf(
+                    '<error>%s (%s)</error>',
+                    $output->isVeryVerbose() ? 'unexpected response' : 'Unexpected response from Selenium server',
+                    $seleniumAdapter->getLastError()
+                )
+            );
             $output->writeln(
                 sprintf(
                     '<error>Looks like url "%s" is occupied by something else than Selenium server. '
@@ -562,7 +623,7 @@ class RunCommand extends Command
             return false;
         }
 
-        $output->writeln('OK');
+        $output->writeln('OK', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
         return true;
     }
