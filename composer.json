@@ -20,7 +20,7 @@
         "ext-curl": "*",
         "phpunit/phpunit": "^4.8.6 || ~5.0",
         "symfony/console": "~3.0",
-        "symfony/process": "~3.0",
+        "symfony/process": "~3.0, <3.0.2",
         "symfony/finder": "~3.0",
         "symfony/event-dispatcher": "~3.0",
         "nette/reflection": "~2.2",

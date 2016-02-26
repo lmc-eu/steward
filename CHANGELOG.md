@@ -14,6 +14,9 @@
     - Debug level (`-vvv`) should be used when you want to know all available information about the run or when you run the tests on CI server. The tests output is printed incrementally.
 - Set status of timeouted tests as done and their result as failed
 
+### Fixed
+- Output of tests was missing from the console when using Symfony/Process component 3.0.2.
+
 ## 1.2.0 - 2016-01-11
 ### Added
 - Property annotation added to `SyntaxSugarTrait` to know `$wd` property meaning in IDE. ([#36](https://github.com/lmc-eu/steward/pull/36))
