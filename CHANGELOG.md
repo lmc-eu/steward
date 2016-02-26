@@ -3,19 +3,22 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+- Nothing yet - everything is released.
+
+## 1.3.0 - 2016-02-26
 ### Added
-- Provide information about results of finished processes in output of the `run` command
+- Provide information about results of finished processes in output of the `run` command. ([#44](https://github.com/lmc-eu/steward/pull/44))
 
 ### Changed
-- Adjust output verbosity for different verbosity levels to improve clarity of the output mainly when running the tests locally.
+- Adjust output verbosity for different verbosity levels to improve clarity of the output mainly when running the tests locally. ([#45](https://github.com/lmc-eu/steward/issues/45), [#46](https://github.com/lmc-eu/steward/pull/46))
     - Use default level if you care only about test results count.
     - Use verbose mode (`-v`) to see name of failed tests during execution.
     - Use very verbose mode (`-vv`) to see detailed progress information during execution and also output of failed tests.
     - Debug level (`-vvv`) should be used when you want to know all available information about the run or when you run the tests on CI server. The tests output is printed incrementally.
-- Set status of timeouted tests as done and their result as failed
+- Set status of timeouted tests as done and their result as failed ([#46](https://github.com/lmc-eu/steward/pull/46))
 
 ### Fixed
-- Output of tests was missing from the console when using Symfony/Process component 3.0.2.
+- Output of tests was missing from the console when using Symfony/Process component 3.0.2. ([#48](https://github.com/lmc-eu/steward/pull/48))
 
 ## 1.2.0 - 2016-01-11
 ### Added
