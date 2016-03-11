@@ -15,7 +15,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
 /**
- * Class to encapsulate ProcessSet creation during RunTestsCommand
+ * Class to encapsulate creation of ProcessSet from files
  */
 class ProcessSetCreator
 {
@@ -137,12 +137,25 @@ class ProcessSetCreator
                 $phpunitArgs[] = '--colors=always';
             }
 
-            $processSet->add(
-                $this->buildProcess($fileName, $phpunitArgs),
-                key($classes),
-                $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '',
-                $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null
-            );
+            $className = key($classes);
+            $processWrapper = new ProcessWrapper($this->buildProcess($fileName, $phpunitArgs), $className);
+
+            $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
+            $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
+            if ($delayAfter) {
+                $processWrapper->setDelay($delayAfter, $delayMinutes);
+            } elseif ($delayMinutes !== null && empty($delayAfter)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Testcase "%s" has defined delay %d minutes, '
+                        . 'but doesn\'t have defined the testcase to run after',
+                        $className,
+                        $delayMinutes
+                    )
+                );
+            }
+
+            $processSet->add($processWrapper);
         }
 
         return $processSet;

@@ -5,6 +5,9 @@ namespace Lmc\Steward\Process;
 use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
+use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedByZeroTimeTest;
+use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedTest;
+use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,7 +16,6 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Process\Process;
 
 /**
  * @covers Lmc\Steward\Process\ProcessSetCreator
@@ -88,9 +90,8 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->assertQueuedTests([self::NAME_DUMMY_TEST, self::NAME_BAR_TEST, self::NAME_FOO_TEST], $processSet);
 
         // Test properties of DummyTest
-        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-        /** @var Process $dummyTestProcess */
-        $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->process;
+        $processes = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+        $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->getProcess();
         $testCommand = $dummyTestProcess->getCommandLine();
         $testEnv = $dummyTestProcess->getEnv();
 
@@ -151,13 +152,46 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->assertRegExp('/Excluding testcase file .*\/GroupBarTest\.php with group bar/', $output);
     }
 
+    public function testShouldAddTestsWithTheirDefinedDelay()
+    {
+        $files = $this->findDummyTests('*Test.php', 'DelayedTests');
+        $processSet = $this->creator->createFromFiles($files, [], []);
+
+        $processes = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+
+        $firstTest = $processes[FirstTest::class];
+        $delayedTest = $processes[DelayedTest::class];
+        $delayedByZeroTimeTest = $processes[DelayedByZeroTimeTest::class];
+
+        $this->assertFalse($firstTest->isDelayed());
+
+        $this->assertTrue($delayedByZeroTimeTest->isDelayed());
+        $this->assertSame(FirstTest::class, $delayedByZeroTimeTest->getDelayAfter());
+        $this->assertSame(0.0, $delayedByZeroTimeTest->getDelayMinutes());
+
+        $this->assertTrue($delayedTest->isDelayed());
+        $this->assertSame(FirstTest::class, $delayedTest->getDelayAfter());
+        $this->assertSame(3.33, $delayedTest->getDelayMinutes());
+    }
+
+    public function testShouldThrowExceptionIfAddingTestWithDelayTimeButWithoutDelayedClass()
+    {
+        $files = $this->findDummyTests('InvalidDelayTest.php', 'InvalidTests');
+
+        $this->setExpectedException(
+            \InvalidArgumentException::class,
+            'Testcase "Lmc\Steward\Process\Fixtures\InvalidTests\InvalidDelayTest" has defined delay 5 minutes, '
+            . 'but doesn\'t have defined the testcase to run after'
+        );
+        $this->creator->createFromFiles($files, [], []);
+    }
+
     public function testShouldPassFilterOptionToPhpunitProcess()
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], [], 'testCase::testName');
 
-        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
-        /** @var Process $dummyTestProcess */
-        $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->process;
+        $processes = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+        $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->getProcess();
         $testCommand = $dummyTestProcess->getCommandLine();
         $output = $this->bufferedOutput->fetch();
 
@@ -190,8 +224,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 
         $processSet = $this->creator->createFromFiles($files, [], []);
 
-        /** @var Process $process */
-        $process = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->process;
+        $process = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->getProcess();
         $processEnv = $process->getEnv();
 
         $this->assertArraySubset(
@@ -213,8 +246,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 
         // Test default commands (decorated output was disabled in setUp)
         $processSet = $this->creator->createFromFiles($files, [], []);
-        /** @var Process $process */
-        $process = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->process;
+        $process = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->getProcess();
         $commandWithoutColors = $process->getCommandLine();
         $this->assertNotContains('--colors', $commandWithoutColors);
 
@@ -228,8 +260,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         );
 
         $processSet = $this->creator->createFromFiles($files, [], []);
-        /** @var Process $process */
-        $process = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->process;
+        $process = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->getProcess();
         $commandWithColors = $process->getCommandLine();
         $this->assertContains('--colors=always', $commandWithColors);
     }
@@ -245,13 +276,14 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $pattern
+     * @param string $directory
      * @return Finder
      */
-    protected function findDummyTests($pattern = '*Test.php')
+    protected function findDummyTests($pattern = '*Test.php', $directory = 'DummyTests')
     {
         return (new Finder())
             ->files()
-            ->in(__DIR__ . '/Fixtures/DummyTests')
+            ->in(__DIR__ . '/Fixtures/' . $directory)
             ->name($pattern);
     }
 
@@ -264,10 +296,11 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(ProcessSet::class, $processSet);
         $this->assertCount(count($expectedTestNames), $processSet);
-        $processes = $processSet->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        $processes = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
 
         foreach ($expectedTestNames as $expectedTestName) {
             $this->assertArrayHasKey($expectedTestName, $processes);
+            $this->assertInstanceOf(ProcessWrapper::class, $processes[$expectedTestName]);
         }
     }
 }

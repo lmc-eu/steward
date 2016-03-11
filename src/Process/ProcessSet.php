@@ -2,11 +2,11 @@
 
 namespace Lmc\Steward\Process;
 
+use Assert\Assertion;
 use Graphp\Algorithms\Tree\OutTree;
 use Fhaculty\Graph\Graph;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 
 /**
  * Set of Test processes.
@@ -14,8 +14,8 @@ use Symfony\Component\Process\Process;
 class ProcessSet implements \Countable
 {
     /**
-     * Array of objects with test processes, indexed by testcase fully qualified name
-     * @var array
+     * Array of wrapped Processes, indexed by testcase fully qualified name
+     * @var ProcessWrapper[]
      */
     protected $processes = [];
 
@@ -28,33 +28,6 @@ class ProcessSet implements \Countable
     /** @var OutTree */
     protected $tree;
 
-    /** Process prepared to be run */
-    const PROCESS_STATUS_PREPARED = 'prepared';
-    /** Process in queue  - waiting to be prepared */
-    const PROCESS_STATUS_QUEUED = 'queued';
-    /** Finished process */
-    const PROCESS_STATUS_DONE = 'done';
-
-    /** Process passed successful (with all its tests passing) */
-    const PROCESS_RESULT_PASSED = 'passed';
-    /** Process failed - some tests have failed or are broken */
-    const PROCESS_RESULT_FAILED = 'failed';
-    /** Process fatally failed (PHP fatal error occurred - eg. no WebDriver available) */
-    const PROCESS_RESULT_FATAL = 'fatal';
-
-    /** @var array List of possible process statuses */
-    public static $processStatuses = [
-        self::PROCESS_STATUS_PREPARED,
-        self::PROCESS_STATUS_QUEUED,
-        self::PROCESS_STATUS_DONE,
-    ];
-
-    /** @var array List of possible process results */
-    public static $processResults = [
-        self::PROCESS_RESULT_PASSED,
-        self::PROCESS_RESULT_FAILED,
-        self::PROCESS_RESULT_FATAL,
-    ];
 
     /**
      * Instantiate processSet to manage processes in different states,
@@ -88,15 +61,11 @@ class ProcessSet implements \Countable
     /**
      * Add new process to the set.
      *
-     * @param Process $process PHPUnit process to run
-     * @param string $className Tested class fully qualified name
-     * @param string $delayAfter Other fully qualified class name after which this test should be run.
-     * If is set, $delayMinutes must also be specified.
-     * @param float|null $delayMinutes Delay execution for $delayMinutes after $delayAfter test.
+     * @param ProcessWrapper $processWrapper Wrapped process
      */
-
-    public function add(Process $process, $className, $delayAfter = '', $delayMinutes = null)
+    public function add(ProcessWrapper $processWrapper)
     {
+        $className = $processWrapper->getClassName();
         if (isset($this->processes[$className])) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -106,51 +75,12 @@ class ProcessSet implements \Countable
             );
         }
 
-        if (!empty($delayAfter)) {
-            if ($delayMinutes === null) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Testcase "%s" should run after "%s", but no delay was defined',
-                        $className,
-                        $delayAfter
-                    )
-                );
-            } elseif (!is_numeric($delayMinutes) || (float) $delayMinutes < 0) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Delay defined in testcase "%s" must be greater than or equal 0, but "%s" was given',
-                        $className,
-                        $delayMinutes
-                    )
-                );
-            }
-
-            $delayMinutes = (float) $delayMinutes;
-        }
-
-        if ($delayMinutes !== null && empty($delayAfter)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Testcase "%s" has defined delay %d minutes, but does not have defined the testcase to run after',
-                    $className,
-                    $delayMinutes
-                )
-            );
-        }
-
-        $this->processes[$className] = (object) [
-            'status' => self::PROCESS_STATUS_QUEUED,
-            'result' => null,
-            'process' => $process,
-            'delayAfter' => $delayAfter,
-            'delayMinutes' => $delayMinutes,
-            'finishedTime' => null,
-        ];
+        $this->processes[$className] = $processWrapper;
 
         $this->graph->createVertex($className);
 
         if ($this->publisher) {
-            $this->publisher->publishResults($className, self::PROCESS_STATUS_QUEUED, null);
+            $this->publisher->publishResults($className, ProcessWrapper::PROCESS_STATUS_QUEUED, null);
         }
     }
 
@@ -159,48 +89,20 @@ class ProcessSet implements \Countable
      *
      * @param string $status {prepared, queued, done}
      *
-     * @return array
+     * @return ProcessWrapper[]
      */
     public function get($status)
     {
+        Assertion::choice($status, ProcessWrapper::$processStatuses);
+
         $return = [];
-        foreach ($this->processes as $className => $processObject) {
-            if ($processObject->status == $status) {
-                $return[$className] = $processObject;
+        foreach ($this->processes as $className => $processWrapper) {
+            if ($processWrapper->getStatus() == $status) {
+                $return[$className] = $processWrapper;
             }
         }
 
         return $return;
-    }
-
-    /**
-     * Set status of given process
-     * @param $className string
-     * @param $status string
-     * @throws \InvalidArgumentException
-     */
-    public function setStatus($className, $status)
-    {
-        if (!in_array($status, self::$processStatuses)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Process status must be one of "%s", but "%s" given',
-                    join(', ', self::$processStatuses),
-                    $status
-                )
-            );
-        }
-        $this->processes[$className]->status = $status;
-
-        $result = null;
-        if ($status == self::PROCESS_STATUS_DONE) {
-            $result = $this->resolveResult($className);
-            $this->processes[$className]->result = $result;
-        }
-
-        if ($this->publisher) {
-            $this->publisher->publishResults($className, $status, $result);
-        }
     }
 
     /**
@@ -209,21 +111,22 @@ class ProcessSet implements \Countable
      */
     public function dequeueProcessesWithoutDelay(OutputInterface $output)
     {
-        $queuedProcesses = $this->get(self::PROCESS_STATUS_QUEUED);
-        foreach ($queuedProcesses as $className => $processObject) {
-            if ($processObject->delayMinutes === null) {
+        $queuedProcesses = $this->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+
+        foreach ($queuedProcesses as $className => $processWrapper) {
+            if (!$processWrapper->isDelayed()) {
                 $output->writeln(
                     sprintf('Testcase "%s" is prepared to be run', $className),
                     OutputInterface::VERBOSITY_DEBUG
                 );
-                $this->setStatus($className, self::PROCESS_STATUS_PREPARED);
+                $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
             } else {
                 $output->writeln(
                     sprintf(
                         'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
                         $className,
-                        $processObject->delayMinutes,
-                        $processObject->delayAfter
+                        $processWrapper->getDelayMinutes(),
+                        $processWrapper->getDelayAfter()
                     ),
                     OutputInterface::VERBOSITY_DEBUG
                 );
@@ -242,26 +145,26 @@ class ProcessSet implements \Countable
             $root = $this->graph->createVertex(0);
 
             // Create edges directed from the root node
-            foreach ($this->processes as $processClassName => $processObject) {
-                $vertex = $this->graph->getVertex($processClassName);
+            foreach ($this->processes as $className => $processWrapper) {
+                $vertex = $this->graph->getVertex($className);
 
-                if (!$processObject->delayMinutes) { // process doesn't depend on anything => link it to the root node
+                if (!$processWrapper->getDelayMinutes()) { // process doesn't depend on anything => link it to the root
                     $root->createEdgeTo($vertex)->setWeight(0);
                 } else { // link process to its dependency
                     // Throw error if dependency is to not existing vertex
-                    if (!$this->graph->hasVertex($processObject->delayAfter)) {
+                    if (!$this->graph->hasVertex($processWrapper->getDelayAfter())) {
                         throw new \InvalidArgumentException(
                             sprintf(
                                 'Testcase "%s" has @delayAfter dependency on "%s", but this testcase was not defined.',
-                                $processClassName,
-                                $processObject->delayAfter
+                                $className,
+                                $processWrapper->getDelayAfter()
                             )
                         );
                     }
 
-                    $this->graph->getVertex($processObject->delayAfter)
+                    $this->graph->getVertex($processWrapper->getDelayAfter())
                         ->createEdgeTo($vertex)
-                        ->setWeight($processObject->delayMinutes);
+                        ->setWeight($processWrapper->getDelayMinutes());
                 }
             }
         }
@@ -305,7 +208,7 @@ class ProcessSet implements \Countable
     public function countStatuses()
     {
         $statusesCount = [];
-        foreach (self::$processStatuses as $status) {
+        foreach (ProcessWrapper::$processStatuses as $status) {
             $statusesCount[$status] = count($this->get($status));
         }
 
@@ -319,50 +222,20 @@ class ProcessSet implements \Countable
      */
     public function countResults()
     {
-        $done = $this->get(self::PROCESS_STATUS_DONE);
+        $done = $this->get(ProcessWrapper::PROCESS_STATUS_DONE);
         $doneClasses = [];
         $resultsCount = [
-            self::PROCESS_RESULT_PASSED => 0,
-            self::PROCESS_RESULT_FAILED => 0,
-            self::PROCESS_RESULT_FATAL => 0,
+            ProcessWrapper::PROCESS_RESULT_PASSED => 0,
+            ProcessWrapper::PROCESS_RESULT_FAILED => 0,
+            ProcessWrapper::PROCESS_RESULT_FATAL => 0,
         ];
 
         // Retrieve names of done processes and count their results
         foreach ($done as $className => $processObject) {
             $doneClasses[] = $className;
-            $resultsCount[$processObject->result]++;
+            $resultsCount[$processObject->getResult()]++;
         }
 
         return $resultsCount;
-    }
-
-    /**
-     * Resolve result of finished process of given class
-     *
-     * @param string $className
-     * @return string
-     */
-    private function resolveResult($className)
-    {
-        switch ($this->processes[$className]->process->getExitCode()) {
-            case \PHPUnit_TextUI_TestRunner::SUCCESS_EXIT: // all tests passed
-                $result = self::PROCESS_RESULT_PASSED;
-                // for passed process save just the status and result; end time was saved by TestStatusListener
-                break;
-            case 15: // Process killed because of timeout, or
-            case 9: // Process terminated because of timeout
-                $result = self::PROCESS_RESULT_FATAL;
-                break;
-            case 255: // PHP fatal error
-                $result = self::PROCESS_RESULT_FATAL;
-                break;
-            case \PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT: // exception thrown from phpunit
-            case \PHPUnit_TextUI_TestRunner::FAILURE_EXIT: // some test failed
-            default:
-                $result = self::PROCESS_RESULT_FAILED;
-                break;
-        }
-
-        return $result;
     }
 }
