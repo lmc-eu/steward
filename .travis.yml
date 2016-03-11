@@ -16,5 +16,5 @@ script:
   - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml
   - cd .. && vendor/bin/phpcs --standard=ruleset.xml
 
-after_script:
-  - vendor/bin/coveralls -v -c .coveralls.yml
+after_success:
+  - travis_retry php vendor/bin/coveralls -v
