@@ -4,7 +4,7 @@ namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\ConfigProvider;
-use Lmc\Steward\Process\ProcessSet;
+use Lmc\Steward\Process\ProcessWrapper;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.
@@ -121,7 +121,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             try {
                 $publisher->publishResults(
                     $suite->getName(),
-                    $status = ProcessSet::PROCESS_STATUS_DONE,
+                    $status = ProcessWrapper::PROCESS_STATUS_DONE,
                     $result = null, // do not override, the value is set by ProcessSet::setStatus()
                     $this->startDate,
                     new \DateTimeImmutable()

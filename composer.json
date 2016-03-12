@@ -30,7 +30,8 @@
         "graphp/algorithms": "^0.8.1",
         "florianwolters/component-util-singleton": "0.3.2",
         "caseyamcl/configula": "~2.3",
-        "doctrine/inflector": "~1.0"
+        "doctrine/inflector": "~1.0",
+        "beberlei/assert": "^2.4"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "~2.3.4 || ^2.4.1",

@@ -22,21 +22,11 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
     public function testShouldBeCountable()
     {
         $this->assertCount(0, $this->set);
-        $this->set->add(new Process(''), 'Foo');
+        $this->set->add(new ProcessWrapper(new Process(''), 'Foo'));
         $this->assertCount(1, $this->set);
-        $this->set->add(new Process(''), 'Bar');
-        $this->set->add(new Process(''), 'Baz');
+        $this->set->add(new ProcessWrapper(new Process(''), 'Bar'));
+        $this->set->add(new ProcessWrapper(new Process(''), 'Baz'));
         $this->assertCount(3, $this->set);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Testcase "Foo" should run after "Bar", but no delay was defined
-     */
-    public function testShouldFailIfDependencyWasDefinedButWithoutDelay()
-    {
-        $this->set->add(new Process(''), 'Bar');
-        $this->set->add(new Process(''), 'Foo', 'Bar');
     }
 
     /**
@@ -45,70 +35,65 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldFailWhenAddingTestWithNonUniqueName()
     {
-        $this->set->add(new Process(''), 'Foo\Bar');
-        $this->set->add(new Process(''), 'Foo\Bar');
+        $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
+        $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
     }
 
-    /**
-     * @dataProvider delayProvider
-     * @param mixed $delay
-     * @param string|null $expectedExceptionMessage Null if no exception should be raised
-     */
-    public function testShouldAcceptOnlyGreaterThanOrEqualToZeroNumbersAsDelay($delay, $expectedExceptionMessage)
+    public function testShouldHasNewlyAddedProcessInQueuedState()
     {
-        if ($expectedExceptionMessage !== null) {
-            $this->setExpectedException('\InvalidArgumentException', $expectedExceptionMessage);
-        }
+        $this->set->add(new ProcessWrapper(new Process(''), 'Foo'));
+        $this->set->add(new ProcessWrapper(new Process(''), 'Bar'));
 
-        $this->set->add(new Process(''), 'Bar');
-        $this->set->add(new Process(''), 'Foo', 'Bar', $delay);
-
-        if ($expectedExceptionMessage === null) {
-            // delay retrieved from the set is same as when process was added
-            $this->assertEquals(
-                $delay,
-                $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED)['Foo']->delayMinutes,
-                '',
-                0.001
-            );
-        }
+        $this->assertCount(2, $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED));
+        $this->assertCount(0, $this->set->get(ProcessWrapper::PROCESS_STATUS_DONE));
+        $this->assertCount(0, $this->set->get(ProcessWrapper::PROCESS_STATUS_PREPARED));
     }
 
-    public function delayProvider()
+    public function testShouldAddAndGetWrappedProcesses()
     {
-        return [
-            // delay, expected exception (null if no exception should be raised)
-            'integer value' => [1, null],
-            'zero value' => [0, null],
-            'float value' => [3.33, null],
-            'negative value' => [
-                -5,
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "-5" was given'
-            ],
-            'string value' => [
-                'omg',
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "omg" was given'
-            ],
-        ];
+        $processFoo = new ProcessWrapper(new Process(''), 'Foo');
+        $processBaz = new ProcessWrapper(new Process(''), 'Baz');
+        $this->set->add($processFoo);
+        $this->set->add($processBaz);
+
+        $processes = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+
+        $this->assertSame($processBaz, $processes['Baz']);
+        $this->assertSame($processFoo, $processes['Foo']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Testcase "Foo" has defined delay 5 minutes, but does not have defined the testcase to
-     */
-    public function testShouldFailIfDelayWasDefinedButNotTheDependentClass()
+    public function testShouldRetrieveProcessesByStatus()
     {
-        $this->set->add(new Process(''), 'Foo', null, 5);
-    }
+        $doneTest1 = new ProcessWrapper(new Process(''), 'DoneTest1');
+        $doneTest2 = new ProcessWrapper(new Process(''), 'DoneTest2');
+        $preparedTest = new ProcessWrapper(new Process(''), 'PreparedTest');
+        $this->set->add($doneTest1);
+        $this->set->add($doneTest2);
+        $this->set->add($preparedTest);
 
-    public function testShouldSetNewlyAddedProcessAsQueued()
-    {
-        $this->set->add(new Process(''), 'Foo');
-        $this->set->add(new Process(''), 'Bar');
+        // all processes are queued by default
+        $this->assertCount(3, $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED));
 
-        $this->assertCount(2, $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED));
-        $this->assertCount(0, $this->set->get(ProcessSet::PROCESS_STATUS_DONE));
-        $this->assertCount(0, $this->set->get(ProcessSet::PROCESS_STATUS_PREPARED));
+        // set statuses
+        $doneTest1->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
+        $doneTest2->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
+        $preparedTest->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
+
+        // retrieve processes by status
+        $doneProcesses = $this->set->get(ProcessWrapper::PROCESS_STATUS_DONE);
+        $preparedProcesses = $this->set->get(ProcessWrapper::PROCESS_STATUS_PREPARED);
+
+        // check both done processes
+        $this->assertCount(2, $doneProcesses);
+        $this->assertSame($doneTest1, $doneProcesses['DoneTest1']);
+        $this->assertSame($doneTest2, $doneProcesses['DoneTest2']);
+
+        // check one prepared process
+        $this->assertCount(1, $preparedProcesses);
+        $this->assertSame($preparedTest, $preparedProcesses['PreparedTest']);
+
+        // no queued process left
+        $this->assertCount(0, $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED));
     }
 
     public function testShouldPublishProcessWhenAdded()
@@ -121,14 +106,14 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
             ->method('publishResults')
             ->with(
                 'FooClassName',
-                ProcessSet::PROCESS_STATUS_QUEUED,
+                ProcessWrapper::PROCESS_STATUS_QUEUED,
                 $this->identicalTo(null),
                 $this->identicalTo(null),
                 $this->identicalTo(null)
             );
 
         $set = new ProcessSet($publisherMock);
-        $set->add(new Process(''), 'FooClassName');
+        $set->add(new ProcessWrapper(new Process(''), 'FooClassName'));
     }
 
     public function testShouldAllowToDefinePublisherUsingSetter()
@@ -143,132 +128,37 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
             ->method('publishResults')
             ->with(
                 'FooClassName',
-                ProcessSet::PROCESS_STATUS_QUEUED,
+                ProcessWrapper::PROCESS_STATUS_QUEUED,
                 $this->identicalTo(null),
                 $this->identicalTo(null),
                 $this->identicalTo(null)
             );
 
         $set->setPublisher($publisherMock);
-        $set->add(new Process(''), 'FooClassName');
+        $set->add(new ProcessWrapper(new Process(''), 'FooClassName'));
     }
 
-    public function testShouldAddAndGetProcess()
+    public function testShouldCountStatusesOfWrappedProcesses()
     {
-        $this->set->add(new Process(''), 'Foo');
-        $this->set->add(new Process(''), 'Baz', 'Foo', 5);
+        $doneTest1 = new ProcessWrapper(new Process(''), 'DoneTest1');
+        $doneTest1->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
+        $doneTest2 = new ProcessWrapper(new Process(''), 'DoneTest2');
+        $doneTest2->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
+        $queuedTest = new ProcessWrapper(new Process(''), 'QueuedTest');
+        $queuedTest->setStatus(ProcessWrapper::PROCESS_STATUS_QUEUED);
+        $preparedTest = new ProcessWrapper(new Process(''), 'PreparedTest');
+        $preparedTest->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
 
-        $processes = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
-        $this->assertArrayHasKey('Foo', $processes);
-        $this->assertArrayHasKey('Baz', $processes);
-
-        $process = $processes['Baz'];
-        $this->assertInstanceOf(\stdClass::class, $process);
-        $this->assertEquals(ProcessSet::PROCESS_STATUS_QUEUED, $process->status);
-        $this->assertInstanceOf(Process::class, $process->process);
-        $this->assertEquals('Foo', $process->delayAfter);
-        $this->assertEquals(5, $process->delayMinutes);
-        $this->assertNull($process->finishedTime);
-    }
-
-    public function testShouldSetDefinedProcessStatus()
-    {
-        $this->set->add(new Process(''), 'DoneTest1');
-        $this->set->add(new Process(''), 'DoneTest2');
-        $this->set->add(new Process(''), 'PreparedTest');
-
-        // all processes are queued by default
-        $this->assertCount(3, $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED));
-
-        // set statuses
-        $this->set->setStatus('DoneTest1', ProcessSet::PROCESS_STATUS_DONE);
-        $this->set->setStatus('DoneTest2', ProcessSet::PROCESS_STATUS_PREPARED); // first set prepared
-        $this->set->setStatus('DoneTest2', ProcessSet::PROCESS_STATUS_DONE); // than set done
-        $this->set->setStatus('PreparedTest', ProcessSet::PROCESS_STATUS_PREPARED);
-
-        $doneProcesses = $this->set->get(ProcessSet::PROCESS_STATUS_DONE);
-        $preparedProcesses = $this->set->get(ProcessSet::PROCESS_STATUS_PREPARED);
-
-        // check both done processes
-        $this->assertCount(2, $doneProcesses);
-        $this->assertArrayHasKey('DoneTest1', $doneProcesses);
-        $this->assertArrayHasKey('DoneTest2', $doneProcesses);
-
-        // check one prepared process
-        $this->assertCount(1, $preparedProcesses);
-        $this->assertArrayHasKey('PreparedTest', $preparedProcesses);
-
-        // no queued process left
-        $this->assertCount(0, $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED));
-    }
-
-    /**
-     * @dataProvider processResultProvider
-     * @param int $exitCode
-     * @param string $expectedResult
-     */
-    public function testShouldResolveAndStoreResultOfFinishedProcess($exitCode, $expectedResult)
-    {
-        $processMock = $this->getMockBuilder(Process::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $processMock->expects($this->once())
-            ->method('getExitCode')
-            ->willReturn($exitCode);
-
-        $this->set->add($processMock, 'DoneTest');
-        $this->set->setStatus('DoneTest', ProcessSet::PROCESS_STATUS_DONE);
-
-        $doneProcesses = $this->set->get(ProcessSet::PROCESS_STATUS_DONE);
-
-        $this->assertSame($expectedResult, $doneProcesses['DoneTest']->result);
-    }
-
-    /**
-     * @return array[]
-     */
-    public function processResultProvider()
-    {
-        return [
-            // $exitCode, $expectedResult
-            'Testcase succeeded' => [\PHPUnit_TextUI_TestRunner::SUCCESS_EXIT, ProcessSet::PROCESS_RESULT_PASSED],
-            'Exception thrown from PHPUnit' =>
-                [\PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT, ProcessSet::PROCESS_RESULT_FAILED],
-            'Some test failed' =>
-                [\PHPUnit_TextUI_TestRunner::FAILURE_EXIT, ProcessSet::PROCESS_RESULT_FAILED],
-            'PHP fatal error' => [255, ProcessSet::PROCESS_RESULT_FATAL],
-            'Process was killed' => [9, ProcessSet::PROCESS_RESULT_FATAL],
-            'Process was terminated' => [9, ProcessSet::PROCESS_RESULT_FATAL],
-            'Unrecognized exit error code should mark result as failed' => [66, ProcessSet::PROCESS_RESULT_FAILED],
-        ];
-    }
-
-    public function testShouldNotStoreResultOfUnfinishedProcess()
-    {
-        $this->set->add(new Process(''), 'PreparedTest');
-        $this->set->setStatus('PreparedTest', ProcessSet::PROCESS_STATUS_PREPARED);
-
-        $preparedProcesses = $this->set->get(ProcessSet::PROCESS_STATUS_PREPARED);
-        $this->assertNull($preparedProcesses['PreparedTest']->result);
-    }
-
-    public function testShouldCountProcessStatuses()
-    {
-        $this->set->add(new Process(''), 'DoneTest1');
-        $this->set->add(new Process(''), 'QueuedTest');
-        $this->set->add(new Process(''), 'PreparedTest');
-        $this->set->add(new Process(''), 'DoneTest2');
-
-        $this->set->setStatus('DoneTest1', ProcessSet::PROCESS_STATUS_DONE);
-        $this->set->setStatus('PreparedTest', ProcessSet::PROCESS_STATUS_PREPARED);
-        $this->set->setStatus('DoneTest2', ProcessSet::PROCESS_STATUS_DONE);
+        $this->set->add($doneTest1);
+        $this->set->add($queuedTest);
+        $this->set->add($preparedTest);
+        $this->set->add($doneTest2);
 
         $this->assertEquals(
             [
-                ProcessSet::PROCESS_STATUS_PREPARED => 1,
-                ProcessSet::PROCESS_STATUS_QUEUED => 1,
-                ProcessSet::PROCESS_STATUS_DONE => 2,
+                ProcessWrapper::PROCESS_STATUS_PREPARED => 1,
+                ProcessWrapper::PROCESS_STATUS_QUEUED => 1,
+                ProcessWrapper::PROCESS_STATUS_DONE => 2,
             ],
             $this->set->countStatuses()
         );
@@ -276,85 +166,65 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCountResultsOfDoneProcesses()
     {
-        $doneProcessMock = $this->getMockBuilder(Process::class)
+        $processWrapperMock = $this->getMockBuilder(ProcessWrapper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $doneProcessMock->expects($this->exactly(4))
-            ->method('getExitCode')
-            ->willReturnOnConsecutiveCalls(0, 255, 2, 0);
+        $processWrapperMock->expects($this->exactly(4))
+            ->method('getClassName')
+            ->willReturnOnConsecutiveCalls('Process1', 'Process2', 'Process3', 'Process4');
+        $processWrapperMock->expects($this->exactly(4))
+            ->method('getStatus')
+            ->willReturn(ProcessWrapper::PROCESS_STATUS_DONE);
 
-        $this->set->add($doneProcessMock, 'DoneTestPassed1');
-        $this->set->add($doneProcessMock, 'DoneTestFatal');
-        $this->set->add($doneProcessMock, 'DoneTestFailed');
-        $this->set->add($doneProcessMock, 'DoneTestPassed2');
-        $this->set->setStatus('DoneTestPassed1', ProcessSet::PROCESS_STATUS_DONE);
-        $this->set->setStatus('DoneTestFatal', ProcessSet::PROCESS_STATUS_DONE);
-        $this->set->setStatus('DoneTestFailed', ProcessSet::PROCESS_STATUS_DONE);
-        $this->set->setStatus('DoneTestPassed2', ProcessSet::PROCESS_STATUS_DONE);
+        $processWrapperMock->expects($this->exactly(4))
+            ->method('getResult')
+            ->willReturnOnConsecutiveCalls(
+                ProcessWrapper::PROCESS_RESULT_PASSED,
+                ProcessWrapper::PROCESS_RESULT_FAILED,
+                ProcessWrapper::PROCESS_RESULT_FATAL,
+                ProcessWrapper::PROCESS_RESULT_PASSED
+            );
+
+        $this->set->add($processWrapperMock);
+        $this->set->add($processWrapperMock);
+        $this->set->add($processWrapperMock);
+        $this->set->add($processWrapperMock);
 
         $this->assertEquals(
             [
-                ProcessSet::PROCESS_RESULT_PASSED => 2,
-                ProcessSet::PROCESS_RESULT_FAILED => 1,
-                ProcessSet::PROCESS_RESULT_FATAL => 1,
+                ProcessWrapper::PROCESS_RESULT_PASSED => 2,
+                ProcessWrapper::PROCESS_RESULT_FAILED => 1,
+                ProcessWrapper::PROCESS_RESULT_FATAL => 1,
             ],
             $this->set->countResults()
         );
     }
 
-    public function testShouldPublishProcessStatusWhenStatusWasSet()
-    {
-        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $publisherMock->expects($this->at(1))
-            ->method('publishResults')
-            ->with(
-                'FooClassName',
-                ProcessSet::PROCESS_STATUS_DONE,
-                ProcessSet::PROCESS_RESULT_PASSED,
-                $this->identicalTo(null),
-                $this->identicalTo(null)
-            );
-
-        $set = new ProcessSet($publisherMock);
-        $set->add(new Process(''), 'FooClassName');
-        $set->setStatus('FooClassName', ProcessSet::PROCESS_STATUS_DONE);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Process status must be one of "prepared, queued, done", but "WrongStatus" given
-     */
-    public function testFailIfWrongProcessStatusGiven()
-    {
-        $this->set->add(new Process(''), 'Foo');
-        $this->set->setStatus('Foo', 'WrongStatus');
-    }
-
     public function testShouldDequeueProcessesWithoutDelay()
     {
-        $this->set->add(new Process(''), 'NoDelay'); // process without delay
-        $this->set->add(new Process(''), 'Delayed', 'NoDelay', 3.3); // process with delay
+        $noDelayTest = new ProcessWrapper(new Process(''), 'NoDelay');
+        $delayedTest = new ProcessWrapper(new Process(''), 'Delayed');
+        $delayedTest->setDelay('NoDelay', 3.3);
+        $this->set->add($noDelayTest);
+        $this->set->add($delayedTest);
+        $outputBuffer = new BufferedOutput(Output::VERBOSITY_DEBUG);
 
-        // Both processes should be queued after being added
-        $processes = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        // Preconditions - both processes should be queued after being added
+        $processes = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
         $this->assertCount(2, $processes);
 
-        $outputBuffer = new BufferedOutput(Output::VERBOSITY_DEBUG);
-        // Dequeue process without delay
+        // Should Dequeue process without delay
         $this->set->dequeueProcessesWithoutDelay($outputBuffer);
 
-        // The process without delay should be prapared now
-        $prepared = $this->set->get(ProcessSet::PROCESS_STATUS_PREPARED);
+        // The process without delay should be prepared now
+        $prepared = $this->set->get(ProcessWrapper::PROCESS_STATUS_PREPARED);
         $this->assertCount(1, $prepared);
-        $this->assertArrayHasKey('NoDelay', $prepared);
+        $this->assertSame($noDelayTest, $prepared['NoDelay']);
 
         // The other process with delay should be kept as queued
-        $queued = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        $queued = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
         $this->assertCount(1, $queued);
-        $this->assertArrayHasKey('Delayed', $queued);
+        $this->assertSame($delayedTest, $queued['Delayed']);
 
         $output = $outputBuffer->fetch();
         $this->assertContains('Testcase "NoDelay" is prepared to be run', $output);
@@ -364,13 +234,17 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Testcase "Foo" has @delayAfter dependency on "XXX", but this testcase was not defined.
-     */
     public function testShouldFailBuildingTreeIfTestHasDependencyOnNotExistingTest()
     {
-        $this->set->add(new Process(''), 'Foo', 'XXX', 5);
+        $process = new ProcessWrapper(new Process(''), 'Foo');
+        $process->setDelay('NotExisting', 5);
+
+        $this->set->add($process);
+
+        $this->setExpectedException(
+            \InvalidArgumentException::class,
+            'Testcase "Foo" has @delayAfter dependency on "NotExisting", but this testcase was not defined.'
+        );
         $this->set->buildTree();
     }
 
@@ -384,8 +258,13 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         //
         // A <--> B
 
-        $this->set->add(new Process(''), 'A', 'B', 1);
-        $this->set->add(new Process(''), 'B', 'A', 1);
+        $processA = new ProcessWrapper(new Process(''), 'A');
+        $processA->setDelay('B', 1);
+        $processB = new ProcessWrapper(new Process(''), 'B');
+        $processB->setDelay('A', 1);
+
+        $this->set->add($processA);
+        $this->set->add($processB);
         $this->set->buildTree();
     }
 
@@ -399,11 +278,17 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
 
         // Order in which dependencies are added before buildTree() is called is not important,
         // so add leafs to the tree first.
-        $this->set->add(new Process(''), 'C', 'B', 3);
-        $this->set->add(new Process(''), 'D', 'B', 5);
-        $this->set->add(new Process(''), 'A');
-        $this->set->add(new Process(''), 'B');
+        $processC = new ProcessWrapper(new Process(''), 'C');
+        $processC->setDelay('B', 3);
+        $processD = new ProcessWrapper(new Process(''), 'D');
+        $processD->setDelay('B', 5);
+        $processA = new ProcessWrapper(new Process(''), 'A');
+        $processB = new ProcessWrapper(new Process(''), 'B');
 
+        $this->set->add($processC);
+        $this->set->add($processD);
+        $this->set->add($processA);
+        $this->set->add($processB);
 
         $tree = $this->set->buildTree();
         $this->assertInstanceOf(OutTree::class, $tree);
@@ -442,19 +327,26 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         //       3 / \ 5
         //        C   D
 
-        $this->set->add(new Process(''), 'A');
-        $this->set->add(new Process(''), 'B');
-        $this->set->add(new Process(''), 'C', 'B', 3);
-        $this->set->add(new Process(''), 'D', 'B', 5);
+        $processA = new ProcessWrapper(new Process(''), 'A');
+        $processB = new ProcessWrapper(new Process(''), 'B');
+        $processC = new ProcessWrapper(new Process(''), 'C');
+        $processC->setDelay('B', 3);
+        $processD = new ProcessWrapper(new Process(''), 'D');
+        $processD->setDelay('B', 5);
 
-        // The MockOrderStrategy return processes with order values A - 0, B - 1, C - 2, D - 3.
-        // Thus after optimization the processes in processSet should be sorted descending
-        $processesBefore = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        $this->set->add($processA);
+        $this->set->add($processB);
+        $this->set->add($processC);
+        $this->set->add($processD);
+
+        // Check original order, not yet affected by order strategy
+        $processesBefore = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
         $this->assertSame(['A', 'B', 'C', 'D'], array_keys($processesBefore));
 
+        // The MockOrderStrategy return processes with order values A - 0, B - 1, C - 2, D - 3.
+        // Thus after optimization the processes in processSet should be sorted descending from the highest number
         $this->set->optimizeOrder(new MockOrderStrategy());
-
-        $processesAfter = $this->set->get(ProcessSet::PROCESS_STATUS_QUEUED);
+        $processesAfter = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
         $this->assertSame(['D', 'C', 'B', 'A'], array_keys($processesAfter));
     }
 }
