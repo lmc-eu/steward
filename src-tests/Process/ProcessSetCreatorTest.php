@@ -174,6 +174,22 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(3.33, $delayedTest->getDelayMinutes());
     }
 
+    public function testShouldIgnoreTestsDelays()
+    {
+        $files = $this->findDummyTests('*Test.php', 'DelayedTests');
+        $processSet = $this->creator->createFromFiles($files, [], [], null, true);
+
+        $processes = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+
+        $firstTest = $processes[FirstTest::class];
+        $delayedTest = $processes[DelayedTest::class];
+        $delayedByZeroTimeTest = $processes[DelayedByZeroTimeTest::class];
+
+        $this->assertFalse($firstTest->isDelayed());
+        $this->assertFalse($delayedByZeroTimeTest->isDelayed());
+        $this->assertFalse($delayedTest->isDelayed());
+    }
+
     public function testShouldThrowExceptionIfAddingTestWithDelayTimeButWithoutDelayedClass()
     {
         $files = $this->findDummyTests('InvalidDelayTest.php', 'InvalidTests');

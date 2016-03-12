@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet - everything is released.
+### Added
+- Option `--ignore-delays` of `run` command to ignore delays defined between tests with `@delayAfter` annotation. Usable when writing or debugging dependent tests. ([#27](https://github.com/lmc-eu/steward/issues/27))
 
 ## 1.3.0 - 2016-02-26
 ### Added

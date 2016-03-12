@@ -55,10 +55,16 @@ class ProcessSetCreator
      * @param array $groups Groups to be run
      * @param array $excludeGroups Groups to be excluded
      * @param string $filter filter test cases by name
+     * @param bool $ignoreDelays Should test delays be ignored?
      * @return ProcessSet
      */
-    public function createFromFiles(Finder $files, array $groups = null, array $excludeGroups = null, $filter = null)
-    {
+    public function createFromFiles(
+        Finder $files,
+        array $groups = null,
+        array $excludeGroups = null,
+        $filter = null,
+        $ignoreDelays = false
+    ) {
         $files->sortByName();
         $processSet = $this->getProcessSet();
 
@@ -140,19 +146,21 @@ class ProcessSetCreator
             $className = key($classes);
             $processWrapper = new ProcessWrapper($this->buildProcess($fileName, $phpunitArgs), $className);
 
-            $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
-            $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
-            if ($delayAfter) {
-                $processWrapper->setDelay($delayAfter, $delayMinutes);
-            } elseif ($delayMinutes !== null && empty($delayAfter)) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Testcase "%s" has defined delay %d minutes, '
-                        . 'but doesn\'t have defined the testcase to run after',
-                        $className,
-                        $delayMinutes
-                    )
-                );
+            if (!$ignoreDelays) {
+                $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
+                $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
+                if ($delayAfter) {
+                    $processWrapper->setDelay($delayAfter, $delayMinutes);
+                } elseif ($delayMinutes !== null && empty($delayAfter)) {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            'Testcase "%s" has defined delay %d minutes, '
+                            . 'but doesn\'t have defined the testcase to run after',
+                            $className,
+                            $delayMinutes
+                        )
+                    );
+                }
             }
 
             $processSet->add($processWrapper);

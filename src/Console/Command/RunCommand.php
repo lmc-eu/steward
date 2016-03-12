@@ -50,6 +50,7 @@ class RunCommand extends Command
     const OPTION_FILTER = 'filter';
     const OPTION_PUBLISH_RESULTS = 'publish-results';
     const OPTION_NO_EXIT = 'no-exit';
+    const OPTION_IGNORE_DELAYS = 'ignore-delays';
 
     /**
      * @param SeleniumServerAdapter $seleniumAdapter
@@ -148,7 +149,14 @@ class RunCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Always exit with code 0 <comment>(by default any failed test causes the command to return 1)</comment>'
+            )
+            ->addOption(
+                self::OPTION_IGNORE_DELAYS,
+                null,
+                InputOption::VALUE_NONE,
+                'Ignore delays defined between testcases'
             );
+        ;
 
         $this->addUsage('staging firefox');
         $this->addUsage('--group=foo --group=bar --exclude-group=baz -vvv development phantomjs');
@@ -222,6 +230,9 @@ class RunCommand extends Command
             $output->writeln(
                 sprintf('Publish results: %s', ($input->getOption(self::OPTION_PUBLISH_RESULTS)) ? 'yes' : 'no')
             );
+            $output->writeln(
+                sprintf('Ignore delays: %s', ($input->getOption(self::OPTION_IGNORE_DELAYS)) ? 'yes' : 'no')
+            );
         }
     }
 
@@ -271,7 +282,8 @@ class RunCommand extends Command
             $files,
             $input->getOption(self::OPTION_GROUP),
             $input->getOption(self::OPTION_EXCLUDE_GROUP),
-            $input->getOption(self::OPTION_FILTER)
+            $input->getOption(self::OPTION_FILTER),
+            $input->getOption(self::OPTION_IGNORE_DELAYS)
         );
 
         if (!count($processSet)) {
