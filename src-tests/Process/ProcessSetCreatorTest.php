@@ -114,6 +114,18 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->assertArraySubset($expectedEnv, $testEnv);
     }
 
+    public function testShouldThrowExceptionIfAddingFileWithNoClass()
+    {
+        $files = $this->findDummyTests('NoClassTest.php', 'InvalidTests');
+
+        $fileName = key(iterator_to_array($files->getIterator()));
+        $this->setExpectedException(
+            \RuntimeException::class,
+            'No class found in file "' . $fileName . '"'
+        );
+        $this->creator->createFromFiles($files, [], []);
+    }
+
     public function testShouldOnlyAddTestsOfGivenGroups()
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), ['bar', 'foo'], []);

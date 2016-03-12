@@ -83,6 +83,10 @@ class ProcessSetCreator
             // Parse classes from the testcase file
             $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
 
+            if (empty($classes)) {
+                throw new \RuntimeException(sprintf('No class found in file "%s"', $fileName));
+            }
+
             // Get annotations for the first class in testcase (one file = one class)
             $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
 

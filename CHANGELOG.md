@@ -5,6 +5,9 @@
 ## Unreleased
 - Nothing yet - everything is released.
 
+### Changed
+- Throw explanatory exception when attempting to load test file without any test class defined (instead of confusing `ReflectionException`).
+
 ## 1.3.0 - 2016-02-26
 ### Added
 - Provide information about results of finished processes in output of the `run` command. ([#44](https://github.com/lmc-eu/steward/pull/44))
