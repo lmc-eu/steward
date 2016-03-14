@@ -6,6 +6,10 @@
 ### Added
 - Option `--ignore-delays` of `run` command to ignore delays defined between tests with `@delayAfter` annotation. Usable when writing or debugging dependent tests. ([#27](https://github.com/lmc-eu/steward/issues/27))
 
+### Changed
+- Throw explanatory exception when attempting to load test file without any test class defined (instead of confusing `ReflectionException`).
+- Throw explanatory exception when test class cannot be instantiated (if class name/namespace doesn't match file path).
+
 ## 1.3.0 - 2016-02-26
 ### Added
 - Provide information about results of finished processes in output of the `run` command. ([#44](https://github.com/lmc-eu/steward/pull/44))
