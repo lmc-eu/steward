@@ -16,7 +16,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $this->publisher = new XmlPublisher(null, null, null);
+        $this->publisher = new XmlPublisher();
     }
 
     public static function tearDownAfterClass()
@@ -208,7 +208,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $publisher = new XmlPublisher(null, null, null);
+        $publisher = new XmlPublisher();
         $publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
     }
 
