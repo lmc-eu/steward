@@ -150,9 +150,9 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException(
             InvalidArgumentException::class,
-            'Value "Foo" is not an element of the valid values: prepared, queued, done'
+            'Value "WrongStatus" is not an element of the valid values: prepared, queued, done'
         );
-        $wrapper->setStatus('Foo', 'WrongStatus');
+        $wrapper->setStatus('WrongStatus');
     }
 
     public function testShouldPublishProcessStatusWhenStatusWasSet()

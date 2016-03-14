@@ -89,7 +89,7 @@ class TestUtils extends AbstractComponent
      */
     public static function sleep($seconds)
     {
-        $fullSecond = floor($seconds);
+        $fullSecond = (int) floor($seconds);
         $microseconds = fmod($seconds, 1) * 1000000000;
 
         time_nanosleep($fullSecond, $microseconds);

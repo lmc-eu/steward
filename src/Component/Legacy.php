@@ -214,12 +214,12 @@ class Legacy extends AbstractComponent
     /**
      * Converts legacy value to string that can be printed (e.g. in log)
      * calls __toString on the object if it's defined otherwise print_r()
-     * @param $obj
+     * @param mixed $obj
      * @return string
      */
     private function getPrintableValue($obj)
     {
-        if (method_exists($obj, '__toString')) {
+        if (is_object($obj) && method_exists($obj, '__toString')) {
             return $obj;
         }
 
