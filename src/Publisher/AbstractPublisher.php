@@ -48,25 +48,6 @@ abstract class AbstractPublisher
         \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR => self::TEST_RESULT_BROKEN,
     ];
 
-    /** @var string */
-    protected $environment;
-
-    /** @var string */
-    protected $jobName;
-
-    /** @var int */
-    protected $buildNumber;
-
-    /** @var bool */
-    protected $debug = false;
-
-    /**
-     * @param string $environment
-     * @param string $jobName
-     * @param int $buildNumber
-     */
-    abstract public function __construct($environment, $jobName, $buildNumber);
-
     /**
      * Publish testcase result
      *

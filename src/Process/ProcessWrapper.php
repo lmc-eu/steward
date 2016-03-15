@@ -52,7 +52,7 @@ class ProcessWrapper
     private $status;
     /** @var string */
     private $result;
-    /** @var string */
+    /** @var int */
     private $finishedTime;
 
 
@@ -178,7 +178,7 @@ class ProcessWrapper
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getFinishedTime()
     {

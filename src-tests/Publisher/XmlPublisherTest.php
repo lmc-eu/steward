@@ -16,7 +16,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $this->publisher = new XmlPublisher(null, null, null);
+        $this->publisher = new XmlPublisher();
     }
 
     public static function tearDownAfterClass()
@@ -95,8 +95,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
 
         /** @var \SimpleXMLElement $xml */
-        $fullXml = simplexml_load_file($fileName);
-        $xml = $fullXml[0];
+        $xml = simplexml_load_file($fileName);
 
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
@@ -112,7 +111,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $startDate = (string) $xml->testcase->test['start']; // convert to string so it could be serialized by PHPUnit
         $this->assertEmpty($xml->testcase->test['end']);
 
-        return [$fileName, $fullXml->asXML(), $startDate];
+        return [$fileName, $xml->asXML(), $startDate];
     }
 
     /**
@@ -132,7 +131,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'done', 'passed');
 
         /** @var \SimpleXMLElement $xml */
-        $xml = simplexml_load_file($fileName)[0];
+        $xml = simplexml_load_file($fileName);
 
         // still only one test result is present
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
@@ -157,7 +156,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResults('testCaseNameFoo', 'queued');
 
         /** @var \SimpleXMLElement $xml */
-        $xml = simplexml_load_file($fileName)[0];
+        $xml = simplexml_load_file($fileName);
 
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
@@ -187,7 +186,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         );
 
         /** @var \SimpleXMLElement $xml */
-        $xml = simplexml_load_file($fileName)[0];
+        $xml = simplexml_load_file($fileName);
 
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
@@ -208,7 +207,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $publisher = new XmlPublisher(null, null, null);
+        $publisher = new XmlPublisher();
         $publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
     }
 
@@ -223,7 +222,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult('testCaseNameBar', 'testFoo', 'done', XmlPublisher::TEST_RESULT_PASSED);
 
         /** @var \SimpleXMLElement $xml */
-        $xml = simplexml_load_file($fileName)[0];
+        $xml = simplexml_load_file($fileName);
 
         $tests = $xml->xpath('//test[@name="testFoo"]');
 
@@ -246,7 +245,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult($testCaseName, $testName, XmlPublisher::TEST_STATUS_STARTED);
 
         /** @var \SimpleXMLElement $xml */
-        $xml = simplexml_load_file($fileName)[0];
+        $xml = simplexml_load_file($fileName);
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals(1, count($xml->testcase));
         $this->assertEquals($testCaseName, $xml->testcase['name']);
@@ -264,7 +263,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         );
 
         /** @var \SimpleXMLElement $xml */
-        $xml = simplexml_load_file($fileName)[0];
+        $xml = simplexml_load_file($fileName);
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals(1, count($xml->testcase));
         $this->assertEquals($testCaseName, $xml->testcase['name']);

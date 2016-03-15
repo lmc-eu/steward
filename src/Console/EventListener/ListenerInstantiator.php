@@ -30,7 +30,7 @@ class ListenerInstantiator
                 && !$r->isAbstract()
             ) {
                 /** @var EventSubscriberInterface $listenerInstance */
-                $listenerInstance = $r->newInstance();
+                $listenerInstance = $r->newInstanceWithoutConstructor();
                 $dispatcher->addSubscriber($listenerInstance);
             }
         }

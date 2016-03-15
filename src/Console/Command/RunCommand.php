@@ -331,7 +331,7 @@ class RunCommand extends Command
     protected function getProcessSetCreator(InputInterface $input, OutputInterface $output)
     {
         if (!$this->processSetCreator) {
-            $xmlPublisher = new XmlPublisher($input->getArgument(self::ARGUMENT_ENVIRONMENT), null, null);
+            $xmlPublisher = new XmlPublisher();
             $xmlPublisher->setFileDir($input->getOption(self::OPTION_LOGS_DIR));
             $xmlPublisher->clean();
 

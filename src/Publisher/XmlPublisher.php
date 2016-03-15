@@ -16,17 +16,6 @@ class XmlPublisher extends AbstractPublisher
     protected $fileHandle;
 
     /**
-     * Create the publisher.
-     *
-     * @param string $environment
-     * @param string $jobName
-     * @param int $buildNumber
-     */
-    public function __construct($environment, $jobName, $buildNumber)
-    {
-    }
-
-    /**
      * Set directory where results file should be stored. Usable when config object is not available (when
      * not called from PHPUnit testcase but from Command). If the file dir is not set, the value from Config object
      * is used.
