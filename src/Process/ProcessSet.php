@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Process;
 
 use Assert\Assertion;
+use Fhaculty\Graph\Vertex;
 use Graphp\Algorithms\Tree\OutTree;
 use Fhaculty\Graph\Graph;
 use Lmc\Steward\Publisher\AbstractPublisher;
@@ -137,6 +138,7 @@ class ProcessSet implements \Countable
     /**
      * Build out-tree graph from defined Processes and their relations.
      *
+     * @internal
      * @return OutTree
      */
     public function buildTree()
@@ -237,5 +239,47 @@ class ProcessSet implements \Countable
         }
 
         return $resultsCount;
+    }
+
+    /**
+     * Mark all dependant processes of given process as failed
+     *
+     * @param string $className
+     * @return ProcessWrapper[] Processes that has been failed
+     */
+    public function failDependants($className)
+    {
+        $descendantProcesses = $this->getDependencyTree($className);
+
+        $failedProcesses = [];
+        foreach ($descendantProcesses as $className => $processWrapper) {
+            $failedProcesses[$className] = $processWrapper;
+            $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
+        }
+
+        return $failedProcesses;
+    }
+
+    /**
+     * Get all wrapped processes that depends on process of given name.
+     *
+     * @param string $className
+     * @return ProcessWrapper[]
+     */
+    protected function getDependencyTree($className)
+    {
+        Assertion::notEmpty($this->tree, 'Cannot get dependency tree - the tree was not yet build using buildTree()');
+
+        $descendants = $this->tree->getVerticesDescendant($this->graph->getVertex($className));
+
+        /** @var ProcessWrapper[] $descendantProcesses */
+        $descendantProcesses = [];
+
+        /** @var Vertex $descendant */
+        foreach ($descendants as $descendant) {
+            $descendantProcesses[$descendant->getId()] = $this->processes[$descendant->getId()];
+        }
+
+        return $descendantProcesses;
     }
 }

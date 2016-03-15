@@ -419,6 +419,22 @@ class RunCommand extends Command
                             sprintf('<fg=red>Testcase "%s" %s</>', $testClass, $processWrapper->getResult())
                         );
                     }
+
+                    // Fail also process dependencies
+                    if (!$hasProcessPassed) {
+                        $failedDependants = $processSet->failDependants($testClass);
+                        if ($output->isVerbose()) {
+                            foreach ($failedDependants as $failedClass => $failedProcessWrapper) {
+                                $output->writeln(
+                                    sprintf(
+                                        '<fg=red>Failing testcase "%s", because it was depending on failed "%s"</>',
+                                        $failedClass,
+                                        $testClass
+                                    )
+                                );
+                            }
+                        }
+                    }
                 }
             }
 
