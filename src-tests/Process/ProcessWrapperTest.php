@@ -132,6 +132,7 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
             'Process was killed' => [9, ProcessWrapper::PROCESS_RESULT_FATAL],
             'Process was terminated' => [9, ProcessWrapper::PROCESS_RESULT_FATAL],
             'Unrecognized exit error code should mark result as failed' => [66, ProcessWrapper::PROCESS_RESULT_FAILED],
+            'None exit code (null) should mark result as failed' => [null, ProcessWrapper::PROCESS_RESULT_FAILED],
         ];
     }
 

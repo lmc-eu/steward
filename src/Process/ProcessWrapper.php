@@ -213,7 +213,14 @@ class ProcessWrapper
      */
     private function resolveResult()
     {
-        switch ($this->getProcess()->getExitCode()) {
+        $exitCode = $this->getProcess()->getExitCode();
+
+        // If the process was not even started, mark its result as failed
+        if ($exitCode === null) {
+            return self::PROCESS_RESULT_FAILED;
+        }
+
+        switch ($exitCode) {
             case \PHPUnit_TextUI_TestRunner::SUCCESS_EXIT: // all tests passed
                 $result = self::PROCESS_RESULT_PASSED;
                 // for passed process save just the status and result; end time was saved by TestStatusListener
