@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Process;
 
+use Assert\InvalidArgumentException;
 use Graphp\Algorithms\Tree\OutTree;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
 use Lmc\Steward\Publisher\XmlPublisher;
@@ -348,5 +349,76 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->set->optimizeOrder(new MockOrderStrategy());
         $processesAfter = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
         $this->assertSame(['D', 'C', 'B', 'A'], array_keys($processesAfter));
+    }
+
+    public function testShouldFailDependantsOfGivenProcess()
+    {
+        //     ROOT
+        //    /    \
+        //   A      B
+        //       3 / \ 5
+        //        C   D
+        //            | 2
+        //            E
+
+        $processA = new ProcessWrapper(new Process(''), 'A');
+        $processB = new ProcessWrapper(new Process(''), 'B');
+        $processC = new ProcessWrapper(new Process(''), 'C');
+        $processC->setDelay('B', 3);
+        $processD = new ProcessWrapper(new Process(''), 'D');
+        $processD->setDelay('B', 5);
+        $processE = new ProcessWrapper(new Process(''), 'E');
+        $processE->setDelay('D', 2);
+
+        $this->set->add($processA);
+        $this->set->add($processB);
+        $this->set->add($processC);
+        $this->set->add($processD);
+        $this->set->add($processE);
+
+        $this->set->buildTree();
+
+        $processB->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
+
+        // Test preconditions - one process is done, other are queued
+        $this->assertCount(1, $this->set->get(ProcessWrapper::PROCESS_STATUS_DONE));
+        $this->assertCount(4, $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED));
+        $this->assertEquals(1, $this->set->countResults()[ProcessWrapper::PROCESS_RESULT_FAILED]);
+
+        $failedProcesses = $this->set->failDependants('B');
+        $this->assertCount(3, $failedProcesses);
+        $this->assertContainsOnlyInstancesOf(ProcessWrapper::class, $failedProcesses);
+        $this->assertArrayHasKey('C', $failedProcesses);
+        $this->assertArrayHasKey('D', $failedProcesses);
+        $this->assertArrayHasKey('E', $failedProcesses);
+
+        // A will still be queued
+        $this->assertCount(1, $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED));
+        $this->assertSame(ProcessWrapper::PROCESS_STATUS_QUEUED, $processA->getStatus());
+        // C, D and E processes will be done and failed
+        $this->assertCount(4, $this->set->get(ProcessWrapper::PROCESS_STATUS_DONE));
+        $this->assertSame(ProcessWrapper::PROCESS_STATUS_DONE, $processC->getStatus());
+        $this->assertSame(ProcessWrapper::PROCESS_STATUS_DONE, $processD->getStatus());
+        $this->assertSame(ProcessWrapper::PROCESS_STATUS_DONE, $processE->getStatus());
+        $this->assertEquals(4, $this->set->countResults()[ProcessWrapper::PROCESS_RESULT_FAILED]);
+        $this->assertSame(ProcessWrapper::PROCESS_RESULT_FAILED, $processC->getResult());
+        $this->assertSame(ProcessWrapper::PROCESS_RESULT_FAILED, $processD->getResult());
+        $this->assertSame(ProcessWrapper::PROCESS_RESULT_FAILED, $processE->getResult());
+    }
+
+    public function testShouldFailWhenFailingDependantsButTheTreeWasNotYetBuilt()
+    {
+        $processA = new ProcessWrapper(new Process(''), 'A');
+        $processB = new ProcessWrapper(new Process(''), 'B');
+        $processB->setDelay('A', 3);
+
+        $this->set->add($processA);
+        $this->set->add($processB);
+
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Cannot get dependency tree - the tree was not yet build using buildTree()'
+        );
+        $this->set->failDependants('A');
     }
 }
