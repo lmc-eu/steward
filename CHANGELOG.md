@@ -12,6 +12,9 @@
 - Testcases depending on failed testcase are instantly marked as failed and skipped. ([#47](https://github.com/lmc-eu/steward/issues/47))
 - Allow Symfony/Process 3.0.4+ to be installed.
 
+### Fixed
+- Upgrade nette/reflection to not throw confusing exception if testcase does not have any use statement nor annotation. ([#51](https://github.com/lmc-eu/steward/issues/51))
+
 ## 1.3.0 - 2016-02-26
 ### Added
 - Provide information about results of finished processes in output of the `run` command. ([#44](https://github.com/lmc-eu/steward/pull/44))
