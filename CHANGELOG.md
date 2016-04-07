@@ -3,17 +3,20 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+- Nothing yet - everything is released.
+
+## 1.4.0 - 2016-04-07
 ### Added
-- Option `--ignore-delays` of `run` command to ignore delays defined between tests with `@delayAfter` annotation. Usable when writing or debugging dependent tests. ([#27](https://github.com/lmc-eu/steward/issues/27))
+- Option `--ignore-delays` of `run` command to ignore delays defined between tests with `@delayAfter` annotation. Usable when writing or debugging dependent tests. ([#27](https://github.com/lmc-eu/steward/issues/27), [#52](https://github.com/lmc-eu/steward/pull/52))
 
 ### Changed
-- Throw explanatory exception when attempting to load test file without any test class defined (instead of confusing `ReflectionException`).
-- Throw explanatory exception when test class cannot be instantiated (if class name/namespace doesn't match file path).
-- Testcases depending on failed testcase are instantly marked as failed and skipped. ([#47](https://github.com/lmc-eu/steward/issues/47))
-- Allow Symfony/Process 3.0.4+ to be installed.
+- Throw explanatory exception when attempting to load test file without any test class defined (instead of confusing `ReflectionException`). ([#53](https://github.com/lmc-eu/steward/pull/53))
+- Throw explanatory exception when test class cannot be instantiated (if class name/namespace doesn't match file path). ([#53](https://github.com/lmc-eu/steward/pull/53))
+- Testcases depending on failed testcase are instantly marked as failed and skipped. ([#47](https://github.com/lmc-eu/steward/issues/47),  [#55](https://github.com/lmc-eu/steward/pull/55))
+- Allow Symfony/Process 3.0.4+ to be installed. ([#57](https://github.com/lmc-eu/steward/pull/57))
 
 ### Fixed
-- Upgrade nette/reflection to not throw confusing exception if testcase does not have any use statement nor annotation. ([#51](https://github.com/lmc-eu/steward/issues/51))
+- Upgrade nette/reflection to not throw confusing exception if testcase does not have any use statement nor annotation. ([#51](https://github.com/lmc-eu/steward/issues/51), [#58](https://github.com/lmc-eu/steward/pull/58))
 
 ## 1.3.0 - 2016-02-26
 ### Added
