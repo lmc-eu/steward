@@ -156,13 +156,13 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
         $wrapper->setStatus('WrongStatus');
     }
 
-    public function testShouldPublishProcessStatusWhenStatusWasSet()
+    public function testShouldPublishProcessStatusWhenInitializedAndWhenStatusWasSet()
     {
         $publisherMock = $this->getMockBuilder(XmlPublisher::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $publisherMock->expects($this->once())
+        $publisherMock->expects($this->at(0))
             ->method('publishResults')
             ->with(
                 'FooClassName',
@@ -172,10 +172,19 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
                 $this->identicalTo(null)
             );
 
-        $wrapper = new ProcessWrapper(new Process(''), 'FooClassName');
-        $wrapper->setPublisher($publisherMock);
+        $publisherMock->expects($this->at(1))
+            ->method('publishResults')
+            ->with(
+                'FooClassName',
+                ProcessWrapper::PROCESS_STATUS_DONE,
+                $this->identicalTo(ProcessWrapper::PROCESS_RESULT_FAILED),
+                $this->identicalTo(null),
+                $this->identicalTo(null)
+            );
 
-        $wrapper->setStatus(ProcessWrapper::PROCESS_STATUS_QUEUED);
+        $wrapper = new ProcessWrapper(new Process(''), 'FooClassName', $publisherMock);
+
+        $wrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
     }
 
     public function testShouldReturnErrorMessageIfProcessTimeoutIsDetected()
