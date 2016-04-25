@@ -59,20 +59,14 @@ class ProcessWrapper
     /**
      * @param Process $process Instance of PHPUnit process
      * @param string $className Tested class fully qualified name
+     * @param AbstractPublisher $publisher
      */
-    public function __construct(Process $process, $className)
+    public function __construct(Process $process, $className, AbstractPublisher $publisher = null)
     {
         $this->process = $process;
         $this->className = $className;
-        $this->setStatus(self::PROCESS_STATUS_QUEUED);
-    }
-
-    /**
-     * @param AbstractPublisher $publisher
-     */
-    public function setPublisher(AbstractPublisher $publisher)
-    {
         $this->publisher = $publisher;
+        $this->setStatus(self::PROCESS_STATUS_QUEUED);
     }
 
     /**
@@ -158,14 +152,13 @@ class ProcessWrapper
 
         $this->status = $status;
 
-        $result = null;
         if ($status == self::PROCESS_STATUS_DONE) {
             $this->result = $this->resolveResult();
             $this->finishedTime = time();
         }
 
         if ($this->publisher) {
-            $this->publisher->publishResults($this->getClassName(), $status, $result);
+            $this->publisher->publishResults($this->getClassName(), $status, $this->result);
         }
     }
 

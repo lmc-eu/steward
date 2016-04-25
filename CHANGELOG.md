@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet - everything is released.
+### Fixed
+- Process status and result was not properly published to results.xml file.
 
 ## 1.4.0 - 2016-04-07
 ### Added

@@ -159,7 +159,11 @@ class ProcessSetCreator
             }
 
             $className = key($classes);
-            $processWrapper = new ProcessWrapper($this->buildProcess($fileName, $phpunitArgs), $className);
+            $processWrapper = new ProcessWrapper(
+                $this->buildProcess($fileName, $phpunitArgs),
+                $className,
+                $this->publisher
+            );
 
             if (!$ignoreDelays) {
                 $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
