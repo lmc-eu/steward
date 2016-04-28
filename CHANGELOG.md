@@ -3,8 +3,11 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+- Nothing yet - everything is released.
+
+## 1.4.1 - 2016-04-28
 ### Fixed
-- Process status and result was not properly published to results.xml file.
+- Process status and result was not properly published to results.xml file. ([#59](https://github.com/lmc-eu/steward/pull/59))
 
 ## 1.4.0 - 2016-04-07
 ### Added
