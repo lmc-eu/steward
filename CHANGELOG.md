@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet - everything is released.
+### Changed
+- Prepare removal of deprecated features - show deprecation warning when `run-tests` alias is being used. Note this alias and also non-namespaced WebDriver (deprecated in 1.2.0) will be removed in future Steward versions!
 
 ## 1.4.1 - 2016-04-28
 ### Fixed
