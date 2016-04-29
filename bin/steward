@@ -7,6 +7,7 @@ use Lmc\Steward\Console\Command\InstallCommand;
 use Lmc\Steward\Console\Command\ResultsCommand;
 use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
+use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 function requireIfExists($file)
