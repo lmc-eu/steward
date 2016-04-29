@@ -21,6 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ResultsCommand extends Command
 {
+    const OPTION_RESULTS_FILE = 'results-file';
+
     /**
      * Configure command
      */
@@ -29,11 +31,11 @@ class ResultsCommand extends Command
         $this->setName('results')
             ->setDescription('Show test results overview')
             ->addOption(
-                RunCommand::OPTION_LOGS_DIR,
+                self::OPTION_RESULTS_FILE,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Path to directory with results.xml file',
-                realpath(STEWARD_BASE_DIR . '/logs')
+                'Path to test results xml file',
+                realpath(STEWARD_BASE_DIR . '/logs/' . XmlPublisher::FILE_NAME)
             );
 
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
@@ -46,13 +48,13 @@ class ResultsCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $filePath = $input->getOption(RunCommand::OPTION_LOGS_DIR) . '/' . XmlPublisher::FILE_NAME;
+        $filePath = $input->getOption(self::OPTION_RESULTS_FILE);
 
         if (!is_readable($filePath)) {
             throw new \RuntimeException(
                 sprintf(
                     'Cannot read results file "%s", make sure it is accessible '
-                    . '(or use --logs-dir option if it is stored elsewhere)',
+                    . '(or use --results-file option if it is stored elsewhere)',
                     $filePath
                 )
             );
