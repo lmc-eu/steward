@@ -7,6 +7,7 @@ use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -60,6 +61,7 @@ class ResultsCommand extends Command
         $data = $this->processResults($filePath);
 
         $this->outputTable($output, $data['testcases'], $output->isDebug());
+        $this->outputFooter($output, $data['stats']);
 
         return 0;
     }
@@ -128,6 +130,49 @@ class ResultsCommand extends Command
     /**
      * @param OutputInterface $output
      * @param array $data
+     */
+    private function outputFooter(OutputInterface $output, array $data)
+    {
+        $isFinished = ($data['tcCount'] == $data['tcDoneCount']);
+
+        $output->writeln(
+            sprintf(
+                'Testcases (%d total): prepared: %d, running: %d, done: %d (passed: %d, failed: %d, fatal: %d)',
+                $data['tcCount'],
+                $data['tcPreparedCount'],
+                $data['tcQueuedCount'],
+                $data['tcDoneCount'],
+                $data['tcPassedCount'],
+                $data['tcFailedCount'],
+                $data['tcFatalCount']
+            )
+        );
+
+        $output->writeln(
+            sprintf(
+                'Tests (%d %s): started: %d, done: %d (passed: %d, failed or broken: %d, skipped or incomplete: %d)',
+                $data['testCount'],
+                $isFinished ? 'total' : 'so far',
+                $data['testStartedCount'],
+                $data['testDoneCount'],
+                $data['testPassedCount'],
+                $data['testFailedBrokenCount'],
+                $data['testSkippedIncompleteCount']
+            )
+        );
+
+        $progressBar = new ProgressBar($output, $data['tcCount']);
+        $progressBar->setFormat('%current%/%max% testcases done [%bar%] %percent:3s%%');
+        $progressBar->setOverwrite(false);
+        $progressBar->setBarWidth(70); // minimal table width, TODO: adjust after setColumnWidths is used in Symfony 3.1
+        $progressBar->setProgress($data['tcDoneCount']);
+
+        $output->writeln('');
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param array $data
      * @param bool $showTests
      */
     private function outputTable(OutputInterface $output, array $data, $showTests)
@@ -141,6 +186,7 @@ class ResultsCommand extends Command
 
         $table->setHeaders($header);
         $table->setColumnStyle(5, $rightAlignedColumn);
+        // TODO in Symfony 3.1 use setColumnWidths to set minimal columns width (and also increase barWidth accordingly)
 
         $first = true;
         foreach ($data as $tc) {
