@@ -6,6 +6,9 @@
 ### Removed
 - Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2.
 
+### Added
+- Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser).
+
 ## 1.5.0 - 2016-05-05
 ### Added
 - Shortcut `-i` to invoke `--ignore-delays` option of `run` command. ([#69](https://github.com/lmc-eu/steward/pull/69))

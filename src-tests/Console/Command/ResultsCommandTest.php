@@ -34,7 +34,7 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
-                '--logs-dir' => '/not/accessible'
+                '--logs-dir' => '/not/accessible',
             ]
         );
     }
@@ -72,8 +72,6 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldOutputRunningTimeOfStartedTest()
     {
-        $testStartTimestamp = 1461926013; // 2016-04-29 12:33:33+0200
-        $expectedDuration = time() - $testStartTimestamp;
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
@@ -88,6 +86,14 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('|  - testBanStarted   | started  |        | 2016-04-29 12:33:33 |          |', $output);
         $this->assertRegExp('/| \d+ sec/', $output);
 
+        $this->assertContains(
+            'Testcases (1 total): prepared: 1, running: 0, done: 0 (passed: 0, failed: 0, fatal: 0',
+            $output
+        );
+        $this->assertContains(
+            'Tests (1 so far): started: 1, done: 0 (passed: 0, failed or broken: 0, skipped or incomplete: 0)',
+            $output
+        );
     }
 
     public function testShouldNotShowEndingTimeOfFataledTest()
