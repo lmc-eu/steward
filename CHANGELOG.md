@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet - everything is released.
+### Added
+- Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser)
 
 ## 1.4.0 - 2016-04-07
 ### Added
