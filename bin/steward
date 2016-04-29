@@ -3,6 +3,7 @@
 
 namespace Lmc\Steward;
 
+use Lmc\Steward\Console\Command\ResultsCommand;
 use Symfony\Component\Console\Application;
 use Lmc\Steward\Console\Command\InstallCommand;
 use Lmc\Steward\Console\Command\RunCommand;
@@ -47,6 +48,7 @@ $application->setDispatcher($dispatcher);
 $application->addCommands(
     [
         new RunCommand($dispatcher),
+        new ResultsCommand($dispatcher),
         new InstallCommand($dispatcher),
     ]
 );

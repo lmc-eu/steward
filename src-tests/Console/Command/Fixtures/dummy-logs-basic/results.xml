@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testcases>
+  <!-- Passed testcase that took 1337 seconds -->
+  <testcase name="Foo\BarPassedTest" status="done" start="2016-04-29T12:56:28+0200" end="2016-04-29T13:18:45+0200" result="passed">
+    <!-- Passed test that took 333 seconds -->
+    <test name="testBarFirstPassed" status="done" start="2016-04-29T12:56:29+0200" end="2016-04-29T13:02:02+0200" result="passed"/>
+    <!-- Passed test that took 66 seconds -->
+    <test name="testBarSecondPassed" status="done" start="2016-04-29T12:57:05+0200" end="2016-04-29T12:58:11+0200" result="passed"/>
+  </testcase>
+  <testcase name="Foo\BazFailedTest" status="done" start="2016-04-29T12:57:28+0200" end="2016-04-29T12:57:34+0200" result="failed">
+    <test name="testBazBroken" status="done" start="2016-04-29T12:57:29+0200" end="2016-04-29T12:57:33+0200" result="broken"/>
+  </testcase>
+  <testcase name="Foo\FooQueuedTest" status="queued"/>
+</testcases>

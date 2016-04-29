@@ -14,14 +14,15 @@ class ProcessWrapper
 {
     /** Process prepared to be run */
     const PROCESS_STATUS_PREPARED = 'prepared';
-    /** Process failed - some tests have failed or are broken */
-    const PROCESS_RESULT_FAILED = 'failed';
-    /** Process fatally failed (PHP fatal error occurred - eg. no WebDriver available) */
-    const PROCESS_RESULT_FATAL = 'fatal';
     /** Finished process */
     const PROCESS_STATUS_DONE = 'done';
     /** Process in queue  - waiting to be prepared */
     const PROCESS_STATUS_QUEUED = 'queued';
+
+    /** Process failed - some tests have failed or are broken */
+    const PROCESS_RESULT_FAILED = 'failed';
+    /** Process fatally failed (PHP fatal error occurred - eg. no WebDriver available) */
+    const PROCESS_RESULT_FATAL = 'fatal';
     /** Process passed successful (with all its tests passing) */
     const PROCESS_RESULT_PASSED = 'passed';
 
