@@ -29,12 +29,12 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldShowErrorIfResultsFileCannotBeFound()
     {
-        $this->setExpectedException(\RuntimeException::class, 'Cannot read results file "/not/accessible/results.xml"');
+        $this->setExpectedException(\RuntimeException::class, 'Cannot read results file "/not/accessible.xml"');
 
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
-                '--logs-dir' => '/not/accessible',
+                '--results-file' => '/not/accessible.xml',
             ]
         );
     }
@@ -44,14 +44,14 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
-                '--logs-dir' => __DIR__ . '/Fixtures/dummy-logs-basic',
+                '--results-file' => __DIR__ . '/Fixtures/dummy-logs/results-basic.xml',
             ]
         );
 
         $output = $this->tester->getDisplay();
 
         $this->assertSame(0, $this->tester->getStatusCode());
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs-basic/expected-output.txt', $output);
+        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-basic.txt', $output);
     }
 
     public function testShouldOutputTestcasesAndTestsResultInDebugMode()
@@ -59,7 +59,7 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
-                '--logs-dir' => __DIR__ . '/Fixtures/dummy-logs-basic',
+                '--results-file' => __DIR__ . '/Fixtures/dummy-logs/results-basic.xml',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
@@ -67,7 +67,7 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $output = $this->tester->getDisplay();
 
         $this->assertSame(0, $this->tester->getStatusCode());
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs-basic/expected-output-with-tests.txt', $output);
+        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-with-tests.txt', $output);
     }
 
     public function testShouldOutputRunningTimeOfStartedTest()
@@ -75,7 +75,7 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
-                '--logs-dir' => __DIR__ . '/Fixtures/dummy-logs-running',
+                '--results-file' => __DIR__ . '/Fixtures/dummy-logs/results-running.xml',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
@@ -101,7 +101,7 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
-                '--logs-dir' => __DIR__ . '/Fixtures/dummy-logs-fatal',
+                '--results-file' => __DIR__ . '/Fixtures/dummy-logs/results-fatal.xml',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
@@ -109,6 +109,6 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
         $output = $this->tester->getDisplay();
 
         $this->assertSame(0, $this->tester->getStatusCode());
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs-fatal/expected-output.txt', $output);
+        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-fatal.txt', $output);
     }
 }
