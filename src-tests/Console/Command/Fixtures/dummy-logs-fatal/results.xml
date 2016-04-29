@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testcases>
+  <!-- Testcase whose test has fataled  -->
+  <testcase name="Foo\FataledTest" status="done" result="fatal">
+    <test name="testFataled" status="started" start="2016-04-29T12:58:48+0200"/>
+  </testcase>
+</testcases>

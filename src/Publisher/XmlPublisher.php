@@ -6,11 +6,12 @@ use Lmc\Steward\ConfigProvider;
 
 class XmlPublisher extends AbstractPublisher
 {
+    /** @var string Default name of results file. */
+    const FILE_NAME  = 'results.xml';
     /** @var string */
     protected $fileDir;
-
     /** @var string */
-    protected $fileName = 'results.xml';
+    protected $fileName = self::FILE_NAME;
 
     /** @var resource */
     protected $fileHandle;

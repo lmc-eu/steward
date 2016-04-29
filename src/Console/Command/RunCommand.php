@@ -106,7 +106,8 @@ class RunCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Base path to directory with fixture files',
                 realpath(STEWARD_BASE_DIR . '/tests')
-            )->addOption(
+            )
+            ->addOption(
                 self::OPTION_LOGS_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
