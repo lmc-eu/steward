@@ -4,10 +4,7 @@ namespace Lmc\Steward\Console\EventListener;
 
 use Lmc\Steward\Component\Environment;
 use Lmc\Steward\Console\CommandEvents;
-use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
-use Lmc\Steward\Console\Event\RunTestsProcessEvent;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
