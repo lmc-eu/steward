@@ -8,6 +8,7 @@
 
 ### Added
 - Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser).
+- Command `clean` to remove old content of logs directory (previous png screenshots, HTML snapshots and JUnit xmls).
 
 ## 1.5.0 - 2016-05-05
 ### Added
