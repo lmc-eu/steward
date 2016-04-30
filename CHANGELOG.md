@@ -10,6 +10,10 @@
 - Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser).
 - Command `clean` to remove old content of logs directory (previous png screenshots, HTML snapshots and JUnit xmls).
 
+### Changed
+- Content of directory with logs is cleaned before `run` command starts by default. This could be suppressed using `--no-clean` option of the `run` command. ([#63](https://github.com/lmc-eu/steward/issues/63))
+- Directory for logs is automatically created if it does not exist. ([#67](https://github.com/lmc-eu/steward/issues/67))
+
 ## 1.5.0 - 2016-05-05
 ### Added
 - Shortcut `-i` to invoke `--ignore-delays` option of `run` command. ([#69](https://github.com/lmc-eu/steward/pull/69))

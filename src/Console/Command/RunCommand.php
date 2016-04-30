@@ -98,21 +98,21 @@ class RunCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with tests',
-                realpath(STEWARD_BASE_DIR . '/tests')
+                STEWARD_BASE_DIR . '/tests'
             )
             ->addOption(
                 self::OPTION_FIXTURES_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Base path to directory with fixture files',
-                realpath(STEWARD_BASE_DIR . '/tests')
+                STEWARD_BASE_DIR . '/tests'
             )
             ->addOption(
                 self::OPTION_LOGS_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with logs',
-                realpath(STEWARD_BASE_DIR . '/logs')
+                STEWARD_BASE_DIR . '/logs'
             )
             ->addOption(
                 self::OPTION_PATTERN,
@@ -210,6 +210,11 @@ class RunCommand extends Command
             $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
         }
 
+        $this->getDispatcher()->dispatch(
+            CommandEvents::RUN_TESTS_INIT,
+            new ExtendedConsoleEvent($this, $input, $output)
+        );
+
         // Check if directories exists
         $this->testDirectories(
             $input,
@@ -246,11 +251,6 @@ class RunCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->getDispatcher()->dispatch(
-            CommandEvents::RUN_TESTS_INIT,
-            new ExtendedConsoleEvent($this, $input, $output)
-        );
-
         if (!$this->testSeleniumConnection($output, $input->getOption(self::OPTION_SERVER_URL))) {
             return 1;
         }
@@ -565,11 +565,12 @@ class RunCommand extends Command
         foreach ($dirs as $dir) {
             $currentValue = $input->getOption($dir->getName());
 
-            if ($currentValue === false || realpath($currentValue) === false) {
+            if (realpath($currentValue) === false || !is_readable($currentValue)) {
                 throw new \RuntimeException(
                     sprintf(
-                        '%s does not exist, make sure it is accessible or define your own path using %s option',
+                        '%s "%s" does not exist, make sure it is accessible or define your own path using %s option',
                         $dir->getDescription(),
+                        $currentValue,
                         '--' . $dir->getName()
                     )
                 );

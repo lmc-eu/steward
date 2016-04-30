@@ -100,9 +100,9 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     public function directoryOptionsProvider()
     {
         return [
-            ['tests-dir', 'Path to directory with tests does not exist'],
-            ['logs-dir', 'Path to directory with logs does not exist'],
-            ['fixtures-dir', 'Base path to directory with fixture files does not exist'],
+            ['tests-dir', 'Path to directory with tests "/not/accessible" does not exist'],
+            ['logs-dir', 'Path to directory with logs "/not/accessible" does not exist'],
+            ['fixtures-dir', 'Base path to directory with fixture files "/not/accessible" does not exist'],
         ];
     }
 
