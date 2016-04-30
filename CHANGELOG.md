@@ -2,8 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
-## Unreleased
-- Nothing yet - everything is released.
+## 2.0.0 - unreleased
 
 ## 1.4.1 - 2016-04-28
 ### Fixed
