@@ -52,8 +52,8 @@
 
 namespace Lmc\Steward\Component;
 
-use Lmc\Steward\Test\AbstractTestCaseBase;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Test\AbstractTestCaseBase;
 use Nette\Utils\Strings;
 
 /**

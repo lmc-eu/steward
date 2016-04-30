@@ -4,8 +4,8 @@ namespace Lmc\Steward\Listener;
 
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Test\AbstractTestCase;
 use Nette\Utils\Strings;
 
 /**

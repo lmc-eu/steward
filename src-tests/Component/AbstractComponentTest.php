@@ -3,8 +3,8 @@
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Component\Fixtures\MockComponent;
-use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigHelper;
+use Lmc\Steward\Test\AbstractTestCase;
 
 class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 {

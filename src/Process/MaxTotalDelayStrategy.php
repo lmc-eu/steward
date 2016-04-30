@@ -2,9 +2,9 @@
 
 namespace Lmc\Steward\Process;
 
+use Fhaculty\Graph\Vertex;
 use Graphp\Algorithms\ShortestPath\Dijkstra;
 use Graphp\Algorithms\Tree\OutTree;
-use Fhaculty\Graph\Vertex;
 
 class MaxTotalDelayStrategy implements OptimizeOrderInterface
 {

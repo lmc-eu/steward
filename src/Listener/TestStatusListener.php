@@ -2,9 +2,9 @@
 
 namespace Lmc\Steward\Listener;
 
-use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Process\ProcessWrapper;
+use Lmc\Steward\Publisher\AbstractPublisher;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.

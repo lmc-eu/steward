@@ -3,8 +3,8 @@
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Component\Fixtures\StringableObject;
-use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigHelper;
+use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * @covers Lmc\Steward\Component\Legacy

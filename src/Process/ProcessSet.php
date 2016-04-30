@@ -3,9 +3,9 @@
 namespace Lmc\Steward\Process;
 
 use Assert\Assertion;
+use Fhaculty\Graph\Graph;
 use Fhaculty\Graph\Vertex;
 use Graphp\Algorithms\Tree\OutTree;
-use Fhaculty\Graph\Graph;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Symfony\Component\Console\Output\OutputInterface;
 
