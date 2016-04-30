@@ -17,6 +17,17 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class CleanCommand extends Command
 {
+    /** @var Filesystem */
+    private $filesystem;
+
+    /**
+     * @param Filesystem $filesystem
+     */
+    public function setFilesystem(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
     /**
      * Configure command
      */
@@ -42,9 +53,15 @@ class CleanCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $defaultLogsDir = $this->getDefinition()->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault();
         $logsDir = $input->getOption(RunCommand::OPTION_LOGS_DIR);
 
-        if (!realpath($logsDir)) {
+        // If default path to logs directory is used and it does not exist, create the directory
+        if ($logsDir == $defaultLogsDir) {
+            $this->createLogsDirectoryIfNotExists($logsDir);
+        }
+
+        if (!realpath($logsDir) || !is_writable($logsDir)) {
             throw new \RuntimeException(
                 sprintf(
                     'Cannot clean logs directory "%s", make sure it is accessible.',
@@ -58,6 +75,28 @@ class CleanCommand extends Command
         return 0;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @return Filesystem
+     */
+    protected function getFilesystem()
+    {
+        if (!$this->filesystem) {
+            $this->filesystem = new Filesystem();
+        }
+
+        return $this->filesystem;
+    }
+
+    private function createLogsDirectoryIfNotExists($logsDir)
+    {
+        $filesystem = $this->getFilesystem();
+
+        if (!$filesystem->exists($logsDir)) {
+            $filesystem->mkdir($logsDir);
+        }
+    }
+
     private function cleanDirectory($logsDir)
     {
         $finder = (new Finder())
@@ -69,11 +108,9 @@ class CleanCommand extends Command
             ->name('*.xml')
             ->notName(XmlPublisher::FILE_NAME);
 
-        $fs = new Filesystem();
-
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $fs->remove($file->getRealPath());
+            $this->getFilesystem()->remove($file->getRealPath());
         }
     }
 }

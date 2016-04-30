@@ -29,17 +29,42 @@ class CleanCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldShowErrorIfLogsDirectoryCannotBeFound()
+    public function testShouldShowErrorIfLogsDirectoryIsNotDefaultAndCannotBeFound()
     {
         $this->setExpectedException(
             \RuntimeException::class,
-            'Cannot clean logs directory "/not/accessible", make sure it is accessible.'
+            'Cannot clean logs directory "/custom/not/accessible/path", make sure it is accessible.'
         );
 
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
-                '--logs-dir' => '/not/accessible',
+                '--logs-dir' => '/custom/not/accessible/path',
+            ]
+        );
+    }
+
+    public function testShouldCreateLogsDirectoryIfDefaultPathIsUsed()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Filesystem $filesystemMock */
+        $filesystemMock = $this->getMockBuilder(Filesystem::class)
+            ->setMethods(['exists', 'mkdir'])
+            ->getMock();
+
+        // Make default logs directory appear as not existing
+        $filesystemMock->expects($this->once())
+            ->method('exists')
+            ->willReturn(false);
+
+        // The directory should be created then
+        $filesystemMock->expects($this->once())
+            ->method('mkdir');
+
+        $this->command->setFilesystem($filesystemMock);
+
+        $this->tester->execute(
+            [
+                'command' => $this->command->getName(),
             ]
         );
     }
