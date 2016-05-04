@@ -5,9 +5,16 @@ php:
   - 5.6
   - 7
 
+matrix:
+  include:
+    - php: 5.5
+      env: dependencies="--prefer-lowest --prefer-stable"
+    - php: 7
+      env: dependencies="--prefer-lowest --prefer-stable"
+
 install:
   - travis_retry composer self-update && composer --version
-  - travis_retry composer install --no-interaction
+  - travis_retry composer update --no-interaction $dependencies
 
 before_script:
   - mkdir -p src-tests/logs/
