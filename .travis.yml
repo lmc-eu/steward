@@ -6,7 +6,8 @@ php:
   - 7
 
 install:
-  - composer install --no-interaction
+  - travis_retry composer self-update && composer --version
+  - travis_retry composer install --no-interaction
 
 before_script:
   - mkdir -p src-tests/logs/
