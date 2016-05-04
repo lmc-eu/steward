@@ -3,6 +3,9 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Added
+- Shortcut `-i` to invoke `--ignore-delays` option.
+
 ### Changed
 - Prepare removal of deprecated features - show deprecation warning when `run-tests` alias is being used. Note this alias and also non-namespaced WebDriver (deprecated in 1.2.0) will be removed in future Steward versions!
 
