@@ -1,13 +1,15 @@
 # Changelog
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
-
 ## Unreleased
+- Nothing yet - everything is released.
+
+## 1.5.0 - 2016-05-05
 ### Added
-- Shortcut `-i` to invoke `--ignore-delays` option.
+- Shortcut `-i` to invoke `--ignore-delays` option of `run` command. ([#69](https://github.com/lmc-eu/steward/pull/69))
 
 ### Changed
-- Prepare removal of deprecated features - show deprecation warning when `run-tests` alias is being used. Note this alias and also non-namespaced WebDriver (deprecated in 1.2.0) will be removed in future Steward versions!
+- Prepare removal of deprecated features - show deprecation warning when `run-tests` alias is being used. Note this alias and also non-namespaced WebDriver (deprecated in 1.2.0) will be removed in future Steward versions! ([#60](https://github.com/lmc-eu/steward/pull/60))
 
 ## 1.4.1 - 2016-04-28
 ### Fixed
