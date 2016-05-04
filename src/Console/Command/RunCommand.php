@@ -152,7 +152,7 @@ class RunCommand extends Command
             )
             ->addOption(
                 self::OPTION_IGNORE_DELAYS,
-                null,
+                'i',
                 InputOption::VALUE_NONE,
                 'Ignore delays defined between testcases'
             );
