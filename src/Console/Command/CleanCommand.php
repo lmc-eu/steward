@@ -21,6 +21,7 @@ class CleanCommand extends Command
     private $filesystem;
 
     /**
+     * @internal
      * @param Filesystem $filesystem
      */
     public function setFilesystem(Filesystem $filesystem)

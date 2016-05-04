@@ -26,24 +26,12 @@ class InstallCommand extends Command
     protected $targetDir = '/vendor/bin';
 
     /**
+     * @internal
      * @param Downloader $downloader
      */
     public function setDownloader(Downloader $downloader)
     {
         $this->downloader = $downloader;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     * @return Downloader
-     */
-    public function getDownloader()
-    {
-        if (!$this->downloader) {
-            $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir);
-        }
-
-        return $this->downloader;
     }
 
     /**
@@ -167,5 +155,18 @@ class InstallCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @return Downloader
+     */
+    protected function getDownloader()
+    {
+        if (!$this->downloader) {
+            $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir);
+        }
+
+        return $this->downloader;
     }
 }

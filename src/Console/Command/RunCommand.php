@@ -53,6 +53,7 @@ class RunCommand extends Command
     const OPTION_IGNORE_DELAYS = 'ignore-delays';
 
     /**
+     * @internal
      * @param SeleniumServerAdapter $seleniumAdapter
      */
     public function setSeleniumAdapter(SeleniumServerAdapter $seleniumAdapter)
@@ -61,6 +62,7 @@ class RunCommand extends Command
     }
 
     /**
+     * @internal
      * @param ProcessSetCreator $processSetCreator
      */
     public function setProcessSetCreator(ProcessSetCreator $processSetCreator)
