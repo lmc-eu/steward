@@ -74,7 +74,6 @@ class RunCommand extends Command
     protected function configure()
     {
         $this->setName('run')
-            ->setAliases(['run-tests'])
             ->setDescription('Run tests planner and execute tests')
             ->addArgument(
                 self::ARGUMENT_ENVIRONMENT,
