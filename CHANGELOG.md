@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## 2.0.0 - unreleased
+### Removed
+- Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2.
 
 ## 1.5.0 - 2016-05-05
 ### Added
