@@ -9,5 +9,3 @@ if (file_exists($autoload = __DIR__ . '/../vendor/autoload.php')) {
 } elseif (file_exists($autoload = __DIR__ . '/../../../autoload.php')) {
     require_once $autoload;
 }
-
-require 'init_webdriver_aliases.php';
