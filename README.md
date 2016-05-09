@@ -42,8 +42,6 @@ Then simply install Steward and add it as a dependency:
 $ composer require lmc/steward
 ```
 
-Next necessary step is to create `tests/` and `logs/` directory inside the `selenium-tests/` directory.
-
 ### 2. Install Selenium
 You need Selenium server installed to execute commands in the specified browser.
 In the root directory of your tests (e.g. `selenium-tests/`)  simply run:
@@ -71,7 +69,7 @@ Steward. For the following example it is as easy as adding following to your `co
         }
     }
 ```
-Don't forget to run `composer dump-autoload` afterwards.
+Don't forget to create the `selenium-tests/tests/` directory and to run `composer dump-autoload` afterwards.
 
 Now the test itself (place it to `selenium-tests/tests/` directory):
 

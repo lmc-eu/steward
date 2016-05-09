@@ -54,7 +54,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
         $optionsWithXdebug = $command->getDefinition()->getOptions();
 
         $this->assertCount(count($optionsOriginal) + 1, $optionsWithXdebug);
-        $this->assertArrayHasKey('xdebug', $optionsWithXdebug);
+        $this->assertArrayHasKey(XdebugListener::OPTION_XDEBUG, $optionsWithXdebug);
     }
 
     public function testShouldNotAddXdebugOptionToDifferentCommand()

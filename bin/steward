@@ -3,6 +3,7 @@
 
 namespace Lmc\Steward;
 
+use Lmc\Steward\Console\Command\CleanCommand;
 use Lmc\Steward\Console\Command\InstallCommand;
 use Lmc\Steward\Console\Command\ResultsCommand;
 use Lmc\Steward\Console\Command\RunCommand;
@@ -47,6 +48,7 @@ $application->setDispatcher($dispatcher);
 // Add Commands with injected EventDispatcher to the main console Application
 $application->addCommands(
     [
+        new CleanCommand($dispatcher),
         new RunCommand($dispatcher),
         new ResultsCommand($dispatcher),
         new InstallCommand($dispatcher),

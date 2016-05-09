@@ -29,6 +29,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class XdebugListener implements EventSubscriberInterface
 {
+    const OPTION_XDEBUG = 'xdebug';
+
     /** @var string */
     protected $xdebugIdeKey;
 
@@ -53,7 +55,7 @@ class XdebugListener implements EventSubscriberInterface
         }
 
         $event->getCommand()->addOption(
-            'xdebug',
+            self::OPTION_XDEBUG,
             null,
             InputOption::VALUE_OPTIONAL,
             'Start Xdebug debugger on tests; use given IDE key. Default value is used only if empty option is passed.',
@@ -73,8 +75,8 @@ class XdebugListener implements EventSubscriberInterface
 
         // Use the value of --xdebug only if the option was passed.
         // Don't apply the default if the option was not passed at all.
-        if ($input->getParameterOption('--xdebug') !== false) {
-            $this->xdebugIdeKey = $input->getOption('xdebug');
+        if ($input->getParameterOption('--' . self::OPTION_XDEBUG) !== false) {
+            $this->xdebugIdeKey = $input->getOption(self::OPTION_XDEBUG);
         }
 
         if ($this->xdebugIdeKey) {
