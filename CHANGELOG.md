@@ -5,6 +5,7 @@
 ## 2.0.0 - unreleased
 ### Removed
 - Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2.
+- `run-tests` alias of `run` command.
 
 ### Added
 - Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser).
