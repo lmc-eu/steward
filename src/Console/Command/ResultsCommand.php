@@ -23,6 +23,21 @@ class ResultsCommand extends Command
 {
     const OPTION_RESULTS_FILE = 'results-file';
 
+    /** @var array */
+    protected $testcaseColorMap = [
+        ProcessWrapper::PROCESS_RESULT_PASSED => '<fg=green>',
+        ProcessWrapper::PROCESS_RESULT_FAILED => '<fg=red>',
+        ProcessWrapper::PROCESS_RESULT_FATAL => '<fg=yellow>',
+    ];
+    /** @var array */
+    protected $testColorMap = [
+        AbstractPublisher::TEST_RESULT_PASSED => '<fg=green>',
+        AbstractPublisher::TEST_RESULT_FAILED => '<fg=red>',
+        AbstractPublisher::TEST_RESULT_BROKEN => '<fg=red>',
+        AbstractPublisher::TEST_RESULT_SKIPPED => '<fg=magenta>',
+        AbstractPublisher::TEST_RESULT_INCOMPLETE => '<fg=magenta>',
+    ];
+
     /**
      * Configure command
      */
@@ -288,14 +303,8 @@ class ResultsCommand extends Command
             return $output;
         }
 
-        $colorMap = [
-            ProcessWrapper::PROCESS_RESULT_PASSED => '<fg=green>',
-            ProcessWrapper::PROCESS_RESULT_FAILED => '<fg=red>',
-            ProcessWrapper::PROCESS_RESULT_FATAL => '<fg=yellow>',
-        ];
-
-        if (isset($colorMap[$result])) {
-            $output = $colorMap[$result] . $output . '</>';
+        if (isset($this->testcaseColorMap[$result])) {
+            $output = $this->testcaseColorMap[$result] . $output . '</>';
         }
 
         return $output;
@@ -314,20 +323,11 @@ class ResultsCommand extends Command
         if ($parentTestcaseResult == ProcessWrapper::PROCESS_RESULT_FATAL
             && $status == AbstractPublisher::TEST_STATUS_STARTED
         ) {
-            return '<fg=yellow>fatal</>';
+            return $this->testcaseColorMap[ProcessWrapper::PROCESS_RESULT_FATAL] . 'fatal</>';
         }
 
-        $colorMap = [
-            AbstractPublisher::TEST_RESULT_PASSED => '<fg=green>',
-            AbstractPublisher::TEST_RESULT_FAILED => '<fg=red>',
-            AbstractPublisher::TEST_RESULT_BROKEN => '<fg=red>',
-            AbstractPublisher::TEST_RESULT_SKIPPED => '<fg=magenta>',
-            AbstractPublisher::TEST_RESULT_INCOMPLETE => '<fg=magenta>',
-
-        ];
-
-        if (isset($colorMap[$result])) {
-            $output = $colorMap[$result] . $output . '</>';
+        if (isset($this->testColorMap[$result])) {
+            $output = $this->testColorMap[$result] . $output . '</>';
         }
 
         return $output;
