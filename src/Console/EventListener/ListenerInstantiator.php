@@ -6,6 +6,7 @@ use Nette\Reflection\AnnotationsParser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Search and instantiate event-listeners for the commands
@@ -49,8 +50,9 @@ class ListenerInstantiator
             ->name('*Listener.php');
 
         $listeners = [];
+        /** @var SplFileInfo $file */
         foreach ($files as $file) {
-            $listeners[] = key(AnnotationsParser::parsePhp(\file_get_contents($file->getRealpath())));
+            $listeners[] = key(AnnotationsParser::parsePhp(\file_get_contents($file->getRealPath())));
         }
 
         return $listeners;

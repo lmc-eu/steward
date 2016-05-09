@@ -158,7 +158,6 @@ class RunCommand extends Command
                 InputOption::VALUE_NONE,
                 'Ignore delays defined between testcases'
             );
-        ;
 
         $this->addUsage('staging firefox');
         $this->addUsage('--group=foo --group=bar --exclude-group=baz -vvv development phantomjs');
@@ -219,7 +218,6 @@ class RunCommand extends Command
         // Check if directories exists
         $this->testDirectories(
             $input,
-            $output,
             [
                 $this->getDefinition()->getOption(self::OPTION_TESTS_DIR),
                 $this->getDefinition()->getOption(self::OPTION_LOGS_DIR),
@@ -556,11 +554,10 @@ class RunCommand extends Command
      * Try that given options that define directories exists and are accessible.
      *
      * @param InputInterface $input
-     * @param OutputInterface $output
      * @param InputOption[] $dirs Option defining directories
      * @throws \RuntimeException Thrown when directory is not accessible
      */
-    protected function testDirectories(InputInterface $input, OutputInterface $output, array $dirs)
+    protected function testDirectories(InputInterface $input, array $dirs)
     {
         /** @var $dirs InputOption[] */
         foreach ($dirs as $dir) {

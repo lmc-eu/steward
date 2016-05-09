@@ -23,20 +23,20 @@ class Downloader
     }
 
     /**
-     * Get latest released version of Selenium server. If not found, false is returned.
-     * @return string|false
+     * Get latest released version of Selenium server. If not found, null is returned.
+     * @return string|null
      */
     public static function getLatestVersion()
     {
         $data = @file_get_contents(self::$storageUrl);
         if (!$data) {
-            return false;
+            return null;
         }
 
         libxml_use_internal_errors(true); // disable errors from being thrown
         $xml = simplexml_load_string($data);
         if (!$xml) {
-            return false;
+            return null;
         }
 
         $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
@@ -44,7 +44,7 @@ class Downloader
 
         $lastVersion = preg_replace('/.*standalone-([0-9\.]*)\.jar/', '$1', $lastRelease);
         if ($lastRelease == $lastVersion) { // regexp not matched
-            return false;
+            return null;
         }
 
         return $lastVersion;
@@ -60,7 +60,7 @@ class Downloader
 
     /**
      * Get version that should be downloaded; if not set, attempt to retrieve latest released version
-     * @return false|string
+     * @return string|null
      */
     public function getVersion()
     {

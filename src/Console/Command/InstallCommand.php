@@ -75,7 +75,7 @@ class InstallCommand extends Command
 
             $questionText = '<question>Enter Selenium server version to install:</question> ';
 
-            if ($latestVersion) {
+            if (!empty($latestVersion)) {
                 $question = new Question($questionText . "[$latestVersion] ", $latestVersion);
             } else { // Error auto-detecting latest version
                 $latestVersionErrorMsg = 'Please provide version to download (latest version auto-detect failed)';
