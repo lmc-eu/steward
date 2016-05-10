@@ -56,7 +56,6 @@ class ProcessWrapper
     /** @var int */
     private $finishedTime;
 
-
     /**
      * @param Process $process Instance of PHPUnit process
      * @param string $className Tested class fully qualified name

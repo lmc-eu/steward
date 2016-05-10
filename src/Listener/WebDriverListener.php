@@ -136,6 +136,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
         $requestTimeoutMs
     ) {
         $browserName = ConfigProvider::getInstance()->browserName;
+
         for ($startAttempts = 0; $startAttempts < 4; $startAttempts++) {
             try {
                 $test->wd =

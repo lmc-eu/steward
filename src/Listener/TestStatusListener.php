@@ -14,7 +14,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
     /** @var AbstractPublisher[] $publishers */
     protected $publishers = [];
 
-    /** @var string $startDate */
+    /** @var \DateTimeInterface $startDate */
     protected $startDate;
 
     /**

@@ -11,6 +11,7 @@ use Nette\Utils\Strings;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -69,7 +70,7 @@ class ProcessSetCreator
         $processSet = $this->getProcessSet();
 
         if ($this->output->isVeryVerbose()) {
-            if ($groups || $excludeGroups || $filter) {
+            if ($groups || $excludeGroups || !empty($filter)) {
                 $this->output->writeln('Filtering testcases:');
             }
             if ($groups) {
@@ -78,14 +79,15 @@ class ProcessSetCreator
             if ($excludeGroups) {
                 $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
             }
-            if ($filter) {
+            if (!empty($filter)) {
                 $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
             }
         }
 
         $testCasesNum = 0;
+        /** @var SplFileInfo $file */
         foreach ($files as $file) {
-            $fileName = $file->getRealpath();
+            $fileName = $file->getRealPath();
             // Parse classes from the testcase file
             $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
 
@@ -149,7 +151,7 @@ class ProcessSetCreator
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
             ];
 
-            if ($filter) {
+            if (!empty($filter)) {
                 $phpunitArgs[] = '--filter=' . $filter;
             }
 

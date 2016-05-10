@@ -29,7 +29,6 @@ class ProcessSet implements \Countable
     /** @var OutTree */
     protected $tree;
 
-
     /**
      * Instantiate processSet to manage processes in different states,
      * If publisher is passed, it is used to publish process statuses after status changes.

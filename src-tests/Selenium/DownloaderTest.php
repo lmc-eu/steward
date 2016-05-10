@@ -20,25 +20,25 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('2.45.0', Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnFalseIfRequestToGetLatestVersionFailed()
+    public function testShouldReturnNullIfRequestToGetLatestVersionFailed()
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
             ->willReturn(false);
 
-        $this->assertFalse(Downloader::getLatestVersion());
+        $this->assertNull(Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnFalseIfRequestToGetLatestVersionReturnsInvalidXml()
+    public function testShouldReturnNullIfRequestToGetLatestVersionReturnsInvalidXml()
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
             ->willReturn('is not XML');
 
-        $this->assertFalse(Downloader::getLatestVersion());
+        $this->assertNull(Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnFalseIfLatestVersionCannotBeFound()
+    public function testShouldReturnNullIfLatestVersionCannotBeFound()
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-broken.xml');
 
@@ -46,7 +46,7 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
         $fileGetContentsMock->expects($this->any())
             ->willReturn($releasesDummyResponse);
 
-        $this->assertFalse(Downloader::getLatestVersion());
+        $this->assertNull(Downloader::getLatestVersion());
     }
 
     /**

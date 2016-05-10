@@ -79,7 +79,7 @@ class XmlPublisher extends AbstractPublisher
 
         $testCaseNode = $this->getTestCaseNode($xml, $testCaseName);
         $testCaseNode['status'] = $status;
-        if ($result) {
+        if (!empty($result)) {
             $testCaseNode['result'] = $result;
         }
         if ($startDate) {
