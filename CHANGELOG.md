@@ -14,6 +14,7 @@
 ### Changed
 - Content of directory with logs is cleaned before `run` command starts by default. This could be suppressed using `--no-clean` option of the `run` command. ([#63](https://github.com/lmc-eu/steward/issues/63))
 - Directory for logs is automatically created if it does not exist. ([#67](https://github.com/lmc-eu/steward/issues/67))
+- Process output printed to console (when using `-vv` or `-vvv`) is now prefixed with class name
 
 ## 1.5.0 - 2016-05-05
 ### Added

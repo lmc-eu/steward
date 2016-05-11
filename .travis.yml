@@ -21,6 +21,7 @@ before_script:
   - mkdir -p src-tests/coverage/
 
 script:
+  - stty cols 120
   - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml
   - cd .. && vendor/bin/phpcs --standard=ruleset.xml
 
