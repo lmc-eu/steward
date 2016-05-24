@@ -6,6 +6,7 @@ use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use Lmc\Steward\Console\Style\StewardStyle;
 use Lmc\Steward\Process\MaxTotalDelayStrategy;
 use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
@@ -250,15 +251,17 @@ class RunCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!$this->testSeleniumConnection($output, $input->getOption(self::OPTION_SERVER_URL))) {
+        $io = new StewardStyle($input, $output);
+
+        if (!$this->testSeleniumConnection($io, $input->getOption(self::OPTION_SERVER_URL))) {
             return 1;
         }
 
         // Find all files holding test-cases
-        if ($output->isVeryVerbose()) {
-            $output->writeln('Searching for testcases:');
-            $output->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
-            $output->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
+        if ($io->isVeryVerbose()) {
+            $io->writeln('Searching for testcases:');
+            $io->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
+            $io->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
         }
 
         $files = (new Finder())
@@ -267,17 +270,17 @@ class RunCommand extends Command
             ->name($input->getOption(self::OPTION_PATTERN));
 
         if (!count($files)) {
-            $output->writeln(
+            $io->error(
                 sprintf(
-                    '<error>No testcases found, exiting.%s</error>',
-                    !$output->isVeryVerbose() ? ' (use -vv or -vvv option for more information)' : ''
+                    'No testcases found, exiting.%s',
+                    !$io->isVeryVerbose() ? ' (use -vv or -vvv option for more information)' : ''
                 )
             );
 
             return 1;
         }
 
-        $processSetCreator = $this->getProcessSetCreator($input, $output);
+        $processSetCreator = $this->getProcessSetCreator($input, $io);
         $processSet = $processSetCreator->createFromFiles(
             $files,
             $input->getOption(self::OPTION_GROUP),
@@ -287,7 +290,7 @@ class RunCommand extends Command
         );
 
         if (!count($processSet)) {
-            $output->writeln('<error>No testcases matched given groups, exiting.</error>');
+            $io->error('No testcases matched given groups, exiting.');
 
             return 1;
         }
@@ -296,11 +299,11 @@ class RunCommand extends Command
         $processSet->optimizeOrder(new MaxTotalDelayStrategy());
 
         // Initialize first processes that should be run
-        $processSet->dequeueProcessesWithoutDelay($output);
+        $processSet->dequeueProcessesWithoutDelay($io);
 
         // Start execution loop
-        $output->writeln('');
-        $allTestsPassed = $this->executionLoop($output, $processSet);
+        $io->isVeryVerbose() ? $io->section('Starting execution of testcases') : $io->newLine();
+        $allTestsPassed = $this->executionLoop($io, $processSet);
 
         if ($input->getOption(self::OPTION_NO_EXIT)) {
             return 0;
@@ -344,11 +347,11 @@ class RunCommand extends Command
     /**
      * Start planner execution loop
      *
-     * @param OutputInterface $output
+     * @param StewardStyle $io
      * @param ProcessSet $processSet
      * @return bool Return true if all test returned exit code 0 (or if none test was run)
      */
-    protected function executionLoop(OutputInterface $output, ProcessSet $processSet)
+    protected function executionLoop(StewardStyle $io, ProcessSet $processSet)
     {
         $counterWaitingOutput = 1;
         $statusesCountLast = [];
@@ -364,15 +367,16 @@ class RunCommand extends Command
             // Start all prepared tasks and set status of not running as finished
             foreach ($prepared as $testClass => $processWrapper) {
                 if (!$processWrapper->getProcess()->isStarted()) {
-                    $output->writeln(
-                        sprintf(
-                            'Execution of testcase "%s" started%s',
-                            $testClass,
-                            $output->isDebug() ?
-                                " with command:\n" . $processWrapper->getProcess()->getCommandLine() : ''
-                        ),
-                        OutputInterface::VERBOSITY_VERY_VERBOSE
-                    );
+                    if ($io->isVeryVerbose()) {
+                        $io->runStatus(
+                            sprintf(
+                                'Execution of testcase "%s" started%s',
+                                $testClass,
+                                $io->isDebug() ?
+                                    " with command:\n" . $processWrapper->getProcess()->getCommandLine() : ''
+                            )
+                        );
+                    }
                     $processWrapper->getProcess()->start();
                     usleep(50000); // wait for a while (0,05 sec) to let processes be started in intended order
 
@@ -380,14 +384,20 @@ class RunCommand extends Command
                 }
 
                 if ($timeoutError = $processWrapper->checkProcessTimeout()) {
-                    $output->writeln('<error>' . $timeoutError . '</error>', OutputInterface::VERBOSITY_VERY_VERBOSE);
+                    if ($io->isVeryVerbose()) {
+                        $io->error($timeoutError);
+                    }
                 }
 
-                if ($output->isDebug()) { // In debug mode print all output as it comes
-                    $processOutput = $this->getProcessOutput($processWrapper->getProcess());
-                    if ($processOutput) {
-                        $output->write($processOutput);
-                    }
+                if ($io->isDebug()) { // In debug mode print all output as it comes
+                    $io->output(
+                        $processWrapper->getProcess()->getIncrementalOutput(),
+                        $processWrapper->getClassName()
+                    );
+                    $io->errorOutput(
+                        $processWrapper->getProcess()->getIncrementalErrorOutput(),
+                        $processWrapper->getClassName()
+                    );
                 }
 
                 if (!$processWrapper->getProcess()->isRunning()) {
@@ -395,39 +405,37 @@ class RunCommand extends Command
                     $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
 
                     $hasProcessPassed = $processWrapper->getResult() == ProcessWrapper::PROCESS_RESULT_PASSED;
-                    if ($output->isVeryVerbose()) {
-                        $processOutput = '';
-                        if (!$hasProcessPassed) {
-                            $processOutput = $this->getProcessOutput($processWrapper->getProcess());
+
+                    if ($io->isVeryVerbose()) {
+                        $processOutput = $processErrorOutput = '';
+                        if (!$hasProcessPassed) { // If process failed, collect its output
+                            $processOutput = $processWrapper->getProcess()->getIncrementalOutput();
+                            $processErrorOutput = $processWrapper->getProcess()->getIncrementalErrorOutput();
                         }
 
-                        $output->writeln(
-                            sprintf(
-                                '<fg=%s>Finished execution of testcase "%s" (result: %s)%s</>',
-                                $hasProcessPassed ? 'green' : 'red',
-                                $testClass,
-                                $processWrapper->getResult(),
-                                $processOutput ? ', output:' : ''
-                            )
+                        $testcaseFinishedMessage = sprintf(
+                            'Finished execution of testcase "%s" (result: %s)%s',
+                            $testClass,
+                            $processWrapper->getResult(),
+                            (!empty($processOutput) || !empty($processErrorOutput) ? ', output:' : '')
                         );
+                        $hasProcessPassed ? $io->runStatusSuccess($testcaseFinishedMessage)
+                            : $io->runStatusError($testcaseFinishedMessage);
 
-                        if ($processOutput) { // Eg. in debug mode the output was already printed
-                            $output->write($processOutput);
-                        }
-                    } elseif ($output->isVerbose() && !$hasProcessPassed) {
-                        $output->writeln(
-                            sprintf('<fg=red>Testcase "%s" %s</>', $testClass, $processWrapper->getResult())
-                        );
+                        $io->output($processOutput, $processWrapper->getClassName());
+                        $io->errorOutput($processErrorOutput, $processWrapper->getClassName());
+                    } elseif ($io->isVerbose() && !$hasProcessPassed) {
+                        $io->runStatusError(sprintf('Testcase "%s" %s', $testClass, $processWrapper->getResult()));
                     }
 
                     // Fail also process dependencies
                     if (!$hasProcessPassed) {
                         $failedDependants = $processSet->failDependants($testClass);
-                        if ($output->isVerbose()) {
+                        if ($io->isVerbose()) {
                             foreach ($failedDependants as $failedClass => $failedProcessWrapper) {
-                                $output->writeln(
+                                $io->runStatusError(
                                     sprintf(
-                                        '<fg=red>Failing testcase "%s", because it was depending on failed "%s"</>',
+                                        'Failing testcase "%s", because it was depending on failed "%s"',
                                         $failedClass,
                                         $testClass
                                     )
@@ -451,10 +459,9 @@ class RunCommand extends Command
                 if (in_array($processWrapper->getDelayAfter(), $doneClasses)
                     && (time() - $done[$processWrapper->getDelayAfter()]->getFinishedTime()) > $delaySeconds
                 ) {
-                    $output->writeln(
-                        sprintf('Unqueing testcase "%s"', $testClass),
-                        OutputInterface::VERBOSITY_VERY_VERBOSE
-                    );
+                    if ($io->isVeryVerbose()) {
+                        $io->runStatus(sprintf('Unqueing testcase "%s"', $testClass));
+                    }
                     $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
                 }
             }
@@ -480,10 +487,9 @@ class RunCommand extends Command
                     }
                 }
 
-                $output->writeln(
+                $io->runStatus(
                     sprintf(
-                        "[%s]: waiting (running: %d, queued: %d, done: %d%s)",
-                        date("Y-m-d H:i:s"),
+                        "Waiting (running: %d, queued: %d, done: %d%s)",
                         $statusesCount[ProcessWrapper::PROCESS_STATUS_PREPARED],
                         $statusesCount[ProcessWrapper::PROCESS_STATUS_QUEUED],
                         $statusesCount[ProcessWrapper::PROCESS_STATUS_DONE],
@@ -506,48 +512,12 @@ class RunCommand extends Command
             }
         }
 
-        $output->writeln(
-            sprintf(
-                "\n<%s>Testcases executed: %d (%s)</>",
-                $allTestsPassed ? 'fg=black;bg=green' : 'error',
-                $doneCount,
-                implode(', ', $resultsInfo)
-            )
-        );
+        $io->runStatus('All testcases done');
+
+        $resultMessage = sprintf("Testcases executed: %d (%s)", $doneCount, implode(', ', $resultsInfo));
+        $allTestsPassed ? $io->success($resultMessage) : $io->error($resultMessage);
 
         return $allTestsPassed;
-    }
-
-    /**
-     * Decorate and return Process output
-     * @param Process $process
-     * @return string
-     */
-    protected function getProcessOutput(Process $process)
-    {
-        $output = '';
-
-        // Add standard process output
-        if ($processOutput = $process->getIncrementalOutput()) {
-            $processOutputLines = explode("\n", $processOutput);
-
-            // color output lines containing "[WARN]"
-            foreach ($processOutputLines as &$processOutputLine) {
-                if (strpos($processOutputLine, '[WARN]') !== false) {
-                    $processOutputLine = '<fg=black;bg=yellow>' . $processOutputLine . '</fg=black;bg=yellow>';
-                } elseif (strpos($processOutputLine, '[DEBUG]') !== false) {
-                    $processOutputLine = '<comment>' . $processOutputLine . '</comment>';
-                }
-            }
-            $output .= implode("\n", $processOutputLines);
-        }
-
-        // Add error output
-        if ($errorOutput = $process->getIncrementalErrorOutput()) {
-            $output .= '<error>' . rtrim($errorOutput, PHP_EOL) . '</error>' . "\n";
-        }
-
-        return $output;
     }
 
     /**
@@ -578,31 +548,32 @@ class RunCommand extends Command
 
     /**
      * Try connection to Selenium server
-     * @param OutputInterface $output
+     * @param StewardStyle $io
      * @param string $seleniumServerUrl
      * @return bool
      */
-    protected function testSeleniumConnection(OutputInterface $output, $seleniumServerUrl)
+    protected function testSeleniumConnection(StewardStyle $io, $seleniumServerUrl)
     {
         $seleniumAdapter = $this->getSeleniumAdapter();
-        $output->write(
+        $io->write(
             sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl),
             false,
             OutputInterface::VERBOSITY_VERY_VERBOSE
         );
 
         if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
-            $output->writeln(
+            $io->writeln(
                 sprintf(
                     '<error>%s ("%s")</error>',
-                    $output->isVeryVerbose() ? 'connection error' : 'Error connecting to Selenium server',
+                    $io->isVeryVerbose() ? 'connection error' : 'Error connecting to Selenium server',
                     $seleniumAdapter->getLastError()
                 )
             );
-            $output->writeln(
+
+            $io->error(
                 sprintf(
-                    '<error>Make sure your Selenium server is really accessible on url "%s" '
-                    . 'or change it using --server-url option</error>',
+                    'Make sure your Selenium server is really accessible on url "%s" '
+                    . 'or change it using --server-url option',
                     $seleniumServerUrl
                 )
             );
@@ -611,18 +582,18 @@ class RunCommand extends Command
         }
 
         if (!$seleniumAdapter->isSeleniumServer($seleniumServerUrl)) {
-            $output->writeln(
+            $io->writeln(
                 sprintf(
                     '<error>%s (%s)</error>',
-                    $output->isVeryVerbose() ? 'unexpected response' : 'Unexpected response from Selenium server',
+                    $io->isVeryVerbose() ? 'unexpected response' : 'Unexpected response from Selenium server',
                     $seleniumAdapter->getLastError()
                 )
             );
-            $output->writeln(
+            $io->error(
                 sprintf(
-                    '<error>Looks like url "%s" is occupied by something else than Selenium server. '
-                    . 'Make Selenium server is really accessible on this url '
-                    . 'or change it using --server-url option</error>',
+                    'Looks like url "%s" is occupied by something else than Selenium server. '
+                    . 'Make sure Selenium server is really accessible on this url '
+                    . 'or change it using --server-url option',
                     $seleniumServerUrl
                 )
             );
@@ -630,7 +601,7 @@ class RunCommand extends Command
             return false;
         }
 
-        $output->writeln('OK', OutputInterface::VERBOSITY_VERY_VERBOSE);
+        $io->writeln('OK', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
         return true;
     }
