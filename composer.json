@@ -23,6 +23,7 @@
         "symfony/process": "^3.0.4",
         "symfony/finder": "~3.0",
         "symfony/event-dispatcher": "~3.0",
+        "symfony/filesystem": "~3.0",
         "nette/reflection": "^2.3.2",
         "nette/utils": "~2.3",
         "facebook/webdriver": "^1.1.1",
