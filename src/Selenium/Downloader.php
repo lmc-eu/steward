@@ -39,10 +39,10 @@ class Downloader
             return false;
         }
 
-        $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
+        $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone-2")]]');
         $lastRelease = end($releases); // something like "2.42/selenium-server-standalone-2.42.2.jar"
 
-        $lastVersion = preg_replace('/.*standalone-([0-9\.]*)\.jar/', '$1', $lastRelease);
+        $lastVersion = preg_replace('/.*standalone-(.*)\.jar/', '$1', $lastRelease);
         if ($lastRelease == $lastVersion) { // regexp not matched
             return false;
         }
