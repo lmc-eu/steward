@@ -17,7 +17,7 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
             ->with('https://selenium-release.storage.googleapis.com')
             ->willReturn($releasesDummyResponse);
 
-        $this->assertEquals('2.45.0', Downloader::getLatestVersion());
+        $this->assertEquals('3.0.0-beta1', Downloader::getLatestVersion());
     }
 
     public function testShouldReturnNullIfRequestToGetLatestVersionFailed()
@@ -55,7 +55,8 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
     public function testShouldReadLatestVersionFromTheStorageUrl()
     {
         $latestVersion = Downloader::getLatestVersion();
-        $this->assertRegExp('/^\d+\.\d+\.\d+$/', $latestVersion);
+        $this->assertInternalType('string', $latestVersion);
+        $this->assertRegExp('/^\d+\.\d+\.\d+.*$/', $latestVersion);
     }
 
     public function testShouldGetVersionSetBySetter()
@@ -79,7 +80,7 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($releasesDummyResponse);
 
         $downloader = new Downloader(__DIR__ . '/Fixtures');
-        $this->assertEquals('2.45.0', $downloader->getVersion());
+        $this->assertEquals('3.0.0-beta1', $downloader->getVersion());
     }
 
     public function testShouldAssembleTargetFilePath()
