@@ -16,6 +16,7 @@ use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use Nette\Reflection\AnnotationsParser;
+use OndraM\CiDetector;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
@@ -80,6 +81,19 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             foreach ($extraCapabilities as $extraCapabilityName => $extraCapabilityValue) {
                 $capabilities->setCapability($extraCapabilityName, $extraCapabilityValue);
             }
+        }
+
+        $ci = CiDetector::detect();
+        if ($ci) {
+            $capabilities->setCapability('name', get_class($test) . '::' . $test->getName());
+            $capabilities->setCapability(
+                'build',
+                ConfigProvider::getInstance()->env . '-' . CiDetector::detect()->getBuildNumber()
+            );
+            $capabilities->setCapability(
+                'tags',
+                [ConfigProvider::getInstance()->env, $ci->getCiName(), get_class($test)]
+            );
         }
 
         $this->createWebDriver(
