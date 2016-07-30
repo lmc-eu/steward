@@ -10,6 +10,7 @@ use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedTest;
 use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -249,6 +250,9 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             . ' --' . RunCommand::OPTION_FIXTURES_DIR .'=custom-fixtures-dir/'
             . ' --' . RunCommand::OPTION_LOGS_DIR .'=custom-logs-dir/'
             . ' --' . RunCommand::OPTION_PUBLISH_RESULTS
+            . ' --' . RunCommand::OPTION_CAPABILITY .  '=webdriver.log.file:/foo/bar.log'
+            . ' --' . RunCommand::OPTION_CAPABILITY .  '="capability.in.quotes:/foo/ba r.log"'
+            . ' --' . RunCommand::OPTION_CAPABILITY .  '="platform:OS X 10.8"'
         );
 
         $this->input->bind($this->command->getDefinition());
@@ -261,7 +265,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             $this->publisherMock
         );
 
-        $files = $this->findDummyTests('DummyTest.php'); // find only one file (we don't need more for the test)
+        $files = $this->findDummyTests('DummyTest.php');
 
         $processSet = $this->creator->createFromFiles($files, [], []);
 
@@ -276,14 +280,42 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
                 'PUBLISH_RESULTS' => '1',
                 'FIXTURES_DIR' => 'custom-fixtures-dir/',
                 'LOGS_DIR' => 'custom-logs-dir/',
+                'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","capability.in.quotes":"\/foo\/ba r.log",'
+                    . '"platform":"OS X 10.8"}',
             ],
             $processEnv
         );
     }
 
+    public function testShouldNotAcceptCapabilitiesInWrongFormat()
+    {
+        $this->input = new StringInput(
+            'foo chrome'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=foo'
+        );
+
+        $this->input->bind($this->command->getDefinition());
+
+        // Redeclare creator so it uses the new input
+        $this->creator = new ProcessSetCreator(
+            $this->command,
+            $this->input,
+            $this->bufferedOutput,
+            $this->publisherMock
+        );
+
+        $files = $this->findDummyTests('DummyTest.php');
+
+        $this->setExpectedException(
+            RuntimeException::class,
+            'Capability must be given in format "capabilityName:value" but "foo" was given'
+        );
+        $this->creator->createFromFiles($files, [], []);
+    }
+
     public function testShouldSetPHPUnitColoredOptionOnlyIfTheOutputIsDecorated()
     {
-        $files = $this->findDummyTests('DummyTest.php'); // find only one file (we don't need more for the test)
+        $files = $this->findDummyTests('DummyTest.php');
 
         // Test default commands (decorated output was disabled in setUp)
         $processSet = $this->creator->createFromFiles($files, [], []);

@@ -28,6 +28,7 @@ class ConfigHelper
             'BROWSER_NAME' => 'firefox',
             'ENV' => 'testing',
             'SERVER_URL' => 'http://server.tld:port',
+            'CAPABILITY' => '',
             'PUBLISH_RESULTS' => 0,
             'FIXTURES_DIR' => __DIR__,
             'LOGS_DIR' => __DIR__,

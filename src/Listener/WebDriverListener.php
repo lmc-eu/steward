@@ -75,6 +75,13 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             ]
         );
 
+        if (!empty($config->capability)) {
+            $extraCapabilities = json_decode($config->capability);
+            foreach ($extraCapabilities as $extraCapabilityName => $extraCapabilityValue) {
+                $capabilities->setCapability($extraCapabilityName, $extraCapabilityValue);
+            }
+        }
+
         $this->createWebDriver(
             $test,
             $config->serverUrl .  SeleniumServerAdapter::HUB_ENDPOINT,
@@ -123,11 +130,11 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
      * Subroutine to encapsulate creation of real WebDriver. Handles some exceptions that may occur etc.
      * The WebDriver instance is stored to $test->wd when created.
      *
-     * @param AbstractTestCase $test
+     * @param string AbstractTestCase $test
      * @param $remoteServerUrl
      * @param DesiredCapabilities $capabilities
-     * @param $connectTimeoutMs
-     * @param $requestTimeoutMs
+     * @param int $connectTimeoutMs
+     * @param int $requestTimeoutMs
      */
     protected function createWebDriver(
         AbstractTestCase $test,

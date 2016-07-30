@@ -8,6 +8,7 @@ use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Nette\Reflection\AnnotationsParser;
 use Nette\Utils\Strings;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
@@ -213,20 +214,20 @@ class ProcessSetCreator
             )
         );
 
-        $process = $processBuilder
-            ->setEnv('BROWSER_NAME', $this->input->getArgument('browser'))
-            ->setEnv('ENV', strtolower($this->input->getArgument('environment')))
-            ->setEnv('SERVER_URL', $this->input->getOption('server-url'))
-            ->setEnv('PUBLISH_RESULTS', $this->input->getOption('publish-results') ? '1' : '0')
-            ->setEnv('FIXTURES_DIR', $this->input->getOption('fixtures-dir'))
-            ->setEnv('LOGS_DIR', $this->input->getOption('logs-dir'))
+        $processBuilder
+            ->setEnv('BROWSER_NAME', $this->input->getArgument(RunCommand::ARGUMENT_BROWSER))
+            ->setEnv('ENV', strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
+            ->setEnv('CAPABILITY', $this->encodeCapabilties($this->input->getOption(RunCommand::OPTION_CAPABILITY)))
+            ->setEnv('SERVER_URL', $this->input->getOption(RunCommand::OPTION_SERVER_URL))
+            ->setEnv('PUBLISH_RESULTS', $this->input->getOption(RunCommand::OPTION_PUBLISH_RESULTS) ? '1' : '0')
+            ->setEnv('FIXTURES_DIR', $this->input->getOption(RunCommand::OPTION_FIXTURES_DIR))
+            ->setEnv('LOGS_DIR', $this->input->getOption(RunCommand::OPTION_LOGS_DIR))
             ->setEnv('DEBUG', $this->output->isDebug() ? '1' : '0')
             ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
             ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
-            ->setTimeout(3600) // 1 hour timeout to end possibly stuck processes
-            ->getProcess();
+            ->setTimeout(3600); // 1 hour timeout to end possibly stuck processes
 
-        return $process;
+        return $processBuilder->getProcess();
     }
 
     /**
@@ -240,5 +241,32 @@ class ProcessSetCreator
         }
 
         return $this->processSet;
+    }
+
+    /**
+     * Encode capabilities to JSON string
+     *
+     * @param array $capabilities
+     * @return string
+     */
+    private function encodeCapabilties(array $capabilities)
+    {
+        $outputCapabilities = [];
+
+        foreach ($capabilities as $capability) {
+            $parts = explode(':', $capability);
+            if (empty($parts[0]) || empty($parts[1])) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Capability must be given in format "capabilityName:value" but "%s" was given',
+                        $capability
+                    )
+                );
+            }
+
+            $outputCapabilities[$parts[0]] = $parts[1];
+        }
+
+        return json_encode($outputCapabilities);
     }
 }

@@ -43,6 +43,7 @@ class RunCommand extends Command
     const ARGUMENT_ENVIRONMENT = 'environment';
     const ARGUMENT_BROWSER = 'browser';
     const OPTION_SERVER_URL = 'server-url';
+    const OPTION_CAPABILITY = 'capability';
     const OPTION_TESTS_DIR = 'tests-dir';
     const OPTION_FIXTURES_DIR = 'fixtures-dir';
     const OPTION_LOGS_DIR = 'logs-dir';
@@ -93,8 +94,14 @@ class RunCommand extends Command
                 self::OPTION_SERVER_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Selenium server (hub) hub hostname and port',
+                'Selenium server (hub) hostname and port',
                 'http://localhost:4444'
+            )
+            ->addOption(
+                self::OPTION_CAPABILITY,
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Extra DesiredCapabilities to be passed to WebDriver, use format capabilityName:value'
             )
             ->addOption(
                 self::OPTION_TESTS_DIR,
