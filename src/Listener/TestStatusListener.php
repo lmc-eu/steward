@@ -71,6 +71,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 $publisher->publishResult(
                     get_class($test),
                     $test->getName(),
+                    $test,
                     $status = AbstractPublisher::TEST_STATUS_STARTED
                 );
             } catch (\Exception $e) {
@@ -95,6 +96,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 $publisher->publishResult(
                     get_class($test),
                     $test->getName(),
+                    $test,
                     $status = AbstractPublisher::TEST_STATUS_DONE,
                     $result = AbstractPublisher::$testResultsMap[$test->getStatus()],
                     $test->getStatusMessage()

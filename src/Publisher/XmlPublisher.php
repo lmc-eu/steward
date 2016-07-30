@@ -59,15 +59,6 @@ class XmlPublisher extends AbstractPublisher
         }
     }
 
-    /**
-     * Publish testcase result
-     *
-     * @param string $testCaseName
-     * @param string $status
-     * @param string $result
-     * @param \DateTimeInterface $startDate Testcase start datetime
-     * @param \DateTimeInterface $endDate Testcase end datetime
-     */
     public function publishResults(
         $testCaseName,
         $status,
@@ -92,17 +83,14 @@ class XmlPublisher extends AbstractPublisher
         $this->writeAndUnlock($xml);
     }
 
-    /**
-     * Publish results of one single test
-     *
-     * @param string $testCaseName
-     * @param string $testName
-     * @param string $status
-     * @param string $result
-     * @param string $message
-     */
-    public function publishResult($testCaseName, $testName, $status, $result = null, $message = null)
-    {
+    public function publishResult(
+        $testCaseName,
+        $testName,
+        \PHPUnit_Framework_Test $testInstance,
+        $status,
+        $result = null,
+        $message = null
+    ) {
         if (!in_array($status, self::$testStatuses)) {
             throw new \InvalidArgumentException(
                 sprintf('Tests status must be one of "%s", but "%s" given', join(', ', self::$testStatuses), $status)
