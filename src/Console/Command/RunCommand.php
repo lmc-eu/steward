@@ -94,7 +94,7 @@ class RunCommand extends Command
                 self::OPTION_SERVER_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Selenium server (hub) hostname and port',
+                'Selenium server (hub) URL (may include port numbe)',
                 'http://localhost:4444'
             )
             ->addOption(
@@ -322,12 +322,13 @@ class RunCommand extends Command
 
     /**
      * @codeCoverageIgnore
+     * @param string $seleniumServerUrl
      * @return SeleniumServerAdapter
      */
-    protected function getSeleniumAdapter()
+    protected function getSeleniumAdapter($seleniumServerUrl)
     {
         if (!$this->seleniumAdapter) {
-            $this->seleniumAdapter = new SeleniumServerAdapter();
+            $this->seleniumAdapter = new SeleniumServerAdapter($seleniumServerUrl);
         }
 
         return $this->seleniumAdapter;
@@ -562,14 +563,14 @@ class RunCommand extends Command
      */
     protected function testSeleniumConnection(StewardStyle $io, $seleniumServerUrl)
     {
-        $seleniumAdapter = $this->getSeleniumAdapter();
+        $seleniumAdapter = $this->getSeleniumAdapter($seleniumServerUrl);
         $io->write(
-            sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl),
+            sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumAdapter->getServerUrl()),
             false,
             OutputInterface::VERBOSITY_VERY_VERBOSE
         );
 
-        if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
+        if (!$seleniumAdapter->isAccessible()) {
             $io->writeln(
                 sprintf(
                     '<error>%s ("%s")</error>',
@@ -582,14 +583,14 @@ class RunCommand extends Command
                 sprintf(
                     'Make sure your Selenium server is really accessible on url "%s" '
                     . 'or change it using --server-url option',
-                    $seleniumServerUrl
+                    $seleniumAdapter->getServerUrl()
                 )
             );
 
             return false;
         }
 
-        if (!$seleniumAdapter->isSeleniumServer($seleniumServerUrl)) {
+        if (!$seleniumAdapter->isSeleniumServer()) {
             $io->writeln(
                 sprintf(
                     '<error>%s (%s)</error>',
@@ -602,7 +603,7 @@ class RunCommand extends Command
                     'Looks like url "%s" is occupied by something else than Selenium server. '
                     . 'Make sure Selenium server is really accessible on this url '
                     . 'or change it using --server-url option',
-                    $seleniumServerUrl
+                    $seleniumAdapter->getServerUrl()
                 )
             );
 
