@@ -573,6 +573,33 @@
         <Owner/>
     </Contents>
     <Contents>
+        <Key>3.0-beta1/selenium-java-3.0.0-beta1.zip</Key>
+        <Generation>1469754698355000</Generation>
+        <MetaGeneration>1</MetaGeneration>
+        <LastModified>2016-07-29T01:11:38.346Z</LastModified>
+        <ETag>"318bb36f89e6424c3aba24b49843f7bd"</ETag>
+        <Size>7819964</Size>
+        <Owner/>
+    </Contents>
+    <Contents>
+        <Key>3.0-beta1/selenium-server-3.0.0-beta1.zip</Key>
+        <Generation>1469754714983000</Generation>
+        <MetaGeneration>1</MetaGeneration>
+        <LastModified>2016-07-29T01:11:54.977Z</LastModified>
+        <ETag>"8052bd66bcbbc5fd8df4b7f15cc0bf4f"</ETag>
+        <Size>22448491</Size>
+        <Owner/>
+    </Contents>
+    <Contents>
+        <Key>3.0-beta1/selenium-server-standalone-3.0.0-beta1.jar</Key>
+        <Generation>1469754733373000</Generation>
+        <MetaGeneration>1</MetaGeneration>
+        <LastModified>2016-07-29T01:12:13.366Z</LastModified>
+        <ETag>"d38f875627e2a6cde25fa37fbe400833"</ETag>
+        <Size>25755816</Size>
+        <Owner/>
+    </Contents>
+    <Contents>
         <Key>icons/back.gif</Key>
         <Generation>1389651464491000</Generation>
         <MetaGeneration>2</MetaGeneration>
