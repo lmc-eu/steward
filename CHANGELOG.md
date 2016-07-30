@@ -2,7 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
-- Nothing yet - everything is released.
+### Fixed
+- Parsing of latest Selenium server version in `install` command (due to Selenium 3.0.0-beta1 release). Selenium server version 2.x will be downloaded by default.
 
 ## 1.5.0 - 2016-05-05
 ### Added

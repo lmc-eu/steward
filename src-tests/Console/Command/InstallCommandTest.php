@@ -65,11 +65,11 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
             ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
 
-        $this->assertContains('Enter Selenium server version to install: [5.67.8]', $this->tester->getDisplay());
+        $this->assertContains('Enter Selenium server version to install: [2.34.5]', $this->tester->getDisplay());
 
         // Check latest version was downloaded
         $this->assertContains(
-            'File URL: https://selenium-release.storage.googleapis.com/5.67/selenium-server-standalone-5.67.8.jar',
+            'File URL: https://selenium-release.storage.googleapis.com/2.34/selenium-server-standalone-2.34.5.jar',
             $this->tester->getDisplay()
         );
         $this->assertSame(0, $this->tester->getStatusCode());
@@ -158,7 +158,7 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
         $filePath = __DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-6.33.6.jar';
 
         $this->command->setDownloader($this->getDownloadMock());
-        $this->mockLatestVersionCheck(); // will provide 5.67.8 as an version
+        $this->mockLatestVersionCheck(); // will provide 2.34.5 as an version
 
         $this->tester->execute(
             ['command' => $this->command->getName(), 'version' => '6.33.6'], // specify 6.33.6 as custom option
@@ -173,10 +173,10 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
     public function testShouldOutputOnlyFilePathInNonInteractiveModeAndDownloadLatestVersionIfNoneProvided()
     {
         // Path to an existing file
-        $filePath = __DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-5.67.8.jar';
+        $filePath = __DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-2.34.5.jar';
 
         $this->command->setDownloader($this->getDownloadMock());
-        $this->mockLatestVersionCheck(); // will provide 5.67.8 as an version
+        $this->mockLatestVersionCheck(); // will provide 2.34.5 as an version
 
         $this->tester->execute(
             ['command' => $this->command->getName()], // do not specify custom version
@@ -184,7 +184,7 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(realpath($filePath) . "\n", $this->tester->getDisplay());
-        $this->assertContains('5.67.8', $this->tester->getDisplay());
+        $this->assertContains('2.34.5', $this->tester->getDisplay());
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
@@ -193,10 +193,10 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
         $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
         $this->mockUserInput("\n");
 
-        $this->tester->execute(['command' => $this->command->getName(), 'version' => '5.67.8']);
+        $this->tester->execute(['command' => $this->command->getName(), 'version' => '2.34.5']);
 
         $this->assertContains(
-            'File "selenium-server-standalone-5.67.8.jar" already exists',
+            'File "selenium-server-standalone-2.34.5.jar" already exists',
             $this->tester->getDisplay()
         );
         $this->assertSame(0, $this->tester->getStatusCode());
@@ -208,12 +208,12 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
         $this->mockUserInput("\n");
 
         $this->tester->execute(
-            ['command' => $this->command->getName(), 'version' => '5.67.8'],
+            ['command' => $this->command->getName(), 'version' => '2.34.5'],
             ['interactive' => false]
         );
 
         $this->assertEquals(
-            realpath(__DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-5.67.8.jar') . "\n",
+            realpath(__DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-2.34.5.jar') . "\n",
             $this->tester->getDisplay()
         );
         $this->assertSame(0, $this->tester->getStatusCode());
@@ -262,7 +262,7 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Make latest version check to return version 5.67.8
+     * Make latest version check to return version 2.34.5
      */
     protected function mockLatestVersionCheck()
     {

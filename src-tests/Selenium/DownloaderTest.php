@@ -52,9 +52,10 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @group integration
      */
-    public function testShouldReadLatestVersionFromTheStorageUrl()
+    public function testShouldReadLatestStableVersionFromTheStorageUrl()
     {
         $latestVersion = Downloader::getLatestVersion();
+        $this->assertInternalType('string', $latestVersion);
         $this->assertRegExp('/^\d+\.\d+\.\d+$/', $latestVersion);
     }
 
