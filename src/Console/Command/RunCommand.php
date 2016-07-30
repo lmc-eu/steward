@@ -13,6 +13,7 @@ use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
+use OndraM\CiDetector;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -180,7 +181,7 @@ class RunCommand extends Command
             sprintf(
                 '<info>Steward</info> <comment>%s</comment> is running the tests...%s',
                 $this->getApplication()->getVersion(),
-                (!$this->isCi() ? ' Just for you <fg=red><3</fg=red>!' : '') // on CI server it is not just for you
+                (!CiDetector::detect() ? ' Just for you <fg=red><3</fg=red>!' : '') // on CI it is not just for you...
             )
         );
 
