@@ -11,6 +11,7 @@ use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;
 use Facebook\WebDriver\WebDriverPlatform;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
@@ -76,7 +77,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $this->createWebDriver(
             $test,
-            $config->serverUrl . '/wd/hub',
+            $config->serverUrl .  SeleniumServerAdapter::HUB_ENDPOINT,
             $this->setupCustomCapabilities($capabilities, $config->browserName),
             $connectTimeoutMs = 2*60*1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)

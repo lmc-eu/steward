@@ -8,6 +8,9 @@ namespace Lmc\Steward\Selenium;
  */
 class SeleniumServerAdapter
 {
+    const HUB_ENDPOINT = '/wd/hub';
+    const STATUS_ENDPOINT = '/wd/hub/status';
+
     /** @var string */
     protected $lastError;
 
@@ -51,7 +54,7 @@ class SeleniumServerAdapter
     {
         // Check server properly responds to http requests
         $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]);
-        $responseData = @file_get_contents($seleniumServerUrl . '/wd/hub/status/', false, $context);
+        $responseData = @file_get_contents($seleniumServerUrl . self::STATUS_ENDPOINT, false, $context);
 
         if (!$responseData) {
             $this->lastError = 'error reading server response';

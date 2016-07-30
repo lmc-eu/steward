@@ -48,7 +48,7 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
-            ->with($this->serverUrl . '/wd/hub/status/')
+            ->with($this->serverUrl . '/wd/hub/status')
             ->willReturn(false);
 
         $this->assertFalse($this->adapter->isSeleniumServer($this->serverUrl));
@@ -59,7 +59,7 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
-            ->with($this->serverUrl . '/wd/hub/status/')
+            ->with($this->serverUrl . '/wd/hub/status')
             ->willReturn('THIS IS NOT JSON');
 
         $this->assertFalse($this->adapter->isSeleniumServer($this->serverUrl));
@@ -70,7 +70,7 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
-            ->with($this->serverUrl . '/wd/hub/status/')
+            ->with($this->serverUrl . '/wd/hub/status')
             ->willReturn(
                 '{"sessionId":null,"status":0,"state":"success",'
                 . '"value":{"build":{"version":"2.45.0","revision":"5017cb8","time":"2015-02-26 23:59:50"},'
@@ -86,7 +86,7 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
-            ->with($this->serverUrl . '/wd/hub/status/')
+            ->with($this->serverUrl . '/wd/hub/status')
             ->willReturn(
                 '{"status":13,"value":{"message":"Session [(null externalkey)] not available and is not among the'
                 . ' last 1000 terminated sessions.\nActive sessions are[]",'
