@@ -1,0 +1,15 @@
+{
+  "status": 0,
+  "sessionId": null,
+  "value": {
+    "build": {
+      "version": "Sauce Labs"
+    },
+    "details": {
+      "status": "available",
+      "jobWait": 0,
+      "details": "Sauce Labs automated testing is fully operational",
+      "souschefs_online": true
+    }
+  }
+}

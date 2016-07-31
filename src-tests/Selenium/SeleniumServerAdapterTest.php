@@ -146,58 +146,88 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturnTrueIfServerRespondsWithJsonInNoGridMode()
     {
+        $response = file_get_contents(__DIR__ . '/Fixtures/response-standalone.json');
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/wd/hub/status')
-            ->willReturn(
-                '{"sessionId":null,"status":0,"state":"success",'
-                . '"value":{"build":{"version":"2.45.0","revision":"5017cb8","time":"2015-02-26 23:59:50"},'
-                . '"os":{"name":"Linux","arch":"i386","version":"3.17.2-1-custom"},'
-                . '"java":{"version":"1.7.0_79"}},"class":"org.openqa.selenium.remote.Response","hCode":27226235}'
-            );
+            ->willReturn($response);
 
         $this->assertTrue($this->adapter->isSeleniumServer());
+        $this->assertEmpty($this->adapter->getCloudService());
         $this->assertEmpty($this->adapter->getLastError());
     }
 
     public function testShouldReturnTrueIfServerRespondsWithJsonInGridMode()
     {
+        $response = file_get_contents(__DIR__ . '/Fixtures/response-grid.json');
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/wd/hub/status')
-            ->willReturn(
-                '{"status":13,"value":{"message":"Session [(null externalkey)] not available and is not among the'
-                . ' last 1000 terminated sessions.\nActive sessions are[]",'
-                . '"class":"org.openqa.grid.common.exception.GridException",'
-                . '"stackTrace":[{"fileName":"Thread.java","className":"java.lang.Thread","methodName":"run",'
-                . '"lineNumber":745}]}}'
-            );
+            ->willReturn($response);
 
         $this->assertTrue($this->adapter->isSeleniumServer());
+        $this->assertEmpty($this->adapter->getCloudService());
         $this->assertEmpty($this->adapter->getLastError());
     }
 
-    /**
-     * @dataProvider cloudServiceProvider
-     * @param string $serverUrl
-     * @param bool $isCloudService
-     */
-    public function testShouldDetectCloudServices($serverUrl, $isCloudService)
+    public function testShouldConnectToTheServerOnlyOnceWhenAttemptingToGetCloudServiceName()
     {
-        $adapter = new SeleniumServerAdapter($serverUrl);
+        $response = file_get_contents(__DIR__ . '/Fixtures/response-standalone.json');
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
+            ->with($this->serverUrl . '/wd/hub/status')
+            ->willReturn($response);
 
-        $this->assertSame($isCloudService, $adapter->isCloudService());
+        $this->assertEmpty($this->adapter->getCloudService());
+        $this->assertEmpty($this->adapter->getCloudService());
+    }
+
+    public function testShouldThrowExceptionWhenGettingCloudServiceNameButTheServerResponseIsInvalid()
+    {
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
+            ->with($this->serverUrl . '/wd/hub/status')
+            ->willReturn('THIS IS NOT JSON');
+
+        $this->setExpectedExceptionRegExp(
+            \RuntimeException::class,
+            '/^Unable to connect to remote server: error parsing server JSON response \(.+\)$/'
+        );
+
+        $this->assertEmpty($this->adapter->getCloudService());
+    }
+
+    /**
+     * @dataProvider cloudServiceResponseProvider
+     * @param string $responseData
+     * @param string $expectedCloudService
+     */
+    public function testShouldDetectCloudService($responseData, $expectedCloudService)
+    {
+        $adapter = new SeleniumServerAdapter('http://such.cloud:80');
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
+            ->with('http://such.cloud:80/wd/hub/status')
+            ->willReturn($responseData);
+
+        $this->assertSame($expectedCloudService, $adapter->getCloudService());
     }
 
     /**
      * @return array[]
      */
-    public function cloudServiceProvider()
+    public function cloudServiceResponseProvider()
     {
+        $responseSauceLabs = file_get_contents(__DIR__ . '/Fixtures/response-saucelabs.json');
+        $responseBrowserStack = file_get_contents(__DIR__ . '/Fixtures/response-browserstack.json');
+        $responseStandalone = file_get_contents(__DIR__ . '/Fixtures/response-standalone.json');
+        $responseLocalGrid = file_get_contents(__DIR__ . '/Fixtures/response-grid.json');
+
         return [
-            'SauceLabs cloud service' => ['http://foo:bar@ondemand.saucelabs.com:80', true],
-            'BrowserStack cloud service' => ['http://bar:baz@hub-cloud.browserstack.com:80', true],
-            'non-cloud host' => ['http://foobar.com', false],
+            'SauceLabs' => [$responseSauceLabs, SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS],
+            'BrowserStack' => [$responseBrowserStack, SeleniumServerAdapter::CLOUD_SERVICE_BROWSERSTACK],
+            'non-cloud local standalone server' => [$responseStandalone, ''],
+            'non-cloud local grid' => [$responseLocalGrid, ''],
         ];
     }
 }

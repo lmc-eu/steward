@@ -1,0 +1,22 @@
+{
+  "state": "success",
+  "sessionId": null,
+  "hCode": 1526144543,
+  "value": {
+    "build": {
+      "version": "2.53.1",
+      "revision": "a36b8b1",
+      "time": "2016-06-30 17:37:03"
+    },
+    "os": {
+      "name": "Linux",
+      "arch": "amd64",
+      "version": "4.6.4-1-ARCH"
+    },
+    "java": {
+      "version": "1.8.0_102"
+    }
+  },
+  "class": "org.openqa.selenium.remote.Response",
+  "status": 0
+}

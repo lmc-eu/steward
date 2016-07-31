@@ -12,13 +12,15 @@ class SeleniumServerAdapter
     const STATUS_ENDPOINT = '/wd/hub/status';
     const DEFAULT_PORT = 4444;
     const DEFAULT_PORT_CLOUD_SERVICE = 80;
+    const CLOUD_SERVICE_SAUCELABS = 'saucelabs';
+    const CLOUD_SERVICE_BROWSERSTACK = 'browserstack';
 
     /** @var array */
     protected $serverUrlParts;
     /** @var string */
     protected $lastError;
-    /** @var bool */
-    protected $cloudService = false;
+    /** @var string */
+    protected $cloudService = null;
 
     /**
      * @param string $serverUrl
@@ -108,16 +110,25 @@ class SeleniumServerAdapter
             return false;
         }
 
+        $this->cloudService = $this->detectCloudServiceByStatus(json_decode($responseData));
+
         return true;
     }
 
     /**
-     * Is current server cloud service?
+     * Get name of the cloud service we are connected to.
      *
-     * @return bool
+     * @return string Cloud service identifier; empty string if no cloud service detected
      */
-    public function isCloudService()
+    public function getCloudService()
     {
+        // If cloud service value is not yet initialized, attempt to connect to the server first
+        if (is_null($this->cloudService)) {
+            if (!$this->isSeleniumServer()) {
+                throw new \RuntimeException(sprintf('Unable to connect to remote server: %s', $this->getLastError()));
+            }
+        }
+
         return $this->cloudService;
     }
 
@@ -133,12 +144,8 @@ class SeleniumServerAdapter
             throw new \RuntimeException(sprintf('Provided Selenium server URL "%s" is invalid', $seleniumServerUrl));
         }
 
-        if ($this->detectCloudService($urlParts['host'])) {
-            $this->cloudService = true;
-        }
-
         if (empty($urlParts['port'])) {
-            if ($this->cloudService) {
+            if ($this->detectCloudServiceByHost($urlParts['host'])) {
                 $urlParts['port'] = self::DEFAULT_PORT_CLOUD_SERVICE;
             } else {
                 $urlParts['port'] = self::DEFAULT_PORT;
@@ -149,15 +156,38 @@ class SeleniumServerAdapter
     }
 
     /**
+     * Attempt to detect if given host leads to some known cloud service
+     *
      * @param string $host
      * @return bool
      */
-    protected function detectCloudService($host)
+    protected function detectCloudServiceByHost($host)
     {
         if (strpos($host, 'saucelabs.com') !== false || strpos($host, 'browserstack.com') !== false) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Detect cloud service using server status response
+     *
+     * @param object $responseData
+     * @return string
+     */
+    private function detectCloudServiceByStatus($responseData)
+    {
+        if (isset($responseData->value, $responseData->value->build, $responseData->value->build->version)) {
+            if ($responseData->value->build->version == 'Sauce Labs') {
+                return self::CLOUD_SERVICE_SAUCELABS;
+            }
+
+            if (!isset($responseData->class)) {
+                return self::CLOUD_SERVICE_BROWSERSTACK;
+            }
+        }
+
+        return '';
     }
 }
