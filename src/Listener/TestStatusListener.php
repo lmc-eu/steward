@@ -27,6 +27,11 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         // always register XmlPublisher
         $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
 
+        // If current server is SauceLabs, autoregister the SauceLabsPublisher
+        if (strpos($config->serverUrl, 'saucelabs.com') !== false) {
+            $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\SauceLabsPublisher';
+        }
+
         // other publishers register only if $config->publishResults is true
         if ($config->publishResults) {
             $publishersToRegister = array_merge($publishersToRegister, $testPublishers);
