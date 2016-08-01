@@ -610,7 +610,13 @@ class RunCommand extends Command
             return false;
         }
 
-        $io->writeln('OK', OutputInterface::VERBOSITY_VERY_VERBOSE);
+        if ($io->isVeryVerbose()) {
+            $cloudService = $seleniumAdapter->getCloudService();
+            $io->writeln(
+                'OK' . ($cloudService ? ' (' . $cloudService . ' cloud service detected)' : ''),
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        }
 
         return true;
     }
