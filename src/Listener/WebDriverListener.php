@@ -73,6 +73,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             [
                 WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
                 WebDriverCapabilityType::PLATFORM => WebDriverPlatform::ANY,
+                'name' => get_class($test) . '::' . $test->getName(),
             ]
         );
 
@@ -85,7 +86,6 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $ci = CiDetector::detect();
         if ($ci) {
-            $capabilities->setCapability('name', get_class($test) . '::' . $test->getName());
             $capabilities->setCapability(
                 'build',
                 ConfigProvider::getInstance()->env . '-' . CiDetector::detect()->getBuildNumber()
