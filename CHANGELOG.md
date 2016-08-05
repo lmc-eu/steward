@@ -19,6 +19,7 @@
 - Directory for logs is automatically created if it does not exist. ([#67](https://github.com/lmc-eu/steward/issues/67))
 - Process output printed to console (when using `-vv` or `-vvv`) is now prefixed with class name.
 - BC: Pass instance of current PHPUnit test as third parameter of `publishResult()` method of `AbstractPublisher` descendants.
+- Throw an exception if there are multiple testcase classes defined in one file.
 
 ### Fixed
 - Parsing of latest Selenium server version in `install` command so that even Selenium 3 beta releases are installed ([#76](https://github.com/lmc-eu/steward/pull/76))

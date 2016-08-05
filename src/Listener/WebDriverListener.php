@@ -69,37 +69,10 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             $test->getName()
         );
 
-        $capabilities = new DesiredCapabilities(
-            [
-                WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
-                WebDriverCapabilityType::PLATFORM => WebDriverPlatform::ANY,
-                'name' => get_class($test) . '::' . $test->getName(),
-            ]
-        );
-
-        if (!empty($config->capability)) {
-            $extraCapabilities = json_decode($config->capability);
-            foreach ($extraCapabilities as $extraCapabilityName => $extraCapabilityValue) {
-                $capabilities->setCapability($extraCapabilityName, $extraCapabilityValue);
-            }
-        }
-
-        $ci = CiDetector::detect();
-        if ($ci) {
-            $capabilities->setCapability(
-                'build',
-                ConfigProvider::getInstance()->env . '-' . CiDetector::detect()->getBuildNumber()
-            );
-            $capabilities->setCapability(
-                'tags',
-                [ConfigProvider::getInstance()->env, $ci->getCiName(), get_class($test)]
-            );
-        }
-
         $this->createWebDriver(
             $test,
             $config->serverUrl .  SeleniumServerAdapter::HUB_ENDPOINT,
-            $this->setupCustomCapabilities($capabilities, $config->browserName),
+            $this->setupCapabilities($test),
             $connectTimeoutMs = 2*60*1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
             $requestTimeoutMs = 60*60*1000 // 1 hour (same as timeout for the whole process)
@@ -276,6 +249,46 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
      */
     protected function setupPhantomjsCapabilities(DesiredCapabilities $capabilities)
     {
+        return $capabilities;
+    }
+
+    /**
+     * @param AbstractTestCase $test
+     * @return DesiredCapabilities
+     */
+    private function setupCapabilities(AbstractTestCase $test)
+    {
+        $config = ConfigProvider::getInstance();
+
+        $capabilities = new DesiredCapabilities(
+            [
+                WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
+                WebDriverCapabilityType::PLATFORM => WebDriverPlatform::ANY,
+                'name' => get_class($test) . '::' . $test->getName(),
+            ]
+        );
+
+        if (!empty($config->capability)) {
+            $extraCapabilities = json_decode($config->capability);
+            foreach ($extraCapabilities as $extraCapabilityName => $extraCapabilityValue) {
+                $capabilities->setCapability($extraCapabilityName, $extraCapabilityValue);
+            }
+        }
+
+        $ci = CiDetector::detect();
+        if ($ci) {
+            $capabilities->setCapability(
+                'build',
+                ConfigProvider::getInstance()->env . '-' . CiDetector::detect()->getBuildNumber()
+            );
+            $capabilities->setCapability(
+                'tags',
+                [ConfigProvider::getInstance()->env, $ci->getCiName(), get_class($test)]
+            );
+        }
+
+        $capabilities = $this->setupCustomCapabilities($capabilities, $config->browserName);
+
         return $capabilities;
     }
 }

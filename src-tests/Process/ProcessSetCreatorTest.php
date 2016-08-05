@@ -118,8 +118,8 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     public function testShouldThrowExceptionIfAddingFileWithNoClass()
     {
         $files = $this->findDummyTests('NoClassTest.php', 'InvalidTests');
-
         $fileName = key(iterator_to_array($files->getIterator()));
+
         $this->setExpectedException(
             \RuntimeException::class,
             'No class found in file "' . $fileName . '"'
@@ -139,6 +139,20 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         );
         $this->creator->createFromFiles($files, [], []);
     }
+
+    public function testShouldThrowExceptionIfMultipleClassesAreDefinedInFile()
+    {
+        $files = $this->findDummyTests('MultipleClassesInFileTest.php', 'InvalidTests');
+        $fileName = key(iterator_to_array($files->getIterator()));
+
+        $this->setExpectedException(
+            \RuntimeException::class,
+            'File "' . $fileName . '" contains definition of 2 classes. However, each class must be defined in its'
+            . ' own separate file.'
+        );
+        $this->creator->createFromFiles($files, [], []);
+    }
+
 
     public function testShouldOnlyAddTestsOfGivenGroups()
     {
