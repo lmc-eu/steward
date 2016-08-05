@@ -135,12 +135,16 @@ The `run` command has two required arguments - the name of environment and brows
 
 There is also bunch of useful options of `run` command:
 
-- `-vvv` - enable verbose (debug) mode
 - `--group` - run just specific group(s) of tests
 - `--exclude-group` - exclude some group(s) of tests (can be even combined with `--group`)
 - `--server-url` - set different url of selenium server than the default (http://localhost:4444)
 - `--xdebug` - start Xdebug debugger on your tests, so you can debug tests from your IDE
+- `--capability` - directly pass any extra capability to the Selenium WebDriver server
 - `--help` - see all other options and default values
+- **adjust output levels:** by default only test results summary is printed to the output; the verbosity could be changed like this:
+    - `-v` - to instantly output name of failed test(s)
+    - `-vv` - print also progress information during run (which tests were started/finished etc); if any test fails, its output will by printed to the console
+    - `-vvv` - output everything, including all output from the tests
 
 ### 5. See the results and screenshots
 The log is printed to the console where you run the `run` command. But this could be a bit confusing, especially if you run multiple tests in parallel.
