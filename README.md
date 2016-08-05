@@ -147,8 +147,13 @@ The log is printed to the console where you run the `run` command. But this coul
 
 So for each testcase there is separate file in JUnit XML format, placed in `logs/` directory. Also screenshots and HTML snapsnots are saved into this directory (they are automatically generated on failed assertion or if some WebDriver command fails).
 
-During the tests execution check file `logs/results.xml` to see current status of tests:
+To see current status of tests during (or after) tests execution, open file `logs/results.xml` in your browser:
+
 ![Example output as displayed in logs/results.xml file](https://lmc-eu.github.io/steward/images/results-output-example.png)
+
+Similar output but in command line interface could be obtained using `steward results` command - see below. You can also add `-vvv` to see results of each individual test.
+
+![Example output of results command](https://lmc-eu.github.io/steward/images/results-output-cli.png)
 
 ## License
 Steward is open source software licensed under the [MIT license](LICENCE.md).
