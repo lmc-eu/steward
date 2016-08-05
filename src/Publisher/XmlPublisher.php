@@ -7,7 +7,7 @@ use Lmc\Steward\ConfigProvider;
 class XmlPublisher extends AbstractPublisher
 {
     /** @var string Default name of results file. */
-    const FILE_NAME  = 'results.xml';
+    const FILE_NAME = 'results.xml';
     /** @var string */
     protected $fileDir;
     /** @var string */
@@ -130,7 +130,7 @@ class XmlPublisher extends AbstractPublisher
     /**
      * Get element for test case of given name. If id does not exist yet, it is created.
      * @param \SimpleXMLElement $xml
-     * @param $testCaseName
+     * @param string $testCaseName
      * @return \SimpleXMLElement
      */
     protected function getTestCaseNode(\SimpleXMLElement $xml, $testCaseName)
@@ -150,8 +150,8 @@ class XmlPublisher extends AbstractPublisher
     /**
      * Get element for test of given name. If id does not exist yet, it is created.
      * @param \SimpleXMLElement $xml
-     * @param $testCaseName
-     * @param $testName
+     * @param string $testCaseName
+     * @param string $testName
      * @return \SimpleXMLElement
      */
     protected function getTestNode(\SimpleXMLElement $xml, $testCaseName, $testName)

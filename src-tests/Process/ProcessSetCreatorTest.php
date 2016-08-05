@@ -153,7 +153,6 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->creator->createFromFiles($files, [], []);
     }
 
-
     public function testShouldOnlyAddTestsOfGivenGroups()
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), ['bar', 'foo'], []);
@@ -260,13 +259,13 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->input = new StringInput(
             'trolling chrome'
-            . ' --' . RunCommand::OPTION_SERVER_URL .'=http://foo.bar:1337'
-            . ' --' . RunCommand::OPTION_FIXTURES_DIR .'=custom-fixtures-dir/'
-            . ' --' . RunCommand::OPTION_LOGS_DIR .'=custom-logs-dir/'
+            . ' --' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337'
+            . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=custom-fixtures-dir/'
+            . ' --' . RunCommand::OPTION_LOGS_DIR . '=custom-logs-dir/'
             . ' --' . RunCommand::OPTION_PUBLISH_RESULTS
-            . ' --' . RunCommand::OPTION_CAPABILITY .  '=webdriver.log.file:/foo/bar.log'
-            . ' --' . RunCommand::OPTION_CAPABILITY .  '="capability.in.quotes:/foo/ba r.log"'
-            . ' --' . RunCommand::OPTION_CAPABILITY .  '="platform:OS X 10.8"'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '="capability.in.quotes:/foo/ba r.log"'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '="platform:OS X 10.8"'
         );
 
         $this->input->bind($this->command->getDefinition());
@@ -376,7 +375,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Assert ProcessSet consists only of tests of expected names
-     * @param array $expectedTestNames
+     * @param string[] $expectedTestNames
      * @param ProcessSet $processSet
      */
     protected function assertQueuedTests(array $expectedTestNames, $processSet)

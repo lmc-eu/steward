@@ -193,6 +193,6 @@ class StewardStyle extends OutputStyle
      */
     private function getTimestamp()
     {
-        return '[' . date("Y-m-d H:i:s") . '] ';
+        return '[' . date('Y-m-d H:i:s') . '] ';
     }
 }

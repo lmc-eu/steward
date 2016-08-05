@@ -319,11 +319,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
             'Named dataset' => ['testCase', 'testBar with data set "foo"'],
             'Dataset with double quotes in name' => [
                 'testCase',
-                'testBar with data set "Really <weird> chara&amp;cters"'
+                'testBar with data set "Really <weird> chara&amp;cters"',
             ],
             'Dataset with apostrophe in name (double quotes and apostrophes are combined in the whole name)' => [
                 'testCase',
-                'testBar with data set "Apostrophe \' in dataset name"'
+                'testBar with data set "Apostrophe \' in dataset name"',
             ],
             'Only apostrophes used in test name' => ['testCase', 'testBar with data set \'Foo\''],
         ];
