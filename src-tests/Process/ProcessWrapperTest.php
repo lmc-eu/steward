@@ -68,15 +68,15 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
         return [
             'negative value' => [
                 -5,
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "-5" was given'
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "-5" was given',
             ],
             'string value' => [
                 'omg',
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "omg" was given'
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "omg" was given',
             ],
             'empty value' => [
                 '',
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "" was given'
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "" was given',
             ],
         ];
     }

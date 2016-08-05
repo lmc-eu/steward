@@ -72,7 +72,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      * Get url based on relative path of specific snapshot.
      * In our implementation we prepend artifact's URL to given relative path to make it clickable in Jenkins output.
      *
-     * @param $path
+     * @param string $path
      * @return string
      */
     protected function getSnapshotUrl($path)
@@ -83,7 +83,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
                 // from absolute path, remove workspace
                 $path = str_replace(getenv('WORKSPACE'), '', $realPath);
                 // prepend url to artifact
-                $path = getenv('BUILD_URL') . "artifact/" . $path;
+                $path = getenv('BUILD_URL') . 'artifact/' . $path;
             }
         }
 

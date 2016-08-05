@@ -56,7 +56,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 );
             }
             if ($config->debug) {
-                printf('[%s]: Registering test results publisher "%s"' . "\n", date("Y-m-d H:i:s"), $publisherClass);
+                printf('[%s]: Registering test results publisher "%s"' . "\n", date('Y-m-d H:i:s'), $publisherClass);
             }
             $this->publishers[] = $publisher;
         }
@@ -84,7 +84,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             } catch (\Exception $e) {
                 printf(
                     '[%s] [WARN]: Error publishing test started status to "%s" ("%s")' . "\n",
-                    date("Y-m-d H:i:s"),
+                    date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
                 );
@@ -111,7 +111,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             } catch (\Exception $e) {
                 printf(
                     '[%s] [WARN]: Error publishing test done status to "%s" ("%s")' . "\n",
-                    date("Y-m-d H:i:s"),
+                    date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
                 );
@@ -138,7 +138,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             } catch (\Exception $e) {
                 printf(
                     '[%s] [WARN]: Error publishing process done status to "%s" ("%s")' . "\n",
-                    date("Y-m-d H:i:s"),
+                    date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
                 );

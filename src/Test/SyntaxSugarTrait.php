@@ -19,8 +19,8 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose class name contains the search value; compound class names are not permitted.
      *
-     * @throws NoSuchElementException
      * @param string $className
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findByClass($className)
@@ -54,8 +54,8 @@ trait SyntaxSugarTrait
     /**
      * Locates element matching a CSS selector.
      *
-     * @throws NoSuchElementException
      * @param string $cssSelector
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findByCss($cssSelector)
@@ -89,8 +89,8 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose ID attribute matches the search value.
      *
-     * @throws NoSuchElementException
      * @param string $id
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findById($id)
@@ -124,8 +124,8 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose NAME attribute matches the search value.
      *
-     * @throws NoSuchElementException
      * @param string $name
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findByName($name)
@@ -159,8 +159,8 @@ trait SyntaxSugarTrait
     /**
      * Locates anchor element whose visible text matches the search value.
      *
-     * @throws NoSuchElementException
      * @param string $linkText
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findByLinkText($linkText)
@@ -194,8 +194,8 @@ trait SyntaxSugarTrait
     /**
      * Locates anchor element whose visible text partially matches the search value.
      *
-     * @throws NoSuchElementException
      * @param string $partialLinkText
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findByPartialLinkText($partialLinkText)
@@ -229,8 +229,8 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose tag name matches the search value.
      *
-     * @throws NoSuchElementException
      * @param string $tagName
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findByTag($tagName)
@@ -264,8 +264,8 @@ trait SyntaxSugarTrait
     /**
      * Locates element matching an XPath expression.
      *
-     * @throws NoSuchElementException
      * @param string $xpath
+     * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
     public function findByXpath($xpath)

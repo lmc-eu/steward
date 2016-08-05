@@ -140,7 +140,7 @@ class SeleniumServerAdapter
     {
         $urlParts = parse_url($seleniumServerUrl);
 
-        if (!is_array($urlParts)|| empty($urlParts['scheme']) || empty($urlParts['host'])) {
+        if (!is_array($urlParts) || empty($urlParts['scheme']) || empty($urlParts['host'])) {
             throw new \RuntimeException(sprintf('Provided Selenium server URL "%s" is invalid', $seleniumServerUrl));
         }
 

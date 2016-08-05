@@ -89,7 +89,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'firefox',
-                '--' . $directoryOption => '/not/accessible'
+                '--' . $directoryOption => '/not/accessible',
             ]
         );
     }
@@ -117,7 +117,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--tests-dir' => __DIR__ . '/Fixtures/DummyTests',
-                '--pattern' => 'NotExisting.foo' // so the test stops execution
+                '--pattern' => 'NotExisting.foo', // so the test stops execution
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
@@ -251,7 +251,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'firefox',
-                '--pattern' => 'NotExisting.foo'
+                '--pattern' => 'NotExisting.foo',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );

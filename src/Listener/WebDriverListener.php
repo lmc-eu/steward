@@ -71,11 +71,11 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $this->createWebDriver(
             $test,
-            $config->serverUrl .  SeleniumServerAdapter::HUB_ENDPOINT,
+            $config->serverUrl . SeleniumServerAdapter::HUB_ENDPOINT,
             $this->setupCapabilities($test),
-            $connectTimeoutMs = 2*60*1000,
+            $connectTimeoutMs = 2 * 60 * 1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
-            $requestTimeoutMs = 60*60*1000 // 1 hour (same as timeout for the whole process)
+            $requestTimeoutMs = 60 * 60 * 1000 // 1 hour (same as timeout for the whole process)
         );
     }
 
@@ -149,7 +149,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
                     sleep(1);
                     continue;
                 } elseif (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
-                    $test->warn("Cannot execute test on the node. Maybe you started just the hub and not the node?");
+                    $test->warn('Cannot execute test on the node. Maybe you started just the hub and not the node?');
                 }
                 throw $e;
             }

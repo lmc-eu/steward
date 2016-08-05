@@ -25,7 +25,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Your IDE must then listen for incoming Xdebug connections on the same port and use the same IDE key.
  * Then start the `run` command with --xdebug option. For PHPStorm just use the default value ("phpstorm"),
  * for eg. NetBeans you must pass "--xdebug=netbeans". See docs of you IDE for more information.
- *
  */
 class XdebugListener implements EventSubscriberInterface
 {

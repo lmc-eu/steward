@@ -498,7 +498,7 @@ class RunCommand extends Command
 
                 $io->runStatus(
                     sprintf(
-                        "Waiting (running: %d, queued: %d, done: %d%s)",
+                        'Waiting (running: %d, queued: %d, done: %d%s)',
                         $statusesCount[ProcessWrapper::PROCESS_STATUS_PREPARED],
                         $statusesCount[ProcessWrapper::PROCESS_STATUS_QUEUED],
                         $statusesCount[ProcessWrapper::PROCESS_STATUS_DONE],
@@ -523,7 +523,7 @@ class RunCommand extends Command
 
         $io->runStatus('All testcases done');
 
-        $resultMessage = sprintf("Testcases executed: %d (%s)", $doneCount, implode(', ', $resultsInfo));
+        $resultMessage = sprintf('Testcases executed: %d (%s)', $doneCount, implode(', ', $resultsInfo));
         $allTestsPassed ? $io->success($resultMessage) : $io->error($resultMessage);
 
         return $allTestsPassed;

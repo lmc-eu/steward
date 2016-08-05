@@ -9,7 +9,7 @@ class DummyListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'foo' => 'onFoo'
+            'foo' => 'onFoo',
         ];
     }
 

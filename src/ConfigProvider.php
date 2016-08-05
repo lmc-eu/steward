@@ -109,8 +109,8 @@ class ConfigProvider
     /**
      * Retrieve given configuration options values from environment. If value is not found, throw and exception.
      *
-     * @throws \RuntimeException
      * @param array $options
+     * @throws \RuntimeException
      * @return array Option => value option name is converted from CAPS_WITH_UNDERSCORES to camelCase
      */
     private function retrieveConfigurationValues($options)

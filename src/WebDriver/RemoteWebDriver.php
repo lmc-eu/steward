@@ -38,7 +38,7 @@ class RemoteWebDriver extends \Facebook\WebDriver\Remote\RemoteWebDriver
     {
         $argv = func_get_args();
         $format = array_shift($argv);
-        echo '[' . date("Y-m-d H:i:s") . ']:'
+        echo '[' . date('Y-m-d H:i:s') . ']:'
             . ' [WebDriver] '
             . vsprintf($format, $argv)
             . "\n";
