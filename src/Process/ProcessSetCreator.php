@@ -62,8 +62,8 @@ class ProcessSetCreator
      */
     public function createFromFiles(
         Finder $files,
-        array $groups = null,
-        array $excludeGroups = null,
+        array $groups,
+        array $excludeGroups,
         $filter = null,
         $ignoreDelays = false
     ) {
@@ -71,13 +71,13 @@ class ProcessSetCreator
         $processSet = $this->getProcessSet();
 
         if ($this->output->isVeryVerbose()) {
-            if ($groups || $excludeGroups || !empty($filter)) {
+            if (!empty($groups) || !empty($excludeGroups) || !empty($filter)) {
                 $this->output->writeln('Filtering testcases:');
             }
-            if ($groups) {
+            if (!empty($groups)) {
                 $this->output->writeln(sprintf(' - by group(s): %s', implode(', ', $groups)));
             }
-            if ($excludeGroups) {
+            if (!empty($excludeGroups)) {
                 $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
             }
             if (!empty($filter)) {
@@ -90,25 +90,9 @@ class ProcessSetCreator
         foreach ($files as $file) {
             $fileName = $file->getRealPath();
             $className = $this->getClassNameFromFile($fileName);
+            $annotations = $this->getClassAnnotations($className, $fileName);
 
-            // Get annotations for the first class in testcase (one file = one class)
-            try {
-                $annotations = AnnotationsParser::getAll(new \ReflectionClass($className));
-            } catch (\ReflectionException $e) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'Error loading class "%s" from file "%s". Make sure the class name and namespace matches '
-                        . 'the file path.',
-                        $className,
-                        $fileName
-                    )
-                );
-            }
-
-            // Filter out test-cases having any of excluded groups
-            if ($excludeGroups && array_key_exists('group', $annotations)
-                && count($excludingGroups = array_intersect($excludeGroups, $annotations['group']))
-            ) {
+            if ($excludingGroups = $this->getExcludingGroups($excludeGroups, $annotations)) {
                 $this->output->writeln(
                     sprintf('Excluding testcase file %s with group %s', $fileName, implode(', ', $excludingGroups)),
                     OutputInterface::VERBOSITY_DEBUG
@@ -117,7 +101,7 @@ class ProcessSetCreator
             }
 
             // Filter out test-cases without any matching group
-            if ($groups) {
+            if (!empty($groups)) {
                 if (!array_key_exists('group', $annotations)
                     || !count($matchingGroups = array_intersect($groups, $annotations['group']))
                 ) {
@@ -163,20 +147,7 @@ class ProcessSetCreator
             );
 
             if (!$ignoreDelays) {
-                $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
-                $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
-                if ($delayAfter) {
-                    $processWrapper->setDelay($delayAfter, $delayMinutes);
-                } elseif ($delayMinutes !== null && empty($delayAfter)) {
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            'Testcase "%s" has defined delay %d minutes, '
-                            . 'but doesn\'t have defined the testcase to run after',
-                            $className,
-                            $delayMinutes
-                        )
-                    );
-                }
+                $this->setupProcessDelays($processWrapper, $annotations);
             }
 
             $processSet->add($processWrapper);
@@ -265,6 +236,26 @@ class ProcessSetCreator
     }
 
     /**
+     * Get array of groups that cause this class to be excluded.
+     *
+     * @param array $excludeGroups
+     * @param array $annotations
+     * @return array Empty if class should not be excluded.
+     */
+    private function getExcludingGroups(array $excludeGroups, array $annotations)
+    {
+        $excludingGroups = [];
+
+        if (!empty($excludeGroups) && array_key_exists('group', $annotations)) {
+            if (!empty(array_intersect($excludeGroups, $annotations['group']))) {
+                $excludingGroups = array_intersect($excludeGroups, $annotations['group']);
+            }
+        }
+
+        return $excludingGroups;
+    }
+
+    /**
      * @param $fileName
      * @return string
      */
@@ -289,5 +280,53 @@ class ProcessSetCreator
         }
 
         return key($classes);
+    }
+
+    /**
+     * @param ProcessWrapper $processWrapper
+     * @param array $annotations
+     */
+    private function setupProcessDelays(ProcessWrapper $processWrapper, array $annotations)
+    {
+        $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
+        $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
+
+        if ($delayAfter) {
+            $processWrapper->setDelay($delayAfter, $delayMinutes);
+        } elseif ($delayMinutes !== null && empty($delayAfter)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Testcase "%s" has defined delay %d minutes, '
+                    . 'but doesn\'t have defined the testcase to run after',
+                    $processWrapper->getClassName(),
+                    $delayMinutes
+                )
+            );
+        }
+    }
+
+    /**
+     * Get annotations for the first class in testcase (one file = one class)
+     *
+     * @param string $className
+     * @param string $fileName
+     * @return array
+     */
+    private function getClassAnnotations($className, $fileName)
+    {
+        try {
+            $annotations = AnnotationsParser::getAll(new \ReflectionClass($className));
+
+            return $annotations;
+        } catch (\ReflectionException $e) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Error loading class "%s" from file "%s". Make sure the class name and namespace matches '
+                    . 'the file path.',
+                    $className,
+                    $fileName
+                )
+            );
+        }
     }
 }
