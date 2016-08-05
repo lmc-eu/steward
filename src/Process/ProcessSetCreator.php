@@ -89,22 +89,17 @@ class ProcessSetCreator
         /** @var SplFileInfo $file */
         foreach ($files as $file) {
             $fileName = $file->getRealPath();
-            // Parse classes from the testcase file
-            $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
-
-            if (empty($classes)) {
-                throw new \RuntimeException(sprintf('No class found in file "%s"', $fileName));
-            }
+            $className = $this->getClassNameFromFile($fileName);
 
             // Get annotations for the first class in testcase (one file = one class)
             try {
-                $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
+                $annotations = AnnotationsParser::getAll(new \ReflectionClass($className));
             } catch (\ReflectionException $e) {
                 throw new \RuntimeException(
                     sprintf(
                         'Error loading class "%s" from file "%s". Make sure the class name and namespace matches '
                         . 'the file path.',
-                        key($classes),
+                        $className,
                         $fileName
                     )
                 );
@@ -147,7 +142,7 @@ class ProcessSetCreator
 
             $phpunitArgs = [
                 '--log-junit=logs/'
-                . Strings::webalize(key($classes), null, $lower = false)
+                . Strings::webalize($className, null, $lower = false)
                 . '.xml',
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
             ];
@@ -161,7 +156,6 @@ class ProcessSetCreator
                 $phpunitArgs[] = '--colors=always';
             }
 
-            $className = key($classes);
             $processWrapper = new ProcessWrapper(
                 $this->buildProcess($fileName, $phpunitArgs),
                 $className,
@@ -268,5 +262,32 @@ class ProcessSetCreator
         }
 
         return json_encode($outputCapabilities);
+    }
+
+    /**
+     * @param $fileName
+     * @return string
+     */
+    private function getClassNameFromFile($fileName)
+    {
+        // Parse classes from the testcase file
+        $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
+
+        if (empty($classes)) {
+            throw new \RuntimeException(sprintf('No class found in file "%s"', $fileName));
+        }
+
+        if (count($classes) > 1) {
+            throw new \RuntimeException(
+                sprintf(
+                    'File "%s" contains definition of %d classes. However, each class must be defined in its own'
+                    . ' separate file.',
+                    $fileName,
+                    count($classes)
+                )
+            );
+        }
+
+        return key($classes);
     }
 }
