@@ -50,7 +50,6 @@
 
     <file>./src/</file>
     <file>./src-tests/</file>
-    <file>./tests/</file>
 
     <exclude-pattern>bootstrap.php</exclude-pattern>
     <exclude-pattern>src-tests/coverage/*</exclude-pattern>
