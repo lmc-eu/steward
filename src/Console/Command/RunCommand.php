@@ -13,6 +13,7 @@ use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
+use OndraM\CiDetector;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,6 +43,7 @@ class RunCommand extends Command
     const ARGUMENT_ENVIRONMENT = 'environment';
     const ARGUMENT_BROWSER = 'browser';
     const OPTION_SERVER_URL = 'server-url';
+    const OPTION_CAPABILITY = 'capability';
     const OPTION_TESTS_DIR = 'tests-dir';
     const OPTION_FIXTURES_DIR = 'fixtures-dir';
     const OPTION_LOGS_DIR = 'logs-dir';
@@ -92,8 +94,14 @@ class RunCommand extends Command
                 self::OPTION_SERVER_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Selenium server (hub) hub hostname and port',
+                'Selenium server (hub) URL (may include port numbe)',
                 'http://localhost:4444'
+            )
+            ->addOption(
+                self::OPTION_CAPABILITY,
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Extra DesiredCapabilities to be passed to WebDriver, use format capabilityName:value'
             )
             ->addOption(
                 self::OPTION_TESTS_DIR,
@@ -180,7 +188,7 @@ class RunCommand extends Command
             sprintf(
                 '<info>Steward</info> <comment>%s</comment> is running the tests...%s',
                 $this->getApplication()->getVersion(),
-                (!$this->isCi() ? ' Just for you <fg=red><3</fg=red>!' : '') // on CI server it is not just for you
+                (!CiDetector::detect() ? ' Just for you <fg=red><3</fg=red>!' : '') // on CI it is not just for you...
             )
         );
 
@@ -314,12 +322,13 @@ class RunCommand extends Command
 
     /**
      * @codeCoverageIgnore
+     * @param string $seleniumServerUrl
      * @return SeleniumServerAdapter
      */
-    protected function getSeleniumAdapter()
+    protected function getSeleniumAdapter($seleniumServerUrl)
     {
         if (!$this->seleniumAdapter) {
-            $this->seleniumAdapter = new SeleniumServerAdapter();
+            $this->seleniumAdapter = new SeleniumServerAdapter($seleniumServerUrl);
         }
 
         return $this->seleniumAdapter;
@@ -554,14 +563,14 @@ class RunCommand extends Command
      */
     protected function testSeleniumConnection(StewardStyle $io, $seleniumServerUrl)
     {
-        $seleniumAdapter = $this->getSeleniumAdapter();
+        $seleniumAdapter = $this->getSeleniumAdapter($seleniumServerUrl);
         $io->write(
-            sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumServerUrl),
+            sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumAdapter->getServerUrl()),
             false,
             OutputInterface::VERBOSITY_VERY_VERBOSE
         );
 
-        if (!$seleniumAdapter->isAccessible($seleniumServerUrl)) {
+        if (!$seleniumAdapter->isAccessible()) {
             $io->writeln(
                 sprintf(
                     '<error>%s ("%s")</error>',
@@ -574,14 +583,14 @@ class RunCommand extends Command
                 sprintf(
                     'Make sure your Selenium server is really accessible on url "%s" '
                     . 'or change it using --server-url option',
-                    $seleniumServerUrl
+                    $seleniumAdapter->getServerUrl()
                 )
             );
 
             return false;
         }
 
-        if (!$seleniumAdapter->isSeleniumServer($seleniumServerUrl)) {
+        if (!$seleniumAdapter->isSeleniumServer()) {
             $io->writeln(
                 sprintf(
                     '<error>%s (%s)</error>',
@@ -594,14 +603,20 @@ class RunCommand extends Command
                     'Looks like url "%s" is occupied by something else than Selenium server. '
                     . 'Make sure Selenium server is really accessible on this url '
                     . 'or change it using --server-url option',
-                    $seleniumServerUrl
+                    $seleniumAdapter->getServerUrl()
                 )
             );
 
             return false;
         }
 
-        $io->writeln('OK', OutputInterface::VERBOSITY_VERY_VERBOSE);
+        if ($io->isVeryVerbose()) {
+            $cloudService = $seleniumAdapter->getCloudService();
+            $io->writeln(
+                'OK' . ($cloudService ? ' (' . $cloudService . ' cloud service detected)' : ''),
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        }
 
         return true;
     }

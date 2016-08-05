@@ -5,6 +5,7 @@ namespace Lmc\Steward\Listener;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Selenium\SeleniumServerAdapter;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.
@@ -26,6 +27,12 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
 
         // always register XmlPublisher
         $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
+
+        // If current server is SauceLabs, autoregister the SauceLabsPublisher
+        $seleniumServerAdapter = new SeleniumServerAdapter($config->serverUrl);
+        if ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {
+            $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\SauceLabsPublisher';
+        }
 
         // other publishers register only if $config->publishResults is true
         if ($config->publishResults) {
@@ -71,6 +78,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 $publisher->publishResult(
                     get_class($test),
                     $test->getName(),
+                    $test,
                     $status = AbstractPublisher::TEST_STATUS_STARTED
                 );
             } catch (\Exception $e) {
@@ -95,6 +103,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 $publisher->publishResult(
                     get_class($test),
                     $test->getName(),
+                    $test,
                     $status = AbstractPublisher::TEST_STATUS_DONE,
                     $result = AbstractPublisher::$testResultsMap[$test->getStatus()],
                     $test->getStatusMessage()

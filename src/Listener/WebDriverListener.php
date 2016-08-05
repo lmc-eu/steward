@@ -11,10 +11,12 @@ use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;
 use Facebook\WebDriver\WebDriverPlatform;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use Nette\Reflection\AnnotationsParser;
+use OndraM\CiDetector;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
@@ -71,12 +73,32 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             [
                 WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
                 WebDriverCapabilityType::PLATFORM => WebDriverPlatform::ANY,
+                'name' => get_class($test) . '::' . $test->getName(),
             ]
         );
 
+        if (!empty($config->capability)) {
+            $extraCapabilities = json_decode($config->capability);
+            foreach ($extraCapabilities as $extraCapabilityName => $extraCapabilityValue) {
+                $capabilities->setCapability($extraCapabilityName, $extraCapabilityValue);
+            }
+        }
+
+        $ci = CiDetector::detect();
+        if ($ci) {
+            $capabilities->setCapability(
+                'build',
+                ConfigProvider::getInstance()->env . '-' . CiDetector::detect()->getBuildNumber()
+            );
+            $capabilities->setCapability(
+                'tags',
+                [ConfigProvider::getInstance()->env, $ci->getCiName(), get_class($test)]
+            );
+        }
+
         $this->createWebDriver(
             $test,
-            $config->serverUrl . '/wd/hub',
+            $config->serverUrl .  SeleniumServerAdapter::HUB_ENDPOINT,
             $this->setupCustomCapabilities($capabilities, $config->browserName),
             $connectTimeoutMs = 2*60*1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
@@ -122,11 +144,11 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
      * Subroutine to encapsulate creation of real WebDriver. Handles some exceptions that may occur etc.
      * The WebDriver instance is stored to $test->wd when created.
      *
-     * @param AbstractTestCase $test
+     * @param string AbstractTestCase $test
      * @param $remoteServerUrl
      * @param DesiredCapabilities $capabilities
-     * @param $connectTimeoutMs
-     * @param $requestTimeoutMs
+     * @param int $connectTimeoutMs
+     * @param int $requestTimeoutMs
      */
     protected function createWebDriver(
         AbstractTestCase $test,

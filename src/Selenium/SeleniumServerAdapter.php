@@ -8,8 +8,27 @@ namespace Lmc\Steward\Selenium;
  */
 class SeleniumServerAdapter
 {
+    const HUB_ENDPOINT = '/wd/hub';
+    const STATUS_ENDPOINT = '/wd/hub/status';
+    const DEFAULT_PORT = 4444;
+    const DEFAULT_PORT_CLOUD_SERVICE = 80;
+    const CLOUD_SERVICE_SAUCELABS = 'saucelabs';
+    const CLOUD_SERVICE_BROWSERSTACK = 'browserstack';
+
+    /** @var array */
+    protected $serverUrlParts;
     /** @var string */
     protected $lastError;
+    /** @var string */
+    protected $cloudService = null;
+
+    /**
+     * @param string $serverUrl
+     */
+    public function __construct($serverUrl)
+    {
+        $this->serverUrlParts = $this->parseServerUrl($serverUrl);
+    }
 
     /**
      * Get description of last error
@@ -21,17 +40,46 @@ class SeleniumServerAdapter
     }
 
     /**
+     * @return array
+     */
+    public function getServerUrlParts()
+    {
+        return $this->serverUrlParts;
+    }
+
+    /**
+     * @return string
+     */
+    public function getServerUrl()
+    {
+        $parts = $this->serverUrlParts;
+
+        $serverUrl = $parts['scheme'] . '://';
+        $serverUrl .= isset($parts['user']) ? $parts['user'] : '';
+        $serverUrl .= isset($parts['pass']) ? ':' . $parts['pass'] : '';
+        $serverUrl .= (isset($parts['user']) || isset($parts['pass'])) ? '@' : '';
+        $serverUrl .= $parts['host'] . ':' . $parts['port'];
+        $serverUrl .= isset($parts['path']) ? $parts['path'] : '';
+        $serverUrl .= isset($parts['query']) ? '?' . $parts['query'] : '';
+
+        return $serverUrl;
+    }
+
+    /**
      * Test if server URL is accessible
      *
-     * @param string $seleniumServerUrl
      * @return bool
      */
-    public function isAccessible($seleniumServerUrl)
+    public function isAccessible()
     {
-        $urlParts = parse_url($seleniumServerUrl);
-
         // Check connection to server is possible
-        $seleniumConnection = @fsockopen($urlParts['host'], $urlParts['port'], $connectionErrorNo, $connectionError, 5);
+        $seleniumConnection = @fsockopen(
+            $this->serverUrlParts['host'],
+            $this->serverUrlParts['port'],
+            $connectionErrorNo,
+            $connectionError,
+            5
+        );
         if (!is_resource($seleniumConnection)) {
             $this->lastError = $connectionError;
             return false;
@@ -44,14 +92,13 @@ class SeleniumServerAdapter
     /**
      * Test if server is really an Selenium server
      *
-     * @param string $seleniumServerUrl
      * @return bool
      */
-    public function isSeleniumServer($seleniumServerUrl)
+    public function isSeleniumServer()
     {
         // Check server properly responds to http requests
         $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]);
-        $responseData = @file_get_contents($seleniumServerUrl . '/wd/hub/status/', false, $context);
+        $responseData = @file_get_contents($this->getServerUrl() . self::STATUS_ENDPOINT, false, $context);
 
         if (!$responseData) {
             $this->lastError = 'error reading server response';
@@ -63,6 +110,84 @@ class SeleniumServerAdapter
             return false;
         }
 
+        $this->cloudService = $this->detectCloudServiceByStatus(json_decode($responseData));
+
         return true;
+    }
+
+    /**
+     * Get name of the cloud service we are connected to.
+     *
+     * @return string Cloud service identifier; empty string if no cloud service detected
+     */
+    public function getCloudService()
+    {
+        // If cloud service value is not yet initialized, attempt to connect to the server first
+        if (is_null($this->cloudService)) {
+            if (!$this->isSeleniumServer()) {
+                throw new \RuntimeException(sprintf('Unable to connect to remote server: %s', $this->getLastError()));
+            }
+        }
+
+        return $this->cloudService;
+    }
+
+    /**
+     * @param $seleniumServerUrl
+     * @return array URL parts. Scheme, host and port are always non-empty.
+     */
+    protected function parseServerUrl($seleniumServerUrl)
+    {
+        $urlParts = parse_url($seleniumServerUrl);
+
+        if (!is_array($urlParts)|| empty($urlParts['scheme']) || empty($urlParts['host'])) {
+            throw new \RuntimeException(sprintf('Provided Selenium server URL "%s" is invalid', $seleniumServerUrl));
+        }
+
+        if (empty($urlParts['port'])) {
+            if ($this->detectCloudServiceByHost($urlParts['host'])) {
+                $urlParts['port'] = self::DEFAULT_PORT_CLOUD_SERVICE;
+            } else {
+                $urlParts['port'] = self::DEFAULT_PORT;
+            }
+        }
+
+        return $urlParts;
+    }
+
+    /**
+     * Attempt to detect if given host leads to some known cloud service
+     *
+     * @param string $host
+     * @return bool
+     */
+    protected function detectCloudServiceByHost($host)
+    {
+        if (strpos($host, 'saucelabs.com') !== false || strpos($host, 'browserstack.com') !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Detect cloud service using server status response
+     *
+     * @param object $responseData
+     * @return string
+     */
+    private function detectCloudServiceByStatus($responseData)
+    {
+        if (isset($responseData->value, $responseData->value->build, $responseData->value->build->version)) {
+            if ($responseData->value->build->version == 'Sauce Labs') {
+                return self::CLOUD_SERVICE_SAUCELABS;
+            }
+
+            if (!isset($responseData->class)) {
+                return self::CLOUD_SERVICE_BROWSERSTACK;
+            }
+        }
+
+        return '';
     }
 }

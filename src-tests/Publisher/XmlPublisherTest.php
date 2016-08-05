@@ -8,6 +8,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 {
     /** @var XmlPublisher */
     protected $publisher;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|\PHPUnit_Framework_Test */
+    protected $testInstanceMock;
 
     public function setUp()
     {
@@ -17,6 +19,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
 
         $this->publisher = new XmlPublisher();
+        $this->testInstanceMock = $this->getMockBuilder(\PHPUnit_Framework_Test::class)
+            ->getMock();
     }
 
     public static function tearDownAfterClass()
@@ -73,7 +77,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldNotAllowToPublishUnknownTestStatus()
     {
-        $this->publisher->publishResult('testCaseName', 'testName', 'unknownStatus');
+        $this->publisher->publishResult('testCaseName', 'testName', $this->testInstanceMock, 'unknownStatus');
     }
 
     /**
@@ -82,7 +86,13 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldNotAllowToPublishUnknownTestResult()
     {
-        $this->publisher->publishResult('testCaseName', 'testName', 'started', 'unknownResult');
+        $this->publisher->publishResult(
+            'testCaseName',
+            'testName',
+            $this->testInstanceMock,
+            'started',
+            'unknownResult'
+        );
     }
 
     /**
@@ -92,7 +102,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = $this->createEmptyFile();
 
-        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'started');
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -128,7 +138,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         file_put_contents($fileName, $xml);
 
         $this->publisher->setFileName(basename($fileName));
-        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'done', 'passed');
+        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'done', 'passed');
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -208,7 +218,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
 
         $publisher = new XmlPublisher();
-        $publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+        $publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'started');
     }
 
     public function testShouldNotOverwriteTestsWithSameName()
@@ -216,10 +226,22 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $fileName = $this->createEmptyFile();
 
         // create first record for testFoo
-        $this->publisher->publishResult('testCaseNameFoo', 'testFoo', 'done', XmlPublisher::TEST_RESULT_PASSED);
+        $this->publisher->publishResult(
+            'testCaseNameFoo',
+            'testFoo',
+            $this->testInstanceMock,
+            'done',
+            XmlPublisher::TEST_RESULT_PASSED
+        );
 
         // create first record for testFoo, but in different testcase
-        $this->publisher->publishResult('testCaseNameBar', 'testFoo', 'done', XmlPublisher::TEST_RESULT_PASSED);
+        $this->publisher->publishResult(
+            'testCaseNameBar',
+            'testFoo',
+            $this->testInstanceMock,
+            'done',
+            XmlPublisher::TEST_RESULT_PASSED
+        );
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -242,7 +264,12 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $fileName = $this->createEmptyFile();
 
         // Add "started" record of the test
-        $this->publisher->publishResult($testCaseName, $testName, XmlPublisher::TEST_STATUS_STARTED);
+        $this->publisher->publishResult(
+            $testCaseName,
+            $testName,
+            $this->testInstanceMock,
+            XmlPublisher::TEST_STATUS_STARTED
+        );
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -258,6 +285,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult(
             $testCaseName,
             $testName,
+            $this->testInstanceMock,
             XmlPublisher::TEST_STATUS_DONE,
             XmlPublisher::TEST_RESULT_PASSED
         );

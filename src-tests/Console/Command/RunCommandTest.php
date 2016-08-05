@@ -174,11 +174,12 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     public function testShouldStopIfServerIsNotResponding()
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
+            ->setConstructorArgs(['http://foo.bar:1337'])
+            ->setMethods(['isAccessible', 'getLastError'])
             ->getMock();
 
         $seleniumAdapterMock->expects($this->once())
             ->method('isAccessible')
-            ->with('http://foo.bar:1337')
             ->willReturn(false);
 
         $seleniumAdapterMock->expects($this->once())
@@ -206,6 +207,8 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     public function testShouldStopIfServerIsRespondingButIsNotSelenium()
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
+            ->setConstructorArgs(['http://foo.bar:1337'])
+            ->setMethods(['isAccessible', 'isSeleniumServer', 'getLastError'])
             ->getMock();
 
         $seleniumAdapterMock->expects($this->once())
@@ -214,7 +217,6 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         $seleniumAdapterMock->expects($this->once())
             ->method('isSeleniumServer')
-            ->with('http://foo.bar:1337')
             ->willReturn(false);
 
         $seleniumAdapterMock->expects($this->once())
@@ -271,6 +273,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         $application = new Application();
         $application->add(new RunCommand($dispatcherMock));
+        /** @var RunCommand $command */
         $command = $application->find('run');
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
@@ -291,6 +294,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         $application = new Application();
         $application->add(new RunCommand($dispatcherMock));
+        /** @var RunCommand $command */
         $command = $application->find('run');
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
@@ -380,6 +384,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     protected function getSeleniumAdapterMock()
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $seleniumAdapterMock->expects($this->any())

@@ -13,6 +13,7 @@ use FlorianWolters\Component\Util\Singleton\SingletonTrait;
  * @property-read string browserName
  * @property-read string env
  * @property-read string serverUrl
+ * @property-read string capability
  * @property-read string publishResults
  * @property-read string fixturesDir
  * @property-read string logsDir
@@ -92,6 +93,7 @@ class ConfigProvider
             'BROWSER_NAME',
             'ENV',
             'SERVER_URL',
+            'CAPABILITY',
             'PUBLISH_RESULTS',
             'FIXTURES_DIR',
             'LOGS_DIR',
@@ -105,7 +107,7 @@ class ConfigProvider
     }
 
     /**
-     * Retrieve given configuration options values from environment If value is not found, throw and exception.
+     * Retrieve given configuration options values from environment. If value is not found, throw and exception.
      *
      * @throws \RuntimeException
      * @param array $options

@@ -70,9 +70,17 @@ abstract class AbstractPublisher
      *
      * @param string $testCaseName
      * @param string $testName
+     * @param \PHPUnit_Framework_Test $testInstance
      * @param string $status One of self::$testStatuses
      * @param string $result One of self::$testResults
      * @param string $message
      */
-    abstract public function publishResult($testCaseName, $testName, $status, $result = null, $message = null);
+    abstract public function publishResult(
+        $testCaseName,
+        $testName,
+        \PHPUnit_Framework_Test $testInstance,
+        $status,
+        $result = null,
+        $message = null
+    );
 }
