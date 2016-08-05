@@ -11,6 +11,15 @@ matrix:
       env: dependencies="--prefer-lowest --prefer-stable"
     - php: 7
       env: dependencies="--prefer-lowest --prefer-stable"
+    - php: 7
+      env: CHECK_CODESTYLE=1
+      before_install:
+        - phpenv config-rm xdebug.ini
+      before_script: ~
+      script:
+        - vendor/bin/phpcs --standard=ruleset.xml
+        - vendor/bin/php-cs-fixer fix --diff --dry-run
+      after_success: ~
 
 install:
   - travis_retry composer self-update && composer --version
@@ -23,8 +32,6 @@ before_script:
 script:
   - stty cols 120
   - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml
-  - cd .. && vendor/bin/phpcs --standard=ruleset.xml
-  - vendor/bin/php-cs-fixer fix --diff --dry-run
 
 after_success:
   - travis_retry php vendor/bin/coveralls -v
