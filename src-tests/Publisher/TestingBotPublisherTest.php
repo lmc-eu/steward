@@ -6,19 +6,19 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\ConfigHelper;
 
 /**
- * @covers Lmc\Steward\Publisher\SauceLabsPublisher
+ * @covers Lmc\Steward\Publisher\TestingBotPublisher
  * @covers Lmc\Steward\Publisher\AbstractCloudPublisher
  */
-class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
+class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
 {
     public function setUp()
     {
         $configValues = ConfigHelper::getDummyConfig();
-        $configValues['SERVER_URL'] = 'http://username:pass@ondemand.saucelabs.com:80';
+        $configValues['SERVER_URL'] = 'http://username:pass@hub.testingbot.com:80';
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $this->publisher = new SauceLabsPublisher();
+        $this->publisher = new TestingBotPublisher();
 
         parent::setUp();
     }
@@ -26,9 +26,10 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
     /**
      * @dataProvider resultProvider
      * @param string $testResult
+     * @param string $message
      * @param string $expectedData
      */
-    public function testShouldPublishTestResult($testResult, $expectedData)
+    public function testShouldPublishTestResult($testResult, $message, $expectedData)
     {
         $this->testInstanceMock->wd = $this->getMockBuilder(RemoteWebDriver::class)
             ->disableOriginalConstructor()
@@ -36,7 +37,7 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
 
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');
         $curlInitMock->expects($this->once())
-            ->with('https://saucelabs.com/rest/v1/username/jobs/');
+            ->with('https://api.testingbot.com/v1/tests/');
 
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_setopt');
         $curlInitMock->expects($this->at(4))
@@ -57,7 +58,8 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
             'testBar',
             $this->testInstanceMock,
             AbstractPublisher::TEST_STATUS_DONE,
-            $testResult
+            $testResult,
+            $message
         );
     }
 
@@ -67,9 +69,14 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
     public function resultProvider()
     {
         return [
-            'Passed test' => [AbstractPublisher::TEST_RESULT_PASSED, '{"passed":true}'],
-            'Failed test' => [AbstractPublisher::TEST_RESULT_FAILED, '{"passed":false}'],
-            'Broken test' => [AbstractPublisher::TEST_RESULT_BROKEN, '{"passed":false}'],
+            'Passed test' => [AbstractPublisher::TEST_RESULT_PASSED, null, 'test%5Bsuccess%5D=1'],
+            'Failed test' => [AbstractPublisher::TEST_RESULT_FAILED, null, 'test%5Bsuccess%5D=0'],
+            'Failed test with message' => [
+                AbstractPublisher::TEST_RESULT_FAILED,
+                'Error occurred',
+                'test%5Bsuccess%5D=0&test%5Bstatus_message%5D=Error+occurred',
+            ],
+            'Broken test' => [AbstractPublisher::TEST_RESULT_BROKEN, null, 'test%5Bsuccess%5D=0'],
         ];
     }
 }
