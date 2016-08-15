@@ -40,6 +40,10 @@ class SauceLabsPublisher extends AbstractCloudPublisher
     ) {
         $data = ['passed' => ($result == self::TEST_RESULT_PASSED)];
 
+        if (!empty($message)) {
+            $data['custom-data'] = ['message' => $message];
+        }
+
         return json_encode($data);
     }
 }

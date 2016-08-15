@@ -28,7 +28,7 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
      * @param string $testResult
      * @param string $expectedData
      */
-    public function testShouldPublishTestResult($testResult, $expectedData)
+    public function testShouldPublishTestResult($testResult, $message, $expectedData)
     {
         $this->testInstanceMock->wd = $this->getMockBuilder(RemoteWebDriver::class)
             ->disableOriginalConstructor()
@@ -57,7 +57,8 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
             'testBar',
             $this->testInstanceMock,
             AbstractPublisher::TEST_STATUS_DONE,
-            $testResult
+            $testResult,
+            $message
         );
     }
 
@@ -67,9 +68,14 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
     public function resultProvider()
     {
         return [
-            'Passed test' => [AbstractPublisher::TEST_RESULT_PASSED, '{"passed":true}'],
-            'Failed test' => [AbstractPublisher::TEST_RESULT_FAILED, '{"passed":false}'],
-            'Broken test' => [AbstractPublisher::TEST_RESULT_BROKEN, '{"passed":false}'],
+            'Passed test' => [AbstractPublisher::TEST_RESULT_PASSED, null, '{"passed":true}'],
+            'Failed test' => [AbstractPublisher::TEST_RESULT_FAILED, null, '{"passed":false}'],
+            'Failed test with message' => [
+                AbstractPublisher::TEST_RESULT_FAILED,
+                'Error occurred',
+                '{"passed":false,"custom-data":{"message":"Error occurred"}}',
+            ],
+            'Broken test' => [AbstractPublisher::TEST_RESULT_BROKEN, null, '{"passed":false}'],
         ];
     }
 }
