@@ -29,7 +29,6 @@ class ConfigHelper
             'ENV' => 'testing',
             'SERVER_URL' => 'http://server.tld:port',
             'CAPABILITY' => '', // intentionally empty, used by ConfigProviderTest::testShouldDetectEmptyConfigOption
-            'PUBLISH_RESULTS' => 0,
             'FIXTURES_DIR' => __DIR__,
             'LOGS_DIR' => __DIR__,
             'DEBUG' => 0,

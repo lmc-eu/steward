@@ -184,7 +184,6 @@ class ProcessSetCreator
             ->setEnv('ENV', mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
             ->setEnv('CAPABILITY', $this->encodeCapabilties($this->input->getOption(RunCommand::OPTION_CAPABILITY)))
             ->setEnv('SERVER_URL', $this->input->getOption(RunCommand::OPTION_SERVER_URL))
-            ->setEnv('PUBLISH_RESULTS', $this->input->getOption(RunCommand::OPTION_PUBLISH_RESULTS) ? '1' : '0')
             ->setEnv('FIXTURES_DIR', $this->input->getOption(RunCommand::OPTION_FIXTURES_DIR))
             ->setEnv('LOGS_DIR', $this->input->getOption(RunCommand::OPTION_LOGS_DIR))
             ->setEnv('DEBUG', $this->output->isDebug() ? '1' : '0')

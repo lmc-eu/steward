@@ -6,6 +6,7 @@
 ### Removed
 - BC: Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2.
 - BC: `run-tests` alias of `run` command.
+- BC: Option `--publish-results` of run command. The default publishers and custom publishers defined in phpunit.xml will be always registered.
 
 ### Added
 - Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser).

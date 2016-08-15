@@ -19,9 +19,9 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
     protected $startDate;
 
     /**
-     * @param array $testPublishers Array of fully qualified names of AbstractPublisher classes
+     * @param AbstractPublisher[] $customTestPublishers Array of fully qualified names of AbstractPublisher classes
      */
-    public function __construct(array $testPublishers)
+    public function __construct(array $customTestPublishers)
     {
         $config = ConfigProvider::getInstance();
 
@@ -36,10 +36,8 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\TestingBotPublisher';
         }
 
-        // other publishers register only if $config->publishResults is true
-        if ($config->publishResults) {
-            $publishersToRegister = array_merge($publishersToRegister, $testPublishers);
-        }
+        // register custom publishers
+        $publishersToRegister = array_merge($publishersToRegister, $customTestPublishers);
 
         foreach ($publishersToRegister as $publisherClass) {
             if (!class_exists($publisherClass)) {

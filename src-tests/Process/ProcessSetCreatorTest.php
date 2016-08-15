@@ -108,7 +108,6 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             'BROWSER_NAME' => 'firefox',
             'ENV' => 'staging',
             'SERVER_URL' => $definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(),
-            'PUBLISH_RESULTS' => 0,
             'FIXTURES_DIR' => $definition->getOption(RunCommand::OPTION_FIXTURES_DIR)->getDefault(),
             'LOGS_DIR' => $definition->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault(),
         ];
@@ -262,7 +261,6 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             . ' --' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337'
             . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=custom-fixtures-dir/'
             . ' --' . RunCommand::OPTION_LOGS_DIR . '=custom-logs-dir/'
-            . ' --' . RunCommand::OPTION_PUBLISH_RESULTS
             . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log'
             . ' --' . RunCommand::OPTION_CAPABILITY . '="capability.in.quotes:/foo/ba r.log"'
             . ' --' . RunCommand::OPTION_CAPABILITY . '="platform:OS X 10.8"'
@@ -290,7 +288,6 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
                 'BROWSER_NAME' => 'chrome',
                 'ENV' => 'trolling',
                 'SERVER_URL' => 'http://foo.bar:1337',
-                'PUBLISH_RESULTS' => '1',
                 'FIXTURES_DIR' => 'custom-fixtures-dir/',
                 'LOGS_DIR' => 'custom-logs-dir/',
                 'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","capability.in.quotes":"\/foo\/ba r.log",'
