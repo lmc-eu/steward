@@ -40,6 +40,17 @@ class ConfigProvider
         throw new \DomainException(sprintf('Configuration option "%s" was not defined', $name));
     }
 
+    public function __isset($name)
+    {
+        $value = $this->getInstance()->getConfig()->getItem($name, null);
+
+        if (empty($value)) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Add custom configuration options that should be added to the default ones. Can be set only before first call of
      * getConfig(), as the values must be given to the Config object upon initialization.
