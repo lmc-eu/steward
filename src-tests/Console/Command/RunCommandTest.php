@@ -150,7 +150,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         if (!$shouldThrowException) {
             $output = $this->tester->getDisplay();
-            $this->assertContains('Browser: ' . strtolower($browserName), $output);
+            $this->assertContains('Browser: ' . mb_strtolower($browserName), $output);
             $this->assertContains('No testcases found, exiting.', $output);
         }
     }

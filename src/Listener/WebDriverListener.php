@@ -136,9 +136,12 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             try {
                 $test->wd =
                     RemoteWebDriver::create($remoteServerUrl, $capabilities, $connectTimeoutMs, $requestTimeoutMs);
+
                 return;
             } catch (UnknownServerException $e) {
-                if ($browserName == 'firefox' && strpos($e->getMessage(), 'Unable to bind to locking port') !== false) {
+                if ($browserName == 'firefox'
+                    && mb_strpos($e->getMessage(), 'Unable to bind to locking port') !== false
+                ) {
                     // As a consequence of Selenium issue #5172 (cannot change locking port), Firefox may on CI server
                     // collide with other FF instance. As a workaround, we try to start it again after a short delay.
                     $test->warn(
@@ -148,7 +151,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
                     );
                     sleep(1);
                     continue;
-                } elseif (strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
+                } elseif (mb_strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
                     $test->warn('Cannot execute test on the node. Maybe you started just the hub and not the node?');
                 }
                 throw $e;

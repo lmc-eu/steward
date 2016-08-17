@@ -64,7 +64,7 @@ class TestUtils extends AbstractComponent
         $fixturesDir = ConfigProvider::getInstance()->fixturesDir;
         $directorySeparator = '/';
 
-        if (strpos($fixturesDir, '\\') !== false) { // if \ was used in the path, we are most probably on windows
+        if (mb_strpos($fixturesDir, '\\') !== false) { // if \ was used in the path, we are most probably on windows
             $directorySeparator = '\\';
             $fixture = str_replace('/', $directorySeparator, $fixture);
         }

@@ -225,6 +225,7 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
             $legacy2Method2->load(Legacy::LEGACY_TYPE_TEST);
         } catch (LegacyException $e) {
             $this->assertContains('Cannot read legacy file', $e->getMessage());
+
             return;
         }
         $this->fail('Expected exception LegacyException not thrown when loading Legacy that should not exists');

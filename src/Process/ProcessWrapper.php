@@ -188,6 +188,7 @@ class ProcessWrapper
             $this->getProcess()->checkTimeout();
         } catch (ProcessTimedOutException $e) {
             $this->setStatus(self::PROCESS_STATUS_DONE);
+
             return sprintf(
                 'Process for class "%s" exceeded the timeout of %d seconds and was killed.',
                 $this->getClassName(),

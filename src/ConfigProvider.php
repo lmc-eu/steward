@@ -125,7 +125,7 @@ class ConfigProvider
                 throw new \RuntimeException(sprintf('%s environment variable must be defined', $option));
             }
 
-            $outputValues[Inflector::camelize(strtolower($option))] = $value;
+            $outputValues[Inflector::camelize(mb_strtolower($option))] = $value;
         }
 
         return $outputValues;

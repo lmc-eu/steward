@@ -44,6 +44,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
 
         if (!$test->wd instanceof RemoteWebDriver) {
             $test->warn('WebDriver instance not found, cannot take snapshot.');
+
             return;
         }
 
@@ -64,6 +65,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
             $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
         } catch (WebDriverException $e) {
             $test->appendTestLog('Error taking page snapshot, perhaps browser is not accessible?');
+
             return;
         }
     }

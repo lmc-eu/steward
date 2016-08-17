@@ -110,7 +110,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             'SERVER_URL' => $definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(),
             'PUBLISH_RESULTS' => 0,
             'FIXTURES_DIR' => $definition->getOption(RunCommand::OPTION_FIXTURES_DIR)->getDefault(),
-            'LOGS_DIR' =>  $definition->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault(),
+            'LOGS_DIR' => $definition->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault(),
         ];
         $this->assertArraySubset($expectedEnv, $testEnv);
     }

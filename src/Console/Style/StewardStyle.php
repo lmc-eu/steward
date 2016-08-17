@@ -80,9 +80,9 @@ class StewardStyle extends OutputStyle
 
         foreach ($lines as $line) {
             // color lines containing "[WARN]" or "[DEBUG]"
-            if (strpos($line, '[WARN]') !== false) {
+            if (mb_strpos($line, '[WARN]') !== false) {
                 $line = '<fg=black;bg=yellow>' . $line . '</fg=black;bg=yellow>';
-            } elseif (strpos($line, '[DEBUG]') !== false) {
+            } elseif (mb_strpos($line, '[DEBUG]') !== false) {
                 $line = '<comment>' . $line . '</comment>';
             }
 
