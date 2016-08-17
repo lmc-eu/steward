@@ -200,7 +200,7 @@ class RunCommand extends Command
         }
 
         // Browser name is case insensitive, normalize it to lower case
-        $input->setArgument(self::ARGUMENT_BROWSER, strtolower($input->getArgument(self::ARGUMENT_BROWSER)));
+        $input->setArgument(self::ARGUMENT_BROWSER, mb_strtolower($input->getArgument(self::ARGUMENT_BROWSER)));
         $browser = $input->getArgument(self::ARGUMENT_BROWSER);
 
         // Check if browser is supported
@@ -315,9 +315,9 @@ class RunCommand extends Command
 
         if ($input->getOption(self::OPTION_NO_EXIT)) {
             return 0;
-        } else {
-            return $allTestsPassed ? 0 : 1;
         }
+
+        return $allTestsPassed ? 0 : 1;
     }
 
     /**

@@ -134,6 +134,7 @@ class InstallCommand extends Command
             } else {
                 $output->writeln($targetPath); // In non-verbose mode only output path to the file
             }
+
             return 0;
         }
 
@@ -145,6 +146,7 @@ class InstallCommand extends Command
 
         if (!$downloadedSize) {
             $output->writeln('<error>Error downloading file :-(</error>');
+
             return 1;
         }
 

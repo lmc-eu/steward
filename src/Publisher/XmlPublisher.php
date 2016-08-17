@@ -264,9 +264,9 @@ class XmlPublisher extends AbstractPublisher
      */
     protected function quoteXpathAttribute($input)
     {
-        if (strpos($input, '\'') === false) { // Selector does not contain single quotes
+        if (mb_strpos($input, '\'') === false) { // Selector does not contain single quotes
             return "'$input'"; // Encapsulate with double quotes
-        } elseif (strpos($input, '"') === false) { // Selector contain single quotes but not double quotes
+        } elseif (mb_strpos($input, '"') === false) { // Selector contain single quotes but not double quotes
             return "\"$input\""; // Encapsulate with single quotes
         }
 

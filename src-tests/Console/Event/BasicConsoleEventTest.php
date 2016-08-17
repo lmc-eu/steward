@@ -6,7 +6,7 @@ use Lmc\Steward\Console\Command\Command;
 
 class BasicConsoleEventTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Command|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var Command|\PHPUnit_Framework_MockObject_MockObject */
     protected $commandMock;
 
     protected function setUp()

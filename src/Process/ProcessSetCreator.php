@@ -181,7 +181,7 @@ class ProcessSetCreator
 
         $processBuilder
             ->setEnv('BROWSER_NAME', $this->input->getArgument(RunCommand::ARGUMENT_BROWSER))
-            ->setEnv('ENV', strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
+            ->setEnv('ENV', mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
             ->setEnv('CAPABILITY', $this->encodeCapabilties($this->input->getOption(RunCommand::OPTION_CAPABILITY)))
             ->setEnv('SERVER_URL', $this->input->getOption(RunCommand::OPTION_SERVER_URL))
             ->setEnv('PUBLISH_RESULTS', $this->input->getOption(RunCommand::OPTION_PUBLISH_RESULTS) ? '1' : '0')

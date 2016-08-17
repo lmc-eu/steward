@@ -60,10 +60,10 @@ class UniqueValue extends AbstractComponent
         $distinguishingPrefix = null
     ) {
         // hashLength = maxLength - prefix length - suffix length
-        $hashLength = $maxLength - strlen($readablePrefix) - strlen($readableSuffix);
+        $hashLength = $maxLength - mb_strlen($readablePrefix) - mb_strlen($readableSuffix);
 
         $hash = sha1($this->createTimestampValue($distinguishingPrefix));
 
-        return $readablePrefix . substr($hash, 0, $hashLength) . $readableSuffix;
+        return $readablePrefix . mb_substr($hash, 0, $hashLength) . $readableSuffix;
     }
 }

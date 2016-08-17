@@ -9,11 +9,11 @@ use Symfony\Component\Process\ProcessBuilder;
 
 class RunTestsProcessEventTest extends ExtendedConsoleEventTest
 {
-    /** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $inputMock;
-    /** @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $outputMock;
-    /** @var Command|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var Command|\PHPUnit_Framework_MockObject_MockObject */
     protected $commandMock;
     /** @var ProcessBuilder */
     protected $processBuilder;

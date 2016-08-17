@@ -255,9 +255,11 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldFailBuildingTreeIfCycleDetected()
     {
-        //   ROOT
-        //
-        // A <--> B
+        /*
+            ROOT
+
+          A <--> B
+        */
 
         $processA = new ProcessWrapper(new Process(''), 'A');
         $processA->setDelay('B', 1);

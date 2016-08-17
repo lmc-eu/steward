@@ -82,6 +82,7 @@ class SeleniumServerAdapter
         );
         if (!is_resource($seleniumConnection)) {
             $this->lastError = $connectionError;
+
             return false;
         }
         fclose($seleniumConnection);
@@ -102,11 +103,13 @@ class SeleniumServerAdapter
 
         if (!$responseData) {
             $this->lastError = 'error reading server response';
+
             return false;
         }
 
         if (!json_decode($responseData)) {
             $this->lastError = 'error parsing server JSON response (' . json_last_error_msg() . ')';
+
             return false;
         }
 
@@ -163,7 +166,7 @@ class SeleniumServerAdapter
      */
     protected function detectCloudServiceByHost($host)
     {
-        if (strpos($host, 'saucelabs.com') !== false || strpos($host, 'browserstack.com') !== false) {
+        if (mb_strpos($host, 'saucelabs.com') !== false || mb_strpos($host, 'browserstack.com') !== false) {
             return true;
         }
 
