@@ -96,7 +96,15 @@ class Downloader
     public function getFileUrl()
     {
         $versionParts = explode('.', $this->getVersion());
-        $fileUrl = self::$storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1] . '/' . $this->getFileName();
+
+        $devVersion = '';
+        if (preg_match('/(\d+)-([[:alnum:]]+)/', $versionParts[2], $matches)) {
+            $devVersion = $matches[2];
+        }
+
+        $fileUrl = self::$storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1]
+            . (!empty($devVersion) ? '-' . $devVersion : '')
+            . '/' . $this->getFileName();
 
         return $fileUrl;
     }
