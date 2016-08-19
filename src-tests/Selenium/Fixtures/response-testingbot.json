@@ -1,0 +1,13 @@
+{
+  "status": 0,
+  "sessionId": null,
+  "value": {
+    "build": {
+      "version": "TestingBot"
+    },
+    "details": {
+      "status": "available",
+      "details": "TestingBot Selenium Grid is fully operational"
+    }
+  }
+}

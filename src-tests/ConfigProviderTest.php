@@ -36,6 +36,17 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://server.tld:port', ConfigProvider::getInstance()->serverUrl);
     }
 
+    public function testShouldDetectEmptyConfigOption()
+    {
+        ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+
+        $nonEmptyValue = empty(ConfigProvider::getInstance()->serverUrl);
+        $emptyValue = empty(ConfigProvider::getInstance()->capability);
+
+        $this->assertFalse($nonEmptyValue);
+        $this->assertTrue($emptyValue);
+    }
+
     /**
      * @expectedException \DomainException
      * @expectedExceptionMessage Configuration option "notExisting" was not defined

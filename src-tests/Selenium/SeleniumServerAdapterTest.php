@@ -59,8 +59,12 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
             'local URL without port should use 4444' => ['http://localhost', 'http://localhost:4444'],
             'cloud service URL with port should keep it' =>
                 ['http://foo:bar@ondemand.saucelabs.com:1337', 'http://foo:bar@ondemand.saucelabs.com:1337'],
-            'cloud service URL without port should use 80' =>
+            'Sauce Labs cloud service without port should use 80' =>
                 ['http://foo:bar@ondemand.saucelabs.com', 'http://foo:bar@ondemand.saucelabs.com:80'],
+            'BrowserStack cloud service without port should use 80' =>
+                ['http://foo:bar@hub-cloud.browserstack.com', 'http://foo:bar@hub-cloud.browserstack.com:80'],
+            'TestingBot cloud service without port should use 80' =>
+                ['http://foo:bar@hub.testingbot.com', 'http://foo:bar@hub.testingbot.com:80'],
             'non-cloud URL without port should use 4444' => ['http://foo.com', 'http://foo.com:4444'],
             'username and host should get deault port' => ['http://user@foo', 'http://user@foo:4444'],
             'all parts' =>
@@ -220,12 +224,14 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $responseSauceLabs = file_get_contents(__DIR__ . '/Fixtures/response-saucelabs.json');
         $responseBrowserStack = file_get_contents(__DIR__ . '/Fixtures/response-browserstack.json');
+        $responseTestingBot = file_get_contents(__DIR__ . '/Fixtures/response-testingbot.json');
         $responseStandalone = file_get_contents(__DIR__ . '/Fixtures/response-standalone.json');
         $responseLocalGrid = file_get_contents(__DIR__ . '/Fixtures/response-grid.json');
 
         return [
-            'SauceLabs' => [$responseSauceLabs, SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS],
+            'Sauce Labs' => [$responseSauceLabs, SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS],
             'BrowserStack' => [$responseBrowserStack, SeleniumServerAdapter::CLOUD_SERVICE_BROWSERSTACK],
+            'TestingBot' => [$responseTestingBot, SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT],
             'non-cloud local standalone server' => [$responseStandalone, ''],
             'non-cloud local grid' => [$responseLocalGrid, ''],
         ];

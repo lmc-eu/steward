@@ -14,6 +14,7 @@ class SeleniumServerAdapter
     const DEFAULT_PORT_CLOUD_SERVICE = 80;
     const CLOUD_SERVICE_SAUCELABS = 'saucelabs';
     const CLOUD_SERVICE_BROWSERSTACK = 'browserstack';
+    const CLOUD_SERVICE_TESTINGBOT = 'testingbot';
 
     /** @var array */
     protected $serverUrlParts;
@@ -148,29 +149,27 @@ class SeleniumServerAdapter
         }
 
         if (empty($urlParts['port'])) {
-            if ($this->detectCloudServiceByHost($urlParts['host'])) {
-                $urlParts['port'] = self::DEFAULT_PORT_CLOUD_SERVICE;
-            } else {
-                $urlParts['port'] = self::DEFAULT_PORT;
-            }
+            $urlParts['port'] = $this->guessPort($urlParts['host']);
         }
 
         return $urlParts;
     }
 
     /**
-     * Attempt to detect if given host leads to some known cloud service
+     * Guess port for given service
      *
      * @param string $host
-     * @return bool
+     * @return int
      */
-    protected function detectCloudServiceByHost($host)
+    protected function guessPort($host)
     {
-        if (mb_strpos($host, 'saucelabs.com') !== false || mb_strpos($host, 'browserstack.com') !== false) {
-            return true;
+        foreach (['saucelabs.com', 'browserstack.com', 'testingbot.com'] as $knownCloudHost) {
+            if (mb_strpos($host, $knownCloudHost) !== false) {
+                return self::DEFAULT_PORT_CLOUD_SERVICE;
+            }
         }
 
-        return false;
+        return self::DEFAULT_PORT;
     }
 
     /**
@@ -184,6 +183,8 @@ class SeleniumServerAdapter
         if (isset($responseData->value, $responseData->value->build, $responseData->value->build->version)) {
             if ($responseData->value->build->version == 'Sauce Labs') {
                 return self::CLOUD_SERVICE_SAUCELABS;
+            } elseif ($responseData->value->build->version == 'TestingBot') {
+                return self::CLOUD_SERVICE_TESTINGBOT;
             }
 
             if (!isset($responseData->class)) {

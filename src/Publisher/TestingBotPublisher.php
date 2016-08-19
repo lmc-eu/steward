@@ -7,19 +7,15 @@ use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Lmc\Steward\Test\AbstractTestCaseBase;
 
 /**
- * Publish test results to SauceLabs API
+ * Publish test results to TestingBot API
  */
-class SauceLabsPublisher extends AbstractCloudPublisher
+class TestingBotPublisher extends AbstractCloudPublisher
 {
-    const API_URL = 'https://saucelabs.com/rest/v1';
-    const CONTENT_TYPE = 'application/json';
+    const API_URL = 'https://api.testingbot.com/v1';
 
     protected function getEndpointUrl(AbstractTestCaseBase $testInstance)
     {
-        $serverUrl = ConfigProvider::getInstance()->serverUrl;
-        $serverUrlParts = (new SeleniumServerAdapter($serverUrl))->getServerUrlParts();
-
-        return sprintf('%s/%s/jobs/%s', self::API_URL, $serverUrlParts['user'], $testInstance->wd->getSessionID());
+        return sprintf('%s/tests/%s', self::API_URL, $testInstance->wd->getSessionID());
     }
 
     protected function getAuth()
@@ -38,12 +34,18 @@ class SauceLabsPublisher extends AbstractCloudPublisher
         $result = null,
         $message = null
     ) {
-        $data = ['passed' => ($result == self::TEST_RESULT_PASSED)];
-
-        if (!empty($message)) {
-            $data['custom-data'] = ['message' => $message];
+        if ($result == self::TEST_RESULT_PASSED) {
+            $resultToPublish = 1;
+        } else {
+            $resultToPublish = 0;
         }
 
-        return json_encode($data);
+        $data = ['test[success]' => $resultToPublish];
+
+        if (!empty($message)) {
+            $data['test[status_message]'] = $message;
+        }
+
+        return http_build_query($data, null, '&');
     }
 }

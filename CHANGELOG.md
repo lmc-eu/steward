@@ -11,8 +11,8 @@
 - Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser).
 - Command `clean` to remove old content of logs directory (previous png screenshots, HTML snapshots and JUnit xmls).
 - Option `--capability` to `run` command which allows to simply pass any custom DesiredCapabilities to the WebDriver server.
-- Support for cloud services like [SauceLabs](https://saucelabs.com/) or [BrowserStack](https://www.browserstack.com/) - simply pass remote server URL (including credentials) using `--server-url`.
-- If [SauceLabs](https://saucelabs.com/) is used as a remote cloud platform, test results are automatically published to SauceLabs API when test is done.
+- Support for cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) - simply pass remote server URL (including credentials) using `--server-url`.
+- If [Sauce Labs](https://saucelabs.com/) or [TestingBot](https://testingbot.com/) is used as a remote cloud platform, test results are automatically published to their API.
 
 ### Changed
 - Content of directory with logs is cleaned before `run` command starts by default. This could be suppressed using `--no-clean` option of the `run` command. ([#63](https://github.com/lmc-eu/steward/issues/63))

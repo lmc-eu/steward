@@ -28,10 +28,12 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         // always register XmlPublisher
         $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
 
-        // If current server is SauceLabs, autoregister the SauceLabsPublisher
+        // If current server is SauceLabs/TestingBot, autoregister its publisher
         $seleniumServerAdapter = new SeleniumServerAdapter($config->serverUrl);
         if ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {
             $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\SauceLabsPublisher';
+        } elseif ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT) {
+            $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\TestingBotPublisher';
         }
 
         // other publishers register only if $config->publishResults is true
