@@ -5,6 +5,9 @@ namespace Lmc\Steward\Listener;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Publisher\SauceLabsPublisher;
+use Lmc\Steward\Publisher\TestingBotPublisher;
+use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 
 /**
@@ -30,13 +33,13 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         }
 
         // always register XmlPublisher
-        $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
+        $publishersToRegister[] = XmlPublisher::class;
 
         // If current server is SauceLabs/TestingBot, autoregister its publisher
         if ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {
-            $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\SauceLabsPublisher';
+            $publishersToRegister[] = SauceLabsPublisher::class;
         } elseif ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT) {
-            $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\TestingBotPublisher';
+            $publishersToRegister[] = TestingBotPublisher::class;
         }
 
         // register custom publishers
