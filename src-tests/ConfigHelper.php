@@ -27,7 +27,7 @@ class ConfigHelper
         return [
             'BROWSER_NAME' => 'firefox',
             'ENV' => 'testing',
-            'SERVER_URL' => 'http://server.tld:port',
+            'SERVER_URL' => 'http://server.tld:4444',
             'CAPABILITY' => '', // intentionally empty, used by ConfigProviderTest::testShouldDetectEmptyConfigOption
             'FIXTURES_DIR' => __DIR__,
             'LOGS_DIR' => __DIR__,
