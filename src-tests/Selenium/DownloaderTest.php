@@ -52,11 +52,25 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @group integration
      */
+    public function testShouldReturnValidLinkToSpecifiedVersion()
+    {
+        $downloader = new Downloader(__DIR__ . '/Fixtures');
+        $downloader->setVersion('2.53.1');
+
+        $this->isDownloadable($downloader->getFileUrl());
+    }
+
+    /**
+     * @group integration
+     */
     public function testShouldReadLatestVersionFromTheStorageUrl()
     {
         $latestVersion = Downloader::getLatestVersion();
         $this->assertInternalType('string', $latestVersion);
         $this->assertRegExp('/^\d+\.\d+\.\d+.*$/', $latestVersion);
+
+        $downloader = new Downloader(__DIR__ . '/Fixtures');
+        $this->isDownloadable($downloader->getFileUrl());
     }
 
     public function testShouldGetVersionSetBySetter()
@@ -91,15 +105,34 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(__DIR__ . '/Fixtures/selenium-server-standalone-3.33.6.jar', $downloader->getFilePath());
     }
 
-    public function testShouldAssembleUrlToDownload()
+    /**
+     * @dataProvider versionProvider
+     * @param string $version
+     * @param string $expectedPath
+     */
+    public function testShouldAssembleUrlToDownload($version, $expectedPath)
     {
         $downloader = new Downloader(__DIR__ . '/Fixtures');
-        $downloader->setVersion('3.66.3');
+        $downloader->setVersion($version);
 
         $this->assertEquals(
-            'https://selenium-release.storage.googleapis.com/3.66/selenium-server-standalone-3.66.3.jar',
+            'https://selenium-release.storage.googleapis.com' . $expectedPath,
             $downloader->getFileUrl()
         );
+    }
+
+    /**
+     * @return array[]
+     */
+    public function versionProvider()
+    {
+        return [
+            ['2.53.0', '/2.53/selenium-server-standalone-2.53.0.jar'],
+            ['2.53.1', '/2.53/selenium-server-standalone-2.53.1.jar'],
+            ['3.0.0-beta2', '/3.0-beta2/selenium-server-standalone-3.0.0-beta2.jar'],
+            ['3.0.0-rc3', '/3.0-rc3/selenium-server-standalone-3.0.0-rc3.jar'],
+            ['3.0.0', '/3.0/selenium-server-standalone-3.0.0.jar'],
+        ];
     }
 
     public function testShouldCheckIfFileWasAlreadyDownloaded()
@@ -165,5 +198,15 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
         // Cleanup
         unlink($downloader->getFilePath());
         rmdir($expectedDirectory);
+    }
+
+    private function isDownloadable($url)
+    {
+        $context = stream_context_create(['http' => ['method' => 'HEAD', 'ignore_errors' => true]]);
+        $fd = fopen($url, 'rb', false, $context);
+        $responseCode = $http_response_header[0];
+        fclose($fd);
+
+        $this->assertContains('200 OK', $responseCode);
     }
 }
