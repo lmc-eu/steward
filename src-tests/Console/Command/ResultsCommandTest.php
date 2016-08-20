@@ -29,7 +29,8 @@ class ResultsCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldShowErrorIfResultsFileCannotBeFound()
     {
-        $this->setExpectedException(\RuntimeException::class, 'Cannot read results file "/not/accessible.xml"');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot read results file "/not/accessible.xml"');
 
         $this->tester->execute(
             [

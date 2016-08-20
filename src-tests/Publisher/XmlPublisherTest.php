@@ -71,21 +71,22 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertFileNotExists($fn);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Tests status must be one of "started, done", but "unknownStatus" given
-     */
     public function testShouldNotAllowToPublishUnknownTestStatus()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Tests status must be one of "started, done", but "unknownStatus" given');
+
         $this->publisher->publishResult('testCaseName', 'testName', $this->testInstanceMock, 'unknownStatus');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Tests result must be null or one of "passed, failed, broken, skipped, incomplete"
-     */
     public function testShouldNotAllowToPublishUnknownTestResult()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Tests result must be null or one of "passed, failed, broken, skipped, incomplete", '
+            . 'but "unknownResult" given'
+        );
+
         $this->publisher->publishResult(
             'testCaseName',
             'testName',
@@ -206,10 +207,6 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($xml->testcase['end']);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Directory "/notexisting" does not exist or is not writeable.
-     */
     public function testShouldFailIfGivenDirectoryDoesNotExists()
     {
         $configValues = ConfigHelper::getDummyConfig();
@@ -218,6 +215,10 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
 
         $publisher = new XmlPublisher();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Directory "/notexisting" does not exist or is not writeable.');
+
         $publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'started');
     }
 

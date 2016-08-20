@@ -30,13 +30,13 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $this->set);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Testcase with name "Foo\Bar" was already added
-     */
     public function testShouldFailWhenAddingTestWithNonUniqueName()
     {
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Testcase with name "Foo\Bar" was already added');
+
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
     }
 
@@ -242,17 +242,13 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
 
         $this->set->add($process);
 
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'Testcase "Foo" has @delayAfter dependency on "NotExisting", but this testcase was not defined.'
         );
         $this->set->buildTree();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot build tree graph from tests dependencies.
-     */
     public function testShouldFailBuildingTreeIfCycleDetected()
     {
         /*
@@ -268,6 +264,10 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
 
         $this->set->add($processA);
         $this->set->add($processB);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot build tree graph from tests dependencies.');
+
         $this->set->buildTree();
     }
 
@@ -417,10 +417,9 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $this->set->add($processA);
         $this->set->add($processB);
 
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Cannot get dependency tree - the tree was not yet build using buildTree()'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot get dependency tree - the tree was not yet build using buildTree()');
+
         $this->set->failDependants('A');
     }
 }

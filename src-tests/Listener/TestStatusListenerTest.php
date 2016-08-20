@@ -85,24 +85,22 @@ class TestStatusListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowAnExceptionIfRegisteringNotExistingClassAsPublisher()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            'Cannot add new test publisher, class "Foo\NotExistingClass" not found'
-        );
+        $this->expectOutputRegex('/.*/'); // workaround to force PHPUnit to swallow output
 
-        $this->expectOutputRegex('/.*/'); // workaround to force PHpUnit to swallow output
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot add new test publisher, class "Foo\NotExistingClass" not found');
 
         new TestStatusListener(['Foo\NotExistingClass'], $this->seleniumAdapterMock);
     }
 
     public function testShouldThrowAnExceptionIfRegisteringImproperPublisher()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
+        $this->expectOutputRegex('/.*/'); // workaround to force PHPUnit to swallow output
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
             'Cannot add new test publisher, class "stdClass" must be an instance of "AbstractPublisher"'
         );
-
-        $this->expectOutputRegex('/.*/'); // workaround to force PHpUnit to swallow output
 
         new TestStatusListener(['stdClass'], $this->seleniumAdapterMock);
     }

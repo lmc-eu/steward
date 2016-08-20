@@ -55,7 +55,8 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
-        $this->setExpectedException(InvalidArgumentException::class, $expectedExceptionMessage);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
 
         $wrapper->setDelay('Bar', $delay);
     }
@@ -81,13 +82,12 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Testcase "Foo" should run after "Bar", but no delay was defined
-     */
     public function testShouldFailIfDependencyWasDefinedButWithoutDelay()
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Testcase "Foo" should run after "Bar", but no delay was defined');
 
         $wrapper->setDelay('Bar', null);
     }
@@ -149,10 +149,11 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
-        $this->setExpectedException(
-            InvalidArgumentException::class,
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'Value "WrongStatus" is not an element of the valid values: prepared, queued, done'
         );
+
         $wrapper->setStatus('WrongStatus');
     }
 

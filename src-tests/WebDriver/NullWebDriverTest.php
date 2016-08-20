@@ -20,11 +20,12 @@ class NullWebDriverTest extends \PHPUnit_Framework_TestCase
      * @param $methodName
      * @param $params
      * @dataProvider methodNameProvider
-     * @expectedException \Exception
-     * @expectedExceptionMessage You cannot interact with NullWebDriver.
      */
     public function testShouldThrowExceptionWhenInteractingWithInstance($methodName, $params)
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('You cannot interact with NullWebDriver.');
+
         call_user_func_array([$this->webdriver, $methodName], $params);
     }
 

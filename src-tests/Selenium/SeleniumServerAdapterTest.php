@@ -80,10 +80,8 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowExceptionIfInvalidServerUrlIsGiven($serverUrl)
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            'Provided Selenium server URL "' . $serverUrl . '" is invalid'
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Provided Selenium server URL "' . $serverUrl . '" is invalid');
 
         new SeleniumServerAdapter($serverUrl);
     }
@@ -193,8 +191,8 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
             ->with($this->serverUrl . '/wd/hub/status')
             ->willReturn('THIS IS NOT JSON');
 
-        $this->setExpectedExceptionRegExp(
-            \RuntimeException::class,
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageRegExp(
             '/^Unable to connect to remote server: error parsing server JSON response \(.+\)$/'
         );
 

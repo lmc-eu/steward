@@ -58,12 +58,13 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
         $this->component->debug('Foo %s', 'bar');
     }
 
-    /**
-     * @expectedException \PHPUnit_Framework_Error
-     * @expectedExceptionMessage Call to undefined method Lmc\Steward\Component\AbstractComponent::notExisting()
-     */
     public function testShouldFailIfNotExistingMethodIsCalled()
     {
+        $this->expectException(\PHPUnit_Framework_Error::class);
+        $this->expectExceptionMessage(
+            'Call to undefined method Lmc\Steward\Component\AbstractComponent::notExisting()'
+        );
+
         $this->component->notExisting('Bazbar');
     }
 }

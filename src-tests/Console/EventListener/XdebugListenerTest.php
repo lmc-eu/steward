@@ -114,10 +114,6 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Extension Xdebug is not loaded or installed
-     */
     public function testShouldFailWhenXdebugExtensionIsNotLoaded()
     {
         $this->mockXdebugExtension($isExtensionLoaded = false, $isRemoteEnabled = false);
@@ -128,6 +124,9 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
             new StringInput('env firefox --xdebug'),
             new BufferedOutput()
         );
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Extension Xdebug is not loaded or installed');
 
         $this->listener->onCommandRunTestsInit($event);
     }
@@ -143,8 +142,8 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
             new BufferedOutput()
         );
 
-        $this->setExpectedException(
-            \RuntimeException::class,
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
             'The xdebug.remote_enable directive must be set to true to enable remote debugging.'
         );
 

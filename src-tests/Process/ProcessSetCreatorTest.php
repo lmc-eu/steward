@@ -119,10 +119,9 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $files = $this->findDummyTests('NoClassTest.php', 'InvalidTests');
         $fileName = key(iterator_to_array($files->getIterator()));
 
-        $this->setExpectedException(
-            \RuntimeException::class,
-            'No class found in file "' . $fileName . '"'
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('No class found in file "' . $fileName . '"');
+
         $this->creator->createFromFiles($files, [], []);
     }
 
@@ -131,11 +130,12 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $files = $this->findDummyTests('WrongClassTest.php', 'InvalidTests');
 
         $fileName = key(iterator_to_array($files->getIterator()));
-        $this->setExpectedException(
-            \RuntimeException::class,
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
             'Error loading class "Lmc\Steward\Process\Fixtures\InvalidTests\ReallyWrongClassTest" from file "'
             . $fileName . '". Make sure the class name and namespace matches the file path.'
         );
+
         $this->creator->createFromFiles($files, [], []);
     }
 
@@ -144,8 +144,8 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $files = $this->findDummyTests('MultipleClassesInFileTest.php', 'InvalidTests');
         $fileName = key(iterator_to_array($files->getIterator()));
 
-        $this->setExpectedException(
-            \RuntimeException::class,
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
             'File "' . $fileName . '" contains definition of 2 classes. However, each class must be defined in its'
             . ' own separate file.'
         );
@@ -232,11 +232,12 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $files = $this->findDummyTests('InvalidDelayTest.php', 'InvalidTests');
 
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'Testcase "Lmc\Steward\Process\Fixtures\InvalidTests\InvalidDelayTest" has defined delay 5 minutes, '
             . 'but doesn\'t have defined the testcase to run after'
         );
+
         $this->creator->createFromFiles($files, [], []);
     }
 
@@ -316,10 +317,9 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 
         $files = $this->findDummyTests('DummyTest.php');
 
-        $this->setExpectedException(
-            RuntimeException::class,
-            'Capability must be given in format "capabilityName:value" but "foo" was given'
-        );
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Capability must be given in format "capabilityName:value" but "foo" was given');
+
         $this->creator->createFromFiles($files, [], []);
     }
 

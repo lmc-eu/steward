@@ -103,8 +103,8 @@ abstract class AbstractCloudPublisherTestCase extends \PHPUnit_Framework_TestCas
         $curlInitMock->expects($this->once())
             ->willReturn('omg wtf');
 
-        $this->setExpectedExceptionRegExp(
-            \Exception::class,
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageRegExp(
             '/Error publishing results of test testBar to API "https:\/\/.*": omg wtf/'
         );
 
