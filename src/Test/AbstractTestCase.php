@@ -65,41 +65,40 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
      * @param mixed $args
      * @see log
      */
-    public function appendTestLog($format, $args = null)
+    public function appendTestLog($format, ...$args)
     {
-        $output = $this->formatOutput(func_get_args());
+        $output = $this->formatOutput($format, $args);
         $this->appendedTestLog .= $output;
     }
 
-    public function log($format, $args = null)
+    public function log($format, ...$args)
     {
-        echo $this->formatOutput(func_get_args());
+        echo $this->formatOutput($format, $args);
     }
 
-    public function warn($format, $args = null)
+    public function warn($format, ...$args)
     {
-        echo $this->formatOutput(func_get_args(), 'WARN');
+        echo $this->formatOutput($format, $args, 'WARN');
     }
 
-    public function debug($format, $args = null)
+    public function debug($format, ...$args)
     {
         if (ConfigProvider::getInstance()->debug) {
-            echo $this->formatOutput(func_get_args(), 'DEBUG');
+            echo $this->formatOutput($format, $args, 'DEBUG');
         }
     }
 
     /**
      * Format output
+     * @param string $format
      * @param array $args Array of arguments passed to original sprintf()-like function
      * @param string $type Specific log severity type (WARN, DEBUG) prefixed to output
      * @return string Formatted output
      */
-    protected function formatOutput(array $args, $type = '')
+    protected function formatOutput($format, array $args, $type = '')
     {
-        $format = array_shift($args);
-
         // If first item of arguments contains another array use it as arguments
-        if (!empty($args) && is_array($args[0])) {
+        if (is_array($args[0])) {
             $args = $args[0];
         }
 
