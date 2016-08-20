@@ -51,7 +51,6 @@ class RunCommand extends Command
     const OPTION_GROUP = 'group';
     const OPTION_EXCLUDE_GROUP = 'exclude-group';
     const OPTION_FILTER = 'filter';
-    const OPTION_PUBLISH_RESULTS = 'publish-results';
     const OPTION_NO_EXIT = 'no-exit';
     const OPTION_IGNORE_DELAYS = 'ignore-delays';
 
@@ -150,12 +149,6 @@ class RunCommand extends Command
                 'Run only testcases/tests with name matching this filter'
             )
             ->addOption(
-                self::OPTION_PUBLISH_RESULTS,
-                null,
-                InputOption::VALUE_NONE,
-                'Publish test results to test storage'
-            )
-            ->addOption(
                 self::OPTION_NO_EXIT,
                 null,
                 InputOption::VALUE_NONE,
@@ -240,9 +233,6 @@ class RunCommand extends Command
             );
             $output->writeln(
                 sprintf('Path to logs: %s', $input->getOption(self::OPTION_LOGS_DIR))
-            );
-            $output->writeln(
-                sprintf('Publish results: %s', ($input->getOption(self::OPTION_PUBLISH_RESULTS)) ? 'yes' : 'no')
             );
             $output->writeln(
                 sprintf('Ignore delays: %s', ($input->getOption(self::OPTION_IGNORE_DELAYS)) ? 'yes' : 'no')

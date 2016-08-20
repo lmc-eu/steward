@@ -22,9 +22,9 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $config = ConfigProvider::getInstance()->getConfig();
 
         // Property access
-        $this->assertEquals('http://server.tld:port', $config->serverUrl);
+        $this->assertEquals('http://server.tld:4444', $config->serverUrl);
         // getItem() access
-        $this->assertEquals('http://server.tld:port', $config->getItem('serverUrl'));
+        $this->assertEquals('http://server.tld:4444', $config->getItem('serverUrl'));
         // all items retrieval
         $this->assertInternalType('array', $config->getItems());
     }
@@ -33,7 +33,7 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
 
-        $this->assertEquals('http://server.tld:port', ConfigProvider::getInstance()->serverUrl);
+        $this->assertEquals('http://server.tld:4444', ConfigProvider::getInstance()->serverUrl);
     }
 
     public function testShouldDetectEmptyConfigOption()

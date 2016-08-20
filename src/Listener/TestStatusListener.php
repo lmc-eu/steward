@@ -5,6 +5,9 @@ namespace Lmc\Steward\Listener;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Publisher\SauceLabsPublisher;
+use Lmc\Steward\Publisher\TestingBotPublisher;
+use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 
 /**
@@ -19,27 +22,28 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
     protected $startDate;
 
     /**
-     * @param array $testPublishers Array of fully qualified names of AbstractPublisher classes
+     * @param AbstractPublisher[] $customTestPublishers Array of fully qualified names of AbstractPublisher classes
+     * @param SeleniumServerAdapter $seleniumServerAdapter Inject SeleniumServerAdapter. Used only for tests.
      */
-    public function __construct(array $testPublishers)
+    public function __construct(array $customTestPublishers, SeleniumServerAdapter $seleniumServerAdapter = null)
     {
         $config = ConfigProvider::getInstance();
+        if (is_null($seleniumServerAdapter)) {
+            $seleniumServerAdapter = new SeleniumServerAdapter($config->serverUrl);
+        }
 
         // always register XmlPublisher
-        $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
+        $publishersToRegister[] = XmlPublisher::class;
 
         // If current server is SauceLabs/TestingBot, autoregister its publisher
-        $seleniumServerAdapter = new SeleniumServerAdapter($config->serverUrl);
         if ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {
-            $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\SauceLabsPublisher';
+            $publishersToRegister[] = SauceLabsPublisher::class;
         } elseif ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT) {
-            $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\TestingBotPublisher';
+            $publishersToRegister[] = TestingBotPublisher::class;
         }
 
-        // other publishers register only if $config->publishResults is true
-        if ($config->publishResults) {
-            $publishersToRegister = array_merge($publishersToRegister, $testPublishers);
-        }
+        // register custom publishers
+        $publishersToRegister = array_merge($publishersToRegister, $customTestPublishers);
 
         foreach ($publishersToRegister as $publisherClass) {
             if (!class_exists($publisherClass)) {
