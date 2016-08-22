@@ -132,10 +132,6 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onCommandRunTestsInit($event);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The xdebug.remote_enable directive must be true to enable remote debugging
-     */
     public function testShouldFailWhenXdebugExtensionIsLoadedButRemoteDebugIsNotEnabled()
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = false);
@@ -145,6 +141,11 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
             $command,
             new StringInput('env firefox --xdebug'),
             new BufferedOutput()
+        );
+
+        $this->setExpectedException(
+            \RuntimeException::class,
+            'The xdebug.remote_enable directive must be set to true to enable remote debugging.'
         );
 
         $this->listener->onCommandRunTestsInit($event);
