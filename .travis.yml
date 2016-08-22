@@ -34,7 +34,7 @@ before_script:
 
 script:
   - stty cols 120
-  - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml
+  - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml && cd ..
 
 after_success:
   - travis_retry php vendor/bin/coveralls -v
