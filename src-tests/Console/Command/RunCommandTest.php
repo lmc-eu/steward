@@ -34,34 +34,31 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments (missing: "environment, browser").
-     */
     public function testShouldFailWithoutArguments()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "environment, browser").');
+
         $this->tester->execute(
             ['command' => $this->command->getName()]
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments (missing: "browser").
-     */
     public function testShouldFailWithoutBrowserSpecified()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "browser").');
+
         $this->tester->execute(
             ['command' => $this->command->getName(), 'environment' => 'staging']
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments (missing: "environment").
-     */
     public function testShouldFailWithoutEnvironmentSpecified()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "environment").');
+
         $this->tester->execute(
             ['command' => $this->command->getName(), 'browser' => 'firefox']
         );
@@ -82,7 +79,8 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
             $errorBeginning,
             $directoryOption
         );
-        $this->setExpectedException('\RuntimeException', $expectedError);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage($expectedError);
 
         $this->tester->execute(
             [
@@ -136,12 +134,13 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowExceptionIfUnsupportedBrowserSelected($browserName, $shouldThrowException)
     {
-        if ($shouldThrowException) {
-            $this->setExpectedException('\RuntimeException', 'Browser "' . $browserName . '" is not supported');
-        }
-
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
+
+        if ($shouldThrowException) {
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('Browser "' . $browserName . '" is not supported');
+        }
 
         $this->tester->execute(
             ['command' => $this->command->getName(), 'environment' => 'prod', 'browser' => $browserName],

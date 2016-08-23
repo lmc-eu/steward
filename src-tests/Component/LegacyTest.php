@@ -29,22 +29,17 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot read legacy file
-     */
     public function testShouldThrowExceptionIfLegacyFileNotFound()
     {
         $legacy = new Legacy($this->testCase);
         $this->expectOutputRegex('/.*New legacy instantiated.*/');
 
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage('Cannot read legacy file');
+
         $legacy->loadWithName('not-existing');
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot parse legacy from file
-     */
     public function testShouldFailIfNotUnserializableFileFound()
     {
         $fn = sys_get_temp_dir() . '/wrong.legacy';
@@ -53,6 +48,9 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $legacy = new Legacy($this->testCase);
         $legacy->setFileDir(sys_get_temp_dir());
         $this->expectOutputRegex('/.*New legacy instantiated.*/');
+
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage('Cannot parse legacy from file');
 
         $legacy->loadWithName('wrong');
     }
@@ -92,16 +90,16 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($sampleData, $output);
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot save legacy to file /notexisting/baz.legacy
-     */
     public function testShouldFailIfSavingToNotExistingDirectory()
     {
         $legacy = new Legacy($this->testCase);
         $legacy->setFileDir('/notexisting');
 
         $this->expectOutputRegex('/.*Saving data as legacy "baz" to file "\/notexisting\/baz\.legacy".*/');
+
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage('Cannot save legacy to file /notexisting/baz.legacy');
+
         $legacy->saveWithName([], 'baz');
     }
 
@@ -137,10 +135,6 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $this->expectOutputRegex('/^((?!foobar string).)*$/s'); // Output should not contain the string
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot generate legacy name from class without 'Phase' followed by number in name
-     */
     public function testShouldFailIfTryingToAutomaticallySaveLegacyIfTestDoesntHavePhaseInItsName()
     {
         $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)
@@ -150,6 +144,11 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
 
         $legacy = new Legacy($testCasePhase1);
         $legacy->setFileDir(sys_get_temp_dir());
+
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage(
+            'Cannot generate legacy name from class without \'Phase\' followed by number in name'
+        );
 
         $legacy->save('data');
     }

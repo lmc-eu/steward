@@ -22,7 +22,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
     protected $startDate;
 
     /**
-     * @param AbstractPublisher[] $customTestPublishers Array of fully qualified names of AbstractPublisher classes
+     * @param string[] $customTestPublishers Array of fully qualified names of AbstractPublisher classes
      * @param SeleniumServerAdapter $seleniumServerAdapter Inject SeleniumServerAdapter. Used only for tests.
      */
     public function __construct(array $customTestPublishers, SeleniumServerAdapter $seleniumServerAdapter = null)
@@ -33,7 +33,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
         }
 
         // always register XmlPublisher
-        $publishersToRegister[] = XmlPublisher::class;
+        $publishersToRegister = [XmlPublisher::class];
 
         // If current server is SauceLabs/TestingBot, autoregister its publisher
         if ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {

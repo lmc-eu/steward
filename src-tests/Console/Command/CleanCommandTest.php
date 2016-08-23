@@ -30,8 +30,8 @@ class CleanCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldShowErrorIfLogsDirectoryIsNotDefaultAndCannotBeFound()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
             'Cannot clean logs directory "/custom/not/accessible/path", make sure it is accessible.'
         );
 

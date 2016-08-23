@@ -47,13 +47,12 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($emptyValue);
     }
 
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Configuration option "notExisting" was not defined
-     */
     public function testShouldThrowExceptionWhenAccessingNotExistingConfigOptionThroughConfigProvider()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Configuration option "notExisting" was not defined');
 
         ConfigProvider::getInstance()->notExisting;
     }
@@ -69,16 +68,16 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($firstInstance, $secondInstance);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage SERVER_URL environment variable must be defined
-     */
     public function testShouldFailIfRequiredOptionIsNotDefined()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         putenv('SERVER_URL'); // unset value
 
         $provider = ConfigProvider::getInstance();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('SERVER_URL environment variable must be defined');
+
         $provider->getConfig();
     }
 
@@ -97,16 +96,17 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('new', $config->customOption);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Custom configuration options can be set only before the Config object was instantiated
-     */
     public function testShouldFailIfSettingCustomConfigurationOptionsAfterFirstInstantiation()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         $provider = ConfigProvider::getInstance();
         // Create Config instance
         $provider->getConfig();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Custom configuration options can be set only before the Config object was instantiated'
+        );
 
         // This should fail, as the Config instance was already created
         $provider->setCustomConfigurationOptions(['CUSTOM_OPTION']);
