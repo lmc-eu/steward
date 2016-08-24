@@ -17,7 +17,6 @@
             <exclude>
                 <file>../src/bootstrap.php</file>
                 <file>../src/Console/Command/Command.php</file>
-                <file>../src/Test/AbstractTestCase.php</file>
                 <file>../src/Test/AbstractTestCaseBase.php</file>
             </exclude>
         </whitelist>
