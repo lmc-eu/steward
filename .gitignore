@@ -9,3 +9,6 @@ src-tests/coverage/
 
 # Ignore composer.lock because when installed as dependency, it does not affect anything either
 composer.lock
+
+# Ignore JetBrains IDE's project configs
+.idea
