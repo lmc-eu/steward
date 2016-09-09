@@ -22,6 +22,7 @@
 - Process output printed to console (when using `-vv` or `-vvv`) is now prefixed with class name.
 - BC: Pass instance of current PHPUnit test as third parameter of `publishResult()` method of `AbstractPublisher` descendants.
 - Throw an exception if there are multiple testcase classes defined in one file.
+- Status of tests is checked every 100 ms instead of 1 second to speed up the execution loop.
 
 ### Fixed
 - Parsing of latest Selenium server version in `install` command so that even Selenium 3 beta releases are installed ([#76](https://github.com/lmc-eu/steward/pull/76))

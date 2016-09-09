@@ -438,8 +438,8 @@ class RunCommand extends Command
 
             $statusesCount = $processSet->countStatuses();
 
-            // if the output didn't change, wait 10 seconds before printing it again
-            if ($statusesCount === $statusesCountLast && $counterWaitingOutput % 10 !== 0) {
+            // if the output didn't change, wait 100 iterations (10 seconds) before printing it again
+            if ($statusesCount === $statusesCountLast && $counterWaitingOutput % 100 !== 0) {
                 $counterWaitingOutput++;
             } else {
                 $this->printExecutionLoopStatus($io, $processSet, $statusesCount);
@@ -447,7 +447,7 @@ class RunCommand extends Command
             }
 
             $statusesCountLast = $statusesCount;
-            sleep(1);
+            usleep(100000); // 0,1 sec
         }
 
         $doneCount = count($processSet->get(ProcessWrapper::PROCESS_STATUS_DONE));
