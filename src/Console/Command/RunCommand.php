@@ -429,74 +429,23 @@ class RunCommand extends Command
 
                     // Fail also process dependencies
                     if (!$hasProcessPassed) {
-                        $failedDependants = $processSet->failDependants($testClass);
-                        if ($io->isVerbose()) {
-                            foreach ($failedDependants as $failedClass => $failedProcessWrapper) {
-                                $io->runStatusError(
-                                    sprintf(
-                                        'Failing testcase "%s", because it was depending on failed "%s"',
-                                        $failedClass,
-                                        $testClass
-                                    )
-                                );
-                            }
-                        }
+                        $this->failDependants($io, $processSet, $testClass);
                     }
                 }
             }
 
-            $done = $processSet->get(ProcessWrapper::PROCESS_STATUS_DONE);
-            $doneClasses = [];
-            // Retrieve names of done tests
-            foreach ($done as $testClass => $processWrapper) {
-                $doneClasses[] = $testClass;
-            }
-            // Set queued tasks as prepared if their dependent task is done and delay has passed
-            foreach ($queued as $testClass => $processWrapper) {
-                $delaySeconds = $processWrapper->getDelayMinutes() * 60;
-
-                if (in_array($processWrapper->getDelayAfter(), $doneClasses)
-                    && (time() - $done[$processWrapper->getDelayAfter()]->getFinishedTime()) > $delaySeconds
-                ) {
-                    if ($io->isVeryVerbose()) {
-                        $io->runStatus(sprintf('Unqueing testcase "%s"', $testClass));
-                    }
-                    $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
-                }
-            }
+            $this->unqueueDependentProcesses($io, $processSet);
 
             $statusesCount = $processSet->countStatuses();
+
             // if the output didn't change, wait 10 seconds before printing it again
             if ($statusesCount === $statusesCountLast && $counterWaitingOutput % 10 !== 0) {
                 $counterWaitingOutput++;
             } else {
-                // prepare information about results of finished processes
-                $resultsInfo = [];
-                $resultsCount = $processSet->countResults();
-                if ($statusesCount[ProcessWrapper::PROCESS_STATUS_DONE] > 0) {
-                    foreach (ProcessWrapper::$processResults as $resultType) {
-                        if ($resultsCount[$resultType] > 0) {
-                            $resultsInfo[] = sprintf(
-                                '%s: <fg=%s>%d</>',
-                                $resultType,
-                                $resultType == ProcessWrapper::PROCESS_RESULT_PASSED ? 'green' : 'red',
-                                $resultsCount[$resultType]
-                            );
-                        }
-                    }
-                }
-
-                $io->runStatus(
-                    sprintf(
-                        'Waiting (running: %d, queued: %d, done: %d%s)',
-                        $statusesCount[ProcessWrapper::PROCESS_STATUS_PREPARED],
-                        $statusesCount[ProcessWrapper::PROCESS_STATUS_QUEUED],
-                        $statusesCount[ProcessWrapper::PROCESS_STATUS_DONE],
-                        count($resultsInfo) ? ' [' . implode(', ', $resultsInfo) . ']' : ''
-                    )
-                );
+                $this->printExecutionLoopStatus($io, $processSet, $statusesCount);
                 $counterWaitingOutput = 1;
             }
+
             $statusesCountLast = $statusesCount;
             sleep(1);
         }
@@ -609,5 +558,91 @@ class RunCommand extends Command
         }
 
         return true;
+    }
+
+    /**
+     * @param StewardStyle $io
+     * @param ProcessSet $processSet
+     * @param $testClass
+     */
+    protected function failDependants(StewardStyle $io, ProcessSet $processSet, $testClass)
+    {
+        $failedDependants = $processSet->failDependants($testClass);
+
+        if ($io->isVerbose()) {
+            foreach ($failedDependants as $failedClass => $failedProcessWrapper) {
+                $io->runStatusError(
+                    sprintf(
+                        'Failing testcase "%s", because it was depending on failed "%s"',
+                        $failedClass,
+                        $testClass
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * @param StewardStyle $io
+     * @param ProcessSet $processSet
+     * @return array
+     */
+    protected function unqueueDependentProcesses(StewardStyle $io, ProcessSet $processSet)
+    {
+        // Retrieve names of done tests
+        $done = $processSet->get(ProcessWrapper::PROCESS_STATUS_DONE);
+        $doneClasses = [];
+        foreach ($done as $testClass => $processWrapper) {
+            $doneClasses[] = $testClass;
+        }
+
+        // Set queued tasks as prepared if their dependent task is done and delay has passed
+        $queued = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+        foreach ($queued as $testClass => $processWrapper) {
+            $delaySeconds = $processWrapper->getDelayMinutes() * 60;
+
+            if (in_array($processWrapper->getDelayAfter(), $doneClasses)
+                && (time() - $done[$processWrapper->getDelayAfter()]->getFinishedTime()) > $delaySeconds
+            ) {
+                if ($io->isVeryVerbose()) {
+                    $io->runStatus(sprintf('Unqueing testcase "%s"', $testClass));
+                }
+                $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
+            }
+        }
+    }
+
+    /**
+     * @param StewardStyle $io
+     * @param ProcessSet $processSet
+     * @param $statusesCount
+     * @return array
+     */
+    protected function printExecutionLoopStatus(StewardStyle $io, ProcessSet $processSet, $statusesCount)
+    {
+        $resultsInfo = [];
+        $resultsCount = $processSet->countResults();
+        if ($statusesCount[ProcessWrapper::PROCESS_STATUS_DONE] > 0) {
+            foreach (ProcessWrapper::$processResults as $resultType) {
+                if ($resultsCount[$resultType] > 0) {
+                    $resultsInfo[] = sprintf(
+                        '%s: <fg=%s>%d</>',
+                        $resultType,
+                        $resultType == ProcessWrapper::PROCESS_RESULT_PASSED ? 'green' : 'red',
+                        $resultsCount[$resultType]
+                    );
+                }
+            }
+        }
+
+        $io->runStatus(
+            sprintf(
+                'Waiting (running: %d, queued: %d, done: %d%s)',
+                $statusesCount[ProcessWrapper::PROCESS_STATUS_PREPARED],
+                $statusesCount[ProcessWrapper::PROCESS_STATUS_QUEUED],
+                $statusesCount[ProcessWrapper::PROCESS_STATUS_DONE],
+                count($resultsInfo) ? ' [' . implode(', ', $resultsInfo) . ']' : ''
+            )
+        );
     }
 }
