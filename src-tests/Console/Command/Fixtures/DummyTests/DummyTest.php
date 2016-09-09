@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Console\Component\Fixtures\DummyTests;
+namespace Lmc\Steward\Console\Command\Fixtures\DummyTests;
 
 use Lmc\Steward\Test\AbstractTestCase;
 

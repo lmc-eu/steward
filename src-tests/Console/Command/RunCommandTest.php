@@ -115,6 +115,8 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--tests-dir' => __DIR__ . '/Fixtures/DummyTests',
+                '--logs-dir' => __DIR__ . '/Fixtures/logs',
+                '--fixtures-dir' => __DIR__ . '/Fixtures/tests',
                 '--pattern' => 'NotExisting.foo', // so the test stops execution
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
@@ -143,7 +145,13 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->tester->execute(
-            ['command' => $this->command->getName(), 'environment' => 'prod', 'browser' => $browserName],
+            [
+                'command' => $this->command->getName(),
+                'environment' => 'prod',
+                'browser' => $browserName,
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
+                '--fixtures-dir' => __DIR__,
+            ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
@@ -192,6 +200,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--server-url' => 'http://foo.bar:1337',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
             ]
         );
 
@@ -229,6 +238,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--server-url' => 'http://foo.bar:1337',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
             ]
         );
 
@@ -251,6 +261,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--pattern' => 'NotExisting.foo',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
@@ -277,7 +288,12 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
         (new CommandTester($command))->execute(
-            ['command' => $command->getName(), 'environment' => 'staging', 'browser' => 'firefox']
+            [
+                'command' => $command->getName(),
+                'environment' => 'staging',
+                'browser' => 'firefox',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
+            ]
         );
     }
 
@@ -298,7 +314,12 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
         (new CommandTester($command))->execute(
-            ['command' => $command->getName(), 'environment' => 'staging', 'browser' => 'firefox']
+            [
+                'command' => $command->getName(),
+                'environment' => 'staging',
+                'browser' => 'firefox',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
+            ]
         );
     }
 
@@ -330,7 +351,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'browser' => 'firefox',
                 '--group' => ['included'],
                 '--exclude-group' => ['excluded'],
-                '--tests-dir' => __DIR__ . '/Fixtures/DummyTests', // There should by only one test class
+                '--tests-dir' => __DIR__ . '/Fixtures/DummyTests', // There should by only one test class in the dir
             ]
         );
 
@@ -338,9 +359,6 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    /**
-     * @todo Separate to tests for ExecutionLoop
-     */
     public function testShouldExitSuccessfullyIfNoProcessArePreparedOrQueued()
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();

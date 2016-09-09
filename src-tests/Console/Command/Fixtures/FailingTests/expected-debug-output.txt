@@ -1,0 +1,16 @@
+%a
+Testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\DependantTest" is queued to be run 0.0 minutes after testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest" is finished
+Testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest" is prepared to be run
+%aStarting execution of testcases
+-------------------------------
+[%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest" started with command:%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> There was 1 failure:%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> 1) Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest::testThatWillFail%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> Sorry :-(%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> FAILURES!
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> Tests: 1, Assertions: 0, Failures: 1.%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest" (result: failed)
+[%s] Failing testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\DependantTest", because it was depending on failed "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest"
+[%s] Waiting (running: 0, queued: 0, done: 2 [failed: 2])
+[%s] All testcases done
+%A[ERROR] Testcases executed: 2 (failed: 2)%A
