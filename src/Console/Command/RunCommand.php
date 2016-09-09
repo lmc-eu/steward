@@ -389,14 +389,7 @@ class RunCommand extends Command
                 }
 
                 if ($io->isDebug()) { // In debug mode print all output as it comes
-                    $io->output(
-                        $processWrapper->getProcess()->getIncrementalOutput(),
-                        $processWrapper->getClassName()
-                    );
-                    $io->errorOutput(
-                        $processWrapper->getProcess()->getIncrementalErrorOutput(),
-                        $processWrapper->getClassName()
-                    );
+                    $this->flushProcessOutput($io, $processWrapper);
                 }
 
                 if (!$processWrapper->getProcess()->isRunning()) {
@@ -404,6 +397,10 @@ class RunCommand extends Command
                     $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
 
                     $hasProcessPassed = $processWrapper->getResult() == ProcessWrapper::PROCESS_RESULT_PASSED;
+
+                    if ($io->isDebug()) { // There could be new output since the previous flush
+                        $this->flushProcessOutput($io, $processWrapper);
+                    }
 
                     if ($io->isVeryVerbose()) {
                         $processOutput = $processErrorOutput = '';
@@ -643,6 +640,24 @@ class RunCommand extends Command
                 $statusesCount[ProcessWrapper::PROCESS_STATUS_DONE],
                 count($resultsInfo) ? ' [' . implode(', ', $resultsInfo) . ']' : ''
             )
+        );
+    }
+
+    /**
+     * Flush output of the process
+     *
+     * @param StewardStyle $io
+     * @param ProcessWrapper $processWrapper
+     */
+    protected function flushProcessOutput(StewardStyle $io, ProcessWrapper $processWrapper)
+    {
+        $io->output(
+            $processWrapper->getProcess()->getIncrementalOutput(),
+            $processWrapper->getClassName()
+        );
+        $io->errorOutput(
+            $processWrapper->getProcess()->getIncrementalErrorOutput(),
+            $processWrapper->getClassName()
         );
     }
 }
