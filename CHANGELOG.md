@@ -25,6 +25,9 @@
 
 ### Fixed
 - Parsing of latest Selenium server version in `install` command so that even Selenium 3 beta releases are installed ([#76](https://github.com/lmc-eu/steward/pull/76))
+- Testcases that have zero delay defined (`@delayMinutes`) weren't properly added to the dependency graph, what causes multiple bugs:
+    - Testcases were not marked as failed even though the test they were depending on has failed.
+    - It was not checked that the tests dependencies build a tree, ie. you could select (using `--group` etc.) subset of tests which will lead to an infinite wait in the execution loop. [#39](https://github.com/lmc-eu/steward/issues/39)
 
 ## 1.5.0 - 2016-05-05
 ### Added
