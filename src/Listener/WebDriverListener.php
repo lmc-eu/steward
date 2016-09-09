@@ -118,7 +118,7 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
      * The WebDriver instance is stored to $test->wd when created.
      *
      * @param string AbstractTestCase $test
-     * @param $remoteServerUrl
+     * @param string $remoteServerUrl
      * @param DesiredCapabilities $capabilities
      * @param int $connectTimeoutMs
      * @param int $requestTimeoutMs

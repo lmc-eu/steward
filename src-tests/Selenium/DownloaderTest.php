@@ -200,6 +200,9 @@ class DownloaderTest extends \PHPUnit_Framework_TestCase
         rmdir($expectedDirectory);
     }
 
+    /**
+     * @param string $url
+     */
     private function isDownloadable($url)
     {
         $context = stream_context_create(['http' => ['method' => 'HEAD', 'ignore_errors' => true]]);
