@@ -360,7 +360,7 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         //   A      B
         //       3 / \ 5
         //        C   D
-        //            | 2
+        //            | 0 (zero delay is also allowed)
         //            E
 
         $processA = new ProcessWrapper(new Process(''), 'A');
@@ -370,7 +370,7 @@ class ProcessSetTest extends \PHPUnit_Framework_TestCase
         $processD = new ProcessWrapper(new Process(''), 'D');
         $processD->setDelay('B', 5);
         $processE = new ProcessWrapper(new Process(''), 'E');
-        $processE->setDelay('D', 2);
+        $processE->setDelay('D', 0);
 
         $this->set->add($processA);
         $this->set->add($processB);

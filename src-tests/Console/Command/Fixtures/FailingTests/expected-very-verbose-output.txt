@@ -1,0 +1,25 @@
+Steward UNKNOWN is running the tests...%S
+Browser: firefox
+Environment: staging
+Base path to fixtures results: %s/tests
+Path to logs: %s/logs
+Ignore delays: no
+Selenium server (hub) url: %s, trying connection...OK
+Searching for testcases:
+ - in directory %s/src-tests/Console/Command/Fixtures/FailingTests"
+ - by pattern "*Test.php"
+
+Starting execution of testcases
+-------------------------------
+[%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest" started
+[%s] Waiting (running: 1, queued: 1, done: 0)%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest" (result: failed), output:%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> There was 1 failure:%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> 1) Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest::testThatWillFail%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> Sorry :-(%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> FAILURES!%A
+Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest> Tests: 1, Assertions: 0, Failures: 1.%A
+[%s] Failing testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\DependantTest", because it was depending on failed "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest"
+[%s] Waiting (running: 0, queued: 0, done: 2 [failed: 2])
+[%s] All testcases done
+%A[ERROR] Testcases executed: 2 (failed: 2)%A

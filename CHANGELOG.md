@@ -22,9 +22,13 @@
 - Process output printed to console (when using `-vv` or `-vvv`) is now prefixed with class name.
 - BC: Pass instance of current PHPUnit test as third parameter of `publishResult()` method of `AbstractPublisher` descendants.
 - Throw an exception if there are multiple testcase classes defined in one file.
+- Status of tests is checked every 100 ms instead of 1 second to speed up the execution loop.
 
 ### Fixed
 - Parsing of latest Selenium server version in `install` command so that even Selenium 3 beta releases are installed ([#76](https://github.com/lmc-eu/steward/pull/76))
+- Testcases that have zero delay defined (`@delayMinutes`) weren't properly added to the dependency graph, what causes multiple bugs:
+    - Testcases were not marked as failed even though the test they were depending on has failed.
+    - It was not checked that the tests dependencies build a tree, ie. you could select (using `--group` etc.) subset of tests which will lead to an infinite wait in the execution loop. [#39](https://github.com/lmc-eu/steward/issues/39)
 
 ## 1.5.0 - 2016-05-05
 ### Added

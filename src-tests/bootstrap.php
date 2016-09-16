@@ -9,5 +9,5 @@ $loader->addPsr4('Lmc\\Steward\\', __DIR__);
 
 // Define global constant required by Lmc\Steward\Console\Command
 if (!defined('STEWARD_BASE_DIR')) {
-    define('STEWARD_BASE_DIR', __DIR__ . '/Console/Command/Fixtures');
+    define('STEWARD_BASE_DIR', realpath(__DIR__ . '/../'));
 }

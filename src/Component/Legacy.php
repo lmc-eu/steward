@@ -82,7 +82,7 @@ class Legacy extends AbstractComponent
 
         $this->testClassName = get_class($tc);
 
-        $this->log('New legacy instantiated in class "%s"', $this->testClassName);
+        $this->log('New Legacy instantiated in class "%s"', $this->testClassName);
     }
 
     /**
@@ -109,7 +109,7 @@ class Legacy extends AbstractComponent
 
         if (!preg_match('/Phase\d/', $name)) {
             throw new LegacyException(
-                "Cannot generate legacy name from class without 'Phase' followed by number in name " . $name
+                "Cannot generate Legacy name from class without 'Phase' followed by number in name " . $name
             );
         }
 
@@ -145,11 +145,11 @@ class Legacy extends AbstractComponent
     public function saveWithName($data, $legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
-        $this->log('Saving data as legacy "%s" to file "%s"', $legacyName, $filename);
+        $this->log('Saving data as Legacy "%s" to file "%s"', $legacyName, $filename);
         $this->debug('Legacy data: %s', $this->getPrintableValue($data));
 
         if (@file_put_contents($filename, serialize($data)) === false) {
-            throw new LegacyException('Cannot save legacy to file ' . $filename);
+            throw new LegacyException('Cannot save Legacy to file ' . $filename);
         }
     }
 
@@ -192,16 +192,16 @@ class Legacy extends AbstractComponent
     {
         $filename = $this->getLegacyFullPath($legacyName);
 
-        $this->log('Reading legacy "%s" from file "%s"', $legacyName, $filename);
+        $this->log('Reading Legacy "%s" from file "%s"', $legacyName, $filename);
 
         $data = @file_get_contents($filename);
         if ($data === false) {
-            throw new LegacyException('Cannot read legacy file ' . $filename);
+            throw new LegacyException('Cannot read Legacy file ' . $filename);
         }
 
         $legacy = unserialize($data);
         if ($legacy === false) {
-            throw new LegacyException('Cannot parse legacy from file ' . $filename);
+            throw new LegacyException('Cannot parse Legacy from file ' . $filename);
         }
 
         $this->debug('Legacy data: %s', $this->getPrintableValue($legacy));
