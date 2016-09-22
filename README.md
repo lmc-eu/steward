@@ -40,7 +40,7 @@ So let's suggest we put them in `selenium-tests/` directory. **In this directory
 Then simply install Steward and add it as a dependency:
 
 ```sh
-$ composer require lmc/steward
+$ composer require lmc/steward:2.x@dev
 ```
 
 ### 2. Install Selenium
