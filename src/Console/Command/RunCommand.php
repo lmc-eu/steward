@@ -31,13 +31,14 @@ class RunCommand extends Command
     protected $seleniumAdapter;
     /** @var ProcessSetCreator */
     protected $processSetCreator;
-    /** @var array */
+    /** @var array Lowercase name => WebDriver identifier */
     protected $supportedBrowsers = [
-        WebDriverBrowserType::FIREFOX,
-        WebDriverBrowserType::CHROME,
-        WebDriverBrowserType::IE,
-        WebDriverBrowserType::SAFARI,
-        WebDriverBrowserType::PHANTOMJS,
+        'firefox' => WebDriverBrowserType::FIREFOX,
+        'chrome' => WebDriverBrowserType::CHROME,
+        'microsoftedge' => WebDriverBrowserType::MICROSOFT_EDGE,
+        'internet explorer' => WebDriverBrowserType::IE,
+        'safari' => WebDriverBrowserType::SAFARI,
+        'phantomjs' => WebDriverBrowserType::PHANTOMJS,
     ];
 
     const ARGUMENT_ENVIRONMENT = 'environment';
@@ -193,22 +194,24 @@ class RunCommand extends Command
         }
 
         // Browser name is case insensitive, normalize it to lower case
-        $input->setArgument(self::ARGUMENT_BROWSER, mb_strtolower($input->getArgument(self::ARGUMENT_BROWSER)));
-        $browser = $input->getArgument(self::ARGUMENT_BROWSER);
+        $browserNormalized = mb_strtolower($input->getArgument(self::ARGUMENT_BROWSER));
 
         // Check if browser is supported
-        if (!in_array($browser, $this->supportedBrowsers)) {
+        if (!isset($this->supportedBrowsers[$browserNormalized])) {
             throw new \RuntimeException(
                 sprintf(
                     'Browser "%s" is not supported (use one of: %s)',
-                    $browser,
-                    implode(', ', $this->supportedBrowsers)
+                    $browserNormalized,
+                    implode(', ', array_keys($this->supportedBrowsers))
                 )
             );
         }
 
+        // Set WebDriver browser identifier back to the argument value
+        $input->setArgument(self::ARGUMENT_BROWSER, $this->supportedBrowsers[$browserNormalized]);
+
         if ($output->isVerbose()) {
-            $output->writeln(sprintf('Browser: %s', $browser));
+            $output->writeln(sprintf('Browser: %s', $input->getArgument(self::ARGUMENT_BROWSER)));
             $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
         }
 

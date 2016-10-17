@@ -177,6 +177,9 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             case WebDriverBrowserType::CHROME:
                 $capabilities = $this->setupChromeCapabilities($capabilities);
                 break;
+            case WebDriverBrowserType::MICROSOFT_EDGE:
+                $capabilities = $this->setupMicrosoftEdgeCapabilities($capabilities);
+                break;
             case WebDriverBrowserType::IE:
                 $capabilities = $this->setupInternetExplorerCapabilities($capabilities);
                 break;
@@ -218,6 +221,16 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
      * @return DesiredCapabilities
      */
     protected function setupChromeCapabilities(DesiredCapabilities $capabilities)
+    {
+        return $capabilities;
+    }
+
+    /**
+     * Set up Microsoft Edge-specific capabilities
+     * @param DesiredCapabilities $capabilities
+     * @return DesiredCapabilities
+     */
+    protected function setupMicrosoftEdgeCapabilities(DesiredCapabilities $capabilities)
     {
         return $capabilities;
     }
