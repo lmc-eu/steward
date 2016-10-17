@@ -132,10 +132,14 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider browserNameProvider
      * @param string $browserName
+     * @param string $expectedNameInOutput
      * @param bool $shouldThrowException
      */
-    public function testShouldThrowExceptionIfUnsupportedBrowserSelected($browserName, $shouldThrowException)
-    {
+    public function testShouldThrowExceptionOnlyIfUnsupportedBrowserSelected(
+        $browserName,
+        $expectedNameInOutput,
+        $shouldThrowException
+    ) {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
 
@@ -157,7 +161,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         if (!$shouldThrowException) {
             $output = $this->tester->getDisplay();
-            $this->assertContains('Browser: ' . mb_strtolower($browserName), $output);
+            $this->assertContains('Browser: ' . $expectedNameInOutput, $output);
             $this->assertContains('No testcases found, exiting.', $output);
         }
     }
@@ -168,13 +172,15 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     public function browserNameProvider()
     {
         return [
-            // $browserName, $shouldThrowException
-            'firefox is supported' => ['firefox', false],
-            'chrome is supported' => ['chrome', false],
-            'phantomjs is supported' => ['phantomjs', false],
-            'browser name is case insensitive' => ['FIREFOX', false],
-            'not supported browser' => ['mosaic', true],
-            'unprintable character in browser name' => ['firefox​', true],
+            // $browserName, $expectedNameInOutput, $shouldThrowException
+            'firefox is supported' => ['firefox', 'firefox', false],
+            'chrome is supported' => ['chrome', 'chrome', false],
+            'phantomjs is supported' => ['phantomjs', 'phantomjs', false],
+            'MicrosoftEdge is supported' => ['MicrosoftEdge', 'MicrosoftEdge', false],
+            'MicrosoftEdge is supported in lowercase' => ['microsoftedge', 'MicrosoftEdge', false],
+            'browser name is case insensitive' => ['FIREFOX', 'firefox', false],
+            'not supported browser' => ['mosaic', null, true],
+            'unprintable character in browser name' => ['firefox​', null, true],
         ];
     }
 
