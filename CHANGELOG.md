@@ -4,31 +4,37 @@
 
 ## 2.0.0 - unreleased
 ### Removed
-- Support for PHP 5.5, minimal required version of PHP is now 5.6. Also the 5.5 version is [no longer supported](https://secure.php.net/supported-versions.php) by the upstream since July.
-- BC: Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2.
-- BC: `run-tests` alias of `run` command.
-- BC: Option `--publish-results` of run command. The default publishers and custom publishers defined in phpunit.xml will be always registered.
+- Support for PHP 5.5, minimal required version of PHP is now 5.6. Also the 5.5 version is [no longer supported](https://secure.php.net/supported-versions.php) by the upstream since July. ([#87](https://github.com/lmc-eu/steward/pull/87))
+- BC: Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2. ([#66](https://github.com/lmc-eu/steward/pull/66))
+- BC: `run-tests` alias of `run` command. ([#71](https://github.com/lmc-eu/steward/pull/71))
+- BC: Option `--publish-results` of run command. The default publishers and custom publishers defined in phpunit.xml will be always registered. ([#85](https://github.com/lmc-eu/steward/pull/85))
 
 ### Added
-- Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser).
-- Command `clean` to remove old content of logs directory (previous png screenshots, HTML snapshots and JUnit xmls).
-- Option `--capability` to `run` command which allows to simply pass any custom DesiredCapabilities to the WebDriver server.
-- Support for cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) - simply pass remote server URL (including credentials) using `--server-url`.
-- If [Sauce Labs](https://saucelabs.com/) or [TestingBot](https://testingbot.com/) is used as a remote cloud platform, test results are automatically published to their API.
+- Command `results` to show test results summary from the command line (CLI equivalent to viewing `results.xml` in a browser). ([#65](https://github.com/lmc-eu/steward/pull/65))
+- Command `clean` to remove old content of logs directory (previous png screenshots, HTML snapshots and JUnit xmls). ([#68](https://github.com/lmc-eu/steward/pull/68))
+- Option `--capability` to `run` command which allows to simply pass any custom DesiredCapabilities to the WebDriver server. ([#78](https://github.com/lmc-eu/steward/pull/78))
+- Support for cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) - simply pass remote server URL (including credentials) using `--server-url`. ([#78](https://github.com/lmc-eu/steward/pull/78), [#82](https://github.com/lmc-eu/steward/pull/82))
+- If [Sauce Labs](https://saucelabs.com/) or [TestingBot](https://testingbot.com/) is used as a remote cloud platform, test results are automatically published to their API. ([#78](https://github.com/lmc-eu/steward/pull/78), [#82](https://github.com/lmc-eu/steward/pull/82))
+- Microsoft Edge could be selected as a browser to run the tests. ([#95](https://github.com/lmc-eu/steward/pull/95))
 
 ### Changed
 - Content of directory with logs is cleaned before `run` command starts by default. This could be suppressed using `--no-clean` option of the `run` command. ([#63](https://github.com/lmc-eu/steward/issues/63))
 - Directory for logs is automatically created if it does not exist. ([#67](https://github.com/lmc-eu/steward/issues/67))
-- Process output printed to console (when using `-vv` or `-vvv`) is now prefixed with class name.
-- BC: Pass instance of current PHPUnit test as third parameter of `publishResult()` method of `AbstractPublisher` descendants.
-- Throw an exception if there are multiple testcase classes defined in one file.
-- Status of tests is checked every 100 ms instead of 1 second to speed up the execution loop.
+- Process output printed to console (when using `-vv` or `-vvv`) is now prefixed with class name. ([#62](https://github.com/lmc-eu/steward/issues/62), [#73](https://github.com/lmc-eu/steward/pull/73))
+- BC: Pass instance of current PHPUnit test as third parameter of `publishResult()` method of `AbstractPublisher` descendants. ([#78](https://github.com/lmc-eu/steward/pull/78))
+- Throw an exception if there are multiple testcase classes defined in one file. ([#79](https://github.com/lmc-eu/steward/pull/79))
+- Status of tests is checked every 100 ms instead of 1 second to speed up the execution loop. ([#93](https://github.com/lmc-eu/steward/pull/93))
 
 ### Fixed
 - Parsing of latest Selenium server version in `install` command so that even Selenium 3 beta releases are installed ([#76](https://github.com/lmc-eu/steward/pull/76))
 - Testcases that have zero delay defined (`@delayMinutes`) weren't properly added to the dependency graph, what causes multiple bugs:
     - Testcases were not marked as failed even though the test they were depending on has failed.
-    - It was not checked that the tests dependencies build a tree, ie. you could select (using `--group` etc.) subset of tests which will lead to an infinite wait in the execution loop. [#39](https://github.com/lmc-eu/steward/issues/39)
+    - It was not checked that the tests dependencies build a tree, ie. you could select (using `--group` etc.) subset of tests which will lead to an infinite wait in the execution loop. ([#39](https://github.com/lmc-eu/steward/issues/39))
+- Output from test processes may miss is last lines if debug verbosity (`-vvv`) was enabled. ([#93](https://github.com/lmc-eu/steward/pull/93))
+
+## 1.5.1 - 2016-08-02
+### Fixed
+- Parsing of latest Selenium server version in `install` command (due to Selenium 3.0.0-beta1 release). Selenium server version 2.x will be downloaded by default.
 
 ## 1.5.0 - 2016-05-05
 ### Added
