@@ -45,3 +45,7 @@ after_script:
 
 after_success:
   - travis_retry php vendor/bin/coveralls -v
+
+cache:
+  directories:
+    - $HOME/.composer/cache
