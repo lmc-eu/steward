@@ -48,6 +48,7 @@
  *      }
  * }
  */
+
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\ConfigProvider;
