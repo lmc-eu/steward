@@ -8,6 +8,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 {
     /** @var XmlPublisher */
     protected $publisher;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|\PHPUnit_Framework_Test */
+    protected $testInstanceMock;
 
     public function setUp()
     {
@@ -17,6 +19,8 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
 
         $this->publisher = new XmlPublisher();
+        $this->testInstanceMock = $this->getMockBuilder(\PHPUnit_Framework_Test::class)
+            ->getMock();
     }
 
     public static function tearDownAfterClass()
@@ -67,22 +71,29 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertFileNotExists($fn);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Tests status must be one of "started, done", but "unknownStatus" given
-     */
     public function testShouldNotAllowToPublishUnknownTestStatus()
     {
-        $this->publisher->publishResult('testCaseName', 'testName', 'unknownStatus');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Tests status must be one of "started, done", but "unknownStatus" given');
+
+        $this->publisher->publishResult('testCaseName', 'testName', $this->testInstanceMock, 'unknownStatus');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Tests result must be null or one of "passed, failed, broken, skipped, incomplete"
-     */
     public function testShouldNotAllowToPublishUnknownTestResult()
     {
-        $this->publisher->publishResult('testCaseName', 'testName', 'started', 'unknownResult');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Tests result must be null or one of "passed, failed, broken, skipped, incomplete", '
+            . 'but "unknownResult" given'
+        );
+
+        $this->publisher->publishResult(
+            'testCaseName',
+            'testName',
+            $this->testInstanceMock,
+            'started',
+            'unknownResult'
+        );
     }
 
     /**
@@ -92,7 +103,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = $this->createEmptyFile();
 
-        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'started');
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -128,7 +139,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         file_put_contents($fileName, $xml);
 
         $this->publisher->setFileName(basename($fileName));
-        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', 'done', 'passed');
+        $this->publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'done', 'passed');
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -196,10 +207,6 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($xml->testcase['end']);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Directory "/notexisting" does not exist or is not writeable.
-     */
     public function testShouldFailIfGivenDirectoryDoesNotExists()
     {
         $configValues = ConfigHelper::getDummyConfig();
@@ -208,7 +215,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
 
         $publisher = new XmlPublisher();
-        $publisher->publishResult('testCaseNameFoo', 'testNameBar', 'started');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Directory "/notexisting" does not exist or is not writeable.');
+
+        $publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'started');
     }
 
     public function testShouldNotOverwriteTestsWithSameName()
@@ -216,10 +227,22 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $fileName = $this->createEmptyFile();
 
         // create first record for testFoo
-        $this->publisher->publishResult('testCaseNameFoo', 'testFoo', 'done', XmlPublisher::TEST_RESULT_PASSED);
+        $this->publisher->publishResult(
+            'testCaseNameFoo',
+            'testFoo',
+            $this->testInstanceMock,
+            'done',
+            XmlPublisher::TEST_RESULT_PASSED
+        );
 
         // create first record for testFoo, but in different testcase
-        $this->publisher->publishResult('testCaseNameBar', 'testFoo', 'done', XmlPublisher::TEST_RESULT_PASSED);
+        $this->publisher->publishResult(
+            'testCaseNameBar',
+            'testFoo',
+            $this->testInstanceMock,
+            'done',
+            XmlPublisher::TEST_RESULT_PASSED
+        );
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -242,7 +265,12 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $fileName = $this->createEmptyFile();
 
         // Add "started" record of the test
-        $this->publisher->publishResult($testCaseName, $testName, XmlPublisher::TEST_STATUS_STARTED);
+        $this->publisher->publishResult(
+            $testCaseName,
+            $testName,
+            $this->testInstanceMock,
+            XmlPublisher::TEST_STATUS_STARTED
+        );
 
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
@@ -258,6 +286,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->publisher->publishResult(
             $testCaseName,
             $testName,
+            $this->testInstanceMock,
             XmlPublisher::TEST_STATUS_DONE,
             XmlPublisher::TEST_RESULT_PASSED
         );
@@ -291,11 +320,11 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
             'Named dataset' => ['testCase', 'testBar with data set "foo"'],
             'Dataset with double quotes in name' => [
                 'testCase',
-                'testBar with data set "Really <weird> chara&amp;cters"'
+                'testBar with data set "Really <weird> chara&amp;cters"',
             ],
             'Dataset with apostrophe in name (double quotes and apostrophes are combined in the whole name)' => [
                 'testCase',
-                'testBar with data set "Apostrophe \' in dataset name"'
+                'testBar with data set "Apostrophe \' in dataset name"',
             ],
             'Only apostrophes used in test name' => ['testCase', 'testBar with data set \'Foo\''],
         ];

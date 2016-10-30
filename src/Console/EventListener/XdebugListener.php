@@ -13,22 +13,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Adds option to use Xdebug remote debugger on run testcases (so you can add breakpoints, step the tests etc.).
  *
- * Remember, you must first install Xdebug and than set it up in php.ini (or xdebug.ini) in a similar way:
- * zend_extension=/path/to/xdebug.so
- * xdebug.remote_enable=1
- * xdebug.remote_handler=dbgp
- * xdebug.remote_mode=req
- * xdebug.remote_host=127.0.0.1
- * xdebug.remote_port=9000
- * (see http://xdebug.org/docs/remote for docs)
- *
- * Your IDE must then listen for incoming Xdebug connections on the same port and use the same IDE key.
- * Then start the `run` command with --xdebug option. For PHPStorm just use the default value ("phpstorm"),
- * for eg. NetBeans you must pass "--xdebug=netbeans". See docs of you IDE for more information.
- *
+ * @see https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward
  */
 class XdebugListener implements EventSubscriberInterface
 {
+    const OPTION_XDEBUG = 'xdebug';
+    const DOCS_URL = 'https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward';
+
     /** @var string */
     protected $xdebugIdeKey;
 
@@ -53,7 +44,7 @@ class XdebugListener implements EventSubscriberInterface
         }
 
         $event->getCommand()->addOption(
-            'xdebug',
+            self::OPTION_XDEBUG,
             null,
             InputOption::VALUE_OPTIONAL,
             'Start Xdebug debugger on tests; use given IDE key. Default value is used only if empty option is passed.',
@@ -73,18 +64,27 @@ class XdebugListener implements EventSubscriberInterface
 
         // Use the value of --xdebug only if the option was passed.
         // Don't apply the default if the option was not passed at all.
-        if ($input->getParameterOption('--xdebug') !== false) {
-            $this->xdebugIdeKey = $input->getOption('xdebug');
+        if ($input->getParameterOption('--' . self::OPTION_XDEBUG) !== false) {
+            $this->xdebugIdeKey = $input->getOption(self::OPTION_XDEBUG);
         }
 
         if ($this->xdebugIdeKey) {
             if (!extension_loaded('xdebug')) {
-                throw new \RuntimeException('Extension Xdebug is not loaded or installed');
+                throw new \RuntimeException(
+                    sprintf(
+                        'Extension Xdebug is not loaded or installed. See %s for help and more information.',
+                        self::DOCS_URL
+                    )
+                );
             }
 
             if (!ini_get('xdebug.remote_enable')) {
                 throw new \RuntimeException(
-                    'The xdebug.remote_enable directive must be true to enable remote debugging'
+                    sprintf(
+                        'The xdebug.remote_enable directive must be set to true to enable remote debugging. '
+                        . 'See %s for help and more information.',
+                        self::DOCS_URL
+                    )
                 );
             }
 

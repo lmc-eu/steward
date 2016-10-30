@@ -1,0 +1,10 @@
++-----------------+--------+--------+---------------------+----------+----------+
+| Testcase / test | Status | Result | Start time          | End time | Duration |
++-----------------+--------+--------+---------------------+----------+----------+
+| Foo\FataledTest | done   | fatal  |                     |          |          |
+|  - testFataled  |        | fatal  | 2016-04-29 12:58:48 | -        |          |
++-----------------+--------+--------+---------------------+----------+----------+
+Testcases (1 total): prepared: 0, running: 0, done: 1 (passed: 0, failed: 0, fatal: 1)
+Tests (1 total): started: 1, done: 0 (passed: 0, failed or broken: 0, skipped or incomplete: 0)
+
+1/1 testcases done [======================================================================] 100%

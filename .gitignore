@@ -5,11 +5,7 @@ vendor
 logs
 src-tests/logs/
 src-tests/coverage/
+.php_cs.cache
 
 # Ignore composer.lock because when installed as dependency, it does not affect anything either
 composer.lock
-
-# IDE files
-.idea
-*.iml
-nbproject

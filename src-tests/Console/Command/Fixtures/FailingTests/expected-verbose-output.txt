@@ -1,0 +1,10 @@
+Steward UNKNOWN is running the tests...%S
+Browser: firefox
+Environment: staging
+
+[%s] Waiting (running: 1, queued: 1, done: 0)%A
+[%s] Testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest" failed
+[%s] Failing testcase "Lmc\Steward\Console\Command\Fixtures\FailingTests\DependantTest", because it was depending on failed "Lmc\Steward\Console\Command\Fixtures\FailingTests\FailingTest"
+[%s] Waiting (running: 0, queued: 0, done: 2 [failed: 2])
+[%s] All testcases done
+%A[ERROR] Testcases executed: 2 (failed: 2)%A

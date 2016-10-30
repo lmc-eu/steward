@@ -3,9 +3,9 @@
 namespace Lmc\Steward\Process;
 
 use Assert\Assertion;
+use Fhaculty\Graph\Graph;
 use Fhaculty\Graph\Vertex;
 use Graphp\Algorithms\Tree\OutTree;
-use Fhaculty\Graph\Graph;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -28,7 +28,6 @@ class ProcessSet implements \Countable
 
     /** @var OutTree */
     protected $tree;
-
 
     /**
      * Instantiate processSet to manage processes in different states,
@@ -150,9 +149,9 @@ class ProcessSet implements \Countable
             foreach ($this->processes as $className => $processWrapper) {
                 $vertex = $this->graph->getVertex($className);
 
-                if (!$processWrapper->getDelayMinutes()) { // process doesn't depend on anything => link it to the root
+                if (is_null($processWrapper->getDelayMinutes())) { // doesn't depend on anything => link it to the root
                     $root->createEdgeTo($vertex)->setWeight(0);
-                } else { // link process to its dependency
+                } else { // is dependant => link it to its dependency
                     // Throw error if dependency is to not existing vertex
                     if (!$this->graph->hasVertex($processWrapper->getDelayAfter())) {
                         throw new \InvalidArgumentException(

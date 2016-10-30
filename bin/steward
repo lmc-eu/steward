@@ -3,11 +3,13 @@
 
 namespace Lmc\Steward;
 
-use Symfony\Component\Console\Application;
+use Lmc\Steward\Console\Command\CleanCommand;
 use Lmc\Steward\Console\Command\InstallCommand;
+use Lmc\Steward\Console\Command\ResultsCommand;
 use Lmc\Steward\Console\Command\RunCommand;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
+use Symfony\Component\Console\Application;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 function requireIfExists($file)
 {
@@ -32,12 +34,10 @@ if (strpos(__DIR__, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== fa
     define('STEWARD_BASE_DIR', realpath(__DIR__ . '/..'));
 }
 
-require_once __DIR__ . '/../src/init_webdriver_aliases.php';
-
 date_default_timezone_set('Europe/Prague');
 
 $dispatcher = new EventDispatcher();
-$application = new Application('Steward', '1.5.1');
+$application = new Application('Steward', '2.0.0-DEV');
 $application->setDispatcher($dispatcher);
 
 // Search for listeners and attach them to dispatcher
@@ -46,7 +46,9 @@ $application->setDispatcher($dispatcher);
 // Add Commands with injected EventDispatcher to the main console Application
 $application->addCommands(
     [
+        new CleanCommand($dispatcher),
         new RunCommand($dispatcher),
+        new ResultsCommand($dispatcher),
         new InstallCommand($dispatcher),
     ]
 );

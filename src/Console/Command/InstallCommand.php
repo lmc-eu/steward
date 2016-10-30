@@ -5,10 +5,11 @@ namespace Lmc\Steward\Console\Command;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
+use OndraM\CiDetector;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -26,24 +27,12 @@ class InstallCommand extends Command
     protected $targetDir = '/vendor/bin';
 
     /**
+     * @internal
      * @param Downloader $downloader
      */
     public function setDownloader(Downloader $downloader)
     {
         $this->downloader = $downloader;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     * @return Downloader
-     */
-    public function getDownloader()
-    {
-        if (!$this->downloader) {
-            $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir);
-        }
-
-        return $this->downloader;
     }
 
     /**
@@ -87,7 +76,7 @@ class InstallCommand extends Command
 
             $questionText = '<question>Enter Selenium server version to install:</question> ';
 
-            if ($latestVersion) {
+            if (!empty($latestVersion)) {
                 $question = new Question($questionText . "[$latestVersion] ", $latestVersion);
             } else { // Error auto-detecting latest version
                 $latestVersionErrorMsg = 'Please provide version to download (latest version auto-detect failed)';
@@ -118,7 +107,7 @@ class InstallCommand extends Command
                 sprintf(
                     '<info>Steward</info> <comment>%s</comment> is now downloading the Selenium standalone server...%s',
                     $this->getApplication()->getVersion(),
-                    (!$this->isCi() ? ' Just for you <fg=red><3</fg=red>!' : '')
+                    (!CiDetector::detect() ? ' Just for you <fg=red><3</fg=red>!' : '')
                 )
             );
         }
@@ -145,6 +134,7 @@ class InstallCommand extends Command
             } else {
                 $output->writeln($targetPath); // In non-verbose mode only output path to the file
             }
+
             return 0;
         }
 
@@ -156,6 +146,7 @@ class InstallCommand extends Command
 
         if (!$downloadedSize) {
             $output->writeln('<error>Error downloading file :-(</error>');
+
             return 1;
         }
 
@@ -167,5 +158,18 @@ class InstallCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @return Downloader
+     */
+    protected function getDownloader()
+    {
+        if (!$this->downloader) {
+            $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir);
+        }
+
+        return $this->downloader;
     }
 }

@@ -47,23 +47,21 @@
  *          $data = $legacy->load();
  *      }
  * }
- *
  */
 
 namespace Lmc\Steward\Component;
 
-use Lmc\Steward\Test\AbstractTestCaseBase;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Test\AbstractTestCaseBase;
 use Nette\Utils\Strings;
 
 /**
- * Create instance of new Legacy.
- * Legacy allows you to share data between test-cases and phases of tests.
+ * Legacy component allows you to share data between test-cases and phases of tests.
  */
 class Legacy extends AbstractComponent
 {
-    const LEGACY_TYPE_CASE = "CASE";
-    const LEGACY_TYPE_TEST = "TEST";
+    const LEGACY_TYPE_CASE = 'CASE';
+    const LEGACY_TYPE_TEST = 'TEST';
 
     /** @var string */
     protected $testClassName;
@@ -74,10 +72,6 @@ class Legacy extends AbstractComponent
     /** @var string */
     protected $fileDir;
 
-    /**
-     * Create Legacy instance
-     * @param AbstractTestCaseBase $tc TestCase instance
-     */
     public function __construct(AbstractTestCaseBase $tc)
     {
         parent::__construct($tc);
@@ -89,11 +83,12 @@ class Legacy extends AbstractComponent
 
         $this->testClassName = get_class($tc);
 
-        $this->log('New legacy instantiated in class "%s"', $this->testClassName);
+        $this->log('New Legacy instantiated in class "%s"', $this->testClassName);
     }
 
     /**
      * Set directory where results file should be stored. Usable eg. when LOGS_DIR constant was not set.
+     *
      * @param string $dir
      */
     public function setFileDir($dir)
@@ -103,10 +98,11 @@ class Legacy extends AbstractComponent
 
     /**
      * Generates a filename (without path and extension) for the legacy based on the name of the test-case
-     * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
+     *
+     * @param string $type LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
-     * @return string
      * @throws LegacyException
+     * @return string
      */
     protected function getLegacyName($type)
     {
@@ -114,7 +110,7 @@ class Legacy extends AbstractComponent
 
         if (!preg_match('/Phase\d/', $name)) {
             throw new LegacyException(
-                "Cannot generate legacy name from class without 'Phase' followed by number in name " . $name
+                "Cannot generate Legacy name from class without 'Phase' followed by number in name " . $name
             );
         }
 
@@ -130,7 +126,8 @@ class Legacy extends AbstractComponent
 
     /**
      * Gets a path to file with legacy data
-     * @param $filename
+     *
+     * @param string $filename
      * @return string
      */
     protected function getLegacyFullPath($filename)
@@ -140,7 +137,8 @@ class Legacy extends AbstractComponent
 
     /**
      * Store legacy of test under a custom name
-     * @param $data
+     *
+     * @param mixed $data
      * @param string $legacyName filename to store the data if null getLegacyFilename is called to generate filename
      *      from the test class name
      * @throws LegacyException
@@ -148,19 +146,19 @@ class Legacy extends AbstractComponent
     public function saveWithName($data, $legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
-        $this->log('Saving data as legacy "%s" to file "%s"', $legacyName, $filename);
+        $this->log('Saving data as Legacy "%s" to file "%s"', $legacyName, $filename);
         $this->debug('Legacy data: %s', $this->getPrintableValue($data));
 
         if (@file_put_contents($filename, serialize($data)) === false) {
-            throw new LegacyException("Cannot save legacy to file " . $filename);
+            throw new LegacyException('Cannot save Legacy to file ' . $filename);
         }
     }
 
     /**
-     * Store legacy of test getLegacyFilename is called to generate filename
-     *      from the test class name
-     * @param $data
-     * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
+     * Store legacy of test getLegacyFilename is called to generate filename from the test class name
+     *
+     * @param mixed $data
+     * @param string $type LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @throws LegacyException
      */
@@ -170,13 +168,13 @@ class Legacy extends AbstractComponent
     }
 
     /**
-     * Reads legacy of test getLegacyFilename is called to generate filename
-     * from the test class name.
-     * raises exception if it is not found
-     * @param $type string LEGACY_TYPE_CASE (shared by all tests in test case)
+     * Reads legacy of test getLegacyFilename is called to generate filename from the test class name.
+     * Raises exception if it is not found.
+     *
+     * @param string $type LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
-     * @return mixed
      * @throws LegacyException
+     * @return mixed
      */
     public function load($type = self::LEGACY_TYPE_CASE)
     {
@@ -184,26 +182,27 @@ class Legacy extends AbstractComponent
     }
 
     /**
-     * Reads legacy specified by custom name
-     * raises exception if it is not found
+     * Reads legacy specified by custom name.
+     * Raises exception if it is not found.
+     *
      * @param string $legacyName filename to store the data from the test class name
-     * @return mixed
      * @throws LegacyException
+     * @return mixed
      */
     public function loadWithName($legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
 
-        $this->log('Reading legacy "%s" from file "%s"', $legacyName, $filename);
+        $this->log('Reading Legacy "%s" from file "%s"', $legacyName, $filename);
 
         $data = @file_get_contents($filename);
         if ($data === false) {
-            throw new LegacyException("Cannot read legacy file " . $filename);
+            throw new LegacyException('Cannot read Legacy file ' . $filename);
         }
 
         $legacy = unserialize($data);
         if ($legacy === false) {
-            throw new LegacyException("Cannot parse legacy from file " . $filename);
+            throw new LegacyException('Cannot parse Legacy from file ' . $filename);
         }
 
         $this->debug('Legacy data: %s', $this->getPrintableValue($legacy));

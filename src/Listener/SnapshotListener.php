@@ -4,8 +4,8 @@ namespace Lmc\Steward\Listener;
 
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Test\AbstractTestCase;
 use Nette\Utils\Strings;
 
 /**
@@ -44,6 +44,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
 
         if (!$test->wd instanceof RemoteWebDriver) {
             $test->warn('WebDriver instance not found, cannot take snapshot.');
+
             return;
         }
 
@@ -64,6 +65,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
             $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
         } catch (WebDriverException $e) {
             $test->appendTestLog('Error taking page snapshot, perhaps browser is not accessible?');
+
             return;
         }
     }
@@ -72,7 +74,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      * Get url based on relative path of specific snapshot.
      * In our implementation we prepend artifact's URL to given relative path to make it clickable in Jenkins output.
      *
-     * @param $path
+     * @param string $path
      * @return string
      */
     protected function getSnapshotUrl($path)
@@ -83,7 +85,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
                 // from absolute path, remove workspace
                 $path = str_replace(getenv('WORKSPACE'), '', $realPath);
                 // prepend url to artifact
-                $path = getenv('BUILD_URL') . "artifact/" . $path;
+                $path = getenv('BUILD_URL') . 'artifact/' . $path;
             }
         }
 

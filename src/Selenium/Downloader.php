@@ -23,28 +23,28 @@ class Downloader
     }
 
     /**
-     * Get latest released version of Selenium server. If not found, false is returned.
-     * @return string|false
+     * Get latest released version of Selenium server. If not found, null is returned.
+     * @return string|null
      */
     public static function getLatestVersion()
     {
         $data = @file_get_contents(self::$storageUrl);
         if (!$data) {
-            return false;
+            return null;
         }
 
         libxml_use_internal_errors(true); // disable errors from being thrown
         $xml = simplexml_load_string($data);
         if (!$xml) {
-            return false;
+            return null;
         }
 
-        $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone-2")]]');
+        $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
         $lastRelease = end($releases); // something like "2.42/selenium-server-standalone-2.42.2.jar"
 
         $lastVersion = preg_replace('/.*standalone-(.*)\.jar/', '$1', $lastRelease);
         if ($lastRelease == $lastVersion) { // regexp not matched
-            return false;
+            return null;
         }
 
         return $lastVersion;
@@ -60,7 +60,7 @@ class Downloader
 
     /**
      * Get version that should be downloaded; if not set, attempt to retrieve latest released version
-     * @return false|string
+     * @return string|null
      */
     public function getVersion()
     {
@@ -96,7 +96,15 @@ class Downloader
     public function getFileUrl()
     {
         $versionParts = explode('.', $this->getVersion());
-        $fileUrl = self::$storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1] . '/' . $this->getFileName();
+
+        $devVersion = '';
+        if (preg_match('/(\d+)-([[:alnum:]]+)/', $versionParts[2], $matches)) {
+            $devVersion = $matches[2];
+        }
+
+        $fileUrl = self::$storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1]
+            . (!empty($devVersion) ? '-' . $devVersion : '')
+            . '/' . $this->getFileName();
 
         return $fileUrl;
     }

@@ -8,12 +8,12 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
+use phpmock\phpunit\PHPMock;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use phpmock\phpunit\PHPMock;
 use Symfony\Component\Process\ProcessBuilder;
 
 /**
@@ -54,7 +54,7 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
         $optionsWithXdebug = $command->getDefinition()->getOptions();
 
         $this->assertCount(count($optionsOriginal) + 1, $optionsWithXdebug);
-        $this->assertArrayHasKey('xdebug', $optionsWithXdebug);
+        $this->assertArrayHasKey(XdebugListener::OPTION_XDEBUG, $optionsWithXdebug);
     }
 
     public function testShouldNotAddXdebugOptionToDifferentCommand()
@@ -114,10 +114,6 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Extension Xdebug is not loaded or installed
-     */
     public function testShouldFailWhenXdebugExtensionIsNotLoaded()
     {
         $this->mockXdebugExtension($isExtensionLoaded = false, $isRemoteEnabled = false);
@@ -129,13 +125,12 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
             new BufferedOutput()
         );
 
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Extension Xdebug is not loaded or installed');
+
         $this->listener->onCommandRunTestsInit($event);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The xdebug.remote_enable directive must be true to enable remote debugging
-     */
     public function testShouldFailWhenXdebugExtensionIsLoadedButRemoteDebugIsNotEnabled()
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = false);
@@ -145,6 +140,11 @@ class XdebugListenerTest extends \PHPUnit_Framework_TestCase
             $command,
             new StringInput('env firefox --xdebug'),
             new BufferedOutput()
+        );
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
+            'The xdebug.remote_enable directive must be set to true to enable remote debugging.'
         );
 
         $this->listener->onCommandRunTestsInit($event);

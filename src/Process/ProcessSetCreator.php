@@ -8,9 +8,11 @@ use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Nette\Reflection\AnnotationsParser;
 use Nette\Utils\Strings;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -60,8 +62,8 @@ class ProcessSetCreator
      */
     public function createFromFiles(
         Finder $files,
-        array $groups = null,
-        array $excludeGroups = null,
+        array $groups,
+        array $excludeGroups,
         $filter = null,
         $ignoreDelays = false
     ) {
@@ -69,48 +71,28 @@ class ProcessSetCreator
         $processSet = $this->getProcessSet();
 
         if ($this->output->isVeryVerbose()) {
-            if ($groups || $excludeGroups || $filter) {
+            if (!empty($groups) || !empty($excludeGroups) || !empty($filter)) {
                 $this->output->writeln('Filtering testcases:');
             }
-            if ($groups) {
+            if (!empty($groups)) {
                 $this->output->writeln(sprintf(' - by group(s): %s', implode(', ', $groups)));
             }
-            if ($excludeGroups) {
+            if (!empty($excludeGroups)) {
                 $this->output->writeln(sprintf(' - excluding group(s): %s', implode(', ', $excludeGroups)));
             }
-            if ($filter) {
+            if (!empty($filter)) {
                 $this->output->writeln(sprintf(' - by testcase/test name: %s', $filter));
             }
         }
 
         $testCasesNum = 0;
+        /** @var SplFileInfo $file */
         foreach ($files as $file) {
-            $fileName = $file->getRealpath();
-            // Parse classes from the testcase file
-            $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
+            $fileName = $file->getRealPath();
+            $className = $this->getClassNameFromFile($fileName);
+            $annotations = $this->getClassAnnotations($className, $fileName);
 
-            if (empty($classes)) {
-                throw new \RuntimeException(sprintf('No class found in file "%s"', $fileName));
-            }
-
-            // Get annotations for the first class in testcase (one file = one class)
-            try {
-                $annotations = AnnotationsParser::getAll(new \ReflectionClass(key($classes)));
-            } catch (\ReflectionException $e) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'Error loading class "%s" from file "%s". Make sure the class name and namespace matches '
-                        . 'the file path.',
-                        key($classes),
-                        $fileName
-                    )
-                );
-            }
-
-            // Filter out test-cases having any of excluded groups
-            if ($excludeGroups && array_key_exists('group', $annotations)
-                && count($excludingGroups = array_intersect($excludeGroups, $annotations['group']))
-            ) {
+            if ($excludingGroups = $this->getExcludingGroups($excludeGroups, $annotations)) {
                 $this->output->writeln(
                     sprintf('Excluding testcase file %s with group %s', $fileName, implode(', ', $excludingGroups)),
                     OutputInterface::VERBOSITY_DEBUG
@@ -119,7 +101,7 @@ class ProcessSetCreator
             }
 
             // Filter out test-cases without any matching group
-            if ($groups) {
+            if (!empty($groups)) {
                 if (!array_key_exists('group', $annotations)
                     || !count($matchingGroups = array_intersect($groups, $annotations['group']))
                 ) {
@@ -144,12 +126,12 @@ class ProcessSetCreator
 
             $phpunitArgs = [
                 '--log-junit=logs/'
-                . Strings::webalize(key($classes), null, $lower = false)
+                . Strings::webalize($className, null, $lower = false)
                 . '.xml',
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
             ];
 
-            if ($filter) {
+            if (!empty($filter)) {
                 $phpunitArgs[] = '--filter=' . $filter;
             }
 
@@ -158,7 +140,6 @@ class ProcessSetCreator
                 $phpunitArgs[] = '--colors=always';
             }
 
-            $className = key($classes);
             $processWrapper = new ProcessWrapper(
                 $this->buildProcess($fileName, $phpunitArgs),
                 $className,
@@ -166,20 +147,7 @@ class ProcessSetCreator
             );
 
             if (!$ignoreDelays) {
-                $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
-                $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
-                if ($delayAfter) {
-                    $processWrapper->setDelay($delayAfter, $delayMinutes);
-                } elseif ($delayMinutes !== null && empty($delayAfter)) {
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            'Testcase "%s" has defined delay %d minutes, '
-                            . 'but doesn\'t have defined the testcase to run after',
-                            $className,
-                            $delayMinutes
-                        )
-                    );
-                }
+                $this->setupProcessDelays($processWrapper, $annotations);
             }
 
             $processSet->add($processWrapper);
@@ -211,20 +179,19 @@ class ProcessSetCreator
             )
         );
 
-        $process = $processBuilder
-            ->setEnv('BROWSER_NAME', $this->input->getArgument('browser'))
-            ->setEnv('ENV', strtolower($this->input->getArgument('environment')))
-            ->setEnv('SERVER_URL', $this->input->getOption('server-url'))
-            ->setEnv('PUBLISH_RESULTS', $this->input->getOption('publish-results') ? '1' : '0')
-            ->setEnv('FIXTURES_DIR', $this->input->getOption('fixtures-dir'))
-            ->setEnv('LOGS_DIR', $this->input->getOption('logs-dir'))
+        $processBuilder
+            ->setEnv('BROWSER_NAME', $this->input->getArgument(RunCommand::ARGUMENT_BROWSER))
+            ->setEnv('ENV', mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
+            ->setEnv('CAPABILITY', $this->encodeCapabilties($this->input->getOption(RunCommand::OPTION_CAPABILITY)))
+            ->setEnv('SERVER_URL', $this->input->getOption(RunCommand::OPTION_SERVER_URL))
+            ->setEnv('FIXTURES_DIR', $this->input->getOption(RunCommand::OPTION_FIXTURES_DIR))
+            ->setEnv('LOGS_DIR', $this->input->getOption(RunCommand::OPTION_LOGS_DIR))
             ->setEnv('DEBUG', $this->output->isDebug() ? '1' : '0')
             ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
             ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
-            ->setTimeout(3600) // 1 hour timeout to end possibly stuck processes
-            ->getProcess();
+            ->setTimeout(3600); // 1 hour timeout to end possibly stuck processes
 
-        return $process;
+        return $processBuilder->getProcess();
     }
 
     /**
@@ -238,5 +205,127 @@ class ProcessSetCreator
         }
 
         return $this->processSet;
+    }
+
+    /**
+     * Encode capabilities to JSON string
+     *
+     * @param array $capabilities
+     * @return string
+     */
+    private function encodeCapabilties(array $capabilities)
+    {
+        $outputCapabilities = [];
+
+        foreach ($capabilities as $capability) {
+            $parts = explode(':', $capability);
+            if (empty($parts[0]) || empty($parts[1])) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Capability must be given in format "capabilityName:value" but "%s" was given',
+                        $capability
+                    )
+                );
+            }
+
+            $outputCapabilities[$parts[0]] = $parts[1];
+        }
+
+        return json_encode($outputCapabilities);
+    }
+
+    /**
+     * Get array of groups that cause this class to be excluded.
+     *
+     * @param array $excludeGroups
+     * @param array $annotations
+     * @return array Empty if class should not be excluded.
+     */
+    private function getExcludingGroups(array $excludeGroups, array $annotations)
+    {
+        $excludingGroups = [];
+
+        if (!empty($excludeGroups) && array_key_exists('group', $annotations)) {
+            if (!empty(array_intersect($excludeGroups, $annotations['group']))) {
+                $excludingGroups = array_intersect($excludeGroups, $annotations['group']);
+            }
+        }
+
+        return $excludingGroups;
+    }
+
+    /**
+     * @param $fileName
+     * @return string
+     */
+    private function getClassNameFromFile($fileName)
+    {
+        // Parse classes from the testcase file
+        $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
+
+        if (empty($classes)) {
+            throw new \RuntimeException(sprintf('No class found in file "%s"', $fileName));
+        }
+
+        if (count($classes) > 1) {
+            throw new \RuntimeException(
+                sprintf(
+                    'File "%s" contains definition of %d classes. However, each class must be defined in its own'
+                    . ' separate file.',
+                    $fileName,
+                    count($classes)
+                )
+            );
+        }
+
+        return key($classes);
+    }
+
+    /**
+     * @param ProcessWrapper $processWrapper
+     * @param array $annotations
+     */
+    private function setupProcessDelays(ProcessWrapper $processWrapper, array $annotations)
+    {
+        $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
+        $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
+
+        if ($delayAfter) {
+            $processWrapper->setDelay($delayAfter, $delayMinutes);
+        } elseif ($delayMinutes !== null && empty($delayAfter)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Testcase "%s" has defined delay %d minutes, '
+                    . 'but doesn\'t have defined the testcase to run after',
+                    $processWrapper->getClassName(),
+                    $delayMinutes
+                )
+            );
+        }
+    }
+
+    /**
+     * Get annotations for the first class in testcase (one file = one class)
+     *
+     * @param string $className
+     * @param string $fileName
+     * @return array
+     */
+    private function getClassAnnotations($className, $fileName)
+    {
+        try {
+            $annotations = AnnotationsParser::getAll(new \ReflectionClass($className));
+
+            return $annotations;
+        } catch (\ReflectionException $e) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Error loading class "%s" from file "%s". Make sure the class name and namespace matches '
+                    . 'the file path.',
+                    $className,
+                    $fileName
+                )
+            );
+        }
     }
 }

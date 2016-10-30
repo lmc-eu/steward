@@ -2,9 +2,13 @@
 
 namespace Lmc\Steward\Listener;
 
-use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Process\ProcessWrapper;
+use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Publisher\SauceLabsPublisher;
+use Lmc\Steward\Publisher\TestingBotPublisher;
+use Lmc\Steward\Publisher\XmlPublisher;
+use Lmc\Steward\Selenium\SeleniumServerAdapter;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.
@@ -14,23 +18,32 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
     /** @var AbstractPublisher[] $publishers */
     protected $publishers = [];
 
-    /** @var string $startDate */
+    /** @var \DateTimeInterface $startDate */
     protected $startDate;
 
     /**
-     * @param array $testPublishers Array of fully qualified names of AbstractPublisher classes
+     * @param string[] $customTestPublishers Array of fully qualified names of AbstractPublisher classes
+     * @param SeleniumServerAdapter $seleniumServerAdapter Inject SeleniumServerAdapter. Used only for tests.
      */
-    public function __construct(array $testPublishers)
+    public function __construct(array $customTestPublishers, SeleniumServerAdapter $seleniumServerAdapter = null)
     {
         $config = ConfigProvider::getInstance();
+        if (is_null($seleniumServerAdapter)) {
+            $seleniumServerAdapter = new SeleniumServerAdapter($config->serverUrl);
+        }
 
         // always register XmlPublisher
-        $publishersToRegister[] = 'Lmc\\Steward\\Publisher\\XmlPublisher';
+        $publishersToRegister = [XmlPublisher::class];
 
-        // other publishers register only if $config->publishResults is true
-        if ($config->publishResults) {
-            $publishersToRegister = array_merge($publishersToRegister, $testPublishers);
+        // If current server is SauceLabs/TestingBot, autoregister its publisher
+        if ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {
+            $publishersToRegister[] = SauceLabsPublisher::class;
+        } elseif ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT) {
+            $publishersToRegister[] = TestingBotPublisher::class;
         }
+
+        // register custom publishers
+        $publishersToRegister = array_merge($publishersToRegister, $customTestPublishers);
 
         foreach ($publishersToRegister as $publisherClass) {
             if (!class_exists($publisherClass)) {
@@ -49,7 +62,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 );
             }
             if ($config->debug) {
-                printf('[%s]: Registering test results publisher "%s"' . "\n", date("Y-m-d H:i:s"), $publisherClass);
+                printf('[%s]: Registering test results publisher "%s"' . "\n", date('Y-m-d H:i:s'), $publisherClass);
             }
             $this->publishers[] = $publisher;
         }
@@ -71,12 +84,13 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 $publisher->publishResult(
                     get_class($test),
                     $test->getName(),
+                    $test,
                     $status = AbstractPublisher::TEST_STATUS_STARTED
                 );
             } catch (\Exception $e) {
                 printf(
                     '[%s] [WARN]: Error publishing test started status to "%s" ("%s")' . "\n",
-                    date("Y-m-d H:i:s"),
+                    date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
                 );
@@ -95,6 +109,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
                 $publisher->publishResult(
                     get_class($test),
                     $test->getName(),
+                    $test,
                     $status = AbstractPublisher::TEST_STATUS_DONE,
                     $result = AbstractPublisher::$testResultsMap[$test->getStatus()],
                     $test->getStatusMessage()
@@ -102,7 +117,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             } catch (\Exception $e) {
                 printf(
                     '[%s] [WARN]: Error publishing test done status to "%s" ("%s")' . "\n",
-                    date("Y-m-d H:i:s"),
+                    date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
                 );
@@ -129,7 +144,7 @@ class TestStatusListener extends \PHPUnit_Framework_BaseTestListener
             } catch (\Exception $e) {
                 printf(
                     '[%s] [WARN]: Error publishing process done status to "%s" ("%s")' . "\n",
-                    date("Y-m-d H:i:s"),
+                    date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
                 );

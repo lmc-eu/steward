@@ -1,0 +1,153 @@
+{
+  "status": 13,
+  "value": {
+    "message": "Session [(null externalkey)] not available and is not among the last 1000 terminated sessions.\nActive sessions are[]",
+    "class": "org.openqa.grid.common.exception.GridException",
+    "stackTrace": [
+      {
+        "fileName": "ActiveTestSessions.java",
+        "className": "org.openqa.grid.internal.ActiveTestSessions",
+        "methodName": "getExistingSession",
+        "lineNumber": 110
+      },
+      {
+        "fileName": "Registry.java",
+        "className": "org.openqa.grid.internal.Registry",
+        "methodName": "getExistingSession",
+        "lineNumber": 425
+      },
+      {
+        "fileName": "RequestHandler.java",
+        "className": "org.openqa.grid.web.servlet.handler.RequestHandler",
+        "methodName": "getSession",
+        "lineNumber": 240
+      },
+      {
+        "fileName": "RequestHandler.java",
+        "className": "org.openqa.grid.web.servlet.handler.RequestHandler",
+        "methodName": "process",
+        "lineNumber": 120
+      },
+      {
+        "fileName": "DriverServlet.java",
+        "className": "org.openqa.grid.web.servlet.DriverServlet",
+        "methodName": "process",
+        "lineNumber": 83
+      },
+      {
+        "fileName": "DriverServlet.java",
+        "className": "org.openqa.grid.web.servlet.DriverServlet",
+        "methodName": "doGet",
+        "lineNumber": 61
+      },
+      {
+        "fileName": "HttpServlet.java",
+        "className": "javax.servlet.http.HttpServlet",
+        "methodName": "service",
+        "lineNumber": 687
+      },
+      {
+        "fileName": "HttpServlet.java",
+        "className": "javax.servlet.http.HttpServlet",
+        "methodName": "service",
+        "lineNumber": 790
+      },
+      {
+        "fileName": "ServletHolder.java",
+        "className": "org.seleniumhq.jetty9.servlet.ServletHolder",
+        "methodName": "handle",
+        "lineNumber": 808
+      },
+      {
+        "fileName": "ServletHandler.java",
+        "className": "org.seleniumhq.jetty9.servlet.ServletHandler",
+        "methodName": "doHandle",
+        "lineNumber": 587
+      },
+      {
+        "fileName": "SessionHandler.java",
+        "className": "org.seleniumhq.jetty9.server.session.SessionHandler",
+        "methodName": "doHandle",
+        "lineNumber": 221
+      },
+      {
+        "fileName": "ContextHandler.java",
+        "className": "org.seleniumhq.jetty9.server.handler.ContextHandler",
+        "methodName": "doHandle",
+        "lineNumber": 1127
+      },
+      {
+        "fileName": "ServletHandler.java",
+        "className": "org.seleniumhq.jetty9.servlet.ServletHandler",
+        "methodName": "doScope",
+        "lineNumber": 515
+      },
+      {
+        "fileName": "SessionHandler.java",
+        "className": "org.seleniumhq.jetty9.server.session.SessionHandler",
+        "methodName": "doScope",
+        "lineNumber": 185
+      },
+      {
+        "fileName": "ContextHandler.java",
+        "className": "org.seleniumhq.jetty9.server.handler.ContextHandler",
+        "methodName": "doScope",
+        "lineNumber": 1061
+      },
+      {
+        "fileName": "ScopedHandler.java",
+        "className": "org.seleniumhq.jetty9.server.handler.ScopedHandler",
+        "methodName": "handle",
+        "lineNumber": 141
+      },
+      {
+        "fileName": "HandlerWrapper.java",
+        "className": "org.seleniumhq.jetty9.server.handler.HandlerWrapper",
+        "methodName": "handle",
+        "lineNumber": 97
+      },
+      {
+        "fileName": "Server.java",
+        "className": "org.seleniumhq.jetty9.server.Server",
+        "methodName": "handle",
+        "lineNumber": 499
+      },
+      {
+        "fileName": "HttpChannel.java",
+        "className": "org.seleniumhq.jetty9.server.HttpChannel",
+        "methodName": "handle",
+        "lineNumber": 310
+      },
+      {
+        "fileName": "HttpConnection.java",
+        "className": "org.seleniumhq.jetty9.server.HttpConnection",
+        "methodName": "onFillable",
+        "lineNumber": 257
+      },
+      {
+        "fileName": "AbstractConnection.java",
+        "className": "org.seleniumhq.jetty9.io.AbstractConnection$2",
+        "methodName": "run",
+        "lineNumber": 540
+      },
+      {
+        "fileName": "QueuedThreadPool.java",
+        "className": "org.seleniumhq.jetty9.util.thread.QueuedThreadPool",
+        "methodName": "runJob",
+        "lineNumber": 635
+      },
+      {
+        "fileName": "QueuedThreadPool.java",
+        "className": "org.seleniumhq.jetty9.util.thread.QueuedThreadPool$3",
+        "methodName": "run",
+        "lineNumber": 555
+      },
+      {
+        "fileName": "Thread.java",
+        "className": "java.lang.Thread",
+        "methodName": "run",
+        "lineNumber": 745
+      }
+    ]
+  }
+}

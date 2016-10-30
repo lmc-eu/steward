@@ -1,0 +1,59 @@
+Steward UNKNOWN is running the tests...%S
+Browser: firefox
+Environment: staging
+Base path to fixtures results: %s/tests
+Path to logs: %s/logs
+Ignore delays: no
+Selenium server (hub) url: %s, trying connection...OK
+Searching for testcases:
+ - in directory "%s/src-tests/Console/Command/Fixtures/SimpleTests"
+ - by pattern "*Test.php"
+Found testcase file #1: %s/DependantTest.php
+Found testcase file #2: %s/SimpleTest.php
+Testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" is queued to be run 0.0 minutes after testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" is finished
+Testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" is prepared to be run
+%aStarting execution of testcases
+-------------------------------
+[%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" started with command:
+'%s/vendor/bin/phpunit' '--log-junit=logs/Lmc-Steward-Console-Command-Fixtures-SimpleTests-SimpleTest.xml' '--configuration=%s/phpunit.xml' '%s/SimpleTest.php'%A
+[%s] Waiting (running: 1, queued: 1, done: 0)%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: Registering test results publisher "Lmc\Steward\Publisher\XmlPublisher"%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: Initializing "firefox" WebDriver for "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest::testWebpage"%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: Destroying "firefox" WebDriver for "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest::testWebpage" (session %s)
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [WebDriver] Executing command "close" with params []%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [WebDriver] Executing command "quit" with params []%A
+%A[%s]: Starting execution of test Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest::testWebpage%aLmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [WebDriver] Executing command "setWindowSize" with params {"width":1280,"height":1024,":windowHandle":"current"}
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [WebDriver] Loading URL "file:///%s/src-tests/Console/Command/Fixtures/SimpleTests/webpage.html"%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [WebDriver] Executing command "get" with params {"url":"file:///%s/webpage.html"}%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [WebDriver] Executing command "findElement" with params {"using":"css selector","value":"h1"}%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [WebDriver] Executing command "getElementText" with params {":id":"0"}%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [Legacy] New Legacy instantiated in class "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest"
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: [Legacy] Saving data as Legacy "dummy-data" to file "%s/dummy-data.legacy"
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [DEBUG]: [Legacy] Legacy data: Array
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> (
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest>     [0] => fooBarData
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> )%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: Finished execution of test Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest::testWebpage%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> OK (1 test, 1 assertion)%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" (result: passed)%A
+[%s] Unqueing testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest"%A
+[%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" started with command:
+'%s/vendor/bin/phpunit' '--log-junit=logs/Lmc-Steward-Console-Command-Fixtures-SimpleTests-DependantTest.xml' '--configuration=%s/phpunit.xml' '%s/DependantTest.php'
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: Registering test results publisher "Lmc\Steward\Publisher\XmlPublisher"%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: Initializing "firefox" WebDriver for "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest::testFooBar"%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: Destroying "firefox" WebDriver for "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest::testFooBar" (session %s)
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: [WebDriver] Executing command "close" with params []%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: [WebDriver] Executing command "quit" with params []%A
+%a[%s]: Starting execution of test Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest::testFooBar%aLmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: [WebDriver] Executing command "setWindowSize" with params {"width":1280,"height":1024,":windowHandle":"current"}
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: [Legacy] New Legacy instantiated in class "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest"
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: [Legacy] Reading Legacy "dummy-data" from file "%s/dummy-data.legacy"
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] [DEBUG]: [Legacy] Legacy data: Array
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> (
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest>     [0] => fooBarData
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> )%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: Finished execution of test Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest::testFooBar%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> OK (1 test, 1 assertion)%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" (result: passed)
+[%s] Waiting (running: 0, queued: 0, done: 2 [passed: 2])
+[%s] All testcases done
+%A[OK] Testcases executed: 2 (passed: 2)%A

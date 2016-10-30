@@ -10,6 +10,7 @@ use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedTest;
 use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -107,9 +108,8 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             'BROWSER_NAME' => 'firefox',
             'ENV' => 'staging',
             'SERVER_URL' => $definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(),
-            'PUBLISH_RESULTS' => 0,
             'FIXTURES_DIR' => $definition->getOption(RunCommand::OPTION_FIXTURES_DIR)->getDefault(),
-            'LOGS_DIR' =>  $definition->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault(),
+            'LOGS_DIR' => $definition->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault(),
         ];
         $this->assertArraySubset($expectedEnv, $testEnv);
     }
@@ -117,12 +117,11 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     public function testShouldThrowExceptionIfAddingFileWithNoClass()
     {
         $files = $this->findDummyTests('NoClassTest.php', 'InvalidTests');
-
         $fileName = key(iterator_to_array($files->getIterator()));
-        $this->setExpectedException(
-            \RuntimeException::class,
-            'No class found in file "' . $fileName . '"'
-        );
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('No class found in file "' . $fileName . '"');
+
         $this->creator->createFromFiles($files, [], []);
     }
 
@@ -131,10 +130,24 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $files = $this->findDummyTests('WrongClassTest.php', 'InvalidTests');
 
         $fileName = key(iterator_to_array($files->getIterator()));
-        $this->setExpectedException(
-            \RuntimeException::class,
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
             'Error loading class "Lmc\Steward\Process\Fixtures\InvalidTests\ReallyWrongClassTest" from file "'
             . $fileName . '". Make sure the class name and namespace matches the file path.'
+        );
+
+        $this->creator->createFromFiles($files, [], []);
+    }
+
+    public function testShouldThrowExceptionIfMultipleClassesAreDefinedInFile()
+    {
+        $files = $this->findDummyTests('MultipleClassesInFileTest.php', 'InvalidTests');
+        $fileName = key(iterator_to_array($files->getIterator()));
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
+            'File "' . $fileName . '" contains definition of 2 classes. However, each class must be defined in its'
+            . ' own separate file.'
         );
         $this->creator->createFromFiles($files, [], []);
     }
@@ -219,11 +232,12 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $files = $this->findDummyTests('InvalidDelayTest.php', 'InvalidTests');
 
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'Testcase "Lmc\Steward\Process\Fixtures\InvalidTests\InvalidDelayTest" has defined delay 5 minutes, '
             . 'but doesn\'t have defined the testcase to run after'
         );
+
         $this->creator->createFromFiles($files, [], []);
     }
 
@@ -245,10 +259,12 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->input = new StringInput(
             'trolling chrome'
-            . ' --' . RunCommand::OPTION_SERVER_URL .'=http://foo.bar:1337'
-            . ' --' . RunCommand::OPTION_FIXTURES_DIR .'=custom-fixtures-dir/'
-            . ' --' . RunCommand::OPTION_LOGS_DIR .'=custom-logs-dir/'
-            . ' --' . RunCommand::OPTION_PUBLISH_RESULTS
+            . ' --' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337'
+            . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=custom-fixtures-dir/'
+            . ' --' . RunCommand::OPTION_LOGS_DIR . '=custom-logs-dir/'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '="capability.in.quotes:/foo/ba r.log"'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '="platform:OS X 10.8"'
         );
 
         $this->input->bind($this->command->getDefinition());
@@ -261,7 +277,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
             $this->publisherMock
         );
 
-        $files = $this->findDummyTests('DummyTest.php'); // find only one file (we don't need more for the test)
+        $files = $this->findDummyTests('DummyTest.php');
 
         $processSet = $this->creator->createFromFiles($files, [], []);
 
@@ -273,17 +289,43 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
                 'BROWSER_NAME' => 'chrome',
                 'ENV' => 'trolling',
                 'SERVER_URL' => 'http://foo.bar:1337',
-                'PUBLISH_RESULTS' => '1',
                 'FIXTURES_DIR' => 'custom-fixtures-dir/',
                 'LOGS_DIR' => 'custom-logs-dir/',
+                'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","capability.in.quotes":"\/foo\/ba r.log",'
+                    . '"platform":"OS X 10.8"}',
             ],
             $processEnv
         );
     }
 
+    public function testShouldNotAcceptCapabilitiesInWrongFormat()
+    {
+        $this->input = new StringInput(
+            'foo chrome'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=foo'
+        );
+
+        $this->input->bind($this->command->getDefinition());
+
+        // Redeclare creator so it uses the new input
+        $this->creator = new ProcessSetCreator(
+            $this->command,
+            $this->input,
+            $this->bufferedOutput,
+            $this->publisherMock
+        );
+
+        $files = $this->findDummyTests('DummyTest.php');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Capability must be given in format "capabilityName:value" but "foo" was given');
+
+        $this->creator->createFromFiles($files, [], []);
+    }
+
     public function testShouldSetPHPUnitColoredOptionOnlyIfTheOutputIsDecorated()
     {
-        $files = $this->findDummyTests('DummyTest.php'); // find only one file (we don't need more for the test)
+        $files = $this->findDummyTests('DummyTest.php');
 
         // Test default commands (decorated output was disabled in setUp)
         $processSet = $this->creator->createFromFiles($files, [], []);
@@ -330,7 +372,7 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Assert ProcessSet consists only of tests of expected names
-     * @param array $expectedTestNames
+     * @param string[] $expectedTestNames
      * @param ProcessSet $processSet
      */
     protected function assertQueuedTests(array $expectedTestNames, $processSet)

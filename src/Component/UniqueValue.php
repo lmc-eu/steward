@@ -35,7 +35,7 @@ class UniqueValue extends AbstractComponent
      * @param string $suffix
      * @return string
      */
-    public function createTimestampValue($prefix = null, $suffix = "")
+    public function createTimestampValue($prefix = null, $suffix = '')
     {
         if ($prefix === null) {
             $prefix = $this->getTestClassKey();
@@ -55,15 +55,15 @@ class UniqueValue extends AbstractComponent
      */
     public function createTimestampValueHash(
         $maxLength = 50,
-        $readablePrefix = "",
-        $readableSuffix = "",
+        $readablePrefix = '',
+        $readableSuffix = '',
         $distinguishingPrefix = null
     ) {
         // hashLength = maxLength - prefix length - suffix length
-        $hashLength = $maxLength - strlen($readablePrefix) - strlen($readableSuffix);
+        $hashLength = $maxLength - mb_strlen($readablePrefix) - mb_strlen($readableSuffix);
 
         $hash = sha1($this->createTimestampValue($distinguishingPrefix));
 
-        return $readablePrefix . substr($hash, 0, $hashLength) . $readableSuffix;
+        return $readablePrefix . mb_substr($hash, 0, $hashLength) . $readableSuffix;
     }
 }

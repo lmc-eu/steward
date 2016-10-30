@@ -40,10 +40,8 @@ So let's suggest we put them in `selenium-tests/` directory. **In this directory
 Then simply install Steward and add it as a dependency:
 
 ```sh
-$ composer require lmc/steward
+$ composer require lmc/steward:2.x@dev
 ```
-
-Next necessary step is to create `tests/` and `logs/` directory inside the `selenium-tests/` directory.
 
 ### 2. Install Selenium
 You need Selenium server installed to execute commands in the specified browser.
@@ -72,7 +70,7 @@ Steward. For the following example it is as easy as adding following to your `co
         }
     }
 ```
-Don't forget to run `composer dump-autoload` afterwards.
+Don't forget to create the `selenium-tests/tests/` directory and to run `composer dump-autoload` afterwards.
 
 Now the test itself (place it to `selenium-tests/tests/` directory):
 
@@ -138,20 +136,29 @@ The `run` command has two required arguments - the name of environment and brows
 
 There is also bunch of useful options of `run` command:
 
-- `-vvv` - enable verbose (debug) mode
 - `--group` - run just specific group(s) of tests
 - `--exclude-group` - exclude some group(s) of tests (can be even combined with `--group`)
 - `--server-url` - set different url of selenium server than the default (http://localhost:4444)
 - `--xdebug` - start Xdebug debugger on your tests, so you can debug tests from your IDE
+- `--capability` - directly pass any extra capability to the Selenium WebDriver server
 - `--help` - see all other options and default values
+- **adjust output levels:** by default only test results summary is printed to the output; the verbosity could be changed like this:
+    - `-v` - to instantly output name of failed test(s)
+    - `-vv` - print also progress information during run (which tests were started/finished etc); if any test fails, its output will by printed to the console
+    - `-vvv` - output everything, including all output from the tests
 
 ### 5. See the results and screenshots
 The log is printed to the console where you run the `run` command. But this could be a bit confusing, especially if you run multiple tests in parallel.
 
 So for each testcase there is separate file in JUnit XML format, placed in `logs/` directory. Also screenshots and HTML snapsnots are saved into this directory (they are automatically generated on failed assertion or if some WebDriver command fails).
 
-During the tests execution check file `logs/results.xml` to see current status of tests:
+To see current status of tests during (or after) tests execution, open file `logs/results.xml` in your browser:
+
 ![Example output as displayed in logs/results.xml file](https://lmc-eu.github.io/steward/images/results-output-example.png)
+
+Similar output but in command line interface could be obtained using `steward results` command - see below. You can also add `-vvv` to see results of each individual test.
+
+![Example output of results command](https://lmc-eu.github.io/steward/images/results-output-cli.png)
 
 ## License
 Steward is open source software licensed under the [MIT license](LICENCE.md).

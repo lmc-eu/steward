@@ -55,7 +55,8 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
-        $this->setExpectedException(InvalidArgumentException::class, $expectedExceptionMessage);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
 
         $wrapper->setDelay('Bar', $delay);
     }
@@ -68,26 +69,25 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
         return [
             'negative value' => [
                 -5,
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "-5" was given'
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "-5" was given',
             ],
             'string value' => [
                 'omg',
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "omg" was given'
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "omg" was given',
             ],
             'empty value' => [
                 '',
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "" was given'
+                'Delay defined in testcase "Foo" must be greater than or equal 0, but "" was given',
             ],
         ];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Testcase "Foo" should run after "Bar", but no delay was defined
-     */
     public function testShouldFailIfDependencyWasDefinedButWithoutDelay()
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Testcase "Foo" should run after "Bar", but no delay was defined');
 
         $wrapper->setDelay('Bar', null);
     }
@@ -149,10 +149,11 @@ class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
-        $this->setExpectedException(
-            InvalidArgumentException::class,
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'Value "WrongStatus" is not an element of the valid values: prepared, queued, done'
         );
+
         $wrapper->setStatus('WrongStatus');
     }
 

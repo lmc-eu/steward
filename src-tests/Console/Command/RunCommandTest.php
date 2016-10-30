@@ -34,34 +34,31 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments (missing: "environment, browser").
-     */
     public function testShouldFailWithoutArguments()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "environment, browser").');
+
         $this->tester->execute(
             ['command' => $this->command->getName()]
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments (missing: "browser").
-     */
     public function testShouldFailWithoutBrowserSpecified()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "browser").');
+
         $this->tester->execute(
             ['command' => $this->command->getName(), 'environment' => 'staging']
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not enough arguments (missing: "environment").
-     */
     public function testShouldFailWithoutEnvironmentSpecified()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "environment").');
+
         $this->tester->execute(
             ['command' => $this->command->getName(), 'browser' => 'firefox']
         );
@@ -82,14 +79,15 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
             $errorBeginning,
             $directoryOption
         );
-        $this->setExpectedException('\RuntimeException', $expectedError);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage($expectedError);
 
         $this->tester->execute(
             [
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'firefox',
-                '--' . $directoryOption => '/not/accessible'
+                '--' . $directoryOption => '/not/accessible',
             ]
         );
     }
@@ -100,9 +98,9 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     public function directoryOptionsProvider()
     {
         return [
-            ['tests-dir', 'Path to directory with tests does not exist'],
-            ['logs-dir', 'Path to directory with logs does not exist'],
-            ['fixtures-dir', 'Base path to directory with fixture files does not exist'],
+            ['tests-dir', 'Path to directory with tests "/not/accessible" does not exist'],
+            ['logs-dir', 'Path to directory with logs "/not/accessible" does not exist'],
+            ['fixtures-dir', 'Base path to directory with fixture files "/not/accessible" does not exist'],
         ];
     }
 
@@ -117,7 +115,9 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--tests-dir' => __DIR__ . '/Fixtures/DummyTests',
-                '--pattern' => 'NotExisting.foo' // so the test stops execution
+                '--logs-dir' => __DIR__ . '/Fixtures/logs',
+                '--fixtures-dir' => __DIR__ . '/Fixtures/tests',
+                '--pattern' => 'NotExisting.foo', // so the test stops execution
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
@@ -132,25 +132,36 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider browserNameProvider
      * @param string $browserName
+     * @param string $expectedNameInOutput
      * @param bool $shouldThrowException
      */
-    public function testShouldThrowExceptionIfUnsupportedBrowserSelected($browserName, $shouldThrowException)
-    {
-        if ($shouldThrowException) {
-            $this->setExpectedException('\RuntimeException', 'Browser "' . $browserName . '" is not supported');
-        }
-
+    public function testShouldThrowExceptionOnlyIfUnsupportedBrowserSelected(
+        $browserName,
+        $expectedNameInOutput,
+        $shouldThrowException
+    ) {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
 
+        if ($shouldThrowException) {
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('Browser "' . $browserName . '" is not supported');
+        }
+
         $this->tester->execute(
-            ['command' => $this->command->getName(), 'environment' => 'prod', 'browser' => $browserName],
+            [
+                'command' => $this->command->getName(),
+                'environment' => 'prod',
+                'browser' => $browserName,
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
+                '--fixtures-dir' => __DIR__,
+            ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
         if (!$shouldThrowException) {
             $output = $this->tester->getDisplay();
-            $this->assertContains('Browser: ' . strtolower($browserName), $output);
+            $this->assertContains('Browser: ' . $expectedNameInOutput, $output);
             $this->assertContains('No testcases found, exiting.', $output);
         }
     }
@@ -161,24 +172,27 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     public function browserNameProvider()
     {
         return [
-            // $browserName, $shouldThrowException
-            'firefox is supported' => ['firefox', false],
-            'chrome is supported' => ['chrome', false],
-            'phantomjs is supported' => ['phantomjs', false],
-            'browser name is case insensitive' => ['FIREFOX', false],
-            'not supported browser' => ['mosaic', true],
-            'unprintable character in browser name' => ['firefox​', true],
+            // $browserName, $expectedNameInOutput, $shouldThrowException
+            'firefox is supported' => ['firefox', 'firefox', false],
+            'chrome is supported' => ['chrome', 'chrome', false],
+            'phantomjs is supported' => ['phantomjs', 'phantomjs', false],
+            'MicrosoftEdge is supported' => ['MicrosoftEdge', 'MicrosoftEdge', false],
+            'MicrosoftEdge is supported in lowercase' => ['microsoftedge', 'MicrosoftEdge', false],
+            'browser name is case insensitive' => ['FIREFOX', 'firefox', false],
+            'not supported browser' => ['mosaic', null, true],
+            'unprintable character in browser name' => ['firefox​', null, true],
         ];
     }
 
     public function testShouldStopIfServerIsNotResponding()
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
+            ->setConstructorArgs(['http://foo.bar:1337'])
+            ->setMethods(['isAccessible', 'getLastError'])
             ->getMock();
 
         $seleniumAdapterMock->expects($this->once())
             ->method('isAccessible')
-            ->with('http://foo.bar:1337')
             ->willReturn(false);
 
         $seleniumAdapterMock->expects($this->once())
@@ -192,6 +206,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--server-url' => 'http://foo.bar:1337',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
             ]
         );
 
@@ -206,6 +221,8 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     public function testShouldStopIfServerIsRespondingButIsNotSelenium()
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
+            ->setConstructorArgs(['http://foo.bar:1337'])
+            ->setMethods(['isAccessible', 'isSeleniumServer', 'getLastError'])
             ->getMock();
 
         $seleniumAdapterMock->expects($this->once())
@@ -214,7 +231,6 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         $seleniumAdapterMock->expects($this->once())
             ->method('isSeleniumServer')
-            ->with('http://foo.bar:1337')
             ->willReturn(false);
 
         $seleniumAdapterMock->expects($this->once())
@@ -228,6 +244,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'environment' => 'staging',
                 'browser' => 'firefox',
                 '--server-url' => 'http://foo.bar:1337',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
             ]
         );
 
@@ -249,7 +266,8 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'firefox',
-                '--pattern' => 'NotExisting.foo'
+                '--pattern' => 'NotExisting.foo',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
@@ -271,11 +289,17 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         $application = new Application();
         $application->add(new RunCommand($dispatcherMock));
+        /** @var RunCommand $command */
         $command = $application->find('run');
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
         (new CommandTester($command))->execute(
-            ['command' => $command->getName(), 'environment' => 'staging', 'browser' => 'firefox']
+            [
+                'command' => $command->getName(),
+                'environment' => 'staging',
+                'browser' => 'firefox',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
+            ]
         );
     }
 
@@ -291,11 +315,17 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
         $application = new Application();
         $application->add(new RunCommand($dispatcherMock));
+        /** @var RunCommand $command */
         $command = $application->find('run');
         $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
 
         (new CommandTester($command))->execute(
-            ['command' => $command->getName(), 'environment' => 'staging', 'browser' => 'firefox']
+            [
+                'command' => $command->getName(),
+                'environment' => 'staging',
+                'browser' => 'firefox',
+                '--tests-dir' => __DIR__ . '/Fixtures/tests',
+            ]
         );
     }
 
@@ -327,7 +357,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
                 'browser' => 'firefox',
                 '--group' => ['included'],
                 '--exclude-group' => ['excluded'],
-                '--tests-dir' => __DIR__ . '/Fixtures/DummyTests', // There should by only one test class
+                '--tests-dir' => __DIR__ . '/Fixtures/DummyTests', // There should by only one test class in the dir
             ]
         );
 
@@ -335,9 +365,6 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    /**
-     * @todo Separate to tests for ExecutionLoop
-     */
     public function testShouldExitSuccessfullyIfNoProcessArePreparedOrQueued()
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
@@ -380,6 +407,7 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     protected function getSeleniumAdapterMock()
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $seleniumAdapterMock->expects($this->any())

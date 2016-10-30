@@ -6,11 +6,12 @@ use Lmc\Steward\ConfigProvider;
 
 class XmlPublisher extends AbstractPublisher
 {
+    /** @var string Default name of results file. */
+    const FILE_NAME = 'results.xml';
     /** @var string */
     protected $fileDir;
-
     /** @var string */
-    protected $fileName = 'results.xml';
+    protected $fileName = self::FILE_NAME;
 
     /** @var resource */
     protected $fileHandle;
@@ -58,15 +59,6 @@ class XmlPublisher extends AbstractPublisher
         }
     }
 
-    /**
-     * Publish testcase result
-     *
-     * @param string $testCaseName
-     * @param string $status
-     * @param string $result
-     * @param \DateTimeInterface $startDate Testcase start datetime
-     * @param \DateTimeInterface $endDate Testcase end datetime
-     */
     public function publishResults(
         $testCaseName,
         $status,
@@ -78,7 +70,7 @@ class XmlPublisher extends AbstractPublisher
 
         $testCaseNode = $this->getTestCaseNode($xml, $testCaseName);
         $testCaseNode['status'] = $status;
-        if ($result) {
+        if (!empty($result)) {
             $testCaseNode['result'] = $result;
         }
         if ($startDate) {
@@ -91,17 +83,14 @@ class XmlPublisher extends AbstractPublisher
         $this->writeAndUnlock($xml);
     }
 
-    /**
-     * Publish results of one single test
-     *
-     * @param string $testCaseName
-     * @param string $testName
-     * @param string $status
-     * @param string $result
-     * @param string $message
-     */
-    public function publishResult($testCaseName, $testName, $status, $result = null, $message = null)
-    {
+    public function publishResult(
+        $testCaseName,
+        $testName,
+        \PHPUnit_Framework_Test $testInstance,
+        $status,
+        $result = null,
+        $message = null
+    ) {
         if (!in_array($status, self::$testStatuses)) {
             throw new \InvalidArgumentException(
                 sprintf('Tests status must be one of "%s", but "%s" given', join(', ', self::$testStatuses), $status)
@@ -141,7 +130,7 @@ class XmlPublisher extends AbstractPublisher
     /**
      * Get element for test case of given name. If id does not exist yet, it is created.
      * @param \SimpleXMLElement $xml
-     * @param $testCaseName
+     * @param string $testCaseName
      * @return \SimpleXMLElement
      */
     protected function getTestCaseNode(\SimpleXMLElement $xml, $testCaseName)
@@ -161,8 +150,8 @@ class XmlPublisher extends AbstractPublisher
     /**
      * Get element for test of given name. If id does not exist yet, it is created.
      * @param \SimpleXMLElement $xml
-     * @param $testCaseName
-     * @param $testName
+     * @param string $testCaseName
+     * @param string $testName
      * @return \SimpleXMLElement
      */
     protected function getTestNode(\SimpleXMLElement $xml, $testCaseName, $testName)
@@ -275,9 +264,9 @@ class XmlPublisher extends AbstractPublisher
      */
     protected function quoteXpathAttribute($input)
     {
-        if (strpos($input, '\'') === false) { // Selector does not contain single quotes
+        if (mb_strpos($input, '\'') === false) { // Selector does not contain single quotes
             return "'$input'"; // Encapsulate with double quotes
-        } elseif (strpos($input, '"') === false) { // Selector contain single quotes but not double quotes
+        } elseif (mb_strpos($input, '"') === false) { // Selector contain single quotes but not double quotes
             return "\"$input\""; // Encapsulate with single quotes
         }
 

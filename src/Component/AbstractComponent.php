@@ -9,9 +9,9 @@ use Lmc\Steward\Test\SyntaxSugarTrait;
 /**
  * AbstractComponent used as parent of all components to add some default functionality and interface .
  *
- * @method void log(string $message, $arguments = null)
- * @method void warn(string $message, $arguments = null)
- * @method void debug(string $message, $arguments = null)
+ * @method void log(string $format, ...$args)
+ * @method void warn(string $format, ...$args)
+ * @method void debug(string $format, ...$args)
  */
 abstract class AbstractComponent
 {
@@ -43,6 +43,7 @@ abstract class AbstractComponent
         // Log methods prepend componentName to message and call the same method on TestCase.
         if (in_array($name, ['log', 'warn', 'debug'])) {
             $arguments[0] = '[' . $this->componentName . '] ' . $arguments[0];
+
             return call_user_func_array([$this->tc, $name], $arguments);
         }
 

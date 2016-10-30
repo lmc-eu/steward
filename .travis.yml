@@ -1,16 +1,27 @@
 language: php
 
 php:
-  - 5.5
   - 5.6
   - 7
+  - 7.1
 
 matrix:
+  allow_failures:
+    - php: 7.1
   include:
-    - php: 5.5
+    - php: 5.6
       env: dependencies="--prefer-lowest --prefer-stable"
     - php: 7
       env: dependencies="--prefer-lowest --prefer-stable"
+    - php: 7
+      env: CHECK_CODESTYLE=1
+      before_install:
+        - phpenv config-rm xdebug.ini
+      before_script: ~
+      script:
+        - vendor/bin/phpcs --standard=ruleset.xml
+        - vendor/bin/php-cs-fixer fix --diff --dry-run
+      after_success: ~
 
 install:
   - travis_retry composer self-update && composer --version
@@ -19,10 +30,22 @@ install:
 before_script:
   - mkdir -p src-tests/logs/
   - mkdir -p src-tests/coverage/
+  - SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi 2.53.1)
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - java -jar $SELENIUM_JAR -log selenium-server.log &
+  - until $(echo | nc localhost 4444); do sleep 1; echo Waiting for selenium-server to start...; done;
 
 script:
-  - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml
-  - cd .. && vendor/bin/phpcs --standard=ruleset.xml
+  - stty cols 120
+  - cd src-tests && ../vendor/bin/phpunit --coverage-clover ./logs/clover.xml && cd ..
+
+after_script:
+  - cat selenium-server.log
 
 after_success:
   - travis_retry php vendor/bin/coveralls -v
+
+cache:
+  directories:
+    - $HOME/.composer/cache

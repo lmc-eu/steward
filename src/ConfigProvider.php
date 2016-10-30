@@ -13,7 +13,7 @@ use FlorianWolters\Component\Util\Singleton\SingletonTrait;
  * @property-read string browserName
  * @property-read string env
  * @property-read string serverUrl
- * @property-read string publishResults
+ * @property-read string capability
  * @property-read string fixturesDir
  * @property-read string logsDir
  * @property-read string debug
@@ -37,6 +37,17 @@ class ConfigProvider
         }
 
         throw new \DomainException(sprintf('Configuration option "%s" was not defined', $name));
+    }
+
+    public function __isset($name)
+    {
+        $value = $this->getInstance()->getConfig()->getItem($name, null);
+
+        if (empty($value)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -92,7 +103,7 @@ class ConfigProvider
             'BROWSER_NAME',
             'ENV',
             'SERVER_URL',
-            'PUBLISH_RESULTS',
+            'CAPABILITY',
             'FIXTURES_DIR',
             'LOGS_DIR',
             'DEBUG',
@@ -105,10 +116,10 @@ class ConfigProvider
     }
 
     /**
-     * Retrieve given configuration options values from environment If value is not found, throw and exception.
+     * Retrieve given configuration options values from environment. If value is not found, throw and exception.
      *
-     * @throws \RuntimeException
      * @param array $options
+     * @throws \RuntimeException
      * @return array Option => value option name is converted from CAPS_WITH_UNDERSCORES to camelCase
      */
     private function retrieveConfigurationValues($options)
@@ -123,7 +134,7 @@ class ConfigProvider
                 throw new \RuntimeException(sprintf('%s environment variable must be defined', $option));
             }
 
-            $outputValues[Inflector::camelize(strtolower($option))] = $value;
+            $outputValues[Inflector::camelize(mb_strtolower($option))] = $value;
         }
 
         return $outputValues;

@@ -22,9 +22,9 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $config = ConfigProvider::getInstance()->getConfig();
 
         // Property access
-        $this->assertEquals('http://server.tld:port', $config->serverUrl);
+        $this->assertEquals('http://server.tld:4444', $config->serverUrl);
         // getItem() access
-        $this->assertEquals('http://server.tld:port', $config->getItem('serverUrl'));
+        $this->assertEquals('http://server.tld:4444', $config->getItem('serverUrl'));
         // all items retrieval
         $this->assertInternalType('array', $config->getItems());
     }
@@ -33,16 +33,26 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
 
-        $this->assertEquals('http://server.tld:port', ConfigProvider::getInstance()->serverUrl);
+        $this->assertEquals('http://server.tld:4444', ConfigProvider::getInstance()->serverUrl);
     }
 
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Configuration option "notExisting" was not defined
-     */
+    public function testShouldDetectEmptyConfigOption()
+    {
+        ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+
+        $nonEmptyValue = empty(ConfigProvider::getInstance()->serverUrl);
+        $emptyValue = empty(ConfigProvider::getInstance()->capability);
+
+        $this->assertFalse($nonEmptyValue);
+        $this->assertTrue($emptyValue);
+    }
+
     public function testShouldThrowExceptionWhenAccessingNotExistingConfigOptionThroughConfigProvider()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Configuration option "notExisting" was not defined');
 
         ConfigProvider::getInstance()->notExisting;
     }
@@ -58,16 +68,16 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($firstInstance, $secondInstance);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage SERVER_URL environment variable must be defined
-     */
     public function testShouldFailIfRequiredOptionIsNotDefined()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         putenv('SERVER_URL'); // unset value
 
         $provider = ConfigProvider::getInstance();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('SERVER_URL environment variable must be defined');
+
         $provider->getConfig();
     }
 
@@ -86,16 +96,17 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('new', $config->customOption);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Custom configuration options can be set only before the Config object was instantiated
-     */
     public function testShouldFailIfSettingCustomConfigurationOptionsAfterFirstInstantiation()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         $provider = ConfigProvider::getInstance();
         // Create Config instance
         $provider->getConfig();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Custom configuration options can be set only before the Config object was instantiated'
+        );
 
         // This should fail, as the Config instance was already created
         $provider->setCustomConfigurationOptions(['CUSTOM_OPTION']);

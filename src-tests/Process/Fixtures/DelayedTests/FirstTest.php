@@ -6,7 +6,6 @@ use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * First test without delay
- *
  */
 class FirstTest extends AbstractTestCase
 {

@@ -3,8 +3,8 @@
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Component\Fixtures\StringableObject;
-use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\ConfigHelper;
+use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * @covers Lmc\Steward\Component\Legacy
@@ -29,22 +29,17 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         ConfigHelper::unsetConfigInstance();
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot read legacy file
-     */
     public function testShouldThrowExceptionIfLegacyFileNotFound()
     {
         $legacy = new Legacy($this->testCase);
-        $this->expectOutputRegex('/.*New legacy instantiated.*/');
+        $this->expectOutputRegex('/.*New Legacy instantiated.*/');
+
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage('Cannot read Legacy file');
 
         $legacy->loadWithName('not-existing');
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot parse legacy from file
-     */
     public function testShouldFailIfNotUnserializableFileFound()
     {
         $fn = sys_get_temp_dir() . '/wrong.legacy';
@@ -52,7 +47,10 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
 
         $legacy = new Legacy($this->testCase);
         $legacy->setFileDir(sys_get_temp_dir());
-        $this->expectOutputRegex('/.*New legacy instantiated.*/');
+        $this->expectOutputRegex('/.*New Legacy instantiated.*/');
+
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage('Cannot parse Legacy from file');
 
         $legacy->loadWithName('wrong');
     }
@@ -69,7 +67,7 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
 
         $output = $legacy->loadWithName('simple');
 
-        $this->expectOutputRegex('/.*Reading legacy "simple" from file.*/');
+        $this->expectOutputRegex('/.*Reading Legacy "simple" from file.*/');
 
         $this->assertEquals($expectedData, $output);
     }
@@ -87,21 +85,21 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $legacy->saveWithName($sampleData, 'foo');
 
         $output = $legacy->loadWithName('foo');
-        $this->expectOutputRegex('/.*Reading legacy "foo" from file.*/');
+        $this->expectOutputRegex('/.*Reading Legacy "foo" from file.*/');
 
         $this->assertSame($sampleData, $output);
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot save legacy to file /notexisting/baz.legacy
-     */
     public function testShouldFailIfSavingToNotExistingDirectory()
     {
         $legacy = new Legacy($this->testCase);
         $legacy->setFileDir('/notexisting');
 
-        $this->expectOutputRegex('/.*Saving data as legacy "baz" to file "\/notexisting\/baz\.legacy".*/');
+        $this->expectOutputRegex('/.*Saving data as Legacy "baz" to file "\/notexisting\/baz\.legacy".*/');
+
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage('Cannot save Legacy to file /notexisting/baz.legacy');
+
         $legacy->saveWithName([], 'baz');
     }
 
@@ -137,10 +135,6 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         $this->expectOutputRegex('/^((?!foobar string).)*$/s'); // Output should not contain the string
     }
 
-    /**
-     * @expectedException Lmc\Steward\Component\LegacyException
-     * @expectedExceptionMessage Cannot generate legacy name from class without 'Phase' followed by number in name
-     */
     public function testShouldFailIfTryingToAutomaticallySaveLegacyIfTestDoesntHavePhaseInItsName()
     {
         $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)
@@ -150,6 +144,11 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
 
         $legacy = new Legacy($testCasePhase1);
         $legacy->setFileDir(sys_get_temp_dir());
+
+        $this->expectException(LegacyException::class);
+        $this->expectExceptionMessage(
+            'Cannot generate Legacy name from class without \'Phase\' followed by number in name'
+        );
 
         $legacy->save('data');
     }
@@ -224,7 +223,8 @@ class LegacyTest extends \PHPUnit_Framework_TestCase
         try {
             $legacy2Method2->load(Legacy::LEGACY_TYPE_TEST);
         } catch (LegacyException $e) {
-            $this->assertContains('Cannot read legacy file', $e->getMessage());
+            $this->assertContains('Cannot read Legacy file', $e->getMessage());
+
             return;
         }
         $this->fail('Expected exception LegacyException not thrown when loading Legacy that should not exists');

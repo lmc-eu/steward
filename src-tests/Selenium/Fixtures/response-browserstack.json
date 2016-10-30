@@ -1,0 +1,12 @@
+{
+  "status": 0,
+  "sessionId": null,
+  "value": {
+    "build": {
+      "time": "2015-02-26 23:59:50",
+      "version": "2.45.0",
+      "revision": "5017cb8"
+    }
+  },
+  "state": "success"
+}
