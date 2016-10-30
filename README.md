@@ -1,7 +1,6 @@
 # Steward: easy and robust testing with Selenium WebDriver + PHPUnit
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
-[![Latest Development Version](https://img.shields.io/packagist/vpre/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
 [![Build Status](https://img.shields.io/travis/lmc-eu/steward.svg?style=flat-square)](https://travis-ci.org/lmc-eu/steward)
 [![Coverage Status](https://img.shields.io/coveralls/lmc-eu/steward/master.svg?style=flat-square)](https://coveralls.io/r/lmc-eu/steward?branch=master)
 [![Total Downloads](https://img.shields.io/packagist/dt/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
@@ -41,7 +40,7 @@ So let's suggest we put them in `selenium-tests/` directory. **In this directory
 Then simply install Steward and add it as a dependency:
 
 ```sh
-$ composer require lmc/steward:2.x@dev
+$ composer require lmc/steward
 ```
 
 ### 2. Install Selenium

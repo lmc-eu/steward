@@ -2,7 +2,10 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
-## 2.0.0 - unreleased
+## Unreleased
+- Nothing yet - everything is released in the latest tagged version.
+
+## 2.0.0 - 2016-10-30
 ### Removed
 - Support for PHP 5.5, minimal required version of PHP is now 5.6. Also the 5.5 version is [no longer supported](https://secure.php.net/supported-versions.php) by the upstream since July. ([#87](https://github.com/lmc-eu/steward/pull/87))
 - BC: Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2. ([#66](https://github.com/lmc-eu/steward/pull/66))
