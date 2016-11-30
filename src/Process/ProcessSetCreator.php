@@ -182,7 +182,7 @@ class ProcessSetCreator
         $processBuilder
             ->setEnv('BROWSER_NAME', $this->input->getArgument(RunCommand::ARGUMENT_BROWSER))
             ->setEnv('ENV', mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
-            ->setEnv('CAPABILITY', $this->encodeCapabilties($this->input->getOption(RunCommand::OPTION_CAPABILITY)))
+            ->setEnv('CAPABILITY', $this->encodeCapabilities($this->input->getOption(RunCommand::OPTION_CAPABILITY)))
             ->setEnv('SERVER_URL', $this->input->getOption(RunCommand::OPTION_SERVER_URL))
             ->setEnv('FIXTURES_DIR', $this->input->getOption(RunCommand::OPTION_FIXTURES_DIR))
             ->setEnv('LOGS_DIR', $this->input->getOption(RunCommand::OPTION_LOGS_DIR))
@@ -213,13 +213,13 @@ class ProcessSetCreator
      * @param array $capabilities
      * @return string
      */
-    private function encodeCapabilties(array $capabilities)
+    private function encodeCapabilities(array $capabilities)
     {
         $outputCapabilities = [];
 
         foreach ($capabilities as $capability) {
             $parts = explode(':', $capability);
-            if (empty($parts[0]) || empty($parts[1])) {
+            if (!isset($parts[0]) || !isset($parts[1])) {
                 throw new RuntimeException(
                     sprintf(
                         'Capability must be given in format "capabilityName:value" but "%s" was given',
@@ -228,10 +228,31 @@ class ProcessSetCreator
                 );
             }
 
-            $outputCapabilities[$parts[0]] = $parts[1];
+            $outputCapabilities[$parts[0]] = $this->castToGuessedDataType($parts[1]);
         }
 
         return json_encode($outputCapabilities);
+    }
+
+    /**
+     * Guest most appropriate data type acceptable by JSON
+     *
+     * @param string $value
+     * @return mixed
+     */
+    private function castToGuessedDataType($value)
+    {
+        $numberValue = filter_var($value, FILTER_VALIDATE_FLOAT, []);
+        if ($numberValue !== false) {
+            return $numberValue;
+        }
+
+        $boolValue = filter_var($value, FILTER_VALIDATE_BOOLEAN, ['flags' => FILTER_NULL_ON_FAILURE]);
+        if ($boolValue !== null) {
+            return $boolValue;
+        }
+
+        return $value;
     }
 
     /**

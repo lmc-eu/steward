@@ -258,13 +258,19 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
     public function testShouldPropagateCustomOptionsIntoProcess()
     {
         $this->input = new StringInput(
-            'trolling chrome'
+            'staging chrome'
             . ' --' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337'
             . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=custom-fixtures-dir/'
             . ' --' . RunCommand::OPTION_LOGS_DIR . '=custom-logs-dir/'
             . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log'
             . ' --' . RunCommand::OPTION_CAPABILITY . '="capability.in.quotes:/foo/ba r.log"'
             . ' --' . RunCommand::OPTION_CAPABILITY . '="platform:OS X 10.8"'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=stringValue:thisIsString'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=someNumber:1337'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=zeroValue:0'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=floatValue:1.337'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=trueValue:true'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=falseValue:false'
         );
 
         $this->input->bind($this->command->getDefinition());
@@ -287,12 +293,21 @@ class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
         $this->assertArraySubset(
             [
                 'BROWSER_NAME' => 'chrome',
-                'ENV' => 'trolling',
+                'ENV' => 'staging',
                 'SERVER_URL' => 'http://foo.bar:1337',
                 'FIXTURES_DIR' => 'custom-fixtures-dir/',
                 'LOGS_DIR' => 'custom-logs-dir/',
-                'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","capability.in.quotes":"\/foo\/ba r.log",'
-                    . '"platform":"OS X 10.8"}',
+                'CAPABILITY' => '{'
+                    . '"webdriver.log.file":"\/foo\/bar.log",'
+                    . '"capability.in.quotes":"\/foo\/ba r.log",'
+                    . '"platform":"OS X 10.8",'
+                    . '"stringValue":"thisIsString",'
+                    . '"someNumber":1337,'
+                    . '"zeroValue":0,'
+                    . '"floatValue":1.337,'
+                    . '"trueValue":true,'
+                    . '"falseValue":false'
+                    . '}',
             ],
             $processEnv
         );
