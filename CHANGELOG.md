@@ -3,6 +3,9 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+- Nothing yet - everything is released in the latest tagged version.
+
+## 2.0.1 - 2016-12-01
 ### Fixed
 - Values passed using `--capability` option may not work as expected for different data types than strings.
 
