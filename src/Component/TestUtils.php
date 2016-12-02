@@ -17,39 +17,11 @@ class TestUtils extends AbstractComponent
      * @param string $value Value to be selected
      * @param bool $multiSelect OPTIONAL Is the select multiselect?
      * @todo Support multiple values for multiselects
+     * @deprecated Use Select2 component
      */
     public function setSelect2Value($originalId, $value, $multiSelect = false)
     {
-        $select2selector = '#s2id_' . $originalId;
-
-        // Wait for select2 to appear
-        $select2link = $this->tc->wd->wait()->until(
-            WebDriverExpectedCondition::presenceOfElementLocated(
-                WebDriverBy::cssSelector($select2selector . ' ' . ($multiSelect ? 'input' : 'a'))
-            )
-        );
-
-        // Click on element to open dropdown - to copy users behavior
-        $select2link->click();
-
-        $this->log('Sending keys to select2: %s', $value);
-
-        // Insert searched term into s2 generated input
-        $this->tc->wd
-            ->findElement(WebDriverBy::cssSelector($multiSelect ? $select2selector . ' input' : '#select2-drop input'))
-            ->sendKeys($value);
-
-        // Wait until result are rendered (or maybe loaded with ajax)
-        $firstResult = $this->tc->wd->wait()->until(
-            WebDriverExpectedCondition::presenceOfElementLocated(
-                WebDriverBy::cssSelector('.select2-drop .select2-result.select2-highlighted')
-            )
-        );
-
-        $this->log('Dropdown detected, selecting the first result: %s', $firstResult->getText());
-
-        // Select first item in results
-        $firstResult->click();
+        (new Select2($this->tc))->setSelect2Value($originalId, $value, $multiSelect);
     }
 
     /**
