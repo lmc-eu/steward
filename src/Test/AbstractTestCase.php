@@ -92,6 +92,20 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     }
 
     /**
+     * Sleep for given amount of seconds.
+     * Unlike sleep(), also the float values are supported.
+     * ALWAYS TRY TO USE WAIT() INSTEAD!
+     * @param float $seconds
+     */
+    public static function sleep($seconds)
+    {
+        $fullSecond = (int) floor($seconds);
+        $microseconds = fmod($seconds, 1) * 1000000000;
+
+        time_nanosleep($fullSecond, $microseconds);
+    }
+
+    /**
      * Format output
      * @param string $format
      * @param array $args Array of arguments passed to original sprintf()-like function

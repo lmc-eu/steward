@@ -2,9 +2,8 @@
 
 namespace Lmc\Steward\Component;
 
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Common test utils and syntax sugar for tests.
@@ -58,12 +57,10 @@ class TestUtils extends AbstractComponent
      * Unlike sleep(), also the float values are supported.
      * ALWAYS TRY TO USE WAIT() INSTEAD!
      * @param float $seconds
+     * @deprecated Use directly AbstractTestCase::sleep() method
      */
     public static function sleep($seconds)
     {
-        $fullSecond = (int) floor($seconds);
-        $microseconds = fmod($seconds, 1) * 1000000000;
-
-        time_nanosleep($fullSecond, $microseconds);
+        AbstractTestCase::sleep($seconds);
     }
 }
