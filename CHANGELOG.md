@@ -4,11 +4,11 @@
 
 ## Unreleased
 ### Changed
-- Deprecate default instantiation of TestUtils in TestCase - `$this->utils` will be removed in next major release. Do your own instantiation when needed.
-- Deprecate `TestUtils::setSelect2Value()` method. Use directly the new `Select2` component.
-- Deprecate `TestUtils::getFixturePath()` method. Use `Facebook\WebDriver\Remote\FileDetector` instead.
-- Deprecate `TestUtils::sleep()` method. Use `AbstractTestCase::sleep()` method instead.
-
+- Deprecate `TestUtils`. The class will be removed in next major release. This includes:
+    - Deprecate default instantiation of TestUtils in TestCase - `$this->utils` property of TestCase.
+    - Deprecate `TestUtils::setSelect2Value()` method. Use directly the new `Select2` component.
+    - Deprecate `TestUtils::getFixturePath()` method. Use `Facebook\WebDriver\Remote\FileDetector` instead.
+    - Deprecate `TestUtils::sleep()` method. Use `AbstractTestCase::sleep()` method instead.
 
 ## 2.0.1 - 2016-12-01
 ### Fixed

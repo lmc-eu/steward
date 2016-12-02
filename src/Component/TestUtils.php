@@ -7,6 +7,7 @@ use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Common test utils and syntax sugar for tests.
+ * @deprecated
  */
 class TestUtils extends AbstractComponent
 {
