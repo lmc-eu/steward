@@ -21,7 +21,10 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     /** @var int Height of browser window */
     public static $browserHeight = 1024;
 
-    /** @var TestUtils Common test utils, instantiated on setUp. */
+    /**
+     * @var TestUtils Common test utils, instantiated on setUp.
+     * @deprecated Do custom instantiation of the Utils if needed. This will be removed in next major release.
+     */
     public $utils;
 
     /** @var string Log appended to output of this test */

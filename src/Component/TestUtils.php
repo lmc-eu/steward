@@ -8,7 +8,6 @@ use Lmc\Steward\ConfigProvider;
 
 /**
  * Common test utils and syntax sugar for tests.
- * Should be accessible in all tests.
  */
 class TestUtils extends AbstractComponent
 {

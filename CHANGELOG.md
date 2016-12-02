@@ -3,7 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-- Nothing yet - everything is released in the latest tagged version.
+### Changed
+- Deprecate default instantiation of TestUtils in TestCase - `$this->utils` will be removed in next major release. Do your own instantiation when needed.
 
 ## 2.0.1 - 2016-12-01
 ### Fixed
