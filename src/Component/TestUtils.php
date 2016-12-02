@@ -29,6 +29,7 @@ class TestUtils extends AbstractComponent
      *
      * @param string $fixture Fixture identifier (relative path to fixture from directory with tests)
      * @return string Path to fixture
+     * @deprecated Use FileDetector instead
      */
     public function getFixturePath($fixture)
     {
