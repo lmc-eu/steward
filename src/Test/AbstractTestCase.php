@@ -21,7 +21,10 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     /** @var int Height of browser window */
     public static $browserHeight = 1024;
 
-    /** @var TestUtils Common test utils, instantiated on setUp. */
+    /**
+     * @var TestUtils Common test utils, instantiated on setUp.
+     * @deprecated Do custom instantiation of the Utils if needed. This will be removed in next major release.
+     */
     public $utils;
 
     /** @var string Log appended to output of this test */
@@ -86,6 +89,20 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         if (ConfigProvider::getInstance()->debug) {
             echo $this->formatOutput($format, $args, 'DEBUG');
         }
+    }
+
+    /**
+     * Sleep for given amount of seconds.
+     * Unlike sleep(), also the float values are supported.
+     * ALWAYS TRY TO USE WAIT() INSTEAD!
+     * @param float $seconds
+     */
+    public static function sleep($seconds)
+    {
+        $fullSecond = (int) floor($seconds);
+        $microseconds = fmod($seconds, 1) * 1000000000;
+
+        time_nanosleep($fullSecond, $microseconds);
     }
 
     /**

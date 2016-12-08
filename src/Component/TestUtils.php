@@ -2,13 +2,12 @@
 
 namespace Lmc\Steward\Component;
 
-use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverExpectedCondition;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Common test utils and syntax sugar for tests.
- * Should be accessible in all tests.
+ * @deprecated
  */
 class TestUtils extends AbstractComponent
 {
@@ -18,39 +17,11 @@ class TestUtils extends AbstractComponent
      * @param string $value Value to be selected
      * @param bool $multiSelect OPTIONAL Is the select multiselect?
      * @todo Support multiple values for multiselects
+     * @deprecated Use Select2 component
      */
     public function setSelect2Value($originalId, $value, $multiSelect = false)
     {
-        $select2selector = '#s2id_' . $originalId;
-
-        // Wait for select2 to appear
-        $select2link = $this->tc->wd->wait()->until(
-            WebDriverExpectedCondition::presenceOfElementLocated(
-                WebDriverBy::cssSelector($select2selector . ' ' . ($multiSelect ? 'input' : 'a'))
-            )
-        );
-
-        // Click on element to open dropdown - to copy users behavior
-        $select2link->click();
-
-        $this->log('Sending keys to select2: %s', $value);
-
-        // Insert searched term into s2 generated input
-        $this->tc->wd
-            ->findElement(WebDriverBy::cssSelector($multiSelect ? $select2selector . ' input' : '#select2-drop input'))
-            ->sendKeys($value);
-
-        // Wait until result are rendered (or maybe loaded with ajax)
-        $firstResult = $this->tc->wd->wait()->until(
-            WebDriverExpectedCondition::presenceOfElementLocated(
-                WebDriverBy::cssSelector('.select2-drop .select2-result.select2-highlighted')
-            )
-        );
-
-        $this->log('Dropdown detected, selecting the first result: %s', $firstResult->getText());
-
-        // Select first item in results
-        $firstResult->click();
+        (new Select2($this->tc))->setSelect2Value($originalId, $value, $multiSelect);
     }
 
     /**
@@ -58,6 +29,7 @@ class TestUtils extends AbstractComponent
      *
      * @param string $fixture Fixture identifier (relative path to fixture from directory with tests)
      * @return string Path to fixture
+     * @deprecated Use FileDetector instead
      */
     public function getFixturePath($fixture)
     {
@@ -86,12 +58,10 @@ class TestUtils extends AbstractComponent
      * Unlike sleep(), also the float values are supported.
      * ALWAYS TRY TO USE WAIT() INSTEAD!
      * @param float $seconds
+     * @deprecated Use directly AbstractTestCase::sleep() method
      */
     public static function sleep($seconds)
     {
-        $fullSecond = (int) floor($seconds);
-        $microseconds = fmod($seconds, 1) * 1000000000;
-
-        time_nanosleep($fullSecond, $microseconds);
+        AbstractTestCase::sleep($seconds);
     }
 }
