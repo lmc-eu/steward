@@ -3,9 +3,14 @@
 namespace Lmc\Steward\Publisher;
 
 use Lmc\Steward\ConfigHelper;
+use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\WebDriver\RemoteWebDriver;
+use phpmock\phpunit\PHPMock;
 
 class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 {
+    use PHPMock;
+
     /** @var XmlPublisher */
     protected $publisher;
     /** @var \PHPUnit_Framework_MockObject_MockObject|\PHPUnit_Framework_Test */
@@ -301,6 +306,58 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($testName, $xml->testcase->test['name']);
         $this->assertEquals(XmlPublisher::TEST_STATUS_DONE, $xml->testcase->test['status']);
         $this->assertEquals(XmlPublisher::TEST_RESULT_PASSED, $xml->testcase->test['result']);
+    }
+
+    /**
+     * @dataProvider testsessionEndpointResponseProvider
+     * @param string $testsessionEndpointResponse
+     * @param string|null $expectedExecutor
+     * @internal param string $seleniumResponse
+     */
+    public function testShouldLogTestExecutorWhenTestStarted($testsessionEndpointResponse, $expectedExecutor)
+    {
+        $webDriverMock = $this->createMock(RemoteWebDriver::class);
+        $webDriverMock->expects($this->once())
+            ->method('getSessionID')
+            ->willReturn('session-id-foo-bar');
+
+        $testMock = $this->createMock(AbstractTestCase::class);
+        $testMock->wd = $webDriverMock;
+
+        $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
+            ->with('http://server.tld:4444/grid/api/testsession?session=session-id-foo-bar')
+            ->willReturn($testsessionEndpointResponse);
+
+        $fileName = $this->createEmptyFile();
+
+        $this->publisher->publishResult(
+            'testCaseNameFoo',
+            'testFoo',
+            $testMock,
+            XmlPublisher::TEST_STATUS_STARTED
+        );
+
+        /** @var \SimpleXMLElement $xml */
+        $xml = simplexml_load_file($fileName);
+
+        $this->assertEquals('testFoo', $xml->testcase->test['name']);
+        $this->assertEquals('started', $xml->testcase->test['status']);
+        $this->assertEquals($expectedExecutor, $xml->testcase->test['executor']);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function testsessionEndpointResponseProvider()
+    {
+        return [
+            'executor found' => [
+                file_get_contents(__DIR__ . '/../Selenium/Fixtures/testsession-found.json'),
+                'http://10.1.255.241:5555',
+            ],
+            'empty response' => ['', null],
+        ];
     }
 
     /**

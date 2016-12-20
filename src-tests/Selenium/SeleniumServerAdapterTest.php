@@ -227,11 +227,49 @@ class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
         $responseLocalGrid = file_get_contents(__DIR__ . '/Fixtures/response-grid.json');
 
         return [
+            // $responseData, $expectedCloudService
             'Sauce Labs' => [$responseSauceLabs, SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS],
             'BrowserStack' => [$responseBrowserStack, SeleniumServerAdapter::CLOUD_SERVICE_BROWSERSTACK],
             'TestingBot' => [$responseTestingBot, SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT],
             'non-cloud local standalone server' => [$responseStandalone, ''],
             'non-cloud local grid' => [$responseLocalGrid, ''],
+        ];
+    }
+
+    /**
+     * @dataProvider sessionExecutorResponseProvider
+     * @param string $responseData
+     * @param string $expectedSessionExecutor
+     */
+    public function testShouldGetSessionExecutor($responseData, $expectedSessionExecutor)
+    {
+        $adapter = new SeleniumServerAdapter('http://127.0.0.1:4444');
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
+            ->with('http://127.0.0.1:4444/grid/api/testsession?session=4f1bebc2-667e-4b99-b16a-ff36221a20b3')
+            ->willReturn($responseData);
+
+        $this->assertSame(
+            $expectedSessionExecutor,
+            $adapter->getSessionExecutor('4f1bebc2-667e-4b99-b16a-ff36221a20b3')
+        );
+    }
+
+    /**
+     * @return array[]
+     */
+    public function sessionExecutorResponseProvider()
+    {
+        $responseExecutorFound = file_get_contents(__DIR__ . '/Fixtures/testsession-found.json');
+        $responseExecutorNotFound = file_get_contents(__DIR__ . '/Fixtures/testsession-not-found.json');
+        $responseInvalid = file_get_contents(__DIR__ . '/Fixtures/testsession-invalid-response.txt');
+
+        return [
+            // $responseData, $expectedSessionExecutor
+            'Executor for session was found' => [$responseExecutorFound, 'http://10.1.255.241:5555'],
+            'Executor for session was not found' => [$responseExecutorNotFound, ''],
+            'Invalid response by API to get session information' => [$responseInvalid, ''],
+            'Empty response' => ['', ''],
         ];
     }
 }

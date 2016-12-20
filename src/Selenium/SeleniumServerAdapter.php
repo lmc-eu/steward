@@ -10,6 +10,7 @@ class SeleniumServerAdapter
 {
     const HUB_ENDPOINT = '/wd/hub';
     const STATUS_ENDPOINT = '/wd/hub/status';
+    const TESTSESSION_ENDPOINT = '/grid/api/testsession';
     const DEFAULT_PORT = 4444;
     const DEFAULT_PORT_CLOUD_SERVICE = 80;
     const CLOUD_SERVICE_SAUCELABS = 'saucelabs';
@@ -134,6 +135,35 @@ class SeleniumServerAdapter
         }
 
         return $this->cloudService;
+    }
+
+    /**
+     * Get URL of the concrete executor (node) of given session.
+     * Note this is specific non-standard feature of Selenium server (and available only in grid mode), so empty string
+     * will be returned if the server does not provide this functionality.
+     *
+     * @param string $sessionId
+     * @return string
+     */
+    public function getSessionExecutor($sessionId)
+    {
+        $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 1]]);
+        $responseData = @file_get_contents(
+            $this->getServerUrl() . self::TESTSESSION_ENDPOINT . '?session=' . $sessionId,
+            false,
+            $context
+        );
+
+        if (!$responseData) {
+            return '';
+        }
+
+        $responseJson = json_decode($responseData);
+        if (!$responseJson || empty($responseJson->proxyId)) {
+            return '';
+        }
+
+        return $responseJson->proxyId;
     }
 
     /**

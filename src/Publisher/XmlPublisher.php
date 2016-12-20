@@ -2,7 +2,10 @@
 
 namespace Lmc\Steward\Publisher;
 
+use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Selenium\SeleniumServerAdapter;
+use Lmc\Steward\Test\AbstractTestCaseBase;
 
 class XmlPublisher extends AbstractPublisher
 {
@@ -93,14 +96,14 @@ class XmlPublisher extends AbstractPublisher
     ) {
         if (!in_array($status, self::$testStatuses)) {
             throw new \InvalidArgumentException(
-                sprintf('Tests status must be one of "%s", but "%s" given', join(', ', self::$testStatuses), $status)
+                sprintf('Tests status must be one of "%s", but "%s" given', implode(', ', self::$testStatuses), $status)
             );
         }
         if (!is_null($result) && !in_array($result, self::$testResults)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Tests result must be null or one of "%s", but "%s" given',
-                    join(', ', self::$testResults),
+                    implode(', ', self::$testResults),
                     $result
                 )
             );
@@ -115,6 +118,11 @@ class XmlPublisher extends AbstractPublisher
 
         if ($status == self::TEST_STATUS_STARTED) {
             $testNode['start'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
+
+            $executor = $this->getTestExecutor($testInstance);
+            if ($executor) {
+                $testNode['executor'] = $executor;
+            }
         }
         if ($status == self::TEST_STATUS_DONE) {
             $testNode['end'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
@@ -272,5 +280,23 @@ class XmlPublisher extends AbstractPublisher
 
         // When both single and double quotes are contained, escape each part individually and concat() all parts
         return "concat('" . strtr($input, ['\'' => '\', "\'", \'']) . "')";
+    }
+
+    /**
+     * @param \PHPUnit_Framework_Test $test
+     * @return string
+     */
+    protected function getTestExecutor(\PHPUnit_Framework_Test $test)
+    {
+        if (!$test instanceof AbstractTestCaseBase || !$test->wd instanceof RemoteWebDriver) {
+            return '';
+        }
+
+        $serverUrl = ConfigProvider::getInstance()->serverUrl;
+
+        $executor = (new SeleniumServerAdapter($serverUrl))
+            ->getSessionExecutor($test->wd->getSessionID());
+
+        return $executor;
     }
 }
