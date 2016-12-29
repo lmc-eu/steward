@@ -279,7 +279,7 @@ class InstallCommandTest extends \PHPUnit_Framework_TestCase
     protected function mockUserInput($input)
     {
         $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input);
+        fwrite($stream, $input);
         rewind($stream);
 
         $dialog = $this->command->getHelper('question');

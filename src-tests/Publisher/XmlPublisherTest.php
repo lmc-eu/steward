@@ -132,9 +132,9 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @depends testShouldAddTestResultToEmptyFile
-     * @param array
+     * @param array $params
      */
-    public function testShouldUpdateTestStatusWhenTestIsDone($params)
+    public function testShouldUpdateTestStatusWhenTestIsDone(array $params)
     {
         $fileName = $params[0];
         $xml = $params[1];
