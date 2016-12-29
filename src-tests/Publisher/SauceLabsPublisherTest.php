@@ -26,6 +26,7 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
     /**
      * @dataProvider resultProvider
      * @param string $testResult
+     * @param string $message
      * @param string $expectedData
      */
     public function testShouldPublishTestResult($testResult, $message, $expectedData)
