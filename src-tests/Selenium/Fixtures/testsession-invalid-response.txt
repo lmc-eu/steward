@@ -1,0 +1,10 @@
+<html>
+<head>
+<title>Error 403 Forbidden for Proxy</title>
+</head>
+<body>
+<h2>HTTP ERROR: 403</h2><pre>Forbidden for Proxy</pre>
+<p>RequestURI=/grid/api/testsession</p>
+<p><i><small><a href="http://jetty.mortbay.org">Powered by Jetty://</a></small></i></p>
+</body>
+</html>
