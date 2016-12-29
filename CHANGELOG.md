@@ -3,6 +3,9 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Added
+- When test is started, url of the executing node is stored in the `results.xml` file. (Applies only for Selenium standalone server.)
+
 ### Changed
 - Deprecate `TestUtils`. The class will be removed in next major release. This includes:
     - Deprecate default instantiation of TestUtils in TestCase - `$this->utils` property of TestCase.
