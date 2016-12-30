@@ -8,6 +8,7 @@ use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -19,6 +20,13 @@ class CleanCommand extends Command
 {
     /** @var Filesystem */
     private $filesystem;
+
+    public function __construct(EventDispatcher $dispatcher, $name = null)
+    {
+        $this->filesystem = new Filesystem();
+
+        parent::__construct($dispatcher, $name);
+    }
 
     /**
      * @internal
@@ -76,25 +84,10 @@ class CleanCommand extends Command
         return 0;
     }
 
-    /**
-     * @codeCoverageIgnore
-     * @return Filesystem
-     */
-    protected function getFilesystem()
-    {
-        if (!$this->filesystem) {
-            $this->filesystem = new Filesystem();
-        }
-
-        return $this->filesystem;
-    }
-
     private function createLogsDirectoryIfNotExists($logsDir)
     {
-        $filesystem = $this->getFilesystem();
-
-        if (!$filesystem->exists($logsDir)) {
-            $filesystem->mkdir($logsDir);
+        if (!$this->filesystem->exists($logsDir)) {
+            $this->filesystem->mkdir($logsDir);
         }
     }
 
@@ -111,7 +104,7 @@ class CleanCommand extends Command
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $this->getFilesystem()->remove($file->getRealPath());
+            $this->filesystem->remove($file->getRealPath());
         }
     }
 }
