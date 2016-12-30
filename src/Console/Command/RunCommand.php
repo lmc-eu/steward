@@ -6,7 +6,6 @@ use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
-use Lmc\Steward\Console\Style\StewardStyle;
 use Lmc\Steward\Process\MaxTotalDelayStrategy;
 use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
@@ -252,17 +251,15 @@ class RunCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new StewardStyle($input, $output);
-
-        if (!$this->testSeleniumConnection($io, $input->getOption(self::OPTION_SERVER_URL))) {
+        if (!$this->testSeleniumConnection($input->getOption(self::OPTION_SERVER_URL))) {
             return 1;
         }
 
         // Find all files holding test-cases
-        if ($io->isVeryVerbose()) {
-            $io->writeln('Searching for testcases:');
-            $io->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
-            $io->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
+        if ($this->io->isVeryVerbose()) {
+            $this->io->writeln('Searching for testcases:');
+            $this->io->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
+            $this->io->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
         }
 
         $files = (new Finder())
@@ -271,17 +268,17 @@ class RunCommand extends Command
             ->name($input->getOption(self::OPTION_PATTERN));
 
         if (!count($files)) {
-            $io->error(
+            $this->io->error(
                 sprintf(
                     'No testcases found, exiting.%s',
-                    !$io->isVeryVerbose() ? ' (use -vv or -vvv option for more information)' : ''
+                    !$this->io->isVeryVerbose() ? ' (use -vv or -vvv option for more information)' : ''
                 )
             );
 
             return 1;
         }
 
-        $processSetCreator = $this->getProcessSetCreator($input, $io);
+        $processSetCreator = $this->getProcessSetCreator($input, $this->io);
         $processSet = $processSetCreator->createFromFiles(
             $files,
             $input->getOption(self::OPTION_GROUP),
@@ -291,7 +288,7 @@ class RunCommand extends Command
         );
 
         if (!count($processSet)) {
-            $io->error('No testcases matched given groups, exiting.');
+            $this->io->error('No testcases matched given groups, exiting.');
 
             return 1;
         }
@@ -300,11 +297,11 @@ class RunCommand extends Command
         $processSet->optimizeOrder(new MaxTotalDelayStrategy());
 
         // Initialize first processes that should be run
-        $processSet->dequeueProcessesWithoutDelay($io);
+        $processSet->dequeueProcessesWithoutDelay($this->io);
 
         // Start execution loop
-        $io->isVeryVerbose() ? $io->section('Starting execution of testcases') : $io->newLine();
-        $allTestsPassed = $this->executionLoop($io, $processSet);
+        $this->io->isVeryVerbose() ? $this->io->section('Starting execution of testcases') : $this->io->newLine();
+        $allTestsPassed = $this->executionLoop($processSet);
 
         if ($input->getOption(self::OPTION_NO_EXIT)) {
             return 0;
@@ -349,11 +346,10 @@ class RunCommand extends Command
     /**
      * Start planner execution loop
      *
-     * @param StewardStyle $io
      * @param ProcessSet $processSet
      * @return bool Return true if all test returned exit code 0 (or if none test was run)
      */
-    protected function executionLoop(StewardStyle $io, ProcessSet $processSet)
+    protected function executionLoop(ProcessSet $processSet)
     {
         $counterWaitingOutput = 1;
         $statusesCountLast = [];
@@ -369,12 +365,12 @@ class RunCommand extends Command
             // Start all prepared tasks and set status of not running as finished
             foreach ($prepared as $testClass => $processWrapper) {
                 if (!$processWrapper->getProcess()->isStarted()) {
-                    if ($io->isVeryVerbose()) {
-                        $io->runStatus(
+                    if ($this->io->isVeryVerbose()) {
+                        $this->io->runStatus(
                             sprintf(
                                 'Execution of testcase "%s" started%s',
                                 $testClass,
-                                $io->isDebug() ?
+                                $this->io->isDebug() ?
                                     " with command:\n" . $processWrapper->getProcess()->getCommandLine() : ''
                             )
                         );
@@ -386,13 +382,13 @@ class RunCommand extends Command
                 }
 
                 if ($timeoutError = $processWrapper->checkProcessTimeout()) {
-                    if ($io->isVeryVerbose()) {
-                        $io->error($timeoutError);
+                    if ($this->io->isVeryVerbose()) {
+                        $this->io->error($timeoutError);
                     }
                 }
 
-                if ($io->isDebug()) { // In debug mode print all output as it comes
-                    $this->flushProcessOutput($io, $processWrapper);
+                if ($this->io->isDebug()) { // In debug mode print all output as it comes
+                    $this->flushProcessOutput($processWrapper);
                 }
 
                 if (!$processWrapper->getProcess()->isRunning()) {
@@ -401,11 +397,11 @@ class RunCommand extends Command
 
                     $hasProcessPassed = $processWrapper->getResult() == ProcessWrapper::PROCESS_RESULT_PASSED;
 
-                    if ($io->isDebug()) { // There could be new output since the previous flush
-                        $this->flushProcessOutput($io, $processWrapper);
+                    if ($this->io->isDebug()) { // There could be new output since the previous flush
+                        $this->flushProcessOutput($processWrapper);
                     }
 
-                    if ($io->isVeryVerbose()) {
+                    if ($this->io->isVeryVerbose()) {
                         $processOutput = $processErrorOutput = '';
                         if (!$hasProcessPassed) { // If process failed, collect its output
                             $processOutput = $processWrapper->getProcess()->getIncrementalOutput();
@@ -418,23 +414,25 @@ class RunCommand extends Command
                             $processWrapper->getResult(),
                             (!empty($processOutput) || !empty($processErrorOutput) ? ', output:' : '')
                         );
-                        $hasProcessPassed ? $io->runStatusSuccess($testcaseFinishedMessage)
-                            : $io->runStatusError($testcaseFinishedMessage);
+                        $hasProcessPassed ? $this->io->runStatusSuccess($testcaseFinishedMessage)
+                            : $this->io->runStatusError($testcaseFinishedMessage);
 
-                        $io->output($processOutput, $processWrapper->getClassName());
-                        $io->errorOutput($processErrorOutput, $processWrapper->getClassName());
-                    } elseif ($io->isVerbose() && !$hasProcessPassed) {
-                        $io->runStatusError(sprintf('Testcase "%s" %s', $testClass, $processWrapper->getResult()));
+                        $this->io->output($processOutput, $processWrapper->getClassName());
+                        $this->io->errorOutput($processErrorOutput, $processWrapper->getClassName());
+                    } elseif ($this->io->isVerbose() && !$hasProcessPassed) {
+                        $this->io->runStatusError(
+                            sprintf('Testcase "%s" %s', $testClass, $processWrapper->getResult())
+                        );
                     }
 
                     // Fail also process dependencies
                     if (!$hasProcessPassed) {
-                        $this->failDependants($io, $processSet, $testClass);
+                        $this->failDependants($processSet, $testClass);
                     }
                 }
             }
 
-            $this->unqueueDependentProcesses($io, $processSet);
+            $this->unqueueDependentProcesses($processSet);
 
             $statusesCount = $processSet->countStatuses();
 
@@ -442,7 +440,7 @@ class RunCommand extends Command
             if ($statusesCount === $statusesCountLast && $counterWaitingOutput % 100 !== 0) {
                 $counterWaitingOutput++;
             } else {
-                $this->printExecutionLoopStatus($io, $processSet, $statusesCount);
+                $this->printExecutionLoopStatus($processSet, $statusesCount);
                 $counterWaitingOutput = 1;
             }
 
@@ -460,10 +458,10 @@ class RunCommand extends Command
             }
         }
 
-        $io->runStatus('All testcases done');
+        $this->io->runStatus('All testcases done');
 
         $resultMessage = sprintf('Testcases executed: %d (%s)', $doneCount, implode(', ', $resultsInfo));
-        $allTestsPassed ? $io->success($resultMessage) : $io->error($resultMessage);
+        $allTestsPassed ? $this->io->success($resultMessage) : $this->io->error($resultMessage);
 
         return $allTestsPassed;
     }
@@ -496,29 +494,28 @@ class RunCommand extends Command
 
     /**
      * Try connection to Selenium server
-     * @param StewardStyle $io
      * @param string $seleniumServerUrl
      * @return bool
      */
-    protected function testSeleniumConnection(StewardStyle $io, $seleniumServerUrl)
+    protected function testSeleniumConnection($seleniumServerUrl)
     {
         $seleniumAdapter = $this->getSeleniumAdapter($seleniumServerUrl);
-        $io->write(
+        $this->io->write(
             sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumAdapter->getServerUrl()),
             false,
             OutputInterface::VERBOSITY_VERY_VERBOSE
         );
 
         if (!$seleniumAdapter->isAccessible()) {
-            $io->writeln(
+            $this->io->writeln(
                 sprintf(
                     '<error>%s ("%s")</error>',
-                    $io->isVeryVerbose() ? 'connection error' : 'Error connecting to Selenium server',
+                    $this->io->isVeryVerbose() ? 'connection error' : 'Error connecting to Selenium server',
                     $seleniumAdapter->getLastError()
                 )
             );
 
-            $io->error(
+            $this->io->error(
                 sprintf(
                     'Make sure your Selenium server is really accessible on url "%s" '
                     . 'or change it using --server-url option',
@@ -530,14 +527,14 @@ class RunCommand extends Command
         }
 
         if (!$seleniumAdapter->isSeleniumServer()) {
-            $io->writeln(
+            $this->io->writeln(
                 sprintf(
                     '<error>%s (%s)</error>',
-                    $io->isVeryVerbose() ? 'unexpected response' : 'Unexpected response from Selenium server',
+                    $this->io->isVeryVerbose() ? 'unexpected response' : 'Unexpected response from Selenium server',
                     $seleniumAdapter->getLastError()
                 )
             );
-            $io->error(
+            $this->io->error(
                 sprintf(
                     'Looks like url "%s" is occupied by something else than Selenium server. '
                     . 'Make sure Selenium server is really accessible on this url '
@@ -549,9 +546,9 @@ class RunCommand extends Command
             return false;
         }
 
-        if ($io->isVeryVerbose()) {
+        if ($this->io->isVeryVerbose()) {
             $cloudService = $seleniumAdapter->getCloudService();
-            $io->writeln(
+            $this->io->writeln(
                 'OK' . ($cloudService ? ' (' . $cloudService . ' cloud service detected)' : ''),
                 OutputInterface::VERBOSITY_VERY_VERBOSE
             );
@@ -561,17 +558,16 @@ class RunCommand extends Command
     }
 
     /**
-     * @param StewardStyle $io
      * @param ProcessSet $processSet
      * @param $testClass
      */
-    protected function failDependants(StewardStyle $io, ProcessSet $processSet, $testClass)
+    protected function failDependants(ProcessSet $processSet, $testClass)
     {
         $failedDependants = $processSet->failDependants($testClass);
 
-        if ($io->isVerbose()) {
+        if ($this->io->isVerbose()) {
             foreach ($failedDependants as $failedClass => $failedProcessWrapper) {
-                $io->runStatusError(
+                $this->io->runStatusError(
                     sprintf(
                         'Failing testcase "%s", because it was depending on failed "%s"',
                         $failedClass,
@@ -583,11 +579,10 @@ class RunCommand extends Command
     }
 
     /**
-     * @param StewardStyle $io
      * @param ProcessSet $processSet
      * @return array
      */
-    protected function unqueueDependentProcesses(StewardStyle $io, ProcessSet $processSet)
+    protected function unqueueDependentProcesses(ProcessSet $processSet)
     {
         // Retrieve names of done tests
         $done = $processSet->get(ProcessWrapper::PROCESS_STATUS_DONE);
@@ -604,8 +599,8 @@ class RunCommand extends Command
             if (in_array($processWrapper->getDelayAfter(), $doneClasses)
                 && (time() - $done[$processWrapper->getDelayAfter()]->getFinishedTime()) > $delaySeconds
             ) {
-                if ($io->isVeryVerbose()) {
-                    $io->runStatus(sprintf('Unqueing testcase "%s"', $testClass));
+                if ($this->io->isVeryVerbose()) {
+                    $this->io->runStatus(sprintf('Unqueing testcase "%s"', $testClass));
                 }
                 $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
             }
@@ -613,12 +608,11 @@ class RunCommand extends Command
     }
 
     /**
-     * @param StewardStyle $io
      * @param ProcessSet $processSet
      * @param $statusesCount
      * @return array
      */
-    protected function printExecutionLoopStatus(StewardStyle $io, ProcessSet $processSet, $statusesCount)
+    protected function printExecutionLoopStatus(ProcessSet $processSet, $statusesCount)
     {
         $resultsInfo = [];
         $resultsCount = $processSet->countResults();
@@ -635,7 +629,7 @@ class RunCommand extends Command
             }
         }
 
-        $io->runStatus(
+        $this->io->runStatus(
             sprintf(
                 'Waiting (running: %d, queued: %d, done: %d%s)',
                 $statusesCount[ProcessWrapper::PROCESS_STATUS_PREPARED],
@@ -649,16 +643,15 @@ class RunCommand extends Command
     /**
      * Flush output of the process
      *
-     * @param StewardStyle $io
      * @param ProcessWrapper $processWrapper
      */
-    protected function flushProcessOutput(StewardStyle $io, ProcessWrapper $processWrapper)
+    protected function flushProcessOutput(ProcessWrapper $processWrapper)
     {
-        $io->output(
+        $this->io->output(
             $processWrapper->getProcess()->getIncrementalOutput(),
             $processWrapper->getClassName()
         );
-        $io->errorOutput(
+        $this->io->errorOutput(
             $processWrapper->getProcess()->getIncrementalErrorOutput(),
             $processWrapper->getClassName()
         );
