@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testcases>
+  <testcase name="Foo\BarTest" status="done" start="2016-12-29T12:56:28+0200" end="2016-12-29T13:18:45+0200" result="passed">
+    <!-- Test with executor: -->
+    <test name="testFirstWithExecutor" status="done" start="2016-12-29T12:56:28+0200" end="2016-12-29T12:56:29+0200" result="passed" executor="http://127.0.0.1:5555"/>
+    <!-- Test without executor: -->
+    <test name="testWithoutExecutor" status="done" start="2016-12-29T12:56:28+0200" end="2016-12-29T12:56:29+0200" result="passed"/>
+    <!-- Test with executor: -->
+    <test name="testSecondWithExecutor" status="done" start="2016-12-29T12:56:28+0200" end="2016-12-29T12:56:29+0200" result="passed" executor="http://127.0.0.1:5555"/>
+  </testcase>
+  <testcase name="Foo\BanRunningTest" status="prepared">
+    <!-- Test without executor: -->
+    <test name="testBanWithoutExecutor" status="done" start="2016-12-29T12:56:29+0200" end="2016-12-29T13:02:02+0200" result="passed" />
+  </testcase>
+</testcases>

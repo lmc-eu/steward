@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testcases>
+  <testcase name="Foo\RunningTest" status="prepared">
+    <test name="testRunningWithExecutor" status="started" start="2016-12-29T12:58:15+0200" executor="http://executor-of-started-test:5555"/>
+    <test name="testRunningWithoutExecutor" status="started" start="2016-12-29T12:58:15+0200"/>
+  </testcase>>
+</testcases>

@@ -4,6 +4,7 @@
 
 ## Unreleased
 ### Added
+- Command `generate-timeline` to generate timeline-based visualization of test run into HTML file.
 - When test is started, url of the executing node is stored in the `results.xml` file. (Applies only for Selenium standalone server.)
 
 ### Changed
