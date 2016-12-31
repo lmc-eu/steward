@@ -2,6 +2,9 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\Style\StewardStyle;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -12,6 +15,8 @@ class Command extends \Symfony\Component\Console\Command\Command
 {
     /** @var EventDispatcher */
     protected $dispatcher;
+    /** @var StewardStyle */
+    protected $io;
 
     /**
      * @param EventDispatcher $dispatcher
@@ -34,5 +39,12 @@ class Command extends \Symfony\Component\Console\Command\Command
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->io = new StewardStyle($input, $output);
+
+        parent::initialize($input, $output);
     }
 }

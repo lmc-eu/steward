@@ -309,7 +309,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testsessionEndpointResponseProvider
+     * @dataProvider endpointTestsessionResponseProvider
      * @param string $testsessionEndpointResponse
      * @param string|null $expectedExecutor
      * @internal param string $seleniumResponse
@@ -349,7 +349,7 @@ class XmlPublisherTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array[]
      */
-    public function testsessionEndpointResponseProvider()
+    public function endpointTestsessionResponseProvider()
     {
         return [
             'executor found' => [
