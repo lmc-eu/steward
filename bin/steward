@@ -4,6 +4,7 @@
 namespace Lmc\Steward;
 
 use Lmc\Steward\Console\Command\CleanCommand;
+use Lmc\Steward\Console\Command\GenerateTimelineCommand;
 use Lmc\Steward\Console\Command\InstallCommand;
 use Lmc\Steward\Console\Command\ResultsCommand;
 use Lmc\Steward\Console\Command\RunCommand;
@@ -49,6 +50,7 @@ $application->addCommands(
         new CleanCommand($dispatcher),
         new RunCommand($dispatcher),
         new ResultsCommand($dispatcher),
+        new GenerateTimelineCommand($dispatcher),
         new InstallCommand($dispatcher),
     ]
 );

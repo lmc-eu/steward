@@ -92,7 +92,7 @@ class ResultsCommand extends Command
      */
     private function processResults($filePath)
     {
-        $xml = simplexml_load_string(file_get_contents($filePath));
+        $xml = simplexml_load_file($filePath);
 
         $data = [
             'testcases' => [],

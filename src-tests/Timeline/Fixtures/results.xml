@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testcases>
+  <testcase name="Foo\BarPassedTest" status="done" start="2016-12-29T12:56:28+0200" end="2016-12-29T13:18:45+0200" result="passed">
+    <test name="testBarFirstPassed" status="done" start="2016-12-29T12:56:29+0200" end="2016-12-29T13:02:02+0200" result="passed" executor="http://127.0.0.1:5558"/>
+    <test name="testBarSecondPassed" status="done" start="2016-12-29T12:57:05+0200" end="2016-12-29T12:58:11+0200" result="passed" executor="http://127.0.0.1:5555"/>
+    <test name="testBarThirdWithoutExecutor" status="done" start="2016-12-29T12:56:28+0200" end="2016-12-29T12:56:29+0200" result="passed"/>
+  </testcase>
+  <testcase name="Foo\BazFailedTest" status="done" start="2016-12-29T12:57:28+0200" end="2016-12-29T13:02:16+0200" result="failed">
+    <test name="testBarFirstPassed" status="done" start="2016-12-29T12:57:05+0200" end="2016-12-29T12:57:15+0200" result="passed" executor="http://127.0.0.1:5556"/>
+    <test name="testBazSecondBroken" status="done" start="2016-12-29T13:02:10+0200" end="2016-12-29T13:02:15+0200" result="broken" executor="http://127.0.0.1:5558"/>
+  </testcase>
+  <testcase name="Foo\BanRunningTest" status="prepared">
+    <!-- Started test, to be ignored in the timeline data -->
+    <test name="testBarFirstRunning" status="started" start="2016-12-29T12:58:15+0200" executor="http://127.0.0.1:5556"/>
+  </testcase>
+  <!-- Queued testcase, to be ignored in the timeline data -->
+  <testcase name="Foo\FooQueuedTest" status="queued"/>
+</testcases>
