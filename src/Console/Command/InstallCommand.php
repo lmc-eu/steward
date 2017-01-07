@@ -5,7 +5,7 @@ namespace Lmc\Steward\Console\Command;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
-use OndraM\CiDetector;
+use OndraM\CiDetector\CiDetector;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -107,7 +107,7 @@ class InstallCommand extends Command
                 sprintf(
                     '<info>Steward</info> <comment>%s</comment> is now downloading the Selenium standalone server...%s',
                     $this->getApplication()->getVersion(),
-                    (!CiDetector::detect() ? ' Just for you <fg=red><3</fg=red>!' : '')
+                    (!(new CiDetector())->isCiDetected() ? ' Just for you <fg=red><3</fg=red>!' : '')
                 )
             );
         }
