@@ -33,7 +33,7 @@
         "caseyamcl/configula": "~2.3",
         "doctrine/inflector": "~1.0",
         "beberlei/assert": "^2.4",
-        "ondram/ci-detector": "^1.0"
+        "ondram/ci-detector": "^2.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.4.1",
