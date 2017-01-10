@@ -47,3 +47,6 @@ after_success:
 cache:
   directories:
     - $HOME/.composer/cache
+
+addons:
+  firefox: "latest-esr"

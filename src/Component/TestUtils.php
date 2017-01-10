@@ -15,13 +15,14 @@ class TestUtils extends AbstractComponent
      * Set value of Select2 element
      * @param string $originalId ID of original select/input element
      * @param string $value Value to be selected
-     * @param bool $multiSelect OPTIONAL Is the select multiselect?
+     * @param bool $multiSelect UNUSED, kept for backwards compatibility
      * @todo Support multiple values for multiselects
      * @deprecated Use Select2 component
      */
     public function setSelect2Value($originalId, $value, $multiSelect = false)
     {
-        (new Select2($this->tc))->setSelect2Value($originalId, $value, $multiSelect);
+        $originalSelect = $this->waitForId($originalId);
+        (new Select2($this->tc, $originalSelect))->selectByVisiblePartialText($value);
     }
 
     /**
