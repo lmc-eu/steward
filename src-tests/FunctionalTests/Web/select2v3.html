@@ -2,13 +2,37 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Select2 (version 3) test page</title>
+    <title>Select2 (version 3.5) test page</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.min.js"></script>
 
     <script>
-        $(document).ready(function() { $("select").select2(); });
+        $(document).ready(function() {
+            $("select").select2();
+
+            $("#input").select2({
+                multiple: false,
+                data: [
+                    {id: 0, text: 'First'},
+                    {id: 1, text: 'This is second option'},
+                    {id: 2, text: 'This is not second option'},
+                    {id: 3, text: 'Fourth  with   spaces   inside'},
+                    {id: 4, text: '   Fifth surrounded by spaces    '}
+                ]
+            });
+
+            $("#input-multiple").select2({
+                multiple: true,
+                data: [
+                    {id: 0, text: 'First'},
+                    {id: 1, text: 'This is second option'},
+                    {id: 2, text: 'This is not second option'},
+                    {id: 3, text: 'Fourth  with   spaces   inside'},
+                    {id: 4, text: '   Fifth surrounded by spaces    '}
+                ]
+            });
+        });
     </script>
     <style>
 
@@ -23,21 +47,32 @@
             <option value="first">First</option>
             <option value="second">This is second option</option>
             <option value="third">This is not second option</option>
-            <option value="fourth">Fourth with spaces inside</option>
-            <option value="fifth"> Fifth surrounded by spaces</option>
+            <option value="fourth">Fourth  with   spaces   inside</option>
+            <option value="fifth">   Fifth surrounded by spaces    </option>
         </select>
         <br>
 
         <label for="select-multiple">Select multiple:</label>
         <br>
-        <select name="select-multiple" id="select-multiple"  style="width: 20em;" multiple>
+        <select name="select-multiple" id="select-multiple" style="width: 20em;" multiple>
             <option value="first">First</option>
             <option value="second">This is second option</option>
             <option value="third">This is not second option</option>
-            <option value="fourth">Fourth with spaces inside</option>
-            <option value="fifth"> Fifth surrounded by spaces</option>
+            <option value="fourth">Fourth  with   spaces   inside</option>
+            <option value="fifth">   Fifth surrounded by spaces    </option>
         </select>
         <br>
+
+        <label for="input">Select one from input:</label>
+        <br>
+        <input type="text" id="input" style="width: 20em;">
+        <br>
+
+        <label for="input-multiple">Select multiple from input:</label>
+        <br>
+        <input type="text" id="input-multiple" style="width: 20em;">
+        <br>
+
         <p>
             <input type="submit" name="submit" id="submit" value="Submit">
         </p>
