@@ -3,6 +3,7 @@
 namespace Lmc\Steward;
 
 use Lmc\Steward\Console\Command\RunCommand;
+use Lmc\Steward\Console\EventListener\ListenerInstantiator;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -27,6 +28,13 @@ class FunctionalTestRunnerTest extends \PHPUnit_Framework_TestCase
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
+        $application->setDispatcher($dispatcher);
+
+        // Search for test listeners and attach them to dispatcher
+        $instantiator = new ListenerInstantiator();
+        $instantiator->setSearchPathPattern('Fixtures/');
+        $instantiator->instantiate($dispatcher, __DIR__ . '/FunctionalTests');
+
         $application->add(new RunCommand($dispatcher));
 
         $this->command = $application->find('run');

@@ -95,16 +95,31 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
         return reset($selected);
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @param int $index
+     * @throws UnsupportedOperationException
+     */
     public function selectByIndex($index)
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @param string $value
+     * @throws UnsupportedOperationException
+     */
     public function selectByValue($value)
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @param string $text
+     * @throws UnsupportedOperationException
+     */
     public function selectByVisibleText($text)
     {
         throw new UnsupportedOperationException('Method not is not implemented');
@@ -143,26 +158,50 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
         $firstResult->click();
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @throws UnsupportedOperationException
+     */
     public function deselectAll()
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @param int $index
+     * @throws UnsupportedOperationException
+     */
     public function deselectByIndex($index)
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @param string $value
+     * @throws UnsupportedOperationException
+     */
     public function deselectByValue($value)
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @param string $text
+     * @throws UnsupportedOperationException
+     */
     public function deselectByVisibleText($text)
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @param string $text
+     * @throws UnsupportedOperationException
+     */
     public function deselectByVisiblePartialText($text)
     {
         throw new UnsupportedOperationException('Method not is not implemented');

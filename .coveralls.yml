@@ -1,2 +1,4 @@
-coverage_clover: src-tests/logs/clover.xml
+coverage_clover:
+  - src-tests/logs/clover.xml
+  - src-tests/FunctionalTests/logs/clover.xml
 json_path: src-tests/logs/coveralls-upload.json
