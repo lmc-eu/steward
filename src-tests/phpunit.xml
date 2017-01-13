@@ -9,6 +9,7 @@
         <directory>./</directory>
         <exclude>./Process/Fixtures</exclude>
         <exclude>./Console/Command/Fixtures</exclude>
+        <exclude>./FunctionalTests/</exclude>
     </testsuite>
 
     <filter>

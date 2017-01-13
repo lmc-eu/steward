@@ -6,11 +6,12 @@
 ### Added
 - Command `generate-timeline` to generate timeline-based visualization of test run into HTML file.
 - When test is started, url of the executing node is stored in the `results.xml` file. (Applies only for Selenium standalone server.)
+- `Select2` component for jQuery based Select2, which mimics behavior of native `WebDriverSelect` (it actually uses the same interface; though not all methods are implemented).
 
 ### Changed
 - Deprecate `TestUtils`. The class will be removed in next major release. This includes:
     - Deprecate default instantiation of TestUtils in TestCase - `$this->utils` property of TestCase.
-    - Deprecate `TestUtils::setSelect2Value()` method. Use directly the new `Select2` component.
+    - Deprecate `TestUtils::setSelect2Value()` method. Use directly the new `Select2` component and `selectByVisiblePartialText()` method.
     - Deprecate `TestUtils::getFixturePath()` method. Use `Facebook\WebDriver\Remote\FileDetector` instead.
     - Deprecate `TestUtils::sleep()` method. Use `AbstractTestCase::sleep()` method instead.
 

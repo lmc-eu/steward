@@ -1,0 +1,26 @@
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.8/phpunit.xsd"
+    bootstrap="../../bootstrap.php"
+>
+    <listeners>
+        <listener class="Lmc\Steward\Listener\SnapshotListener" />
+        <listener class="Lmc\Steward\Listener\WebDriverListener" />
+        <listener class="Lmc\Steward\Listener\TestStatusListener">
+            <arguments>
+                <array/>
+                <!-- A list of test publisher classes -->
+            </arguments>
+        </listener>
+    </listeners>
+
+    <filter>
+        <whitelist>
+            <file>../../../src/Component/Select2.php</file>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-clover" target="../logs/clover.xml"/>
+    </logging>
+</phpunit>
