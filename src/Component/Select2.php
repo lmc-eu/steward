@@ -7,7 +7,6 @@ use Facebook\WebDriver\Exception\UnsupportedOperationException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use Facebook\WebDriver\WebDriverSelect;
 use Facebook\WebDriver\WebDriverSelectInterface;
 use Lmc\Steward\Test\AbstractTestCaseBase;
 
@@ -25,30 +24,29 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
     const MULTISELECT_SELECTED_OPTIONS_SELECTOR = '.select2-choices > li.select2-search-choice';
 
     /** @var bool */
-    protected $multiple = false;
+    protected $multiple;
     /** @var WebDriverElement */
     protected $element;
-    /** @var WebDriverSelect */
-    protected $nativeSelect;
     /** @var string */
     protected $select2Selector;
 
     /**
      * @param AbstractTestCaseBase $tc
-     * @param WebDriverElement $element
+     * @param WebDriverElement $element Original HTML element to which is the Select2 attached
      */
     public function __construct(AbstractTestCaseBase $tc, WebDriverElement $element)
     {
-        $this->element = $element;
-        $this->nativeSelect = new WebDriverSelect($element);
-        $this->select2Selector = '#s2id_' . $this->element->getAttribute('id');
-
         parent::__construct($tc);
+
+        $this->element = $element;
+        $this->select2Selector = '#s2id_' . $this->element->getAttribute('id');
+        $select2Element = $this->waitForCss($this->select2Selector);
+        $this->multiple = $this->detectMultipleFromSelect2($select2Element);
     }
 
     public function isMultiple()
     {
-        return $this->nativeSelect->isMultiple();
+        return $this->multiple;
     }
 
     public function getOptions()
@@ -218,5 +216,18 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
 
         // Click on element to open dropdown - to copy users behavior
         $select2link->click();
+    }
+
+    /**
+     * Detect if given Select2 element is multiple
+     *
+     * @param WebDriverElement $select2Element
+     * @return bool
+     */
+    protected function detectMultipleFromSelect2(WebDriverElement $select2Element)
+    {
+        $select2Classes = $select2Element->getAttribute('class');
+
+        return (mb_strpos($select2Classes, 'select2-container-multi') !== false);
     }
 }

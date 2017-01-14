@@ -17,7 +17,9 @@ use Lmc\Steward\Test\AbstractTestCase;
 class Select2Test extends AbstractTestCase
 {
     const SELECT_SIMPLE_SELECTOR = '#select';
+    const INPUT_SIMPLE_SELECTOR = '#input';
     const SELECT_MULTIPLE_SELECTOR = '#select-multiple';
+    const INPUT_MULTIPLE_SELECTOR = '#input-multiple';
 
     /**
      * @before
@@ -66,7 +68,9 @@ class Select2Test extends AbstractTestCase
     {
         return [
             'simple <select>' => [self::SELECT_SIMPLE_SELECTOR, false],
+            'simple <input>' => [self::INPUT_SIMPLE_SELECTOR, false],
             '<select> with multiple attribute' => [self::SELECT_MULTIPLE_SELECTOR, true],
+            '<input> with multiple options' => [self::INPUT_MULTIPLE_SELECTOR, true],
         ];
     }
 
@@ -115,8 +119,8 @@ class Select2Test extends AbstractTestCase
         $select2->selectByVisiblePartialText('not second');
         $this->assertSame('This is not second option', $select2->getFirstSelectedOption()->getText());
 
-        $select2->selectByVisiblePartialText('Fourth with spaces');
-        $this->assertSame('Fourth with spaces inside', $select2->getFirstSelectedOption()->getText());
+        $select2->selectByVisiblePartialText('Fifth');
+        $this->assertSame('Fifth surrounded by spaces', $select2->getFirstSelectedOption()->getText());
     }
 
     public function testShouldSelectOptionOfMultipleSelectByVisiblePartialText()
@@ -134,7 +138,7 @@ class Select2Test extends AbstractTestCase
         $this->assertSame('First', $selectedOptions[0]->getText());
 
         $select2->selectByVisiblePartialText('second');
-        $select2->selectByVisiblePartialText('Fourth with spaces');
+        $select2->selectByVisiblePartialText('Fifth');
         // the first selected option is still the same
         $this->assertSame('First', $select2->getFirstSelectedOption()->getText());
 
@@ -143,6 +147,6 @@ class Select2Test extends AbstractTestCase
         $this->assertCount(3, $finalSelectedOptions);
         $this->assertSame('First', $finalSelectedOptions[0]->getText());
         $this->assertSame('This is second option', $finalSelectedOptions[1]->getText());
-        $this->assertSame('Fourth with spaces inside', $finalSelectedOptions[2]->getText());
+        $this->assertSame('Fifth surrounded by spaces', $finalSelectedOptions[2]->getText());
     }
 }
