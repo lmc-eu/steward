@@ -7,6 +7,7 @@
 - Command `generate-timeline` to generate timeline-based visualization of test run into HTML file.
 - When test is started, url of the executing node is stored in the `results.xml` file. (Applies only for Selenium standalone server.)
 - `Select2` component for jQuery based Select2, which mimics behavior of native `WebDriverSelect` (it actually uses the same interface; though not all methods are implemented).
+- `waitForTitleRegexp()` syntax sugar method to wait until current page title matches given regexp (shortcut for new `WebDriverExpectedCondition::titleMatches()` method).
 
 ### Changed
 - Deprecate `TestUtils`. The class will be removed in next major release. This includes:
@@ -14,6 +15,7 @@
     - Deprecate `TestUtils::setSelect2Value()` method. Use directly the new `Select2` component and `selectByVisiblePartialText()` method.
     - Deprecate `TestUtils::getFixturePath()` method. Use `Facebook\WebDriver\Remote\FileDetector` instead.
     - Deprecate `TestUtils::sleep()` method. Use `AbstractTestCase::sleep()` method instead.
+- Upgrade [php-webdriver](https://github.com/facebook/php-webdriver) to version 1.3.0.
 
 ## 2.0.1 - 2016-12-01
 ### Fixed

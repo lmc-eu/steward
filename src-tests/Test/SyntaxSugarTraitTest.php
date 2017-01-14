@@ -126,6 +126,7 @@ class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
 
             ['waitForTitle', false],
             ['waitForPartialTitle', false],
+            ['waitForTitleRegexp', false],
         ];
     }
 }

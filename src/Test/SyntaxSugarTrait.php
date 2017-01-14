@@ -323,6 +323,19 @@ trait SyntaxSugarTrait
     }
 
     /**
+     * Wait until page title partially matches given regular expression
+     *
+     * @param string $titleRegepx The expected title regular expression
+     * @return RemoteWebElement|array
+     */
+    public function waitForTitleRegexp($titleRegepx)
+    {
+        return $this->wd->wait()->until(
+            WebDriverExpectedCondition::titleMatches($titleRegepx)
+        );
+    }
+
+    /**
      * Wait until an element is present on the DOM of a page (and is also visible if $mustBeVisible is set to true).
      *
      * @param WebDriverBy $by The locator used to find the element.
