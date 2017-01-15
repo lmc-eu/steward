@@ -160,5 +160,19 @@ Similar output but in command line interface could be obtained using `steward re
 
 ![Example output of results command](https://lmc-eu.github.io/steward/images/results-output-cli.png)
 
+### 6. See test execution timeline
+Steward provides visual representation of test execution timeline. When used with Selenium server grid you can see which
+Selenium node executed which testcase, identify possible bottlenecks and so on.
+
+To generate the timeline, simply run after your test build is finished the command `generate-timeline`:
+
+```sh
+./vendor/bin/steward generate-timeline
+```
+
+File `timeline.html` will be then generated into `logs/` directory.
+
+![Example timeline visualization](https://lmc-eu.github.io/steward/images/timeline.png)
+
 ## License
 Steward is open source software licensed under the [MIT license](LICENCE.md).
