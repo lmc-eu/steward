@@ -259,7 +259,7 @@ class XmlPublisher extends AbstractPublisher
      */
     private function getStylesheet()
     {
-        $xslPath = __DIR__ . '/../results.xsl';
+        $xslPath = __DIR__ . '/../Resources/results.xsl';
         $xsl = file_get_contents($xslPath);
 
         return $xsl;
