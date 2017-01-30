@@ -4,19 +4,16 @@ namespace Lmc\Steward\Listener;
 
 use Facebook\WebDriver\Exception\UnknownServerException;
 use Facebook\WebDriver\Exception\WebDriverException;
-use Facebook\WebDriver\Firefox\FirefoxDriver;
-use Facebook\WebDriver\Firefox\FirefoxProfile;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
-use Facebook\WebDriver\Remote\WebDriverCapabilityType;
-use Facebook\WebDriver\WebDriverPlatform;
 use Lmc\Steward\ConfigProvider;
+use Lmc\Steward\Selenium\CapabilitiesResolver;
+use Lmc\Steward\Selenium\CapabilitiesResolverInterface;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use Nette\Reflection\AnnotationsParser;
-use OndraM\CiDetector\CiDetector;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
@@ -30,6 +27,28 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 {
     const NO_BROWSER_ANNOTATION = 'noBrowser';
 
+    /** @var ConfigProvider */
+    protected $config;
+    /** @var CapabilitiesResolverInterface */
+    protected $capabilitiesResolver;
+
+    public function __construct()
+    {
+        $this->config = ConfigProvider::getInstance();
+    }
+
+    /**
+     * @return CapabilitiesResolverInterface
+     */
+    protected function getCapabilitiesResolver()
+    {
+        if ($this->capabilitiesResolver === null) {
+            $this->capabilitiesResolver = new CapabilitiesResolver($this->config);
+        }
+
+        return $this->capabilitiesResolver;
+    }
+
     public function startTest(\PHPUnit_Framework_Test $test)
     {
         if ($test instanceof \PHPUnit_Framework_Warning) {
@@ -39,8 +58,6 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
         if (!$test instanceof AbstractTestCase) {
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
         }
-
-        $config = ConfigProvider::getInstance();
 
         // Initialize NullWebDriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
         $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
@@ -64,15 +81,17 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
         // Initialize real WebDriver otherwise
         $test->log(
             'Initializing "%s" WebDriver for "%s::%s"',
-            $config->browserName,
+            $this->config->browserName,
             get_class($test),
             $test->getName()
         );
 
+        $capabilities = $this->getCapabilitiesResolver()->resolveCapabilities($test);
+
         $this->createWebDriver(
             $test,
-            $config->serverUrl . SeleniumServerAdapter::HUB_ENDPOINT,
-            $this->setupCapabilities($test),
+            $this->config->serverUrl . SeleniumServerAdapter::HUB_ENDPOINT,
+            $capabilities,
             $connectTimeoutMs = 2 * 60 * 1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
             $requestTimeoutMs = 60 * 60 * 1000 // 1 hour (same as timeout for the whole process)
@@ -160,152 +179,5 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
 
         $test->warn('All %d attempts to instantiate Firefox WebDriver failed', $startAttempts + 1);
         throw $e;
-    }
-
-    /**
-     * Setup browser-specific custom capabilities.
-     * @param DesiredCapabilities $capabilities
-     * @param string $browser Browser name
-     * @return DesiredCapabilities
-     */
-    protected function setupCustomCapabilities(DesiredCapabilities $capabilities, $browser)
-    {
-        switch ($browser) {
-            case WebDriverBrowserType::FIREFOX:
-                $capabilities = $this->setupFirefoxCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::CHROME:
-                $capabilities = $this->setupChromeCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::MICROSOFT_EDGE:
-                $capabilities = $this->setupMicrosoftEdgeCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::IE:
-                $capabilities = $this->setupInternetExplorerCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::SAFARI:
-                $capabilities = $this->setupSafariCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::PHANTOMJS:
-                $capabilities = $this->setupPhantomjsCapabilities($capabilities);
-                break;
-        }
-
-        return $capabilities;
-    }
-
-    /**
-     * Set up Firefox-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupFirefoxCapabilities(DesiredCapabilities $capabilities)
-    {
-        // Firefox does not (as a intended feature) trigger "change" and "focus" events in javascript if not in active
-        // (focused) window. This would be a problem for concurrent testing - solution is to use focusmanager.testmode.
-        // See https://code.google.com/p/selenium/issues/detail?id=157
-        $profile = new FirefoxProfile(); // see https://github.com/facebook/php-webdriver/wiki/FirefoxProfile
-        $profile->setPreference(
-            'focusmanager.testmode',
-            true
-        );
-
-        $capabilities->setCapability(FirefoxDriver::PROFILE, $profile);
-
-        return $capabilities;
-    }
-
-    /**
-     * Set up Chrome/Chromium-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupChromeCapabilities(DesiredCapabilities $capabilities)
-    {
-        return $capabilities;
-    }
-
-    /**
-     * Set up Microsoft Edge-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupMicrosoftEdgeCapabilities(DesiredCapabilities $capabilities)
-    {
-        return $capabilities;
-    }
-
-    /**
-     * Set up Internet Explorer-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupInternetExplorerCapabilities(DesiredCapabilities $capabilities)
-    {
-        // Clears cache, cookies, history, and saved form data of MSIE.
-        $capabilities->setCapability('ie.ensureCleanSession', true);
-
-        return $capabilities;
-    }
-
-    /**
-     * Set up Safari-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupSafariCapabilities(DesiredCapabilities $capabilities)
-    {
-        return $capabilities;
-    }
-
-    /**
-     * Set up PhantomJS-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupPhantomjsCapabilities(DesiredCapabilities $capabilities)
-    {
-        return $capabilities;
-    }
-
-    /**
-     * @param AbstractTestCase $test
-     * @return DesiredCapabilities
-     */
-    private function setupCapabilities(AbstractTestCase $test)
-    {
-        $config = ConfigProvider::getInstance();
-
-        $capabilities = new DesiredCapabilities(
-            [
-                WebDriverCapabilityType::BROWSER_NAME => $config->browserName,
-                WebDriverCapabilityType::PLATFORM => WebDriverPlatform::ANY,
-                'name' => get_class($test) . '::' . $test->getName(),
-            ]
-        );
-
-        if (!empty($config->capability)) {
-            $extraCapabilities = json_decode($config->capability);
-            foreach ($extraCapabilities as $extraCapabilityName => $extraCapabilityValue) {
-                $capabilities->setCapability($extraCapabilityName, $extraCapabilityValue);
-            }
-        }
-
-        $ciDetector = new CiDetector();
-        if ($ciDetector->isCiDetected()) {
-            $ci = $ciDetector->detect();
-            $capabilities->setCapability(
-                'build',
-                ConfigProvider::getInstance()->env . '-' . $ci->getBuildNumber()
-            );
-            $capabilities->setCapability(
-                'tags',
-                [ConfigProvider::getInstance()->env, $ci->getCiName(), get_class($test)]
-            );
-        }
-
-        $capabilities = $this->setupCustomCapabilities($capabilities, $config->browserName);
-
-        return $capabilities;
     }
 }
