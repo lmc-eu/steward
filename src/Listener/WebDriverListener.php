@@ -86,12 +86,14 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
             $test->getName()
         );
 
-        $capabilities = $this->getCapabilitiesResolver()->resolveCapabilities($test);
+        $desiredCapabilities = $this->getCapabilitiesResolver()->resolveDesiredCapabilities($test);
+        $requiredCapabilities = $this->getCapabilitiesResolver()->resolveRequiredCapabilities($test);
 
         $this->createWebDriver(
             $test,
             $this->config->serverUrl . SeleniumServerAdapter::HUB_ENDPOINT,
-            $capabilities,
+            $desiredCapabilities,
+            $requiredCapabilities,
             $connectTimeoutMs = 2 * 60 * 1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
             $requestTimeoutMs = 60 * 60 * 1000 // 1 hour (same as timeout for the whole process)
@@ -138,14 +140,17 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
      *
      * @param string AbstractTestCase $test
      * @param string $remoteServerUrl
-     * @param DesiredCapabilities $capabilities
+     * @param DesiredCapabilities $desiredCapabilities
+     * @param DesiredCapabilities $requiredCapabilities
      * @param int $connectTimeoutMs
      * @param int $requestTimeoutMs
+     * @throws UnknownServerException
      */
     protected function createWebDriver(
         AbstractTestCase $test,
         $remoteServerUrl,
-        DesiredCapabilities $capabilities,
+        DesiredCapabilities $desiredCapabilities,
+        DesiredCapabilities $requiredCapabilities,
         $connectTimeoutMs,
         $requestTimeoutMs
     ) {
@@ -154,7 +159,15 @@ class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
         for ($startAttempts = 0; $startAttempts < 4; $startAttempts++) {
             try {
                 $test->wd =
-                    RemoteWebDriver::create($remoteServerUrl, $capabilities, $connectTimeoutMs, $requestTimeoutMs);
+                    RemoteWebDriver::create(
+                        $remoteServerUrl,
+                        $desiredCapabilities,
+                        $connectTimeoutMs,
+                        $requestTimeoutMs,
+                        null,
+                        null,
+                        $requiredCapabilities
+                    );
 
                 return;
             } catch (UnknownServerException $e) {

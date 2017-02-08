@@ -12,9 +12,6 @@ use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
 use OndraM\CiDetector\CiDetector;
 
-/**
- * Resolve capabilities to be used for a TestCase
- */
 class CapabilitiesResolver implements CapabilitiesResolverInterface
 {
     /** @var ConfigProvider */
@@ -25,7 +22,7 @@ class CapabilitiesResolver implements CapabilitiesResolverInterface
         $this->config = $config;
     }
 
-    public function resolveCapabilities(AbstractTestCase $test)
+    public function resolveDesiredCapabilities(AbstractTestCase $test)
     {
         $capabilities = new DesiredCapabilities(
             [
@@ -58,6 +55,11 @@ class CapabilitiesResolver implements CapabilitiesResolverInterface
         $capabilities = $this->setupCustomCapabilities($capabilities, $this->config->browserName);
 
         return $capabilities;
+    }
+
+    public function resolveRequiredCapabilities(AbstractTestCase $test)
+    {
+        return new DesiredCapabilities();
     }
 
     /**

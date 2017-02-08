@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Changed
+- Capabilities are now resolved using `CapabilitiesResolver` class.
 
 ## 2.1.0 - 2017-01-16
 ### Added
