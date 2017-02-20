@@ -20,7 +20,7 @@ Steward is set of libraries made to simplify writing and running robust function
 - You can extend it easily by e.g. registering custom events to EventDispatcher. Thus you can for example add custom configuration options or change parameters passed to PHPUnit processes.
 - Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated, giving you a possibility to run tests with even less setup and without own infrastructure.
 - It is field tested - we use it daily in [our company](http://www.lmc.eu/english) to maintain quality of our various products thanks to hundreds of test-cases. The library itself is also extensively covered with unit tests.
-- Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser browser automation,
+- Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
 [php-webdriver](https://github.com/facebook/php-webdriver) is the most used and developed Selenium language binding for PHP,
 [PHPUnit](https://phpunit.de/) is well known and widely used testing framework and
 [Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) is industry standard for PHP CLI applications.
