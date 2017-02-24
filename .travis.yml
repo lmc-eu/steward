@@ -16,9 +16,7 @@ matrix:
       before_install:
         - phpenv config-rm xdebug.ini
       before_script: ~
-      script:
-        - vendor/bin/phpcs --standard=ruleset.xml
-        - vendor/bin/php-cs-fixer fix --diff --dry-run
+      script: composer codestyle:check
       after_success: ~
 
 install:
