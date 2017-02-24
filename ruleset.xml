@@ -53,6 +53,7 @@
 
     <exclude-pattern>bootstrap.php</exclude-pattern>
     <exclude-pattern>src-tests/coverage/*</exclude-pattern>
+    <exclude-pattern>src-tests/FunctionalTests/logs/coverage/*</exclude-pattern>
 
     <arg value="p"/>
     <arg name="encoding" value="utf-8"/>
