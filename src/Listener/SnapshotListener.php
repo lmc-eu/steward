@@ -15,16 +15,16 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
 {
     public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
-        $this->takeSnapshot($test);
+        if ($test instanceof AbstractTestCase) {
+            $this->takeSnapshot($test);
+        }
     }
 
     public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
     {
-        if ($test instanceof \PHPUnit_Framework_Warning) {
-            return;
+        if ($test instanceof AbstractTestCase) {
+            $this->takeSnapshot($test);
         }
-
-        $this->takeSnapshot($test);
     }
 
     /**
@@ -34,19 +34,14 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
      */
     protected function takeSnapshot(AbstractTestCase $test)
     {
-        $savePath = ConfigProvider::getInstance()->logsDir . '/';
-
-        $testIdentifier = Strings::webalize(get_class($test), null, $lower = false)
-            . '-'
-            . Strings::webalize($test->getName(), null, $lower = false)
-            . '-'
-            . date('Y-m-d-H-i-s');
-
         if (!$test->wd instanceof RemoteWebDriver) {
-            $test->warn('WebDriver instance not found, cannot take snapshot.');
+            $test->appendTestLog('[WARN] WebDriver instance not found, cannot take snapshot.');
 
             return;
         }
+
+        $savePath = ConfigProvider::getInstance()->logsDir . '/';
+        $testIdentifier = $this->assembleTestIdentifier($test);
 
         try {
             $test->appendTestLog(
@@ -64,7 +59,7 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
             file_put_contents($htmlPath, $test->wd->getPageSource());
             $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
         } catch (WebDriverException $e) {
-            $test->appendTestLog('Error taking page snapshot, perhaps browser is not accessible?');
+            $test->appendTestLog('[WARN] Error taking page snapshot, perhaps browser is not accessible?');
 
             return;
         }
@@ -90,5 +85,19 @@ class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
         }
 
         return $path;
+    }
+
+    /**
+     * @param AbstractTestCase $testCase
+     * @return string
+     */
+    private function assembleTestIdentifier(AbstractTestCase $testCase)
+    {
+        return sprintf(
+            '%s-%s-%s',
+            Strings::webalize(get_class($testCase), null, $lower = false),
+            Strings::webalize($testCase->getName(), null, $lower = false),
+            date('Y-m-d-H-i-s')
+        );
     }
 }
