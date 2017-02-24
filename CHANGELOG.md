@@ -5,6 +5,7 @@
 ## Unreleased
 ### Changed
 - Capabilities are now resolved using `CapabilitiesResolver` class.
+- Require PHPUnit ^5.7
 
 ## 2.1.0 - 2017-01-16
 ### Added
