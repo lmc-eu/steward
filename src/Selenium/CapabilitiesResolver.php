@@ -16,10 +16,14 @@ class CapabilitiesResolver implements CapabilitiesResolverInterface
 {
     /** @var ConfigProvider */
     protected $config;
+    /** @var CiDetector */
+    protected $ciDetector;
 
     public function __construct(ConfigProvider $config)
     {
         $this->config = $config;
+
+        $this->ciDetector = new CiDetector();
     }
 
     public function resolveDesiredCapabilities(AbstractTestCase $test)
@@ -39,16 +43,15 @@ class CapabilitiesResolver implements CapabilitiesResolverInterface
             }
         }
 
-        $ciDetector = new CiDetector();
-        if ($ciDetector->isCiDetected()) {
-            $ci = $ciDetector->detect();
+        if ($this->ciDetector->isCiDetected()) {
+            $ci = $this->ciDetector->detect();
             $capabilities->setCapability(
                 'build',
-                ConfigProvider::getInstance()->env . '-' . $ci->getBuildNumber()
+                $this->config->env . '-' . $ci->getBuildNumber()
             );
             $capabilities->setCapability(
                 'tags',
-                [ConfigProvider::getInstance()->env, $ci->getCiName(), get_class($test)]
+                [$this->config->env, $ci->getCiName(), get_class($test)]
             );
         }
 
@@ -60,6 +63,15 @@ class CapabilitiesResolver implements CapabilitiesResolverInterface
     public function resolveRequiredCapabilities(AbstractTestCase $test)
     {
         return new DesiredCapabilities();
+    }
+
+    /**
+     * @internal
+     * @param CiDetector $ciDetector
+     */
+    public function setCiDetector(CiDetector $ciDetector)
+    {
+        $this->ciDetector = $ciDetector;
     }
 
     /**
