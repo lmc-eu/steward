@@ -11,7 +11,6 @@ use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -264,14 +263,9 @@ class ProcessSetCreatorTest extends TestCase
             . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=custom-fixtures-dir/'
             . ' --' . RunCommand::OPTION_LOGS_DIR . '=custom-logs-dir/'
             . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '="capability.in.quotes:/foo/ba r.log"'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '="platform:OS X 10.8"'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=stringValue:thisIsString'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=someNumber:1337'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=zeroValue:0'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=floatValue:1.337'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=trueValue:true'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=falseValue:false'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '="enquoted:OS X 10.8"'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.foo:false'
+            . ' --' . RunCommand::OPTION_CAPABILITY . '=version:\"14.14393\"'
         );
 
         $this->input->bind($this->command->getDefinition());
@@ -298,45 +292,11 @@ class ProcessSetCreatorTest extends TestCase
                 'SERVER_URL' => 'http://foo.bar:1337',
                 'FIXTURES_DIR' => 'custom-fixtures-dir/',
                 'LOGS_DIR' => 'custom-logs-dir/',
-                'CAPABILITY' => '{'
-                    . '"webdriver.log.file":"\/foo\/bar.log",'
-                    . '"capability.in.quotes":"\/foo\/ba r.log",'
-                    . '"platform":"OS X 10.8",'
-                    . '"stringValue":"thisIsString",'
-                    . '"someNumber":1337,'
-                    . '"zeroValue":0,'
-                    . '"floatValue":1.337,'
-                    . '"trueValue":true,'
-                    . '"falseValue":false'
-                    . '}',
+                'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","enquoted":"OS X 10.8","webdriver.foo":false,' .
+                    '"version":"14.14393"}',
             ],
             $processEnv
         );
-    }
-
-    public function testShouldNotAcceptCapabilitiesInWrongFormat()
-    {
-        $this->input = new StringInput(
-            'foo chrome'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=foo'
-        );
-
-        $this->input->bind($this->command->getDefinition());
-
-        // Redeclare creator so it uses the new input
-        $this->creator = new ProcessSetCreator(
-            $this->command,
-            $this->input,
-            $this->bufferedOutput,
-            $this->publisherMock
-        );
-
-        $files = $this->findDummyTests('DummyTest.php');
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Capability must be given in format "capabilityName:value" but "foo" was given');
-
-        $this->creator->createFromFiles($files, [], []);
     }
 
     public function testShouldSetPHPUnitColoredOptionOnlyIfTheOutputIsDecorated()
