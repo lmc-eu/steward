@@ -1,9 +1,10 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.2/phpunit.xsd"
+    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.6/phpunit.xsd"
     bootstrap="./bootstrap.php"
     colors="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
+    backupGlobals="false"
 >
     <testsuite name="Steward">
         <directory>./</directory>
