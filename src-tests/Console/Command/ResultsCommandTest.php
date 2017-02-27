@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -10,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 /**
  * @covers Lmc\Steward\Console\Command\ResultsCommand
  */
-class ResultsCommandTest extends \PHPUnit_Framework_TestCase
+class ResultsCommandTest extends TestCase
 {
     /** @var ResultsCommand */
     protected $command;

@@ -7,8 +7,9 @@ use Lmc\Steward\Listener\Fixtures\DummyPublisher;
 use Lmc\Steward\Publisher\SauceLabsPublisher;
 use Lmc\Steward\Publisher\TestingBotPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
+use PHPUnit\Framework\TestCase;
 
-class TestStatusListenerTest extends \PHPUnit_Framework_TestCase
+class TestStatusListenerTest extends TestCase
 {
     /** @var SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject */
     protected $seleniumAdapterMock;

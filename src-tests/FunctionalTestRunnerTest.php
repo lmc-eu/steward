@@ -4,6 +4,7 @@ namespace Lmc\Steward;
 
 use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -17,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * @group functional
  * @runTestsInSeparateProcesses
  */
-class FunctionalTestRunnerTest extends \PHPUnit_Framework_TestCase
+class FunctionalTestRunnerTest extends TestCase
 {
     /** @var RunCommand */
     protected $command;

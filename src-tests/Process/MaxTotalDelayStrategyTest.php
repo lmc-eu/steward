@@ -4,8 +4,9 @@ namespace Lmc\Steward\Process;
 
 use Fhaculty\Graph\Graph;
 use Graphp\Algorithms\Tree\OutTree;
+use PHPUnit\Framework\TestCase;
 
-class MaxTotalDelayStrategyTest extends \PHPUnit_Framework_TestCase
+class MaxTotalDelayStrategyTest extends TestCase
 {
     public function testShouldOptimizeOrderBasedOnMaxSubtreeDelay()
     {

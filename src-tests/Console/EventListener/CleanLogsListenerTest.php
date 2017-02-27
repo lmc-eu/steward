@@ -8,6 +8,7 @@ use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
@@ -18,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 /**
  * @covers Lmc\Steward\Console\EventListener\CleanLogsListener
  */
-class CleanLogsListenerTest extends \PHPUnit_Framework_TestCase
+class CleanLogsListenerTest extends TestCase
 {
     /** @var CleanLogsListener */
     protected $listener;

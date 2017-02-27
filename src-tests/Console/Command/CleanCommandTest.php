@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -11,7 +12,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * @covers Lmc\Steward\Console\Command\CleanCommand
  */
-class CleanCommandTest extends \PHPUnit_Framework_TestCase
+class CleanCommandTest extends TestCase
 {
     /** @var CleanCommand */
     protected $command;

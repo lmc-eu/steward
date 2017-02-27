@@ -4,10 +4,11 @@ namespace Lmc\Steward\Process;
 
 use Assert\InvalidArgumentException;
 use Lmc\Steward\Publisher\XmlPublisher;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
-class ProcessWrapperTest extends \PHPUnit_Framework_TestCase
+class ProcessWrapperTest extends TestCase
 {
     public function testShouldWrapGivenProcess()
     {

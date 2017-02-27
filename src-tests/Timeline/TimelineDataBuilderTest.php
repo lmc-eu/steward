@@ -2,10 +2,12 @@
 
 namespace Lmc\Steward\Timeline;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @covers Lmc\Steward\Timeline\TimelineDataBuilder
  */
-class TimelineDataBuilderTest extends \PHPUnit_Framework_TestCase
+class TimelineDataBuilderTest extends TestCase
 {
     public function testShouldNotIncludeStartedTestsInTimelineData()
     {

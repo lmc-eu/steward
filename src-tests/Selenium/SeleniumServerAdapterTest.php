@@ -3,8 +3,9 @@
 namespace Lmc\Steward\Selenium;
 
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\TestCase;
 
-class SeleniumServerAdapterTest extends \PHPUnit_Framework_TestCase
+class SeleniumServerAdapterTest extends TestCase
 {
     use PHPMock;
 

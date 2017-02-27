@@ -5,8 +5,9 @@ namespace Lmc\Steward\Component;
 use Lmc\Steward\Component\Fixtures\MockComponent;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
+use PHPUnit\Framework\TestCase;
 
-class AbstractComponentTest extends \PHPUnit_Framework_TestCase
+class AbstractComponentTest extends TestCase
 {
     /** @var AbstractTestCase */
     protected $testCase;

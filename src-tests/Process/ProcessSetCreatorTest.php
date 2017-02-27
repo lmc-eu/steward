@@ -10,6 +10,7 @@ use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedTest;
 use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
@@ -21,7 +22,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * @covers Lmc\Steward\Process\ProcessSetCreator
  */
-class ProcessSetCreatorTest extends \PHPUnit_Framework_TestCase
+class ProcessSetCreatorTest extends TestCase
 {
     /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcherMock;

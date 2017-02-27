@@ -7,11 +7,12 @@ use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers Lmc\Steward\Listener\SnapshotListener
  */
-class SnapshotListenerTest extends \PHPUnit_Framework_TestCase
+class SnapshotListenerTest extends TestCase
 {
     use PHPMock;
 

@@ -9,6 +9,7 @@ use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -19,7 +20,7 @@ use Symfony\Component\Process\ProcessBuilder;
 /**
  * @covers Lmc\Steward\Console\EventListener\XdebugListener
  */
-class XdebugListenerTest extends \PHPUnit_Framework_TestCase
+class XdebugListenerTest extends TestCase
 {
     use PHPMock;
 

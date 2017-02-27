@@ -3,12 +3,13 @@
 namespace Lmc\Steward\Test;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Abstract test case base.
  * It holds RemoteWebDriver and defines function templates.
  */
-abstract class AbstractTestCaseBase extends \PHPUnit_Framework_TestCase
+abstract class AbstractTestCaseBase extends TestCase
 {
     /** @var RemoteWebDriver */
     public $wd;

@@ -5,12 +5,13 @@ namespace Lmc\Steward\Component;
 use Lmc\Steward\Component\Fixtures\StringableObject;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers Lmc\Steward\Component\Legacy
  * @covers Lmc\Steward\Component\LegacyException
  */
-class LegacyTest extends \PHPUnit_Framework_TestCase
+class LegacyTest extends TestCase
 {
     /** @var AbstractTestCase */
     protected $testCase;
