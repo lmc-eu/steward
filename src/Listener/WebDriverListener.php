@@ -14,6 +14,7 @@ use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use Nette\Reflection\AnnotationsParser;
+use PHPUnit\Framework\BaseTestListener;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
@@ -23,7 +24,7 @@ use Nette\Reflection\AnnotationsParser;
  * If taking screenshot using addFailure(), tearDown() would have already been called and the
  * browser would be closed.
  */
-class WebDriverListener extends \PHPUnit_Framework_BaseTestListener
+class WebDriverListener extends BaseTestListener
 {
     const NO_BROWSER_ANNOTATION = 'noBrowser';
 

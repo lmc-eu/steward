@@ -2,10 +2,11 @@
 
 namespace Lmc\Steward\Console\Style;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class StewardStyleTest extends \PHPUnit_Framework_TestCase
+class StewardStyleTest extends TestCase
 {
     /** @var StewardStyle */
     protected $style;

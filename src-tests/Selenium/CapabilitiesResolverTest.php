@@ -9,11 +9,12 @@ use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
 use OndraM\CiDetector\Ci\Jenkins;
 use OndraM\CiDetector\CiDetector;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers Lmc\Steward\Selenium\CapabilitiesResolver
  */
-class CapabilitiesResolverTest extends \PHPUnit_Framework_TestCase
+class CapabilitiesResolverTest extends TestCase
 {
     /**
      * @dataProvider provideBrowsers

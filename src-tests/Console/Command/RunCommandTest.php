@@ -8,6 +8,7 @@ use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -17,7 +18,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * @covers Lmc\Steward\Console\Command\RunCommand
  */
-class RunCommandTest extends \PHPUnit_Framework_TestCase
+class RunCommandTest extends TestCase
 {
     /** @var RunCommand */
     protected $command;

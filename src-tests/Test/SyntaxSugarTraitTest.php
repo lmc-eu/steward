@@ -6,8 +6,9 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverWait;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
+use PHPUnit\Framework\TestCase;
 
-class SyntaxSugarTraitTest extends \PHPUnit_Framework_TestCase
+class SyntaxSugarTraitTest extends TestCase
 {
     /** @var SyntaxSugarTrait|\stdClass */
     protected $trait;

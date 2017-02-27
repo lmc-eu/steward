@@ -8,8 +8,9 @@ use Facebook\WebDriver\WebDriverWindow;
 use Lmc\Steward\Component\TestUtils;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
+use PHPUnit\Framework\TestCase;
 
-class AbstractTestCaseTest extends \PHPUnit_Framework_TestCase
+class AbstractTestCaseTest extends TestCase
 {
     const EXPECTED_TIMESTAMP_PATTERN = '\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]';
 

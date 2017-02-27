@@ -6,8 +6,9 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\Test\AbstractTestCaseBase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\TestCase;
 
-abstract class AbstractCloudPublisherTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractCloudPublisherTestCase extends TestCase
 {
     use PHPMock;
 

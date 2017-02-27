@@ -6,6 +6,7 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -14,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 /**
  * @covers Lmc\Steward\Console\Command\InstallCommand
  */
-class InstallCommandTest extends \PHPUnit_Framework_TestCase
+class InstallCommandTest extends TestCase
 {
     use PHPMock;
 

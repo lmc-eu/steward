@@ -3,12 +3,13 @@
 namespace Lmc\Steward\Console\EventListener\ListenerInstantiator;
 
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @covers Lmc\Steward\Console\EventListener\ListenerInstantiator
  */
-class ListenerInstantiatorTest extends \PHPUnit_Framework_TestCase
+class ListenerInstantiatorTest extends TestCase
 {
     /** @var ListenerInstantiator */
     protected $instantiator;

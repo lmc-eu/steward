@@ -3,8 +3,9 @@
 namespace Lmc\Steward;
 
 use Configula\Config;
+use PHPUnit\Framework\TestCase;
 
-class ConfigProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigProviderTest extends TestCase
 {
     /** @var array */
     protected $environmentVariables = [];

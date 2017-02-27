@@ -3,8 +3,9 @@
 namespace Lmc\Steward\WebDriver;
 
 use Facebook\WebDriver\WebDriverBy;
+use PHPUnit\Framework\TestCase;
 
-class NullWebDriverTest extends \PHPUnit_Framework_TestCase
+class NullWebDriverTest extends TestCase
 {
     /**
      * @var NullWebDriver

@@ -5,8 +5,9 @@ namespace Lmc\Steward\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\WebDriver\Fixtures\DummyCommandExecutor;
+use PHPUnit\Framework\TestCase;
 
-class RemoteWebDriverTest extends \PHPUnit_Framework_TestCase
+class RemoteWebDriverTest extends TestCase
 {
     /** @var RemoteWebDriver|\PHPUnit_Framework_MockObject_MockObject */
     protected $driver;

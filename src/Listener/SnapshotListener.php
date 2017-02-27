@@ -7,11 +7,12 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
 use Nette\Utils\Strings;
+use PHPUnit\Framework\BaseTestListener;
 
 /**
  * Listener to take snapshots of the page (screenshot and html snapshot) on each error or failure.
  */
-class SnapshotListener extends \PHPUnit_Framework_BaseTestListener
+class SnapshotListener extends BaseTestListener
 {
     public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {

@@ -6,11 +6,12 @@ use Assert\InvalidArgumentException;
 use Graphp\Algorithms\Tree\OutTree;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
 use Lmc\Steward\Publisher\XmlPublisher;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Process\Process;
 
-class ProcessSetTest extends \PHPUnit_Framework_TestCase
+class ProcessSetTest extends TestCase
 {
     /** @var ProcessSet */
     protected $set;

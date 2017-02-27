@@ -6,8 +6,9 @@ use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\TestCase;
 
-class XmlPublisherTest extends \PHPUnit_Framework_TestCase
+class XmlPublisherTest extends TestCase
 {
     use PHPMock;
 
