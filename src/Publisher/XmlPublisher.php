@@ -15,8 +15,7 @@ class XmlPublisher extends AbstractPublisher
     protected $fileDir;
     /** @var string */
     protected $fileName = self::FILE_NAME;
-
-    /** @var resource */
+    /** @var resource|null */
     protected $fileHandle;
 
     /**
