@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Process;
 
+use Assert\Assert;
 use Assert\Assertion;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
@@ -93,7 +94,7 @@ class ProcessWrapper
             $this->getClassName(),
             $minutes
         );
-        \Assert\that($minutes)->numeric($assertionError)->greaterOrEqualThan(0, $assertionError);
+        Assert::that($minutes)->numeric($assertionError)->greaterOrEqualThan(0, $assertionError);
 
         $this->delayAfter = $afterClass;
         $this->delayMinutes = (float) $minutes;

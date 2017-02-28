@@ -37,7 +37,7 @@
         "florianwolters/component-util-singleton": "0.3.2",
         "caseyamcl/configula": "~2.3",
         "doctrine/inflector": "~1.0",
-        "beberlei/assert": "^2.4",
+        "beberlei/assert": "^2.7",
         "ondram/ci-detector": "^2.0"
     },
     "require-dev": {
