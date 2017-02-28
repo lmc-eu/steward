@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Console\EventListener\ListenerInstantiator;
+namespace Lmc\Steward\Console\EventListener;
 
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
 use PHPUnit\Framework\TestCase;
