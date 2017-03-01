@@ -3,6 +3,9 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Added
+- Capabilities passed using `--capability` CLI option could now force to be specified as an string (by encapsulating into additional quotes).
+
 ### Changed
 - Capabilities are now resolved using `CapabilitiesResolver` class.
 - Require PHPUnit ^5.7
