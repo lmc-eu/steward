@@ -2,7 +2,6 @@
 
 namespace Lmc\Steward\Console\EventListener;
 
-use Lmc\Steward\Console\EventListener\ListenerInstantiator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
