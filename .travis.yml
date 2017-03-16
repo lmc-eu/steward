@@ -47,4 +47,4 @@ cache:
     - $HOME/.composer/cache
 
 addons:
-  firefox: "latest-esr"
+  firefox: "45.8.0esr"
