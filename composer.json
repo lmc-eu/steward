@@ -60,5 +60,10 @@
             "vendor/bin/php-cs-fixer fix --diff || exit 0",
             "vendor/bin/phpcbf --standard=ruleset.xml"
         ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        }
     }
 }
