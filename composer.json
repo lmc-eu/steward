@@ -35,7 +35,6 @@
         "clue/graph": "~0.9.0",
         "graphp/algorithms": "^0.8.1",
         "florianwolters/component-util-singleton": "0.3.2",
-        "caseyamcl/configula": "~2.3",
         "doctrine/inflector": "~1.0",
         "beberlei/assert": "^2.7",
         "ondram/ci-detector": "^2.0"

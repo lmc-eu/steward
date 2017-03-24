@@ -2,7 +2,6 @@
 
 namespace Lmc\Steward;
 
-use Configula\Config;
 use Doctrine\Common\Inflector\Inflector;
 use FlorianWolters\Component\Util\Singleton\SingletonTrait;
 
@@ -22,46 +21,68 @@ class ConfigProvider
 {
     use SingletonTrait;
 
-    /** @var Config Config object instance */
-    private $config;
+    /** @var array[] Configuration options */
+    private $config = null;
 
     /** @var array Array of custom configuration options that should be added to the default ones */
     private $customConfigurationOptions = [];
 
+    /**
+     * @param string $name
+     * @return array
+     */
     public function __get($name)
     {
-        $value = $this->getInstance()->getConfig()->getItem($name, null);
+        $this->initialize();
 
-        if ($value !== null) {
-            return $value;
+        if (isset($this->config[$name])) {
+            return $this->config[$name];
         }
 
         throw new \DomainException(sprintf('Configuration option "%s" was not defined', $name));
     }
 
-    public function __isset($name)
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
     {
-        $value = $this->getInstance()->getConfig()->getItem($name, null);
-
-        if (empty($value)) {
-            return false;
-        }
-
-        return true;
+        throw new \LogicException('Configuration values are immutable after initialization and cannot be changed');
     }
 
     /**
-     * Add custom configuration options that should be added to the default ones. Can be set only before first call of
-     * getConfig(), as the values must be given to the Config object upon initialization.
+     * @param string $name
+     */
+    public function __unset($name)
+    {
+        throw new \LogicException('Configuration values are immutable after initialization and cannot be changed');
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        $this->initialize();
+
+        return isset($this->config[$name]);
+    }
+
+    /**
+     * Add custom configuration options that should be added to the default ones.
+     * Can be set only before initialization, because the configuration is then immutable.
+     *
      * Note you cannot override the default configuration options.
      *
      * @param array $customConfigurationOptions Array with values = configuration options (environment variables)
      */
     public function setCustomConfigurationOptions(array $customConfigurationOptions)
     {
-        if ($this->config) {
+        if (!is_null($this->config)) {
             throw new \RuntimeException(
-                'Custom configuration options can be set only before the Config object was instantiated'
+                'Custom configuration options can be set only before initialization of configuration'
             );
         }
 
@@ -69,27 +90,25 @@ class ConfigProvider
     }
 
     /**
-     * @return Config
+     * @deprecated No longer necessary, call the property directly on instance of ConfigProvider
+     * @return $this
      */
     public function getConfig()
     {
-        if (!$this->config) {
-            $this->config = new Config(null, $this->prepareConfiguration());
-        }
+        $this->initialize();
 
-        return $this->config;
+        return $this;
     }
 
-    /**
-     * @return array
-     */
-    private function prepareConfiguration()
+    private function initialize()
     {
+        if (!is_null($this->config)) {
+            return;
+        }
+
         $options = $this->assembleConfigurationOptions();
 
-        $configuration = $this->retrieveConfigurationValues($options);
-
-        return $configuration;
+        $this->config = $this->retrieveConfigurationValues($options);
     }
 
     /**
