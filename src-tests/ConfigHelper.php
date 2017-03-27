@@ -5,7 +5,7 @@ namespace Lmc\Steward;
 class ConfigHelper
 {
     /**
-     * Unset config instance from the singleton, so next time the config will be get, it will be recreated from
+     * Unset config value from the singleton, so next time the config will be get, it will be recreated from
      * current (and possibly adjusted to our needs) environment variables.
      */
     public static function unsetConfigInstance()

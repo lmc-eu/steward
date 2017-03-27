@@ -2,7 +2,6 @@
 
 namespace Lmc\Steward;
 
-use Configula\Config;
 use PHPUnit\Framework\TestCase;
 
 class ConfigProviderTest extends TestCase
@@ -20,14 +19,11 @@ class ConfigProviderTest extends TestCase
     public function testShouldRetrieveConfigurationValuesFromEnvironmentAndUseCamelCaseKeysForThem()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
-        $config = ConfigProvider::getInstance()->getConfig();
+        $config = ConfigProvider::getInstance();
 
-        // Property access
         $this->assertEquals('http://server.tld:4444', $config->serverUrl);
-        // getItem() access
-        $this->assertEquals('http://server.tld:4444', $config->getItem('serverUrl'));
-        // all items retrieval
-        $this->assertInternalType('array', $config->getItems());
+
+        $this->assertEquals('firefox', $config->browserName);
     }
 
     public function testShouldMakeConfigOptionsAccessibleDirectlyThroughConfigProvider()
@@ -37,15 +33,47 @@ class ConfigProviderTest extends TestCase
         $this->assertEquals('http://server.tld:4444', ConfigProvider::getInstance()->serverUrl);
     }
 
-    public function testShouldDetectEmptyConfigOption()
+    public function testShouldNotAllowToChangeTheValues()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
 
-        $nonEmptyValue = empty(ConfigProvider::getInstance()->serverUrl);
-        $emptyValue = empty(ConfigProvider::getInstance()->capability);
+        $config = ConfigProvider::getInstance();
 
-        $this->assertFalse($nonEmptyValue);
-        $this->assertTrue($emptyValue);
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Configuration values are immutable after initialization and cannot be changed');
+
+        $config->serverUrl = 'foo';
+    }
+
+    public function testShouldNotAllowToUnsetValues()
+    {
+        ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+
+        $config = ConfigProvider::getInstance();
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Configuration values are immutable after initialization and cannot be changed');
+
+        unset($config->serverUrl);
+    }
+
+    public function testShouldDetectEmptyConfigOption()
+    {
+        ConfigHelper::setEnvironmentVariables($this->environmentVariables);
+        $config = ConfigProvider::getInstance();
+
+        $nonEmptyValue = $config->serverUrl;
+        $emptyValue = $config->capability;
+
+        $isNonEmptyValueEmpty = empty($nonEmptyValue);
+        $this->assertFalse($isNonEmptyValueEmpty);
+        $this->assertTrue(isset($nonEmptyValue));
+        $this->assertTrue($config->__isset('serverUrl'));
+
+        $isEmptyValueEmpty = empty($emptyValue);
+        $this->assertTrue($isEmptyValueEmpty);
+        $this->assertTrue(isset($emptyValue));
+        $this->assertTrue($config->__isset('capability'));
     }
 
     public function testShouldThrowExceptionWhenAccessingNotExistingConfigOptionThroughConfigProvider()
@@ -61,12 +89,14 @@ class ConfigProviderTest extends TestCase
     public function testShouldOnlyHoldOneInstanceOfConfigObject()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
-        $provider = ConfigProvider::getInstance();
-        $firstInstance = $provider->getConfig();
-        $this->assertInstanceOf(Config::class, $firstInstance);
+        $firstInstance = ConfigProvider::getInstance();
+        $this->assertInstanceOf(ConfigProvider::class, $firstInstance);
 
-        $secondInstance = ConfigProvider::getInstance()->getConfig();
+        $secondInstance = ConfigProvider::getInstance();
         $this->assertSame($firstInstance, $secondInstance);
+
+        $thirdInstanceDeprecatedRetrieval = ConfigProvider::getInstance()->getConfig();
+        $this->assertSame($firstInstance, $thirdInstanceDeprecatedRetrieval);
     }
 
     public function testShouldFailIfRequiredOptionIsNotDefined()
@@ -74,25 +104,23 @@ class ConfigProviderTest extends TestCase
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         putenv('SERVER_URL'); // unset value
 
-        $provider = ConfigProvider::getInstance();
+        $config = ConfigProvider::getInstance();
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('SERVER_URL environment variable must be defined');
 
-        $provider->getConfig();
+        $config->serverUrl;
     }
 
     public function testShouldAllowToAddCustomConfigurationOptions()
     {
-        $provider = ConfigProvider::getInstance();
+        $config = ConfigProvider::getInstance();
 
-        $provider->setCustomConfigurationOptions(['CUSTOM_OPTION']);
+        $config->setCustomConfigurationOptions(['CUSTOM_OPTION']);
 
         // Set environment values for custom option
         $this->environmentVariables['CUSTOM_OPTION'] = 'new';
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
-
-        $config = $provider->getConfig();
 
         $this->assertEquals('new', $config->customOption);
     }
@@ -100,16 +128,17 @@ class ConfigProviderTest extends TestCase
     public function testShouldFailIfSettingCustomConfigurationOptionsAfterFirstInstantiation()
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
-        $provider = ConfigProvider::getInstance();
-        // Create Config instance
-        $provider->getConfig();
+        $config = ConfigProvider::getInstance();
+
+        // Trigger initialization
+        $config->serverUrl;
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
-            'Custom configuration options can be set only before the Config object was instantiated'
+            'Custom configuration options can be set only before initialization of configuration'
         );
 
         // This should fail, as the Config instance was already created
-        $provider->setCustomConfigurationOptions(['CUSTOM_OPTION']);
+        $config->setCustomConfigurationOptions(['CUSTOM_OPTION']);
     }
 }

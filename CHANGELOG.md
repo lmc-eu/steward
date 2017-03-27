@@ -9,6 +9,7 @@
 ### Changed
 - Capabilities are now resolved using `CapabilitiesResolver` class.
 - Require PHPUnit ^5.7
+- Remove dependency on unmaintained Configula (and internally reimplement configuration options retrieval)
 
 ## 2.1.0 - 2017-01-16
 ### Added

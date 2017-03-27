@@ -26,7 +26,13 @@ class CapabilitiesResolverTest extends TestCase
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');
 
         $configMock = $this->createMock(ConfigProvider::class);
-        $configMock->browserName = $browser;
+        $configMock->expects($this->any())
+            ->method('__get')
+            ->willReturnMap(
+                [
+                    ['browserName', $browser],
+                ]
+            );
 
         $resolver = new CapabilitiesResolver($configMock);
         $resolver->setCiDetector($this->createConfiguredMock(CiDetector::class, ['isCiDetected' => false]));
@@ -75,8 +81,14 @@ class CapabilitiesResolverTest extends TestCase
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');
 
         $configMock = $this->createMock(ConfigProvider::class);
-        $configMock->browserName = WebDriverBrowserType::FIREFOX;
-        $configMock->env = 'staging';
+        $configMock->expects($this->any())
+            ->method('__get')
+            ->willReturnMap(
+                [
+                    ['browserName', WebDriverBrowserType::FIREFOX],
+                    ['env', 'staging'],
+                ]
+            );
 
         $ciMock = $this->createConfiguredMock(Jenkins::class, ['getBuildNumber' => 1337, 'getCiName' => 'Jenkins']);
         $ciDetectorMock = $this->createConfiguredMock(
