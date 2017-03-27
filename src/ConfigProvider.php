@@ -6,7 +6,8 @@ use Doctrine\Common\Inflector\Inflector;
 use FlorianWolters\Component\Util\Singleton\SingletonTrait;
 
 /**
- * Provide access to Configuration object instance or create its instance if not yet instantiated.
+ * Provide access to global configuration (from within the tests).
+ * The configuration is immutable - ie. cannot be altered after it is used for the first time.
  *
  * @method static ConfigProvider getInstance()
  * @property-read string $browserName
@@ -21,9 +22,8 @@ class ConfigProvider
 {
     use SingletonTrait;
 
-    /** @var array[] Configuration options */
+    /** @var array Configuration options and theirs values */
     private $config = null;
-
     /** @var array Array of custom configuration options that should be added to the default ones */
     private $customConfigurationOptions = [];
 
