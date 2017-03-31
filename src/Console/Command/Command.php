@@ -2,17 +2,16 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\Application;
 use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Configuration\ConfigFileReader;
 use Lmc\Steward\Console\Configuration\ConfigResolver;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Style\StewardStyle;
-use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Base class for all Steward commands.
@@ -69,27 +68,19 @@ class Command extends \Symfony\Component\Console\Command\Command
      */
     protected function resolveConfiguration(InputInterface $input)
     {
-        $configFileName = '';
-        $configFileValues = [];
-        if (is_readable(STEWARD_BASE_DIR . '/steward.yml')) {
-            $configFileName = STEWARD_BASE_DIR . '/steward.yml';
-        } elseif (is_readable(STEWARD_BASE_DIR . '/steward.yml.dist')) {
-            $configFileName = STEWARD_BASE_DIR . '/steward.yml.dist';
-        }
+        $configFileReader = new ConfigFileReader();
 
-        if (!empty($configFileName)) {
-            $parsedConfig = Yaml::parse(file_get_contents($configFileName));
-            if (is_array($parsedConfig)) {
-                $configFileValues = $parsedConfig;
-            }
+        $configFilePath = $configFileReader->resolvePathToConfigFile(
+            $input->getOption(Application::OPTION_CONFIGURATION)
+        );
+
+        $configFileValues = [];
+        if (!empty($configFilePath)) {
+            $configFileValues = $configFileReader->readConfigFile($configFilePath);
         }
 
         $configResolver = new ConfigResolver(new OptionsResolver(), $this->getDefinition());
 
-        try {
-            return $configResolver->resolve($input, $configFileValues);
-        } catch (InvalidArgumentException $e) {
-            throw new LogicException('Error resolving configuration from file TODO', 0, $e);
-        }
+        return $configResolver->resolve($input, $configFileValues);
     }
 }

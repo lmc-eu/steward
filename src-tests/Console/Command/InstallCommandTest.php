@@ -2,13 +2,13 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\Application;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;

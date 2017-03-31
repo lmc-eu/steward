@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Console\EventListener;
 
+use Lmc\Steward\Console\Application;
 use Lmc\Steward\Console\Command\CleanCommand;
 use Lmc\Steward\Console\Command\InstallCommand;
 use Lmc\Steward\Console\Command\RunCommand;
@@ -9,7 +10,6 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;

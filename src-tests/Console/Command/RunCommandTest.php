@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Assert\InvalidArgumentException;
+use Lmc\Steward\Console\Application;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
@@ -9,7 +11,6 @@ use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -80,7 +81,7 @@ class RunCommandTest extends TestCase
             $errorBeginning,
             $directoryOption
         );
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedError);
 
         $this->tester->execute(
