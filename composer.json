@@ -37,13 +37,16 @@
         "florianwolters/component-util-singleton": "0.3.2",
         "doctrine/inflector": "~1.0",
         "beberlei/assert": "^2.7",
-        "ondram/ci-detector": "^2.0"
+        "ondram/ci-detector": "^2.0",
+        "symfony/yaml": "^3.2",
+        "symfony/options-resolver": "^3.2"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.4.1",
         "php-mock/php-mock-phpunit": "~1.0",
         "satooshi/php-coveralls": "^1.0",
-        "friendsofphp/php-cs-fixer": "^2.0"
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "symfony/var-dumper": "^3.2"
     },
     "suggest": {
         "ext-posix": "For colored output",

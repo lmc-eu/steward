@@ -3,17 +3,16 @@
 namespace Lmc\Steward\Console\EventListener;
 
 use Lmc\Steward\Console\Command\CleanCommand;
-use Lmc\Steward\Console\Command\Command;
+use Lmc\Steward\Console\Command\InstallCommand;
 use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -31,10 +30,10 @@ class CleanLogsListenerTest extends TestCase
 
     public function testShouldSubscribeToEvents()
     {
-        $subscribedEvents = $this->listener->getSubscribedEvents();
+        $subscribedEvents = CleanLogsListener::getSubscribedEvents();
 
         $this->assertArrayHasKey(CommandEvents::CONFIGURE, $subscribedEvents);
-        $this->assertArrayHasKey(CommandEvents::RUN_TESTS_INIT, $subscribedEvents);
+        $this->assertArrayHasKey(CommandEvents::PRE_INITIALIZE, $subscribedEvents);
     }
 
     public function testShouldAddNoCleanOptionToRunTestsCommand()
@@ -72,13 +71,6 @@ class CleanLogsListenerTest extends TestCase
 
     public function testShouldInvokeCleanCommand()
     {
-        $command = new RunCommand(new EventDispatcher());
-        $eventMock = $this->prepareExtendedConsoleEventMock(
-            $command,
-            new StringInput(''),
-            new BufferedOutput()
-        );
-
         $cleanCommandMock = $this->getMockBuilder(CleanCommand::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,58 +81,80 @@ class CleanLogsListenerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $applicationMock->expects($this->once())
+            ->method('getHelperSet')
+            ->willReturn(new HelperSet());
+        $applicationMock->expects($this->once())
             ->method('find')
             ->with('clean')
             ->willReturn($cleanCommandMock);
 
-        $runCommandMock = $this->getMockBuilder(RunCommand::class)
+        $command = $this->initializeRunCommandWithApplication($applicationMock);
+
+        $input = new StringInput('');
+        $input->bind($command->getDefinition());
+
+        $event = new ExtendedConsoleEvent($command, $input, new BufferedOutput());
+
+        $this->listener->onCommandPreInitialize($event);
+    }
+
+    public function testShouldNotInvokeCleanCommandFromOtherCommandThanRun()
+    {
+        $applicationMock = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $runCommandMock->expects($this->once())
-            ->method('getApplication')
-            ->willReturn($applicationMock);
+        $applicationMock->expects($this->once())
+            ->method('getHelperSet')
+            ->willReturn(new HelperSet());
+        $applicationMock->expects($this->never())
+            ->method('find')
+            ->with('clean');
 
-        $eventMock->expects($this->once())
-            ->method('getCommand')
-            ->willReturn($runCommandMock);
+        $command = new InstallCommand(new EventDispatcher());
+        $command->setApplication($applicationMock);
 
-        $this->listener->onCommandRunTestsInit($eventMock);
+        $this->listener->onCommandConfigure(new BasicConsoleEvent($command));
+
+        $input = new StringInput('');
+        $input->bind($command->getDefinition());
+
+        $event = new ExtendedConsoleEvent($command, $input, new BufferedOutput());
+
+        $this->listener->onCommandPreInitialize($event);
     }
 
     public function testShouldNotInvokeCleanIfNoCleanOptionGiven()
     {
-        $command = new RunCommand(new EventDispatcher());
-        $eventMock = $this->prepareExtendedConsoleEventMock(
-            $command,
-            new StringInput('--no-clean'),
-            new BufferedOutput()
-        );
+        $applicationMock = $this->getMockBuilder(Application::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $applicationMock->expects($this->once())
+            ->method('getHelperSet')
+            ->willReturn(new HelperSet());
+        $applicationMock->expects($this->never())
+            ->method('find')
+            ->with('clean');
 
-        $eventMock->expects($this->never())
-            ->method('getCommand');
+        $command = $this->initializeRunCommandWithApplication($applicationMock);
 
-        $this->listener->onCommandRunTestsInit($eventMock);
+        $input = new StringInput('--no-clean');
+        $input->bind($command->getDefinition());
+
+        $event = new ExtendedConsoleEvent($command, $input, new BufferedOutput());
+
+        $this->listener->onCommandPreInitialize($event);
     }
 
     /**
-     * Prepare ExtendedConsoleEvent that could be passed to onCommandRunTestsInit().
-     *
-     * @param Command $command
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExtendedConsoleEvent
+     * @param Application $application
+     * @return RunCommand
      */
-    protected function prepareExtendedConsoleEventMock($command, $input, $output)
+    private function initializeRunCommandWithApplication(Application $application)
     {
-        // Trigger event to add the option to the command and bind the definition to the input
+        $command = new RunCommand(new EventDispatcher());
+        $command->setApplication($application);
         $this->listener->onCommandConfigure(new BasicConsoleEvent($command));
-        $input->bind($command->getDefinition());
 
-        $event = $this->getMockBuilder(ExtendedConsoleEvent::class)
-            ->setConstructorArgs([$command, $input, $output])
-            ->setMethods(['getCommand'])
-            ->getMock();
-
-        return $event;
+        return $command;
     }
 }

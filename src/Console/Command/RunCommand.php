@@ -4,6 +4,7 @@ namespace Lmc\Steward\Console\Command;
 
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Process\MaxTotalDelayStrategy;
@@ -224,22 +225,12 @@ class RunCommand extends Command
             new ExtendedConsoleEvent($this, $input, $output)
         );
 
-        // Check if directories exists
-        $this->testDirectories(
-            $input,
-            [
-                $this->getDefinition()->getOption(self::OPTION_TESTS_DIR),
-                $this->getDefinition()->getOption(self::OPTION_LOGS_DIR),
-                $this->getDefinition()->getOption(self::OPTION_FIXTURES_DIR),
-            ]
-        );
-
         if ($output->isVeryVerbose()) {
             $output->writeln(
-                sprintf('Base path to fixtures results: %s', $input->getOption(self::OPTION_FIXTURES_DIR))
+                sprintf('Base path to fixtures results: %s', $this->config[ConfigOptions::FIXTURES_DIR])
             );
             $output->writeln(
-                sprintf('Path to logs: %s', $input->getOption(self::OPTION_LOGS_DIR))
+                sprintf('Path to logs: %s', $this->config[ConfigOptions::LOGS_DIR])
             );
             $output->writeln(
                 sprintf('Ignore delays: %s', ($input->getOption(self::OPTION_IGNORE_DELAYS)) ? 'yes' : 'no')
@@ -263,13 +254,13 @@ class RunCommand extends Command
         // Find all files holding test-cases
         if ($this->io->isVeryVerbose()) {
             $this->io->writeln('Searching for testcases:');
-            $this->io->writeln(sprintf(' - in directory "%s"', $input->getOption(self::OPTION_TESTS_DIR)));
+            $this->io->writeln(sprintf(' - in directory "%s"', $this->config[ConfigOptions::TESTS_DIR]));
             $this->io->writeln(sprintf(' - by pattern "%s"', $input->getOption(self::OPTION_PATTERN)));
         }
 
         $files = (new Finder())
             ->files()
-            ->in($input->getOption(self::OPTION_TESTS_DIR))
+            ->in($this->config[ConfigOptions::TESTS_DIR])
             ->name($input->getOption(self::OPTION_PATTERN));
 
         if (!count($files)) {
@@ -339,10 +330,10 @@ class RunCommand extends Command
     {
         if (!$this->processSetCreator) {
             $xmlPublisher = new XmlPublisher();
-            $xmlPublisher->setFileDir($input->getOption(self::OPTION_LOGS_DIR));
+            $xmlPublisher->setFileDir($this->config[ConfigOptions::LOGS_DIR]);
             $xmlPublisher->clean();
 
-            $this->processSetCreator = new ProcessSetCreator($this, $input, $output, $xmlPublisher);
+            $this->processSetCreator = new ProcessSetCreator($this, $input, $output, $xmlPublisher, $this->config);
         }
 
         return $this->processSetCreator;
@@ -474,32 +465,6 @@ class RunCommand extends Command
         $allTestsPassed ? $this->io->success($resultMessage) : $this->io->error($resultMessage);
 
         return $allTestsPassed;
-    }
-
-    /**
-     * Try that given options that define directories exists and are accessible.
-     *
-     * @param InputInterface $input
-     * @param InputOption[] $dirs Option defining directories
-     * @throws \RuntimeException Thrown when directory is not accessible
-     */
-    protected function testDirectories(InputInterface $input, array $dirs)
-    {
-        /** @var $dirs InputOption[] */
-        foreach ($dirs as $dir) {
-            $currentValue = $input->getOption($dir->getName());
-
-            if (realpath($currentValue) === false || !is_readable($currentValue)) {
-                throw new \RuntimeException(
-                    sprintf(
-                        '%s "%s" does not exist, make sure it is accessible or define your own path using %s option',
-                        $dir->getDescription(),
-                        $currentValue,
-                        '--' . $dir->getName()
-                    )
-                );
-            }
-        }
     }
 
     /**

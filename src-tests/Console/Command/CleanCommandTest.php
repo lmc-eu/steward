@@ -32,9 +32,7 @@ class CleanCommandTest extends TestCase
     public function testShouldShowErrorIfLogsDirectoryIsNotDefaultAndCannotBeFound()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(
-            'Cannot clean logs directory "/custom/not/accessible/path", make sure it is accessible.'
-        );
+        $this->expectExceptionMessage('Path to directory with logs "/custom/not/accessible/path" does not exist');
 
         $this->tester->execute(
             [

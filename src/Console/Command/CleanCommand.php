@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Symfony\Component\Console\Input\InputInterface;
@@ -55,6 +56,17 @@ class CleanCommand extends Command
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
 
+    protected function resolveConfiguration(InputInterface $input)
+    {
+        if ($this->isDefaultLogsDirUsed($input)) {
+            $this->createLogsDirectoryIfNotExists(
+                $input->getOption(RunCommand::OPTION_LOGS_DIR)
+            );
+        }
+
+        return parent::resolveConfiguration($input);
+    }
+
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -62,28 +74,28 @@ class CleanCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $defaultLogsDir = $this->getDefinition()->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault();
-        $logsDir = $input->getOption(RunCommand::OPTION_LOGS_DIR);
-
-        // If default path to logs directory is used and it does not exist, create the directory
-        if ($logsDir == $defaultLogsDir) {
-            $this->createLogsDirectoryIfNotExists($logsDir);
-        }
-
-        if (!realpath($logsDir) || !is_writable($logsDir)) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Cannot clean logs directory "%s", make sure it is accessible.',
-                    $logsDir
-                )
-            );
-        }
+        $logsDir = $this->config[ConfigOptions::LOGS_DIR];
 
         $this->cleanDirectory($logsDir);
 
         return 0;
     }
 
+    /**
+     * @param InputInterface $input
+     * @return bool
+     */
+    protected function isDefaultLogsDirUsed(InputInterface $input)
+    {
+        $logsDir = $input->getOption(RunCommand::OPTION_LOGS_DIR);
+        $defaultLogsDir = $this->getDefinition()->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault();
+
+        return $logsDir == $defaultLogsDir;
+    }
+
+    /**
+     * @param string $logsDir
+     */
     private function createLogsDirectoryIfNotExists($logsDir)
     {
         if (!$this->filesystem->exists($logsDir)) {
@@ -91,6 +103,9 @@ class CleanCommand extends Command
         }
     }
 
+    /**
+     * @param string $logsDir
+     */
     private function cleanDirectory($logsDir)
     {
         $finder = (new Finder())
