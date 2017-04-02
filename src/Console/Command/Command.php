@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Style\StewardStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,6 +45,11 @@ class Command extends \Symfony\Component\Console\Command\Command
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        $this->getDispatcher()->dispatch(
+            CommandEvents::PRE_INITIALIZE,
+            new ExtendedConsoleEvent($this, $input, $output)
+        );
+
         $this->io = new StewardStyle($input, $output);
 
         parent::initialize($input, $output);

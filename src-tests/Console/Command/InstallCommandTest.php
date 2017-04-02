@@ -4,6 +4,7 @@ namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
+use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
@@ -239,18 +240,23 @@ class InstallCommandTest extends TestCase
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
-    public function testShouldDispatchConfigureEvent()
+    public function testShouldDispatchEventsOnExecute()
     {
         $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
             ->setMethods(['dispatch'])
             ->getMock();
 
-        $dispatcherMock->expects($this->once())
+        $dispatcherMock->expects($this->at(0))
             ->method('dispatch')
             ->with($this->equalTo(CommandEvents::CONFIGURE), $this->isInstanceOf(BasicConsoleEvent::class));
 
+        $dispatcherMock->expects($this->at(1))
+            ->method('dispatch')
+            ->with($this->equalTo(CommandEvents::PRE_INITIALIZE), $this->isInstanceOf(ExtendedConsoleEvent::class));
+
         $application = new Application();
         $application->add(new InstallCommand($dispatcherMock));
+        /** @var InstallCommand $command */
         $command = $application->find('install');
         $command->setDownloader($this->getDownloadMock());
 

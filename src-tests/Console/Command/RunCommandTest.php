@@ -278,7 +278,7 @@ class RunCommandTest extends TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldDispatchConfigureEvent()
+    public function testShouldDispatchEventsOnExecute()
     {
         $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
             ->setMethods(['dispatch'])
@@ -288,29 +288,11 @@ class RunCommandTest extends TestCase
             ->method('dispatch')
             ->with($this->equalTo(CommandEvents::CONFIGURE), $this->isInstanceOf(BasicConsoleEvent::class));
 
-        $application = new Application();
-        $application->add(new RunCommand($dispatcherMock));
-        /** @var RunCommand $command */
-        $command = $application->find('run');
-        $command->setSeleniumAdapter($this->getSeleniumAdapterMock());
-
-        (new CommandTester($command))->execute(
-            [
-                'command' => $command->getName(),
-                'environment' => 'staging',
-                'browser' => 'firefox',
-                '--tests-dir' => __DIR__ . '/Fixtures/tests',
-            ]
-        );
-    }
-
-    public function testShouldDispatchInitEvent()
-    {
-        $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
-            ->setMethods(['dispatch'])
-            ->getMock();
-
         $dispatcherMock->expects($this->at(1))
+            ->method('dispatch')
+            ->with($this->equalTo(CommandEvents::PRE_INITIALIZE), $this->isInstanceOf(ExtendedConsoleEvent::class));
+
+        $dispatcherMock->expects($this->at(2))
             ->method('dispatch')
             ->with($this->equalTo(CommandEvents::RUN_TESTS_INIT), $this->isInstanceOf(ExtendedConsoleEvent::class));
 
