@@ -4,6 +4,12 @@
 
 ## Unreleased
 ### Added
+- Configuration file support 🎉. Useful for global Steward configuration which doesn't change for different runs. Place `steward.yml` or `steward.yml.dist` to base directory or use `-c`/`--configuration` option to define custom path to configuration file. Supported options are currently:
+    - `capabilities_resolver`
+    - `tests_dir`
+    - `logs_dir`
+    - `fixtures_dir`
+- Event `command.pre_initialize`, triggered before initialization of any command is started.
 - Capabilities passed using `--capability` CLI option could now force to be specified as an string (by encapsulating into additional quotes).
 - Print total execution time at the end; in `-vv` and `-vvv` modes print also execution after each testcase is finished.
 
