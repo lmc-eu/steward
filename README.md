@@ -140,7 +140,7 @@ There is also bunch of useful options of `run` command:
 - `--exclude-group` - exclude some group(s) of tests (can be even combined with `--group`)
 - `--server-url` - set different url of selenium server than the default (http://localhost:4444)
 - `--xdebug` - start Xdebug debugger on your tests, so you can debug tests from your IDE ([learn more about tests debugging](https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward) in our Wiki)
-- `--capability` - directly pass any extra capability to the Selenium WebDriver server
+- `--capability` - directly pass any extra capability to the Selenium WebDriver server ([see wiki](https://github.com/lmc-eu/steward/wiki/Set-custom-capabilities) for more information and examples)
 - `--help` - see all other options and default values
 - **adjust output levels:** by default only test results summary is printed to the output; the verbosity could be changed like this:
     - `-v` - to instantly output name of failed test(s)
