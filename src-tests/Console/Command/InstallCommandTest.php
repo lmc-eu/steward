@@ -8,6 +8,7 @@ use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -36,7 +37,7 @@ class InstallCommandTest extends TestCase
 
     public function testShouldDownloadWithoutAskingForInputWhenVersionIsDefinedAsOption()
     {
-        $this->command->setDownloader($this->getDownloadMock($expectedFileSize = 123));
+        $this->command->setDownloader($this->getDownloadMock($expectedFileSize = 2 * 1024 * 1024));
 
         $this->tester->execute(
             [
@@ -46,41 +47,54 @@ class InstallCommandTest extends TestCase
             ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
 
+        $output = $this->tester->getDisplay();
+        $this->assertContains('Downloading Selenium standalone server version 6.3.6...', $output);
         $this->assertContains(
-            'File URL: https://selenium-release.storage.googleapis.com/6.3/selenium-server-standalone-6.3.6.jar',
-            $this->tester->getDisplay()
+            'Download URL: https://selenium-release.storage.googleapis.com/6.3/selenium-server-standalone-6.3.6.jar',
+            $output
         );
-        $this->assertContains('Downloaded 123 bytes, file saved successfully.', $this->tester->getDisplay());
+        $this->assertContains('Downloaded 2 MB, file saved successfully.', $this->tester->getDisplay());
 
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
+    /**
+     * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
+     */
     public function testShouldDownloadLatestVersionIfUserDoesNotEnterItsOwn()
     {
         $this->command->setDownloader($this->getDownloadMock());
         $this->mockLatestVersionCheck();
-        $this->mockUserInput("\n"); // just press enter when asking for version to install to confirm default
+
+        $this->tester->setInputs(["\n"]);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
             ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
 
-        $this->assertContains('Enter Selenium server version to install: [2.34.5]', $this->tester->getDisplay());
+        $output = $this->tester->getDisplay();
+
+        $this->assertContains('Enter Selenium server version to install [2.34.5]:', $output);
 
         // Check latest version was downloaded
+        $this->assertContains('Downloading Selenium standalone server version 2.34.5...', $output);
         $this->assertContains(
-            'File URL: https://selenium-release.storage.googleapis.com/2.34/selenium-server-standalone-2.34.5.jar',
-            $this->tester->getDisplay()
+            'Download URL: https://selenium-release.storage.googleapis.com/2.34/selenium-server-standalone-2.34.5.jar',
+            $output
         );
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
+    /**
+     * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
+     */
     public function testShouldDownloadVersionEnteredByUser()
     {
         $this->command->setDownloader($this->getDownloadMock());
         $this->mockLatestVersionCheck();
-        $this->mockUserInput("1.33.7\n");
+
+        $this->tester->setInputs(["1.33.7\n"]);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
@@ -88,13 +102,18 @@ class InstallCommandTest extends TestCase
         );
 
         // Check custom version was downloaded
+        $output = $this->tester->getDisplay();
+        $this->assertContains('Downloading Selenium standalone server version 1.33.7...', $output);
         $this->assertContains(
-            'File URL: https://selenium-release.storage.googleapis.com/1.33/selenium-server-standalone-1.33.7.jar',
-            $this->tester->getDisplay()
+            'Download URL: https://selenium-release.storage.googleapis.com/1.33/selenium-server-standalone-1.33.7.jar',
+            $output
         );
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
+    /**
+     * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
+     */
     public function testShouldRequireVersionToBeEnteredIfLastVersionCheckFails()
     {
         $this->command->setDownloader($this->getDownloadMock());
@@ -102,21 +121,17 @@ class InstallCommandTest extends TestCase
         $fileGetContentsMock->expects($this->any())
             ->willReturn(false);
 
-        $this->mockUserInput("\n1.33.7");
+        $this->tester->setInputs(["\n", '6.6.6']);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
             ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
 
-        $this->assertContains(
-            'Enter Selenium server version to install: ',
-            $this->tester->getDisplay()
-        );
-        $this->assertContains(
-            ' Please provide version to download (latest version auto-detect failed)',
-            $this->tester->getDisplay()
-        );
+        $output = $this->tester->getDisplay();
+        $this->assertContains('Enter Selenium server version to install:', $output);
+        $this->assertContains('Please provide version to download (latest version auto-detect failed)', $output);
+        $this->assertContains('Downloading Selenium standalone server version 6.6.6...', $output);
     }
 
     public function testShouldPrintErrorIfDownloadFails()
@@ -129,7 +144,7 @@ class InstallCommandTest extends TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldExitInNonInteractiveModeIfLastVersionCheckFailsAndNoVersionWasProvided()
+    public function testShouldThrowAnExceptionInNonInteractiveModeIfLastVersionCheckFailsAndNoVersionWasProvided()
     {
         $downloaderMock = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([__DIR__ . '/Fixtures/vendor/bin'])
@@ -140,17 +155,13 @@ class InstallCommandTest extends TestCase
         $fileGetContentsMock->expects($this->any())
             ->willReturn(false);
 
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Auto-detection of latest Selenium version failed - version must be provided');
+
         $this->tester->execute(
             ['command' => $this->command->getName()],
             ['interactive' => false, 'verbosity' => OutputInterface::VERBOSITY_VERBOSE]
         );
-
-        $this->assertEquals(
-            "Please provide version to download (latest version auto-detect failed)\n",
-            $this->tester->getDisplay()
-        );
-
-        $this->assertSame(1, $this->tester->getStatusCode());
     }
 
     public function testShouldOutputOnlyFilePathInNonInteractiveModeAndDownloadVersionProvidedAsOption()
@@ -189,10 +200,14 @@ class InstallCommandTest extends TestCase
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
+    /**
+     * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
+     */
     public function testShouldNotDownloadTheFileAgainIfAlreadyExists()
     {
         $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
-        $this->mockUserInput("\n");
+
+        $this->tester->setInputs(["\n"]);
 
         $this->tester->execute(['command' => $this->command->getName(), 'version' => '2.34.5']);
 
@@ -203,10 +218,14 @@ class InstallCommandTest extends TestCase
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
+    /**
+     * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
+     */
     public function testShouldNotDownloadTheFileAgainIfAlreadyExistsOutputOnlyFilePathInNonInteractiveMode()
     {
         $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
-        $this->mockUserInput("\n");
+
+        $this->tester->setInputs(["\n"]);
 
         $this->tester->execute(
             ['command' => $this->command->getName(), 'version' => '2.34.5'],
@@ -271,19 +290,5 @@ class InstallCommandTest extends TestCase
         $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
             ->willReturn($releasesDummyResponse);
-    }
-
-    /**
-     * @param string $input Input string to be streamed
-     * @return resource
-     */
-    protected function mockUserInput($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fwrite($stream, $input);
-        rewind($stream);
-
-        $dialog = $this->command->getHelper('question');
-        $dialog->setInputStream($stream);
     }
 }

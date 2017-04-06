@@ -6,11 +6,10 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
 use OndraM\CiDetector\CiDetector;
-use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Install (download) Selenium standalone server.
@@ -69,92 +68,61 @@ class InstallCommand extends Command
         $version = $input->getArgument('version'); // exact version could be specified as argument
 
         if (!$version) {
-            $latestVersion = Downloader::getLatestVersion();
-
-            /** @var QuestionHelper $questionHelper */
-            $questionHelper = $this->getHelper('question');
-
-            $questionText = '<question>Enter Selenium server version to install:</question> ';
-
-            if (!empty($latestVersion)) {
-                $question = new Question($questionText . "[$latestVersion] ", $latestVersion);
-            } else { // Error auto-detecting latest version
-                $latestVersionErrorMsg = 'Please provide version to download (latest version auto-detect failed)';
-
-                if ($input->isInteractive()) { // in interactive mode require version to be specified
-                    $question = new Question($questionText);
-                    $question->setValidator(
-                        function ($answer) use ($latestVersionErrorMsg) {
-                            if (empty($answer)) {
-                                throw new \RuntimeException($latestVersionErrorMsg);
-                            }
-
-                            return $answer;
-                        }
-                    );
-                } else { // in non-interactive mode fail, as we have nowhere to get the version number
-                    $output->writeln('<error>' . $latestVersionErrorMsg . '</error>');
-
-                    return 1;
-                }
-            }
-
-            $version = $questionHelper->ask($input, $output, $question);
+            $version = $this->askForVersion($input->isInteractive());
         }
 
         if ($verboseOutput) {
-            $output->writeln(
+            $this->io->note(
                 sprintf(
-                    '<info>Steward</info> <comment>%s</comment> is now downloading the Selenium standalone server...%s',
-                    $this->getApplication()->getVersion(),
-                    (!(new CiDetector())->isCiDetected() ? ' Just for you <fg=red><3</fg=red>!' : '')
+                    'Downloading Selenium standalone server version %s...%s',
+                    $version,
+                    (!(new CiDetector())->isCiDetected() ? ' Just for you <3!' : '')
                 )
             );
         }
 
         $downloader = $this->getDownloader();
         $downloader->setVersion($version);
+        $targetPath = realpath($downloader->getFilePath());
 
-        if ($output->isVerbose()) {
-            $output->writeln(sprintf('Version: %s', $version));
-            $output->writeln(sprintf('File URL: %s', $downloader->getFileUrl()));
-            $output->writeln(sprintf('Target file path: %s', $downloader->getFilePath()));
+        if ($this->io->isVerbose()) {
+            $this->io->note(sprintf('Download URL: %s', $downloader->getFileUrl()));
         }
 
         if ($downloader->isAlreadyDownloaded()) {
-            $targetPath = realpath($downloader->getFilePath());
             if ($verboseOutput) {
-                $output->writeln(
-                    sprintf(
-                        'File "%s" already exists in directory "%s" - won\'t be downloaded again.',
-                        basename($targetPath),
-                        dirname($targetPath)
-                    )
+                $this->io->note(
+                    sprintf('File "%s" already exists - won\'t be downloaded again.', basename($targetPath))
                 );
+
+                $this->io->note('Path to file: ' . $targetPath);
             } else {
-                $output->writeln($targetPath); // In non-verbose mode only output path to the file
+                $this->io->writeln($targetPath); // In non-verbose mode only output path to the file
             }
 
             return 0;
         }
 
         if ($verboseOutput) {
-            $output->writeln('Downloading (may take a while - its over 30 MB)...');
+            $this->io->note('Downloading may take a while - its ~20 MB...');
         }
 
         $downloadedSize = $downloader->download();
+        $downloadedFilePath = realpath($downloader->getFilePath());
 
         if (!$downloadedSize) {
-            $output->writeln('<error>Error downloading file :-(</error>');
+            $this->io->error('Error downloading file :-(');
 
             return 1;
         }
 
         if ($verboseOutput) {
-            $output->writeln('Downloaded ' . $downloadedSize . ' bytes, file saved successfully.');
+            $this->io->success(
+                sprintf('Downloaded %d MB, file saved successfully.', round($downloadedSize / 1024 / 1024, 1))
+            );
+            $this->io->note('Path to file: ' . $downloadedFilePath);
         } else {
-            $targetPath = realpath($downloader->getFilePath());
-            $output->writeln($targetPath); // In non-verbose mode only output path to the file
+            $this->io->writeln($downloadedFilePath); // In non-verbose mode only output path to the file
         }
 
         return 0;
@@ -171,5 +139,34 @@ class InstallCommand extends Command
         }
 
         return $this->downloader;
+    }
+
+    /**
+     * @param $isInteractiveInput
+     * @return string
+     */
+    private function askForVersion($isInteractiveInput)
+    {
+        $latestVersion = Downloader::getLatestVersion();
+
+        $questionText = 'Enter Selenium server version to install';
+
+        if (!empty($latestVersion)) {
+            return $this->io->ask($questionText, $latestVersion);
+        }
+
+        // When latest version cannot be detected, the version must always be provided
+        if (!$isInteractiveInput) { // we have nowhere to get the version number in non-interactive mode
+            throw new RuntimeException('Auto-detection of latest Selenium version failed - version must be provided');
+        }
+
+        // in interactive mode version must specified
+        return $this->io->ask($questionText, null, function ($answer) {
+            if (empty($answer)) {
+                throw new \RuntimeException('Please provide version to download (latest version auto-detect failed)');
+            }
+
+            return $answer;
+        });
     }
 }
