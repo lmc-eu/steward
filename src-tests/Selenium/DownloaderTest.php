@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Selenium;
 
+use Assert\InvalidArgumentException;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 
@@ -133,6 +134,33 @@ class DownloaderTest extends TestCase
             ['3.0.0-beta2', '/3.0-beta2/selenium-server-standalone-3.0.0-beta2.jar'],
             ['3.0.0-rc3', '/3.0-rc3/selenium-server-standalone-3.0.0-rc3.jar'],
             ['3.0.0', '/3.0/selenium-server-standalone-3.0.0.jar'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidVersionProvider
+     * @param string $version
+     */
+    public function testShouldThrowExceptionIfInvalidVersionGiven($version)
+    {
+        $downloader = new Downloader(__DIR__ . '/Fixtures');
+        $downloader->setVersion($version);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid version (expected format is X.Y.Z)');
+        $downloader->getFileUrl();
+    }
+
+    /**
+     * @return array[]
+     */
+    public function invalidVersionProvider()
+    {
+        return [
+            [' '],
+            ['333'],
+            ['1.2.3.4'],
+            ['1.2'],
         ];
     }
 

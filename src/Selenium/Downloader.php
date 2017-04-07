@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Selenium;
 
+use Assert\Assert;
+
 /**
  * Download Selenium standalone server
  */
@@ -95,7 +97,12 @@ class Downloader
      */
     public function getFileUrl()
     {
-        $versionParts = explode('.', $this->getVersion());
+        $version = $this->getVersion();
+        Assert::that($version, 'Invalid version (expected format is X.Y.Z)')
+            ->notEmpty()
+            ->regex('/^\d+\.\d+\.[\da-z\-]+$/i');
+
+        $versionParts = explode('.', $version);
 
         $devVersion = '';
         if (preg_match('/(\d+)-([[:alnum:]]+)/', $versionParts[2], $matches)) {
