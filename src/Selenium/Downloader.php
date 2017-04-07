@@ -111,6 +111,7 @@ class Downloader
 
     /**
      * Execute the download
+     * @throws \RuntimeException Thrown when file cannot be downloaded
      * @return int Downloaded size in bytes or false on failure
      */
     public function download()
@@ -123,7 +124,12 @@ class Downloader
 
         $fileUrl = $this->getFileUrl();
 
-        $fp = fopen($fileUrl, 'r');
+        $fp = @fopen($fileUrl, 'r');
+        $responseHeaders = get_headers($fileUrl);
+        if (mb_strpos($responseHeaders[0], '200 OK') === false) {
+            throw new \RuntimeException(sprintf('Error downloading file "%s" (%s)', $fileUrl, $responseHeaders[0]));
+        }
+
         $downloadedSize = file_put_contents($targetPath, $fp);
 
         return $downloadedSize;
