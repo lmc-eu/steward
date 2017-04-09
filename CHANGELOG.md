@@ -11,6 +11,9 @@
 - Require PHPUnit ^5.7
 - Remove dependency on unmaintained Configula (and internally reimplement configuration options retrieval)
 
+### Fixed
+- Attempting to download not existing Selenium server version (with `install` command) will not create empty jar file but only show an error.
+
 ## 2.1.0 - 2017-01-16
 ### Added
 - Command `generate-timeline` to generate timeline-based visualization of test run into HTML file.

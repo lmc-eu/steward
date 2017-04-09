@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Selenium;
 
+use Assert\InvalidArgumentException;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 
@@ -58,7 +59,7 @@ class DownloaderTest extends TestCase
         $downloader = new Downloader(__DIR__ . '/Fixtures');
         $downloader->setVersion('2.53.1');
 
-        $this->isDownloadable($downloader->getFileUrl());
+        $this->assertIsDownloadable($downloader->getFileUrl());
     }
 
     /**
@@ -71,7 +72,7 @@ class DownloaderTest extends TestCase
         $this->assertRegExp('/^\d+\.\d+\.\d+.*$/', $latestVersion);
 
         $downloader = new Downloader(__DIR__ . '/Fixtures');
-        $this->isDownloadable($downloader->getFileUrl());
+        $this->assertIsDownloadable($downloader->getFileUrl());
     }
 
     public function testShouldGetVersionSetBySetter()
@@ -107,7 +108,7 @@ class DownloaderTest extends TestCase
     }
 
     /**
-     * @dataProvider versionProvider
+     * @dataProvider provideVersions
      * @param string $version
      * @param string $expectedPath
      */
@@ -125,7 +126,7 @@ class DownloaderTest extends TestCase
     /**
      * @return array[]
      */
-    public function versionProvider()
+    public function provideVersions()
     {
         return [
             ['2.53.0', '/2.53/selenium-server-standalone-2.53.0.jar'],
@@ -133,6 +134,33 @@ class DownloaderTest extends TestCase
             ['3.0.0-beta2', '/3.0-beta2/selenium-server-standalone-3.0.0-beta2.jar'],
             ['3.0.0-rc3', '/3.0-rc3/selenium-server-standalone-3.0.0-rc3.jar'],
             ['3.0.0', '/3.0/selenium-server-standalone-3.0.0.jar'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidVersionProvider
+     * @param string $version
+     */
+    public function testShouldThrowExceptionIfInvalidVersionGiven($version)
+    {
+        $downloader = new Downloader(__DIR__ . '/Fixtures');
+        $downloader->setVersion($version);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid version (expected format is X.Y.Z)');
+        $downloader->getFileUrl();
+    }
+
+    /**
+     * @return array[]
+     */
+    public function invalidVersionProvider()
+    {
+        return [
+            [' '],
+            ['333'],
+            ['1.2.3.4'],
+            ['1.2'],
         ];
     }
 
@@ -165,11 +193,34 @@ class DownloaderTest extends TestCase
         $expectedFile = __DIR__ . '/Fixtures/selenium-server-standalone-1.33.7.jar';
         $this->assertFileNotExists($expectedFile, 'File already exists, though it should be created only by the test');
 
+        $this->mockGetHeadersToReturnHeader('HTTP/1.0 200 OK');
+
         $this->assertEquals(9, $downloader->download());
         $this->assertFileExists($expectedFile);
 
         // Cleanup
         unlink($expectedFile);
+    }
+
+    public function testShouldThrowExceptionIfFileCannotBeDownloaded()
+    {
+        $downloader = $this->getMockBuilder(Downloader::class)
+            ->setConstructorArgs([__DIR__ . '/Fixtures'])
+            ->setMethods(['getFileUrl'])
+            ->getMock();
+
+        $downloader->expects($this->once())
+            ->method('getFileUrl')
+            ->willReturn(__DIR__ . '/Fixtures/dummy-file.jar');
+
+        $downloader->setVersion('1.33.7');
+
+        $this->mockGetHeadersToReturnHeader('HTTP/1.0 404 Not Found');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageRegExp('/Error downloading file "[^"]+" \(HTTP\/1\.0 404 Not Found\)/');
+
+        $downloader->download();
     }
 
     public function testShouldCreateTargetDirectoryIfNotExists()
@@ -191,6 +242,8 @@ class DownloaderTest extends TestCase
             ->willReturn(__DIR__ . '/Fixtures/dummy-file.jar');
         $downloader->setVersion('1.33.7');
 
+        $this->mockGetHeadersToReturnHeader('HTTP/1.0 200 OK');
+
         $downloader->download();
 
         // Directory should now be crated
@@ -204,7 +257,7 @@ class DownloaderTest extends TestCase
     /**
      * @param string $url
      */
-    private function isDownloadable($url)
+    private function assertIsDownloadable($url)
     {
         $context = stream_context_create(['http' => ['method' => 'HEAD', 'ignore_errors' => true]]);
         $fd = fopen($url, 'rb', false, $context);
@@ -212,5 +265,15 @@ class DownloaderTest extends TestCase
         fclose($fd);
 
         $this->assertContains('200 OK', $responseCode);
+    }
+
+    /**
+     * @param string $responseHeader
+     */
+    private function mockGetHeadersToReturnHeader($responseHeader)
+    {
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'get_headers');
+        $fileGetContentsMock->expects($this->any())
+            ->willReturn([0 => $responseHeader]);
     }
 }

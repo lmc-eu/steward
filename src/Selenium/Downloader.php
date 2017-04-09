@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Selenium;
 
+use Assert\Assert;
+
 /**
  * Download Selenium standalone server
  */
@@ -95,7 +97,12 @@ class Downloader
      */
     public function getFileUrl()
     {
-        $versionParts = explode('.', $this->getVersion());
+        $version = $this->getVersion();
+        Assert::that($version, 'Invalid version (expected format is X.Y.Z)')
+            ->notEmpty()
+            ->regex('/^\d+\.\d+\.[\da-z\-]+$/i');
+
+        $versionParts = explode('.', $version);
 
         $devVersion = '';
         if (preg_match('/(\d+)-([[:alnum:]]+)/', $versionParts[2], $matches)) {
@@ -111,6 +118,7 @@ class Downloader
 
     /**
      * Execute the download
+     * @throws \RuntimeException Thrown when file cannot be downloaded
      * @return int Downloaded size in bytes or false on failure
      */
     public function download()
@@ -123,7 +131,12 @@ class Downloader
 
         $fileUrl = $this->getFileUrl();
 
-        $fp = fopen($fileUrl, 'r');
+        $fp = @fopen($fileUrl, 'r');
+        $responseHeaders = get_headers($fileUrl);
+        if (mb_strpos($responseHeaders[0], '200 OK') === false) {
+            throw new \RuntimeException(sprintf('Error downloading file "%s" (%s)', $fileUrl, $responseHeaders[0]));
+        }
+
         $downloadedSize = file_put_contents($targetPath, $fp);
 
         return $downloadedSize;
