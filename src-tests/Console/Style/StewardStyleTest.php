@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Console\Style;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -157,6 +158,35 @@ HTXT;
         $this->assertStringEqualsFile(__DIR__ . '/Fixtures/error.txt', $this->outputBuffer->fetch());
     }
 
+    public function testShouldFormatNote()
+    {
+        $this->style->note('Note message');
+
+        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/note.txt', $this->outputBuffer->fetch());
+    }
+
+    /**
+     * @requires function Symfony\Component\Console\Input\StreamableInputInterface::isInteractive
+     */
+    public function testShouldFormatQuestion()
+    {
+        $inputMock = $this->getMockBuilder(StreamableInputInterface::class)->getMock();
+        $inputMock->expects($this->any())
+            ->method('isInteractive')
+            ->willReturn(true);
+
+        $inputMock->expects($this->any())
+            ->method('getStream')
+            ->willReturn($this->getInputStreamWithUserInput("\n"));
+
+        $style = new StewardStyle($inputMock, $this->outputBuffer);
+
+        $output = $style->ask('Question?', 'default');
+
+        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/question.txt', $this->outputBuffer->fetch());
+        $this->assertSame('default', $output);
+    }
+
     /**
      * @dataProvider notImplementedProvider
      * @param string $method
@@ -179,10 +209,8 @@ HTXT;
             ['title', ['foo']],
             ['listing', [['foo', 'bar']]],
             ['warning', ['foo']],
-            ['note', ['foo']],
             ['caution', ['foo']],
             ['table', [[], []]],
-            ['ask', ['foo']],
             ['askHidden', ['foo']],
             ['confirm', ['foo']],
             ['choice', ['foo', []]],
@@ -191,6 +219,19 @@ HTXT;
             ['progressAdvance', []],
             ['progressFinish', []],
         ];
+    }
+
+    /**
+     * @param string $input
+     * @return resource
+     */
+    private function getInputStreamWithUserInput($input)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+        fwrite($stream, $input);
+        rewind($stream);
+
+        return $stream;
     }
 
     /**

@@ -140,7 +140,7 @@ class StewardStyle extends OutputStyle
 
     public function note($message)
     {
-        throw new \Exception('Method not implemented');
+        $this->symfonyStyle->block($message, 'NOTE', 'fg=yellow', ' ');
     }
 
     public function caution($message)
@@ -155,7 +155,7 @@ class StewardStyle extends OutputStyle
 
     public function ask($question, $default = null, $validator = null)
     {
-        throw new \Exception('Method not implemented');
+        return $this->symfonyStyle->ask($question, $default, $validator);
     }
 
     public function askHidden($question, $validator = null)
