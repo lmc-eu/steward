@@ -96,7 +96,7 @@ class TitlePageTest extends AbstractTestCase
         $this->log('Current page "%s" has title "%s"', $this->wd->getCurrentURL(), $this->wd->getTitle());
 
         // Make sure search input is present
-        $searchInput = $this->wd->findElement(\WebDriverBy::cssSelector('#search-form input'));
+        $searchInput = $this->wd->findElement(WebDriverBy::cssSelector('#search-form input'));
         // Or you can use syntax sugar provided by Steward (this is equivalent of previous line)
         $searchInput = $this->findByCss('#search-form input');
 
