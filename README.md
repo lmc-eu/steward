@@ -43,8 +43,13 @@ Then simply install Steward and add it as a dependency:
 $ composer require lmc/steward
 ```
 
-### 2. Install Selenium
-You need Selenium server installed to execute commands in the specified browser.
+### 2. Download Selenium server and browser driver
+You can download and run Selenium standalone server and the browser locally right on your computer.
+Another possibility is to [start Selenium server + browser inside Docker container](https://github.com/lmc-eu/steward/wiki/Selenium-server-&-browser-drivers#option-2-start-selenium-server--browser-inside-docker-).
+To run Selenium locally:
+
+#### Get Selenium standalone server
+You need to download Selenium server so it can execute commands in the specified browser.
 In the root directory of your tests (e.g. `selenium-tests/`)  simply run:
 
 ```sh
@@ -56,6 +61,11 @@ be placed into `./vendor/bin` directory).
 
 You may want to run this command as part of your CI server build - then simply use the `--no-interaction` option to
 download the Selenium without any interaction and print absolute path to the jar file as the sole output.
+
+#### Download browser driver
+If it is not already installed on your system, you will need to download Selenium driver for the browser you want to
+use for the tests. See dedicated page [Selenium server & browser drivers](https://github.com/lmc-eu/steward/wiki/Selenium-server-&-browser-drivers#2-install-browser-driver)
+in our wiki for more information.
 
 ### 3. Write the first test
 To provide you the Steward functionality, your tests have to extend the `Lmc\Steward\Test\AbstractTestCase` class.
@@ -109,10 +119,10 @@ class TitlePageTest extends AbstractTestCase
 
 ### 4. Run your tests
 #### Start Selenium server
-Now you need to start Selenium server, which will listen and execute commands send from your tests.
+Now you need to start Selenium server, which will listen and execute commands sent from your tests.
 
 ```sh
-$ java -jar ./vendor/bin/selenium-server-standalone-2.53.1.jar # the version may differ
+$ java -jar ./vendor/bin/selenium-server-standalone-3.4.0.jar # the version may differ
 ```
 
 This will start single Selenium server instance (listening on port 4444) in "no-grid" mode (meaning the server receives
