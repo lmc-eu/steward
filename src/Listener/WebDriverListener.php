@@ -52,7 +52,7 @@ class WebDriverListener extends BaseTestListener
 
     public function startTest(\PHPUnit_Framework_Test $test)
     {
-        if ($test instanceof \PHPUnit_Framework_Warning) {
+        if ($test instanceof \PHPUnit_Framework_WarningTestCase) {
             return;
         }
 
@@ -103,7 +103,7 @@ class WebDriverListener extends BaseTestListener
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
     {
-        if ($test instanceof \PHPUnit_Framework_Warning) {
+        if ($test instanceof \PHPUnit_Framework_WarningTestCase) {
             return;
         }
 

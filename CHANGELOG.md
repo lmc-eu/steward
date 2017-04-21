@@ -14,6 +14,7 @@
 
 ### Fixed
 - Attempting to download not existing Selenium server version (with `install` command) will not create empty jar file but only show an error.
+- Fix misleading exception "Test case must be descendant of Lmc\Steward\Test\AbstractTestCase" when invalid data provider is used.
 
 ## 2.1.0 - 2017-01-16
 ### Added
