@@ -96,6 +96,7 @@ class InstallCommand extends Command
                 );
 
                 $this->io->note('Path to file: ' . $targetPath);
+                $this->printLinkToWiki();
             } else {
                 $this->io->writeln($targetPath); // In non-verbose mode only output path to the file
             }
@@ -121,6 +122,7 @@ class InstallCommand extends Command
                 sprintf('Downloaded %d MB, file saved successfully.', round($downloadedSize / 1024 / 1024, 1))
             );
             $this->io->note('Path to file: ' . $downloadedFilePath);
+            $this->printLinkToWiki();
         } else {
             $this->io->writeln($downloadedFilePath); // In non-verbose mode only output path to the file
         }
@@ -168,5 +170,13 @@ class InstallCommand extends Command
 
             return $answer;
         });
+    }
+
+    private function printLinkToWiki()
+    {
+        $this->io->note(
+            'What now? Learn how to start the Selenium server: '
+            . 'https://github.com/lmc-eu/steward/wiki/Selenium-server-&-browser-drivers'
+        );
     }
 }
