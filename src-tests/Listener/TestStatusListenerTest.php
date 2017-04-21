@@ -4,6 +4,7 @@ namespace Lmc\Steward\Listener;
 
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Listener\Fixtures\DummyPublisher;
+use Lmc\Steward\Listener\Fixtures\ExceptionThrowingPublisher;
 use Lmc\Steward\Publisher\SauceLabsPublisher;
 use Lmc\Steward\Publisher\TestingBotPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
@@ -24,6 +25,20 @@ class TestStatusListenerTest extends TestCase
         $configValues['DEBUG'] = 1;
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
+    }
+
+    public function testShouldNotDoAnythingWhenWarningTestCaseOccurs()
+    {
+        $publishers = [ExceptionThrowingPublisher::class];
+
+        $listener = new TestStatusListener($publishers, $this->seleniumAdapterMock);
+
+        $warningTestCase = new \PHPUnit_Framework_WarningTestCase('Warning');
+
+        $listener->startTest($warningTestCase);
+        $listener->endTest($warningTestCase, 1);
+
+        $this->expectOutputRegex('/^((?!Error publishing).)*$/s');
     }
 
     public function testShouldRegisterXmlPublisherByDefault()

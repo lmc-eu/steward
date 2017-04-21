@@ -10,7 +10,6 @@ use Lmc\Steward\Publisher\TestingBotPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use PHPUnit\Framework\BaseTestListener;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.
@@ -77,9 +76,10 @@ class TestStatusListener extends BaseTestListener
 
     public function startTest(\PHPUnit_Framework_Test $test)
     {
-        if (!$test instanceof TestCase || $test instanceof \PHPUnit_Framework_Warning) {
+        if (!$test instanceof \PHPUnit_Framework_TestCase || $test instanceof \PHPUnit_Framework_WarningTestCase) {
             return;
         }
+
         // publish test status to all publishers
         foreach ($this->publishers as $publisher) {
             try {
@@ -102,9 +102,10 @@ class TestStatusListener extends BaseTestListener
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)
     {
-        if (!$test instanceof TestCase || $test instanceof \PHPUnit_Framework_Warning) {
+        if (!$test instanceof \PHPUnit_Framework_TestCase || $test instanceof \PHPUnit_Framework_WarningTestCase) {
             return;
         }
+
         // publish test status to all publishers
         foreach ($this->publishers as $publisher) {
             try {
