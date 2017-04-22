@@ -1,5 +1,5 @@
 Steward UNKNOWN is running the tests...%S
 
 [%s] Waiting (running: 1, queued: 1, done: 0)%A
-[%s] All testcases done
+[%s] All testcases done in %f seconds
 %A[OK] Testcases executed: 2 (passed: 2)%A

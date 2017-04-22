@@ -5,6 +5,7 @@
 ## Unreleased
 ### Added
 - Capabilities passed using `--capability` CLI option could now force to be specified as an string (by encapsulating into additional quotes).
+- Print total execution time at the end; in `-vv` and `-vvv` modes print also execution after each testcase is finished.
 
 ### Changed
 - Capabilities are now resolved using `CapabilitiesResolver` class.

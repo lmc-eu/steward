@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Process\Process;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * Run tests command is used to start Steward test planner and execute tests one by one,
@@ -39,6 +39,8 @@ class RunCommand extends Command
         'safari' => WebDriverBrowserType::SAFARI,
         'phantomjs' => WebDriverBrowserType::PHANTOMJS,
     ];
+    /** @var Stopwatch */
+    private $stopwatch;
 
     const ARGUMENT_ENVIRONMENT = 'environment';
     const ARGUMENT_BROWSER = 'browser';
@@ -175,6 +177,9 @@ class RunCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        $this->stopwatch = new Stopwatch();
+        $this->stopwatch->start('run');
+
         parent::initialize($input, $output);
 
         $output->writeln(
@@ -375,6 +380,8 @@ class RunCommand extends Command
                             )
                         );
                     }
+
+                    $this->stopwatch->start($testClass);
                     $processWrapper->getProcess()->start();
                     usleep(50000); // wait for a while (0,05 sec) to let processes be started in intended order
 
@@ -392,6 +399,7 @@ class RunCommand extends Command
                 }
 
                 if (!$processWrapper->getProcess()->isRunning()) {
+                    $testcaseEnd = $this->stopwatch->stop($testClass);
                     // Mark no longer running processes as finished
                     $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
 
@@ -409,9 +417,10 @@ class RunCommand extends Command
                         }
 
                         $testcaseFinishedMessage = sprintf(
-                            'Finished execution of testcase "%s" (result: %s)%s',
+                            'Finished execution of testcase "%s" (result: %s, time: %.1F sec)%s',
                             $testClass,
                             $processWrapper->getResult(),
+                            $testcaseEnd->getDuration() / 1000,
                             (!empty($processOutput) || !empty($processErrorOutput) ? ', output:' : '')
                         );
                         $hasProcessPassed ? $this->io->runStatusSuccess($testcaseFinishedMessage)
@@ -458,7 +467,8 @@ class RunCommand extends Command
             }
         }
 
-        $this->io->runStatus('All testcases done');
+        $event = $this->stopwatch->stop('run');
+        $this->io->runStatus(sprintf('All testcases done in %.1F seconds', $event->getDuration() / 1000));
 
         $resultMessage = sprintf('Testcases executed: %d (%s)', $doneCount, implode(', ', $resultsInfo));
         $allTestsPassed ? $this->io->success($resultMessage) : $this->io->error($resultMessage);

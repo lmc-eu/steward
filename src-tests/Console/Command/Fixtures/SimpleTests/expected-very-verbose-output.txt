@@ -12,10 +12,10 @@ Searching for testcases:
 Starting execution of testcases
 -------------------------------
 [%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" started%A
-[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" (result: passed)%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" (result: passed, time: %f sec)%A
 [%s] Unqueing testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest"%A
 [%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" started%A
-[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" (result: passed)
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" (result: passed, time: %f sec)
 [%s] Waiting (running: 0, queued: 0, done: 2 [passed: 2])
-[%s] All testcases done
+[%s] All testcases done in %f seconds
 %A[OK] Testcases executed: 2 (passed: 2)%A
