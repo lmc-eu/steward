@@ -53,7 +53,7 @@ namespace Lmc\Steward\Component;
 
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCaseBase;
-use Nette\Utils\Strings;
+use Lmc\Steward\Utils\Strings;
 
 /**
  * Legacy component allows you to share data between test-cases and phases of tests.
@@ -115,10 +115,10 @@ class Legacy extends AbstractComponent
         }
 
         $name = preg_replace('/Phase\d/', '', $name); // remove 'PhaseX' from the name
-        $name = Strings::webalize($name, null, $lower = false);
+        $name = Strings::toFilename($name);
 
         if ($type == self::LEGACY_TYPE_TEST) {
-            $name .= '#' . Strings::webalize($this->tc->getName(false), null, $lower = false);
+            $name .= '#' . Strings::toFilename($this->tc->getName(false));
         }
 
         return $name;

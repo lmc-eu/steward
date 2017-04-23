@@ -30,7 +30,6 @@
         "symfony/event-dispatcher": "~3.0",
         "symfony/filesystem": "~3.0",
         "nette/reflection": "^2.3.2",
-        "nette/utils": "~2.3",
         "facebook/webdriver": "^1.4.0",
         "clue/graph": "~0.9.0",
         "graphp/algorithms": "^0.8.1",
