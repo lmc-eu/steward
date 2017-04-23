@@ -49,7 +49,7 @@ class TestStatusListenerTest extends TestCase
     }
 
     /**
-     * @dataProvider cloudServiceProvider
+     * @dataProvider provideCloudService
      * @param string $detectedCloudService
      * @param array $customPublishers
      * @param array $expectedExtraPublishers
@@ -84,7 +84,7 @@ class TestStatusListenerTest extends TestCase
     /**
      * @return array[]
      */
-    public function cloudServiceProvider()
+    public function provideCloudService()
     {
         return [
             'No cloud service, no custom publisher' => ['', [], []],

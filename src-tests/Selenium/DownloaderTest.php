@@ -138,7 +138,7 @@ class DownloaderTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidVersionProvider
+     * @dataProvider provideInvalidVersion
      * @param string $version
      */
     public function testShouldThrowExceptionIfInvalidVersionGiven($version)
@@ -154,7 +154,7 @@ class DownloaderTest extends TestCase
     /**
      * @return array[]
      */
-    public function invalidVersionProvider()
+    public function provideInvalidVersion()
     {
         return [
             [' '],

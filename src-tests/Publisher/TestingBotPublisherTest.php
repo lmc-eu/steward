@@ -24,7 +24,7 @@ class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
     }
 
     /**
-     * @dataProvider resultProvider
+     * @dataProvider provideTestResult
      * @param string $testResult
      * @param string $message
      * @param string $expectedData
@@ -66,7 +66,7 @@ class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
     /**
      * @return array[]
      */
-    public function resultProvider()
+    public function provideTestResult()
     {
         return [
             'Passed test' => [AbstractPublisher::TEST_RESULT_PASSED, null, 'test%5Bsuccess%5D=1'],

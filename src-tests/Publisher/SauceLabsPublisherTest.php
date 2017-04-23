@@ -24,7 +24,7 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
     }
 
     /**
-     * @dataProvider resultProvider
+     * @dataProvider provideTestResult
      * @param string $testResult
      * @param string $message
      * @param string $expectedData
@@ -66,7 +66,7 @@ class SauceLabsPublisherTest extends AbstractCloudPublisherTestCase
     /**
      * @return array[]
      */
-    public function resultProvider()
+    public function provideTestResult()
     {
         return [
             'Passed test' => [AbstractPublisher::TEST_RESULT_PASSED, null, '{"passed":true}'],

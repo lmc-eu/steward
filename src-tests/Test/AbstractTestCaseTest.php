@@ -84,7 +84,7 @@ class AbstractTestCaseTest extends TestCase
     }
 
     /**
-     * @dataProvider logStringsProvider
+     * @dataProvider provideLogStrings
      * @param string $expectedOutput
      * @param string $logMethod
      * @param string $format
@@ -102,7 +102,7 @@ class AbstractTestCaseTest extends TestCase
         }
     }
 
-    public function logStringsProvider()
+    public function provideLogStrings()
     {
         return [
             'log simple string' => [': This is output', 'log', 'This is output'],

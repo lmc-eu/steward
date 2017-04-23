@@ -75,7 +75,7 @@ class XdebugListenerTest extends TestCase
     }
 
     /**
-     * @dataProvider inputProvider
+     * @dataProvider provideInput
      * @param string $stringInput
      * @param string $expectedIdeKey
      */
@@ -106,7 +106,7 @@ class XdebugListenerTest extends TestCase
         }
     }
 
-    public function inputProvider()
+    public function provideInput()
     {
         return [
             'use default idekey when no specific value is passed' => ['run --xdebug', 'phpstorm'],

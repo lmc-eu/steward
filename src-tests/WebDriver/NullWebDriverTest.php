@@ -20,7 +20,7 @@ class NullWebDriverTest extends TestCase
     /**
      * @param $methodName
      * @param $params
-     * @dataProvider methodNameProvider
+     * @dataProvider provideMethodName
      */
     public function testShouldThrowExceptionWhenInteractingWithInstance($methodName, $params)
     {
@@ -35,7 +35,7 @@ class NullWebDriverTest extends TestCase
      *
      * @return array
      */
-    public function methodNameProvider()
+    public function provideMethodName()
     {
         return [
             ['close', []],

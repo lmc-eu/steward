@@ -23,7 +23,7 @@ class SyntaxSugarTraitTest extends TestCase
     }
 
     /**
-     * @dataProvider findElementProvider
+     * @dataProvider provideFindElementStrategy
      * @param string $methodPostfix Shortcut method postfix to call (prefix 'find' is omitted)
      * @param string $expectedWebDriverByStrategy Method of WebDriverBy that is expected to be called
      */
@@ -41,7 +41,7 @@ class SyntaxSugarTraitTest extends TestCase
     }
 
     /**
-     * @dataProvider findElementProvider
+     * @dataProvider provideFindElementStrategy
      * @param string $methodPostfix Shortcut method postfix to call (prefix 'findMultiple' is omitted)
      * @param string $expectedWebDriverByStrategy Method of WebDriverBy that is expected to be called
      */
@@ -61,7 +61,7 @@ class SyntaxSugarTraitTest extends TestCase
     /**
      * @return array
      */
-    public function findElementProvider()
+    public function provideFindElementStrategy()
     {
         return [
             // $methodPostfix, $expectedWebDriverByStrategy
@@ -80,7 +80,7 @@ class SyntaxSugarTraitTest extends TestCase
      * Test that waitFor...() methods waits for instance of WebDriverExpectedCondition. Note we only test the
      * WebDriverExpectedCondition instance type but not its content, because they return callback
      * which we cannot compare.
-     * @dataProvider waitForMethodProvider
+     * @dataProvider provideWaitForMethod
      * @param string $method
      * @param bool $isElementMethod Is this method working with elements?
      */
@@ -112,7 +112,7 @@ class SyntaxSugarTraitTest extends TestCase
     /**
      * @return array
      */
-    public function waitForMethodProvider()
+    public function provideWaitForMethod()
     {
         return [
             // $method, $isElementMethod

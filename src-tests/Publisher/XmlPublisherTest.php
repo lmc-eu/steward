@@ -262,7 +262,7 @@ class XmlPublisherTest extends TestCase
      * Check processing of tests with special characters in name which could appear when test have dataProvider and
      * its name is appended by PHPUnit.
      *
-     * @dataProvider nameProvider
+     * @dataProvider provideTestName
      * @param string $testCaseName
      * @param string $testName
      */
@@ -310,7 +310,7 @@ class XmlPublisherTest extends TestCase
     }
 
     /**
-     * @dataProvider endpointTestsessionResponseProvider
+     * @dataProvider provideEndpointTestsessionResponse
      * @param string $testsessionEndpointResponse
      * @param string|null $expectedExecutor
      * @internal param string $seleniumResponse
@@ -350,7 +350,7 @@ class XmlPublisherTest extends TestCase
     /**
      * @return array[]
      */
-    public function endpointTestsessionResponseProvider()
+    public function provideEndpointTestsessionResponse()
     {
         return [
             'executor found' => [
@@ -364,7 +364,7 @@ class XmlPublisherTest extends TestCase
     /**
      * @return array[]
      */
-    public function nameProvider()
+    public function provideTestName()
     {
         return [
             // Testcases

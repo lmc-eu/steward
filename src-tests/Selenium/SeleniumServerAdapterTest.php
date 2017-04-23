@@ -38,7 +38,7 @@ class SeleniumServerAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider serverUrlProvider
+     * @dataProvider provideServerUrl
      * @param string $providedServerUrl
      * @param string $expectedServerUrl
      */
@@ -52,7 +52,7 @@ class SeleniumServerAdapterTest extends TestCase
     /**
      * @return array[]
      */
-    public function serverUrlProvider()
+    public function provideServerUrl()
     {
         return [
             'protocol, host and port' => ['http://foo:80', 'http://foo:80'],
@@ -76,7 +76,7 @@ class SeleniumServerAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidServerUrlProvider
+     * @dataProvider provideInvalidServerUrl
      * @param string $serverUrl
      */
     public function testShouldThrowExceptionIfInvalidServerUrlIsGiven($serverUrl)
@@ -90,7 +90,7 @@ class SeleniumServerAdapterTest extends TestCase
     /**
      * @return array[]
      */
-    public function invalidServerUrlProvider()
+    public function provideInvalidServerUrl()
     {
         return [
             ['http://'],
@@ -201,7 +201,7 @@ class SeleniumServerAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider cloudServiceResponseProvider
+     * @dataProvider provideCloudServiceResponse
      * @param string $responseData
      * @param string $expectedCloudService
      */
@@ -219,7 +219,7 @@ class SeleniumServerAdapterTest extends TestCase
     /**
      * @return array[]
      */
-    public function cloudServiceResponseProvider()
+    public function provideCloudServiceResponse()
     {
         $responseSauceLabs = file_get_contents(__DIR__ . '/Fixtures/response-saucelabs.json');
         $responseBrowserStack = file_get_contents(__DIR__ . '/Fixtures/response-browserstack.json');
@@ -238,7 +238,7 @@ class SeleniumServerAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider sessionExecutorResponseProvider
+     * @dataProvider provideSessionExecutorResponse
      * @param string $responseData
      * @param string $expectedSessionExecutor
      */
@@ -259,7 +259,7 @@ class SeleniumServerAdapterTest extends TestCase
     /**
      * @return array[]
      */
-    public function sessionExecutorResponseProvider()
+    public function provideSessionExecutorResponse()
     {
         $responseExecutorFound = file_get_contents(__DIR__ . '/Fixtures/testsession-found.json');
         $responseExecutorNotFound = file_get_contents(__DIR__ . '/Fixtures/testsession-not-found.json');

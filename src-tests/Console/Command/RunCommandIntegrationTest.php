@@ -33,7 +33,7 @@ class RunCommandIntegrationTest extends TestCase
     }
 
     /**
-     * @dataProvider expectedTestOutputProvider
+     * @dataProvider provideExpectedTestOutput
      * @param int $outputVerbosity
      * @param string $expectedOutputFile
      */
@@ -80,7 +80,7 @@ class RunCommandIntegrationTest extends TestCase
     /**
      * @return array[]
      */
-    public function expectedTestOutputProvider()
+    public function provideExpectedTestOutput()
     {
         return [
             [OutputInterface::VERBOSITY_NORMAL, 'expected-normal-output.txt'],
@@ -109,7 +109,7 @@ class RunCommandIntegrationTest extends TestCase
     }
 
     /**
-     * @dataProvider expectedFailingTestOutputProvider
+     * @dataProvider provideExpectedFailingTestOutput
      * @param int $outputVerbosity
      * @param string $expectedOutputFile
      */
@@ -134,7 +134,7 @@ class RunCommandIntegrationTest extends TestCase
     /**
      * @return array[]
      */
-    public function expectedFailingTestOutputProvider()
+    public function provideExpectedFailingTestOutput()
     {
         return [
             [OutputInterface::VERBOSITY_NORMAL, 'expected-normal-output.txt'],

@@ -23,7 +23,7 @@ class ProcessWrapperTest extends TestCase
     }
 
     /**
-     * @dataProvider delayProvider
+     * @dataProvider provideDelay
      * @param float $delay
      */
     public function testShouldSetDelayForTheProcess($delay)
@@ -38,7 +38,7 @@ class ProcessWrapperTest extends TestCase
     /**
      * @return array[]
      */
-    public function delayProvider()
+    public function provideDelay()
     {
         return [
             'integer value' => [1],
@@ -48,7 +48,7 @@ class ProcessWrapperTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidDelayProvider
+     * @dataProvider provideInvalidDelay
      * @param mixed $delay
      * @param string $expectedExceptionMessage
      */
@@ -65,7 +65,7 @@ class ProcessWrapperTest extends TestCase
     /**
      * @return array[]
      */
-    public function invalidDelayProvider()
+    public function provideInvalidDelay()
     {
         return [
             'negative value' => [
@@ -94,7 +94,7 @@ class ProcessWrapperTest extends TestCase
     }
 
     /**
-     * @dataProvider processResultProvider
+     * @dataProvider provideProcessResult
      * @param int $exitCode
      * @param string $expectedResult
      */
@@ -120,7 +120,7 @@ class ProcessWrapperTest extends TestCase
     /**
      * @return array[]
      */
-    public function processResultProvider()
+    public function provideProcessResult()
     {
         return [
             // $exitCode, $expectedResult

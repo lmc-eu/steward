@@ -30,7 +30,7 @@ class Select2Test extends AbstractTestCase
     }
 
     /**
-     * @dataProvider selectSelectorProvider
+     * @dataProvider provideSelectSelector
      * @param string $selector
      * @param bool $shouldBeMultiple
      */
@@ -64,7 +64,7 @@ class Select2Test extends AbstractTestCase
     /**
      * @return array[]
      */
-    public function selectSelectorProvider()
+    public function provideSelectSelector()
     {
         return [
             'simple <select>' => [self::SELECT_SIMPLE_SELECTOR, false],

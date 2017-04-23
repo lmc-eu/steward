@@ -66,7 +66,7 @@ class RunCommandTest extends TestCase
     }
 
     /**
-     * @dataProvider directoryOptionsProvider
+     * @dataProvider provideDirectoryOptions
      * @param string $directoryOption Passed path type option
      * @param string $errorBeginning Beginning of exception message
      */
@@ -96,7 +96,7 @@ class RunCommandTest extends TestCase
     /**
      * @return array
      */
-    public function directoryOptionsProvider()
+    public function provideDirectoryOptions()
     {
         return [
             ['tests-dir', 'Path to directory with tests "/not/accessible" does not exist'],
@@ -131,7 +131,7 @@ class RunCommandTest extends TestCase
     }
 
     /**
-     * @dataProvider browserNameProvider
+     * @dataProvider provideBrowserName
      * @param string $browserName
      * @param string $expectedNameInOutput
      * @param bool $shouldThrowException
@@ -170,7 +170,7 @@ class RunCommandTest extends TestCase
     /**
      * @return array
      */
-    public function browserNameProvider()
+    public function provideBrowserName()
     {
         return [
             // $browserName, $expectedNameInOutput, $shouldThrowException

@@ -24,7 +24,7 @@ class StewardStyleTest extends TestCase
     }
 
     /**
-     * @dataProvider runStatusProvider
+     * @dataProvider provideRunStatus
      * @param string $method
      */
     public function testShouldFormatRunStatusWithTimestamp($method)
@@ -39,7 +39,7 @@ class StewardStyleTest extends TestCase
     /**
      * @return array[]
      */
-    public function runStatusProvider()
+    public function provideRunStatus()
     {
         return [
             ['runStatus'],
@@ -188,7 +188,7 @@ HTXT;
     }
 
     /**
-     * @dataProvider notImplementedProvider
+     * @dataProvider provideNotImplementedMethods
      * @param string $method
      * @param array $args
      */
@@ -203,7 +203,7 @@ HTXT;
     /**
      * @return array[]
      */
-    public function notImplementedProvider()
+    public function provideNotImplementedMethods()
     {
         return [
             ['title', ['foo']],
