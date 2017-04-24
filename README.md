@@ -19,11 +19,11 @@ Steward is set of libraries made to simplify writing and running robust function
 - Status of the tests could be clearly watched during tests execution, so you will easily know how many test were already finished and what was their result.
 - You can extend it easily by e.g. registering custom events to EventDispatcher. Thus you can for example add custom configuration options or change parameters passed to PHPUnit processes.
 - Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated, giving you a possibility to run tests with even less setup and without own infrastructure.
-- It is field tested - we use it daily in [our company](http://www.lmc.eu/english) to maintain quality of our various products thanks to hundreds of test-cases. The library itself is also extensively covered with unit tests.
+- It is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain quality of our various products thanks to hundreds of test-cases. The library itself is also extensively covered with unit tests.
 - Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
 [php-webdriver](https://github.com/facebook/php-webdriver) is the most used and developed Selenium language binding for PHP,
 [PHPUnit](https://phpunit.de/) is well known and widely used testing framework and
-[Symfony Console](http://symfony.com/doc/current/components/console/introduction.html) is industry standard for PHP CLI applications.
+[Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications.
 
 ## Example usage
 To see how to use and extend Steward, have a look at our [example project](https://github.com/lmc-eu/steward-example).
@@ -35,7 +35,7 @@ For latest changes see [CHANGELOG.md](CHANGELOG.md) file. We follow [Semantic Ve
 ### 1. Install Steward
 We recommend to have functional tests in the same repository as your application.
 So let's suggest we put them in `selenium-tests/` directory. **In this directory** create a new composer.json file
-(you can use `composer init` command). You will need to have [Composer](http://getcomposer.org/) installed to do this.
+(you can use `composer init` command). You will need to have [Composer](https://getcomposer.org/) installed to do this.
 
 Then simply install Steward and add it as a dependency:
 

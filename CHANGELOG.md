@@ -158,7 +158,7 @@
 
 ## 0.12.0 - 2015-02-12
 ### Changed
-- Workaround for Firefox locking port collisions (consequence of Selenium issue [#5172](https://code.google.com/p/selenium/issues/detail?id=5172)) - if FF cannot be started, try it again up to five times
+- Workaround for Firefox locking port collisions (consequence of Selenium issue [#5172](https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/5172)) - if FF cannot be started, try it again up to five times
 
 ## 0.11.0 - 2015-02-06
 ### Added
