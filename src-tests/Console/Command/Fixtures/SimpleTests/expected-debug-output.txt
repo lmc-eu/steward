@@ -35,7 +35,7 @@ Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest>     [0] => fooBarDa
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> )%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s]: Finished execution of test Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest::testWebpage%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> OK (1 test, 1 assertion)%A
-[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" (result: passed)%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" (result: passed, time: %f sec)%A
 [%s] Unqueing testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest"%A
 [%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" started with command:
 '%s/vendor/bin/phpunit' '--log-junit=logs/Lmc-Steward-Console-Command-Fixtures-SimpleTests-DependantTest.xml' '--configuration=%s/phpunit.xml' '%s/DependantTest.php'
@@ -53,7 +53,7 @@ Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest>     [0] => fooBa
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> )%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s]: Finished execution of test Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest::testFooBar%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> OK (1 test, 1 assertion)%A
-[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" (result: passed)
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" (result: passed, time: %f sec)
 [%s] Waiting (running: 0, queued: 0, done: 2 [passed: 2])
-[%s] All testcases done
+[%s] All testcases done in %f seconds
 %A[OK] Testcases executed: 2 (passed: 2)%A
