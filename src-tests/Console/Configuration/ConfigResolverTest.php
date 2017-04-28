@@ -5,7 +5,6 @@ namespace Lmc\Steward\Console\Configuration;
 use Assert\InvalidArgumentException;
 use Lmc\Steward\Console\Command\CleanCommand;
 use Lmc\Steward\Console\Command\RunCommand;
-use Lmc\Steward\Selenium\CapabilitiesResolver;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -27,7 +26,7 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             [
-                ConfigOptions::CAPABILITIES_RESOLVER => CapabilitiesResolver::class,
+                ConfigOptions::CAPABILITIES_RESOLVER => '',
             ],
             $config
         );

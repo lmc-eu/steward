@@ -12,20 +12,30 @@ use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
 use OndraM\CiDetector\CiDetector;
 
-class CapabilitiesResolver implements CapabilitiesResolverInterface
+final class CapabilitiesResolver
 {
     /** @var ConfigProvider */
     protected $config;
     /** @var CiDetector */
     protected $ciDetector;
+    /** @var CustomCapabilitiesResolverInterface|null */
+    protected $customCapabilitiesResolver;
 
     public function __construct(ConfigProvider $config)
     {
         $this->config = $config;
 
+        if (!empty($config->capabilitiesResolver)) {
+            $this->customCapabilitiesResolver = new $config->capabilitiesResolver($config);
+        }
+
         $this->ciDetector = new CiDetector();
     }
 
+    /**
+     * @param AbstractTestCase $test
+     * @return DesiredCapabilities
+     */
     public function resolveDesiredCapabilities(AbstractTestCase $test)
     {
         $capabilities = new DesiredCapabilities(
@@ -55,14 +65,28 @@ class CapabilitiesResolver implements CapabilitiesResolverInterface
             );
         }
 
-        $capabilities = $this->setupCustomCapabilities($capabilities, $this->config->browserName);
+        $capabilities = $this->setupBrowserSpecificCapabilities($capabilities, $this->config->browserName);
+
+        if ($this->customCapabilitiesResolver !== null) {
+            $capabilities = $this->customCapabilitiesResolver->resolveDesiredCapabilities($test, $capabilities);
+        }
 
         return $capabilities;
     }
 
+    /**
+     * @param AbstractTestCase $test
+     * @return DesiredCapabilities
+     */
     public function resolveRequiredCapabilities(AbstractTestCase $test)
     {
-        return new DesiredCapabilities();
+        $capabilities = new DesiredCapabilities();
+
+        if ($this->customCapabilitiesResolver !== null) {
+            $capabilities = $this->customCapabilitiesResolver->resolveRequiredCapabilities($test, $capabilities);
+        }
+
+        return $capabilities;
     }
 
     /**
@@ -80,7 +104,7 @@ class CapabilitiesResolver implements CapabilitiesResolverInterface
      * @param string $browser Browser name
      * @return DesiredCapabilities
      */
-    protected function setupCustomCapabilities(DesiredCapabilities $capabilities, $browser)
+    protected function setupBrowserSpecificCapabilities(DesiredCapabilities $capabilities, $browser)
     {
         switch ($browser) {
             case WebDriverBrowserType::FIREFOX:

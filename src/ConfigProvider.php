@@ -14,6 +14,7 @@ use FlorianWolters\Component\Util\Singleton\SingletonTrait;
  * @property-read string $env
  * @property-read string $serverUrl
  * @property-read string $capability
+ * @property-read string $capabilitiesResolver
  * @property-read string $fixturesDir
  * @property-read string $logsDir
  * @property-read string $debug
@@ -123,6 +124,7 @@ class ConfigProvider
             'ENV',
             'SERVER_URL',
             'CAPABILITY',
+            'CAPABILITIES_RESOLVER',
             'FIXTURES_DIR',
             'LOGS_DIR',
             'DEBUG',

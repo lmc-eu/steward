@@ -6,9 +6,9 @@ use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
 
 /**
- * Resolve WebDriver capabilities to be used for a TestCase
+ * Resolve custom WebDriver capabilities to be used for a TestCase
  */
-interface CapabilitiesResolverInterface
+interface CustomCapabilitiesResolverInterface
 {
     /**
      * @param ConfigProvider $config
@@ -16,21 +16,23 @@ interface CapabilitiesResolverInterface
     public function __construct(ConfigProvider $config);
 
     /**
-     * Resolve desired capabilities for given test
+     * Resolve desired capabilities for given test.
      *
      * @param AbstractTestCase $test
+     * @param DesiredCapabilities $capabilities
      * @return DesiredCapabilities
      */
-    public function resolveDesiredCapabilities(AbstractTestCase $test);
+    public function resolveDesiredCapabilities(AbstractTestCase $test, DesiredCapabilities $capabilities);
 
     /**
      * Resolve required capabilities for given test.
      *
      * Please note "required capabilities" are implemented inconsistently in current WebDriver backends, so you should
-     * most probably set only "desired capabilities" unit backends conforms the W3C Webdriver spec.
+     * most probably set only "desired capabilities" until backends conforms the W3C WebDriver spec.
      *
      * @param AbstractTestCase $test
+     * @param DesiredCapabilities $capabilities
      * @return DesiredCapabilities
      */
-    public function resolveRequiredCapabilities(AbstractTestCase $test);
+    public function resolveRequiredCapabilities(AbstractTestCase $test, DesiredCapabilities $capabilities);
 }

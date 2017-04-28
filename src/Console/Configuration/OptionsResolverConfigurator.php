@@ -2,8 +2,7 @@
 
 namespace Lmc\Steward\Console\Configuration;
 
-use Lmc\Steward\Selenium\CapabilitiesResolver;
-use Lmc\Steward\Selenium\CapabilitiesResolverInterface;
+use Lmc\Steward\Selenium\CustomCapabilitiesResolverInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,11 +25,13 @@ class OptionsResolverConfigurator
 
     private function configureCapabilitiesResolverOption(OptionsResolver $optionsResolver)
     {
-        $optionsResolver->setDefaults([
-            ConfigOptions::CAPABILITIES_RESOLVER => CapabilitiesResolver::class,
-        ]);
+        $optionsResolver->setDefault(ConfigOptions::CAPABILITIES_RESOLVER, '');
 
         $optionsResolver->setAllowedValues(ConfigOptions::CAPABILITIES_RESOLVER, function ($value) {
+            if (empty($value)) {
+                return true;
+            }
+
             // Note we throw an exception instead of returning false - to have more understandable exception message
             if (!class_exists($value)) {
                 throw new InvalidOptionsException(
@@ -42,13 +43,13 @@ class OptionsResolverConfigurator
                 );
             }
 
-            if (!is_subclass_of($value, CapabilitiesResolverInterface::class)) {
+            if (!is_subclass_of($value, CustomCapabilitiesResolverInterface::class)) {
                 throw new InvalidOptionsException(
                     sprintf(
                         'The option "%s" is invalid - passed class "%s" does not implement interface "%s"',
                         'capabilities_resolver',
                         $value,
-                        CapabilitiesResolverInterface::class
+                        CustomCapabilitiesResolverInterface::class
                     )
                 );
             }

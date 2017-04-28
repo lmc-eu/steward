@@ -29,6 +29,7 @@ class ConfigHelper
             'ENV' => 'testing',
             'SERVER_URL' => 'http://server.tld:4444',
             'CAPABILITY' => '', // intentionally empty, used by ConfigProviderTest::testShouldDetectEmptyConfigOption
+            'CAPABILITIES_RESOLVER' => '',
             'FIXTURES_DIR' => __DIR__,
             'LOGS_DIR' => __DIR__,
             'DEBUG' => 0,

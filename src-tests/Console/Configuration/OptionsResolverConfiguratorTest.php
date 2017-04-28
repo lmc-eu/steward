@@ -3,8 +3,8 @@
 namespace Lmc\Steward\Console\Configuration;
 
 use Lmc\Steward\Console\Configuration\Fixtures\DoesNotImplementInterface;
-use Lmc\Steward\Console\Configuration\Fixtures\ImplementsInterface;
-use Lmc\Steward\Selenium\CapabilitiesResolverInterface;
+use Lmc\Steward\Console\Configuration\Fixtures\ImplementsCapabilitiesResolverInterface;
+use Lmc\Steward\Selenium\CustomCapabilitiesResolverInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -49,7 +49,7 @@ class OptionsResolverConfiguratorTest extends \PHPUnit_Framework_TestCase
             sprintf(
                 'The option "capabilities_resolver" is invalid - passed class "%s" does not implement interface "%s',
                 DoesNotImplementInterface::class,
-                CapabilitiesResolverInterface::class
+                CustomCapabilitiesResolverInterface::class
             )
         );
 
@@ -62,8 +62,13 @@ class OptionsResolverConfiguratorTest extends \PHPUnit_Framework_TestCase
         $configurator = new OptionsResolverConfigurator();
         $configurator->configure($optionsResolver);
 
-        $output = $optionsResolver->resolve([ConfigOptions::CAPABILITIES_RESOLVER => ImplementsInterface::class]);
+        $output = $optionsResolver->resolve(
+            [ConfigOptions::CAPABILITIES_RESOLVER => ImplementsCapabilitiesResolverInterface::class]
+        );
 
-        $this->assertSame(ImplementsInterface::class, $output[ConfigOptions::CAPABILITIES_RESOLVER]);
+        $this->assertSame(
+            ImplementsCapabilitiesResolverInterface::class,
+            $output[ConfigOptions::CAPABILITIES_RESOLVER]
+        );
     }
 }

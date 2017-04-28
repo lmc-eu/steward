@@ -71,6 +71,7 @@ class ProcessSetCreatorTest extends TestCase
             [
                 ConfigOptions::LOGS_DIR => '/foo/bar/logs',
                 ConfigOptions::FIXTURES_DIR => '/foo/bar/fixtures',
+                ConfigOptions::CAPABILITIES_RESOLVER => '',
             ]
         );
     }
@@ -302,6 +303,7 @@ class ProcessSetCreatorTest extends TestCase
                 'LOGS_DIR' => realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
                 'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","enquoted":"OS X 10.8","webdriver.foo":false,' .
                     '"version":"14.14393"}',
+                'CAPABILITIES_RESOLVER' => '',
             ],
             $processEnv
         );

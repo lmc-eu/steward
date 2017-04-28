@@ -5,7 +5,7 @@
 ## Unreleased
 ### Added
 - Configuration file support 🎉. Useful for global Steward configuration which doesn't change for different runs. Place `steward.yml` or `steward.yml.dist` to base directory or use `-c`/`--configuration` option to define custom path to configuration file. Supported options are currently:
-    - `capabilities_resolver`
+    - `capabilities_resolver` (given class must implement new `CustomCapabilitiesResolverInterface`)
     - `tests_dir`
     - `logs_dir`
     - `fixtures_dir`

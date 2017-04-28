@@ -8,7 +8,6 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\CapabilitiesResolver;
-use Lmc\Steward\Selenium\CapabilitiesResolverInterface;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
@@ -30,7 +29,7 @@ class WebDriverListener extends BaseTestListener
 
     /** @var ConfigProvider */
     protected $config;
-    /** @var CapabilitiesResolverInterface */
+    /** @var CapabilitiesResolver */
     protected $capabilitiesResolver;
 
     public function __construct()
@@ -39,7 +38,7 @@ class WebDriverListener extends BaseTestListener
     }
 
     /**
-     * @return CapabilitiesResolverInterface
+     * @return CapabilitiesResolver
      */
     protected function getCapabilitiesResolver()
     {
