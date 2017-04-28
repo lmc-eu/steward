@@ -54,15 +54,7 @@ final class CapabilitiesResolver
         }
 
         if ($this->ciDetector->isCiDetected()) {
-            $ci = $this->ciDetector->detect();
-            $capabilities->setCapability(
-                'build',
-                $this->config->env . '-' . $ci->getBuildNumber()
-            );
-            $capabilities->setCapability(
-                'tags',
-                [$this->config->env, $ci->getCiName(), get_class($test)]
-            );
+            $capabilities = $this->setupCiCapabilities($capabilities, $test);
         }
 
         $capabilities = $this->setupBrowserSpecificCapabilities($capabilities, $this->config->browserName);
@@ -99,6 +91,27 @@ final class CapabilitiesResolver
     }
 
     /**
+     * Setup capabilities specific for continuous integration server
+     * @param DesiredCapabilities $capabilities
+     * @param AbstractTestCase $test
+     * @return DesiredCapabilities
+     */
+    protected function setupCiCapabilities(DesiredCapabilities $capabilities, AbstractTestCase $test)
+    {
+        $ci = $this->ciDetector->detect();
+        $capabilities->setCapability(
+            'build',
+            $this->config->env . '-' . $ci->getBuildNumber()
+        );
+        $capabilities->setCapability(
+            'tags',
+            [$this->config->env, $ci->getCiName(), get_class($test)]
+        );
+
+        return $capabilities;
+    }
+
+    /**
      * Setup browser-specific custom capabilities.
      * @param DesiredCapabilities $capabilities
      * @param string $browser Browser name
@@ -110,20 +123,8 @@ final class CapabilitiesResolver
             case WebDriverBrowserType::FIREFOX:
                 $capabilities = $this->setupFirefoxCapabilities($capabilities);
                 break;
-            case WebDriverBrowserType::CHROME:
-                $capabilities = $this->setupChromeCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::MICROSOFT_EDGE:
-                $capabilities = $this->setupMicrosoftEdgeCapabilities($capabilities);
-                break;
             case WebDriverBrowserType::IE:
                 $capabilities = $this->setupInternetExplorerCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::SAFARI:
-                $capabilities = $this->setupSafariCapabilities($capabilities);
-                break;
-            case WebDriverBrowserType::PHANTOMJS:
-                $capabilities = $this->setupPhantomjsCapabilities($capabilities);
                 break;
         }
 
@@ -149,26 +150,6 @@ final class CapabilitiesResolver
     }
 
     /**
-     * Set up Chrome/Chromium-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupChromeCapabilities(DesiredCapabilities $capabilities)
-    {
-        return $capabilities;
-    }
-
-    /**
-     * Set up Microsoft Edge-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupMicrosoftEdgeCapabilities(DesiredCapabilities $capabilities)
-    {
-        return $capabilities;
-    }
-
-    /**
      * Set up Internet Explorer-specific capabilities
      * @param DesiredCapabilities $capabilities
      * @return DesiredCapabilities
@@ -178,26 +159,6 @@ final class CapabilitiesResolver
         // Clears cache, cookies, history, and saved form data of MSIE.
         $capabilities->setCapability('ie.ensureCleanSession', true);
 
-        return $capabilities;
-    }
-
-    /**
-     * Set up Safari-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupSafariCapabilities(DesiredCapabilities $capabilities)
-    {
-        return $capabilities;
-    }
-
-    /**
-     * Set up PhantomJS-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupPhantomjsCapabilities(DesiredCapabilities $capabilities)
-    {
         return $capabilities;
     }
 }
