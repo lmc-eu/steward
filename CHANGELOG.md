@@ -12,6 +12,7 @@
 - Require PHPUnit ^5.7
 - Remove dependency on unmaintained Configula (and internally reimplement configuration options retrieval)
 - Improve `install` command output (eg. to always include path to downloaded file).
+- Use custom method `Strings::toFilename` to convert class name to file name (and remove direct Composer dependency on `nette/utils`).
 
 ### Fixed
 - Attempting to download not existing Selenium server version (with `install` command) will not create empty jar file but only show an error.

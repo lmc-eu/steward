@@ -6,7 +6,7 @@ use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
-use Nette\Utils\Strings;
+use Lmc\Steward\Utils\Strings;
 use PHPUnit\Framework\BaseTestListener;
 
 /**
@@ -96,8 +96,8 @@ class SnapshotListener extends BaseTestListener
     {
         return sprintf(
             '%s-%s-%s',
-            Strings::webalize(get_class($testCase), null, $lower = false),
-            Strings::webalize($testCase->getName(), null, $lower = false),
+            Strings::toFilename(get_class($testCase)),
+            Strings::toFilename($testCase->getName()),
             date('Y-m-d-H-i-s')
         );
     }

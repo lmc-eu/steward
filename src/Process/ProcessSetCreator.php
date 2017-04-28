@@ -6,8 +6,8 @@ use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Utils\Strings;
 use Nette\Reflection\AnnotationsParser;
-use Nette\Utils\Strings;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
@@ -125,7 +125,7 @@ class ProcessSetCreator
 
             $phpunitArgs = [
                 '--log-junit=logs/'
-                . Strings::webalize($className, null, $lower = false)
+                . Strings::toFilename($className)
                 . '.xml',
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
             ];
