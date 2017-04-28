@@ -252,7 +252,7 @@ class RunCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return int|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -620,7 +620,6 @@ class RunCommand extends Command
     /**
      * @param ProcessSet $processSet
      * @param $statusesCount
-     * @return array
      */
     protected function printExecutionLoopStatus(ProcessSet $processSet, $statusesCount)
     {
