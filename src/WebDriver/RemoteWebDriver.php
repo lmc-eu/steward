@@ -5,7 +5,7 @@ namespace Lmc\Steward\WebDriver;
 use Lmc\Steward\ConfigProvider;
 
 /**
- * Extends RemoteWebDriver with some extra logic, ie. more verbose logging.
+ * Extends RemoteWebDriver with some extra logic, eg. more verbose logging.
  */
 class RemoteWebDriver extends \Facebook\WebDriver\Remote\RemoteWebDriver
 {

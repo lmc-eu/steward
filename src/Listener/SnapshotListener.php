@@ -44,25 +44,34 @@ class SnapshotListener extends BaseTestListener
         $savePath = ConfigProvider::getInstance()->logsDir . '/';
         $testIdentifier = $this->assembleTestIdentifier($test);
 
+        ob_start();
+        $outputBufferClosed = false;
         try {
-            $test->appendTestLog(
-                'Test failed on page "%s", taking page snapshots:',
-                $test->wd->getCurrentURL()
-            );
-
+            $currentUrl = $test->wd->getCurrentURL();
             // Save PNG screenshot
             $screenshotPath = $savePath . $testIdentifier . '.png';
             $test->wd->takeScreenshot($screenshotPath);
-            $test->appendTestLog('Screenshot saved to file "%s" ', $this->getSnapshotUrl($screenshotPath));
-
             // Save HTML snapshot of page
             $htmlPath = $savePath . $testIdentifier . '.html';
             file_put_contents($htmlPath, $test->wd->getPageSource());
-            $test->appendTestLog('HTML snapshot saved to file "%s" ', $this->getSnapshotUrl($htmlPath));
+
+            $bufferedOutput = ob_get_clean();
+            $outputBufferClosed = true;
+            $test->appendFormattedTestLog($bufferedOutput);
+
+            $test->appendTestLog('');
+            $test->appendTestLog('[WARN] Test failed on page "%s", taking page snapshots:', $currentUrl);
+            $test->appendTestLog('Screenshot: "%s"', $this->getSnapshotUrl($screenshotPath));
+            $test->appendTestLog('HTML snapshot: "%s"', $this->getSnapshotUrl($htmlPath));
+            $test->appendTestLog('');
         } catch (WebDriverException $e) {
             $test->appendTestLog('[WARN] Error taking page snapshot, perhaps browser is not accessible?');
 
             return;
+        } finally {
+            if (!$outputBufferClosed) {
+                $test->appendFormattedTestLog(ob_get_clean());
+            }
         }
     }
 
