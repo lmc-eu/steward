@@ -112,7 +112,10 @@ class WebDriverListener extends BaseTestListener
         }
 
         if ($test->wd instanceof RemoteWebDriver) {
-            $test->log(
+            // The endTest() method of WebDriverListener is called before endTest() of ResultPrinter, so any output
+            // from this listener would overtake output from the tests itself, what would be confusing. Instead of this,
+            // we append them to the output of the test itself, to print them in proper chronological order.
+            $test->appendTestLog(
                 'Destroying "%s" WebDriver for "%s::%s" (session %s)',
                 ConfigProvider::getInstance()->browserName,
                 get_class($test),
@@ -120,6 +123,7 @@ class WebDriverListener extends BaseTestListener
                 $test->wd->getSessionID()
             );
 
+            ob_start(); // Capture any output from commands bellow to make them appended to output of the test.
             try {
                 // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
                 // Should be removed with PhantomJS 2
@@ -131,6 +135,9 @@ class WebDriverListener extends BaseTestListener
                 $test->wd->quit();
             } catch (WebDriverException $e) {
                 $test->warn('Error closing the session, browser may died.');
+            } finally {
+                $output = ob_get_clean();
+                $test->appendFormattedTestLog($output);
             }
         }
     }

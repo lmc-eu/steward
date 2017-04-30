@@ -74,6 +74,17 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         $this->appendedTestLog .= $output;
     }
 
+    /**
+     * Append already formatted log (including timestamp, newlines etc.) to end of test's log.
+     *
+     * @param string $formattedLog
+     * @see appendTestLog
+     */
+    public function appendFormattedTestLog($formattedLog)
+    {
+        $this->appendedTestLog .= $formattedLog;
+    }
+
     public function log($format, ...$args)
     {
         echo $this->formatOutput($format, $args);
