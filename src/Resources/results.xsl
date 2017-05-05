@@ -96,7 +96,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-condensed table-striped table-hover">
+                    <table class="table table-condensed table-hover">
                         <thead>
                             <tr>
                                 <th colspan="2">Testcase / tests</th>
@@ -109,7 +109,7 @@
                         </thead>
                         <tbody>
                             <xsl:for-each select="//testcases/testcase">
-                                <tr class="testcase-row">
+                                <tr class="testcase-row active">
                                     <td colspan="2" style="word-break: break-all;">
                                         <xsl:value-of select="@name"/>
                                     </td>
