@@ -225,7 +225,7 @@
                     window.wasInitialized = true;
 
                     // calculate and print test duration
-                    $('table tr.test-row').each(function() {
+                    $('table tr.test-row, table tr.testcase-row').each(function() {
                         var startDate = moment($('td.date-start', this).text());
                         var endValue = $('td.date-end', this).text();
                         var endDate = moment(endValue);
