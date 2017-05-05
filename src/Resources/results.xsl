@@ -96,7 +96,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-condensed table-hover">
+                    <table class="table table-condensed table-hover results-table">
                         <thead>
                             <tr>
                                 <th colspan="2">Testcase / tests</th>
@@ -157,6 +157,9 @@
                                         <tr class="test-row">
                                             <td></td>
                                             <td style="word-break: break-all;">
+                                                <xsl:attribute name="title">
+                                                    <xsl:value-of select="../@name"/>::<xsl:value-of select="@name"/>
+                                                </xsl:attribute>
                                                 <xsl:value-of select="@name"/>
                                             </td>
                                             <td>
