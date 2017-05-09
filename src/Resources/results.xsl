@@ -96,7 +96,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-condensed table-striped table-hover">
+                    <table class="table table-condensed table-hover results-table">
                         <thead>
                             <tr>
                                 <th colspan="2">Testcase / tests</th>
@@ -109,7 +109,7 @@
                         </thead>
                         <tbody>
                             <xsl:for-each select="//testcases/testcase">
-                                <tr class="testcase-row">
+                                <tr class="testcase-row active">
                                     <td colspan="2" style="word-break: break-all;">
                                         <xsl:value-of select="@name"/>
                                     </td>
@@ -157,6 +157,9 @@
                                         <tr class="test-row">
                                             <td></td>
                                             <td style="word-break: break-all;">
+                                                <xsl:attribute name="title">
+                                                    <xsl:value-of select="../@name"/>::<xsl:value-of select="@name"/>
+                                                </xsl:attribute>
                                                 <xsl:value-of select="@name"/>
                                             </td>
                                             <td>
@@ -225,7 +228,7 @@
                     window.wasInitialized = true;
 
                     // calculate and print test duration
-                    $('table tr.test-row').each(function() {
+                    $('table tr.test-row, table tr.testcase-row').each(function() {
                         var startDate = moment($('td.date-start', this).text());
                         var endValue = $('td.date-end', this).text();
                         var endDate = moment(endValue);
