@@ -74,6 +74,8 @@ class ConfigResolver
 
             $this->assertIsReadableDirectory($currentValue, $dirOption);
 
+            $currentValue = rtrim($currentValue, '/');
+
             $config[$configFileOption] = $currentValue;
         }
 

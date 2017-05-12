@@ -103,6 +103,16 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                 __DIR__ . '/Fixtures/dir-1',
                 __DIR__ . '/Fixtures/dir-2',
             ],
+            'config file option with trailing slash => remove the slash' => [
+                __DIR__ . '/Fixtures/dir-1',
+                '',
+                __DIR__ . '/Fixtures/dir-1/',
+            ],
+            'custom CLI option with traling slash => remove the slash' => [
+                __DIR__ . '/Fixtures/dir-1',
+                __DIR__ . '/Fixtures/dir-1//',
+                '',
+            ],
         ];
     }
 
