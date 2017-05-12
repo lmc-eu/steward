@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+
+## 2.2.0 - 2017-05-12
 ### Added
 - Configuration file support 🎉. Useful for global Steward configuration which doesn't change for different runs. Place `steward.yml` or `steward.yml.dist` to base directory or use `-c`/`--configuration` option to define custom path to configuration file. Supported options are currently:
     - `capabilities_resolver` (given class must implement new `CustomCapabilitiesResolverInterface`)
@@ -10,14 +12,14 @@
     - `logs_dir`
     - `fixtures_dir`
 - Event `command.pre_initialize`, triggered before initialization of any command is started.
-- Capabilities passed using `--capability` CLI option could now force to be specified as an string (by encapsulating into additional quotes).
+- Capabilities passed using `--capability` CLI option could now be forced to be specified as an string (by encapsulating the value into additional quotes).
 - Print total execution time at the end; in `-vv` and `-vvv` modes print also execution after each testcase is finished.
-- Show total execution of each testcase when viewing result.xml file via browser (currently only execution time of each test was shown). Also show full test name (including testcase name) when hovering over its name.
+- Show total execution of each testcase when viewing `result.xml` file via browser (currently only execution time of each test was shown). Also show full test name (including testcase name) when hovering over its name.
 
 ### Changed
 - Capabilities are now resolved using `CapabilitiesResolver` class.
-- Require PHPUnit ^5.7
-- Remove dependency on unmaintained Configula (and internally reimplement configuration options retrieval)
+- Require PHPUnit ^5.7.
+- Remove dependency on unmaintained Configula library (and internally reimplement configuration options retrieval).
 - Improve `install` command output (eg. to always include path to downloaded file).
 - Use custom method `Strings::toFilename` to convert class name to file name (and remove direct Composer dependency on `nette/utils`).
 
@@ -25,7 +27,7 @@
 - Attempting to download not existing Selenium server version (with `install` command) will not create empty jar file but only show an error.
 - Do not throw misleading exception "Test case must be descendant of Lmc\Steward\Test\AbstractTestCase" when invalid data provider is used.
 - Debug messages about destroying WebDriver instance on the end of each test were printed to the output before output of the actual tests.
-- Logs dir was not passed to PHPUnit processes, causing junit lof files to be always written to `logs/` directory.
+- Logs dir was not passed to PHPUnit processes, causing JUnit log files to be always written to `logs/` directory.
 
 ## 2.1.0 - 2017-01-16
 ### Added
