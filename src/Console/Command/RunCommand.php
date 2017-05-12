@@ -289,7 +289,8 @@ class RunCommand extends Command
             $input->getOption(self::OPTION_GROUP),
             $input->getOption(self::OPTION_EXCLUDE_GROUP),
             $input->getOption(self::OPTION_FILTER),
-            $input->getOption(self::OPTION_IGNORE_DELAYS)
+            $input->getOption(self::OPTION_IGNORE_DELAYS),
+            $input->getOption(self::OPTION_LOGS_DIR)
         );
 
         if (!count($processSet)) {

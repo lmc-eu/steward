@@ -57,6 +57,7 @@ class ProcessSetCreator
      * @param array $excludeGroups Groups to be excluded
      * @param string $filter filter test cases by name
      * @param bool $ignoreDelays Should test delays be ignored?
+     * @param string $logsDir Where to write junit logs
      * @return ProcessSet
      */
     public function createFromFiles(
@@ -64,7 +65,8 @@ class ProcessSetCreator
         array $groups,
         array $excludeGroups,
         $filter = null,
-        $ignoreDelays = false
+        $ignoreDelays = false,
+        $logsDir = 'logs'
     ) {
         $files->sortByName();
         $processSet = $this->getProcessSet();
@@ -124,7 +126,7 @@ class ProcessSetCreator
             }
 
             $phpunitArgs = [
-                '--log-junit=logs/'
+                '--log-junit=' . $logsDir . '/'
                 . Strings::toFilename($className)
                 . '.xml',
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
