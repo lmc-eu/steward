@@ -2,8 +2,9 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Assert\InvalidArgumentException;
+use Lmc\Steward\Console\Application;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
@@ -31,10 +32,8 @@ class CleanCommandTest extends TestCase
 
     public function testShouldShowErrorIfLogsDirectoryIsNotDefaultAndCannotBeFound()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(
-            'Cannot clean logs directory "/custom/not/accessible/path", make sure it is accessible.'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Path to directory with logs "/custom/not/accessible/path" does not exist');
 
         $this->tester->execute(
             [

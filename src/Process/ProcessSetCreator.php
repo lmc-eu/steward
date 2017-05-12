@@ -4,6 +4,7 @@ namespace Lmc\Steward\Process;
 
 use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Utils\Strings;
@@ -30,23 +31,28 @@ class ProcessSetCreator
     protected $processSet;
     /** @var AbstractPublisher */
     protected $publisher;
+    /** @var array */
+    protected $config;
 
     /**
      * @param RunCommand $command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param AbstractPublisher $publisher
+     * @param array $config
      */
     public function __construct(
         RunCommand $command,
         InputInterface $input,
         OutputInterface $output,
-        AbstractPublisher $publisher
+        AbstractPublisher $publisher,
+        array $config
     ) {
         $this->command = $command;
         $this->input = $input;
         $this->output = $output;
         $this->publisher = $publisher;
+        $this->config = $config;
     }
 
     /**
@@ -124,7 +130,7 @@ class ProcessSetCreator
             }
 
             $phpunitArgs = [
-                '--log-junit=logs/'
+                '--log-junit=' . $this->config[ConfigOptions::LOGS_DIR] . '/'
                 . Strings::toFilename($className)
                 . '.xml',
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),
@@ -185,9 +191,10 @@ class ProcessSetCreator
             ->setEnv('BROWSER_NAME', $this->input->getArgument(RunCommand::ARGUMENT_BROWSER))
             ->setEnv('ENV', mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
             ->setEnv('CAPABILITY', json_encode($capabilities))
+            ->setEnv('CAPABILITIES_RESOLVER', $this->config[ConfigOptions::CAPABILITIES_RESOLVER])
             ->setEnv('SERVER_URL', $this->input->getOption(RunCommand::OPTION_SERVER_URL))
-            ->setEnv('FIXTURES_DIR', $this->input->getOption(RunCommand::OPTION_FIXTURES_DIR))
-            ->setEnv('LOGS_DIR', $this->input->getOption(RunCommand::OPTION_LOGS_DIR))
+            ->setEnv('FIXTURES_DIR', $this->config[ConfigOptions::FIXTURES_DIR])
+            ->setEnv('LOGS_DIR', $this->config[ConfigOptions::LOGS_DIR])
             ->setEnv('DEBUG', $this->output->isDebug() ? '1' : '0')
             ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
             ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))

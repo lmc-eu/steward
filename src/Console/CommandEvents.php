@@ -18,6 +18,16 @@ final class CommandEvents
     const CONFIGURE = 'command.configure';
 
     /**
+     * The PRE_INITIALIZE event allows you to attach listeners before initialization of any command is started, ie.
+     * just after the input has been validated. It allows you to alter raw input before the configuration is resolved.
+     *
+     * The event listener method receives a Lmc\Steward\Console\Event\ExtendedConsoleEvent instance.
+     *
+     * @var string
+     */
+    const PRE_INITIALIZE = 'command.pre_initialize';
+
+    /**
      * The RUN_TESTS_INIT event is dispatched after basic initialization of Run Command.
      * It allows you to eg. adjust the output on command initialization.
      *

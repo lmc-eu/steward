@@ -2,10 +2,10 @@
 
 namespace Lmc\Steward;
 
+use Lmc\Steward\Console\Application;
 use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\EventListener\ListenerInstantiator;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;

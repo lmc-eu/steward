@@ -20,7 +20,7 @@ class CleanLogsListener implements EventSubscriberInterface
     {
         return [
             CommandEvents::CONFIGURE => 'onCommandConfigure',
-            CommandEvents::RUN_TESTS_INIT => 'onCommandRunTestsInit',
+            CommandEvents::PRE_INITIALIZE => 'onCommandPreInitialize',
         ];
     }
 
@@ -31,7 +31,7 @@ class CleanLogsListener implements EventSubscriberInterface
      */
     public function onCommandConfigure(BasicConsoleEvent $event)
     {
-        if ($event->getCommand()->getName() != 'run') {
+        if ($event->getCommand()->getName() !== 'run') {
             return;
         }
 
@@ -46,8 +46,12 @@ class CleanLogsListener implements EventSubscriberInterface
     /**
      * @param ExtendedConsoleEvent $event
      */
-    public function onCommandRunTestsInit(ExtendedConsoleEvent $event)
+    public function onCommandPreInitialize(ExtendedConsoleEvent $event)
     {
+        if (!$event->getCommand()->getDefinition()->hasOption(self::OPTION_NO_CLEAN)) {
+            return;
+        }
+
         if ($event->getInput()->getOption(self::OPTION_NO_CLEAN)) {
             return;
         }

@@ -4,6 +4,8 @@ namespace Lmc\Steward\Process;
 
 use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
+use Lmc\Steward\Console\Configuration\ConfigOptions;
+use Lmc\Steward\Console\Configuration\ConfigResolver;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedByZeroTimeTest;
 use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedTest;
@@ -17,6 +19,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @covers Lmc\Steward\Process\ProcessSetCreator
@@ -64,7 +67,12 @@ class ProcessSetCreatorTest extends TestCase
             $this->command,
             $this->input,
             $this->bufferedOutput,
-            $this->publisherMock
+            $this->publisherMock,
+            [
+                ConfigOptions::LOGS_DIR => '/foo/bar/logs',
+                ConfigOptions::FIXTURES_DIR => '/foo/bar/fixtures',
+                ConfigOptions::CAPABILITIES_RESOLVER => '',
+            ]
         );
     }
 
@@ -97,7 +105,10 @@ class ProcessSetCreatorTest extends TestCase
         $testEnv = $dummyTestProcess->getEnv();
 
         $this->assertContains('phpunit', $testCommand);
-        $this->assertContains('--log-junit=logs/Lmc-Steward-Process-Fixtures-DummyTests-DummyTest.xml', $testCommand);
+        $this->assertContains(
+            '--log-junit=/foo/bar/logs/Lmc-Steward-Process-Fixtures-DummyTests-DummyTest.xml',
+            $testCommand
+        );
         $this->assertNotContains('--colors', $testCommand); // Decorated output is disabled in setUp()
         $this->assertNotContains('--filter', $testCommand);
         $this->assertRegExp('/--configuration=.*\/src\/phpunit\.xml/', $testCommand);
@@ -108,8 +119,8 @@ class ProcessSetCreatorTest extends TestCase
             'BROWSER_NAME' => 'firefox',
             'ENV' => 'staging',
             'SERVER_URL' => $definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(),
-            'FIXTURES_DIR' => $definition->getOption(RunCommand::OPTION_FIXTURES_DIR)->getDefault(),
-            'LOGS_DIR' => $definition->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault(),
+            'FIXTURES_DIR' => '/foo/bar/fixtures',
+            'LOGS_DIR' => '/foo/bar/logs',
         ];
         $this->assertArraySubset($expectedEnv, $testEnv);
     }
@@ -260,8 +271,8 @@ class ProcessSetCreatorTest extends TestCase
         $this->input = new StringInput(
             'staging chrome'
             . ' --' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337'
-            . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=custom-fixtures-dir/'
-            . ' --' . RunCommand::OPTION_LOGS_DIR . '=custom-logs-dir/'
+            . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/')
+            . ' --' . RunCommand::OPTION_LOGS_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-logs-dir/')
             . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log'
             . ' --' . RunCommand::OPTION_CAPABILITY . '="enquoted:OS X 10.8"'
             . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.foo:false'
@@ -275,7 +286,8 @@ class ProcessSetCreatorTest extends TestCase
             $this->command,
             $this->input,
             $this->bufferedOutput,
-            $this->publisherMock
+            $this->publisherMock,
+            $this->resolveConfig()
         );
 
         $files = $this->findDummyTests('DummyTest.php');
@@ -290,10 +302,11 @@ class ProcessSetCreatorTest extends TestCase
                 'BROWSER_NAME' => 'chrome',
                 'ENV' => 'staging',
                 'SERVER_URL' => 'http://foo.bar:1337',
-                'FIXTURES_DIR' => 'custom-fixtures-dir/',
-                'LOGS_DIR' => 'custom-logs-dir/',
+                'FIXTURES_DIR' => realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/'),
+                'LOGS_DIR' => realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
                 'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","enquoted":"OS X 10.8","webdriver.foo":false,' .
                     '"version":"14.14393"}',
+                'CAPABILITIES_RESOLVER' => '',
             ],
             $processEnv
         );
@@ -315,7 +328,8 @@ class ProcessSetCreatorTest extends TestCase
             $this->command,
             $this->input,
             $this->bufferedOutput,
-            $this->publisherMock
+            $this->publisherMock,
+            $this->resolveConfig()
         );
 
         $processSet = $this->creator->createFromFiles($files, [], []);
@@ -361,5 +375,13 @@ class ProcessSetCreatorTest extends TestCase
             $this->assertArrayHasKey($expectedTestName, $processes);
             $this->assertInstanceOf(ProcessWrapper::class, $processes[$expectedTestName]);
         }
+    }
+
+    /**
+     * @return array
+     */
+    private function resolveConfig()
+    {
+        return (new ConfigResolver(new OptionsResolver(), $this->command->getDefinition()))->resolve($this->input, []);
     }
 }

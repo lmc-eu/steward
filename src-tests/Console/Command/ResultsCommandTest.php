@@ -2,8 +2,8 @@
 
 namespace Lmc\Steward\Console\Command;
 
+use Lmc\Steward\Console\Application;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
