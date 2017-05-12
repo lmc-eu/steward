@@ -130,7 +130,7 @@ class ProcessSetCreator
             }
 
             $phpunitArgs = [
-                '--log-junit=logs/'
+                '--log-junit=' . $this->config[ConfigOptions::LOGS_DIR] . '/'
                 . Strings::toFilename($className)
                 . '.xml',
                 '--configuration=' . realpath(__DIR__ . '/../phpunit.xml'),

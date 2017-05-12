@@ -24,6 +24,7 @@
 - Attempting to download not existing Selenium server version (with `install` command) will not create empty jar file but only show an error.
 - Do not throw misleading exception "Test case must be descendant of Lmc\Steward\Test\AbstractTestCase" when invalid data provider is used.
 - Debug messages about destroying WebDriver instance on the end of each test were printed to the output before output of the actual tests.
+- Logs dir was not passed to PHPUnit processes, causing junit lof files to be always written to `logs/` directory.
 
 ## 2.1.0 - 2017-01-16
 ### Added

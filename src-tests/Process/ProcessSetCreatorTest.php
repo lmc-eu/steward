@@ -105,7 +105,10 @@ class ProcessSetCreatorTest extends TestCase
         $testEnv = $dummyTestProcess->getEnv();
 
         $this->assertContains('phpunit', $testCommand);
-        $this->assertContains('--log-junit=logs/Lmc-Steward-Process-Fixtures-DummyTests-DummyTest.xml', $testCommand);
+        $this->assertContains(
+            '--log-junit=/foo/bar/logs/Lmc-Steward-Process-Fixtures-DummyTests-DummyTest.xml',
+            $testCommand
+        );
         $this->assertNotContains('--colors', $testCommand); // Decorated output is disabled in setUp()
         $this->assertNotContains('--filter', $testCommand);
         $this->assertRegExp('/--configuration=.*\/src\/phpunit\.xml/', $testCommand);
