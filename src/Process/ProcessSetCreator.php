@@ -66,7 +66,7 @@ class ProcessSetCreator
         array $excludeGroups,
         $filter = null,
         $ignoreDelays = false,
-        $logsDir = 'logs/'
+        $logsDir = 'logs'
     ) {
         $files->sortByName();
         $processSet = $this->getProcessSet();
