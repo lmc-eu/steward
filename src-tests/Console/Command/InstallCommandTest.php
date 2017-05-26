@@ -67,7 +67,7 @@ class InstallCommandTest extends TestCase
         $this->command->setDownloader($this->getDownloadMock());
         $this->mockLatestVersionCheck();
 
-        $this->tester->setInputs(["\n"]);
+        $this->tester->setInputs([PHP_EOL]);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
@@ -95,7 +95,7 @@ class InstallCommandTest extends TestCase
         $this->command->setDownloader($this->getDownloadMock());
         $this->mockLatestVersionCheck();
 
-        $this->tester->setInputs(["1.33.7\n"]);
+        $this->tester->setInputs(['1.33.7' . PHP_EOL]);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
@@ -122,7 +122,7 @@ class InstallCommandTest extends TestCase
         $fileGetContentsMock->expects($this->any())
             ->willReturn(false);
 
-        $this->tester->setInputs(["\n", '6.6.6']);
+        $this->tester->setInputs([PHP_EOL, '6.6.6']);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
@@ -178,8 +178,9 @@ class InstallCommandTest extends TestCase
             ['interactive' => false]
         );
 
-        $this->assertEquals(realpath($filePath) . "\n", $this->tester->getDisplay());
-        $this->assertContains('6.33.6', $this->tester->getDisplay());
+        $output = $this->tester->getDisplay();
+        $this->assertEquals(realpath($filePath) . PHP_EOL, $output);
+        $this->assertContains('6.33.6', $output);
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
@@ -196,7 +197,7 @@ class InstallCommandTest extends TestCase
             ['interactive' => false]
         );
 
-        $this->assertEquals(realpath($filePath) . "\n", $this->tester->getDisplay());
+        $this->assertEquals(realpath($filePath) . PHP_EOL, $this->tester->getDisplay());
         $this->assertContains('2.34.5', $this->tester->getDisplay());
         $this->assertSame(0, $this->tester->getStatusCode());
     }
@@ -208,7 +209,7 @@ class InstallCommandTest extends TestCase
     {
         $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
 
-        $this->tester->setInputs(["\n"]);
+        $this->tester->setInputs([PHP_EOL]);
 
         $this->tester->execute(['command' => $this->command->getName(), 'version' => '2.34.5']);
 
@@ -226,7 +227,7 @@ class InstallCommandTest extends TestCase
     {
         $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
 
-        $this->tester->setInputs(["\n"]);
+        $this->tester->setInputs([PHP_EOL]);
 
         $this->tester->execute(
             ['command' => $this->command->getName(), 'version' => '2.34.5'],
@@ -234,7 +235,7 @@ class InstallCommandTest extends TestCase
         );
 
         $this->assertEquals(
-            realpath(__DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-2.34.5.jar') . "\n",
+            realpath(__DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-2.34.5.jar') . PHP_EOL,
             $this->tester->getDisplay()
         );
         $this->assertSame(0, $this->tester->getStatusCode());

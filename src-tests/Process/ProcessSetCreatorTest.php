@@ -13,6 +13,7 @@ use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -111,7 +112,7 @@ class ProcessSetCreatorTest extends TestCase
         );
         $this->assertNotContains('--colors', $testCommand); // Decorated output is disabled in setUp()
         $this->assertNotContains('--filter', $testCommand);
-        $this->assertRegExp('/--configuration=.*\/src\/phpunit\.xml/', $testCommand);
+        $this->assertStringMatchesFormat('%A--configuration=%A%esrc%ephpunit.xml%A', $testCommand);
 
         // Check defaults were passed to the Processes
         $definition = $this->command->getDefinition();
@@ -128,10 +129,9 @@ class ProcessSetCreatorTest extends TestCase
     public function testShouldThrowExceptionIfAddingFileWithNoClass()
     {
         $files = $this->findDummyTests('NoClassTest.php', 'InvalidTests');
-        $fileName = key(iterator_to_array($files->getIterator()));
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('No class found in file "' . $fileName . '"');
+        $this->expectExceptionMessageRegExp('/No class found in file ".*NoClassTest.php"/');
 
         $this->creator->createFromFiles($files, [], []);
     }
@@ -140,11 +140,10 @@ class ProcessSetCreatorTest extends TestCase
     {
         $files = $this->findDummyTests('WrongClassTest.php', 'InvalidTests');
 
-        $fileName = key(iterator_to_array($files->getIterator()));
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(
-            'Error loading class "Lmc\Steward\Process\Fixtures\InvalidTests\ReallyWrongClassTest" from file "'
-            . $fileName . '". Make sure the class name and namespace matches the file path.'
+        $this->expectExceptionMessageRegExp(
+            '/Error loading class "Lmc\\\\Steward\\\\Process\\\\Fixtures\\\\InvalidTests\\\\ReallyWrongClassTest"'
+            . ' from file ".*WrongClassTest.php"/'
         );
 
         $this->creator->createFromFiles($files, [], []);
@@ -153,12 +152,10 @@ class ProcessSetCreatorTest extends TestCase
     public function testShouldThrowExceptionIfMultipleClassesAreDefinedInFile()
     {
         $files = $this->findDummyTests('MultipleClassesInFileTest.php', 'InvalidTests');
-        $fileName = key(iterator_to_array($files->getIterator()));
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(
-            'File "' . $fileName . '" contains definition of 2 classes. However, each class must be defined in its'
-            . ' own separate file.'
+        $this->expectExceptionMessageRegExp(
+            '/File ".*MultipleClassesInFileTest.php" contains definition of 2 classes/'
         );
         $this->creator->createFromFiles($files, [], []);
     }
@@ -171,8 +168,8 @@ class ProcessSetCreatorTest extends TestCase
 
         $output = $this->bufferedOutput->fetch();
         $this->assertContains('by group(s): bar, foo', $output);
-        $this->assertRegExp('/Found testcase file #1 in group bar: .*\/GroupBarTest\.php/', $output);
-        $this->assertRegExp('/Found testcase file #2 in group foo: .*\/GroupFooTest\.php/', $output);
+        $this->assertStringMatchesFormat('%AFound testcase file #1 in group bar: %A%eGroupBarTest.php%A', $output);
+        $this->assertStringMatchesFormat('%AFound testcase file #2 in group foo: %A%eGroupFooTest.php%A', $output);
     }
 
     public function testShouldExcludeTestsOfGivenGroups()
@@ -183,8 +180,8 @@ class ProcessSetCreatorTest extends TestCase
 
         $output = $this->bufferedOutput->fetch();
         $this->assertContains('excluding group(s): bar, foo', $output);
-        $this->assertRegExp('/Excluding testcase file .*\/GroupBarTest\.php with group bar/', $output);
-        $this->assertRegExp('/Excluding testcase file .*\/GroupFooTest\.php with group foo/', $output);
+        $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupBarTest.php with group bar%A', $output);
+        $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupFooTest.php with group foo%A', $output);
     }
 
     public function testShouldAddTestsOfGivenGroupsButExcludeFromThemThoseOfExcludedGroups()
@@ -197,8 +194,8 @@ class ProcessSetCreatorTest extends TestCase
         $output = $this->bufferedOutput->fetch();
         $this->assertContains('by group(s): both', $output);
         $this->assertContains('excluding group(s): bar', $output);
-        $this->assertRegExp('/Found testcase file #1 in group both: .*\/GroupFooTest\.php/', $output);
-        $this->assertRegExp('/Excluding testcase file .*\/GroupBarTest\.php with group bar/', $output);
+        $this->assertStringMatchesFormat('%AFound testcase file #1 in group both: %A%eGroupFooTest.php%A', $output);
+        $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupBarTest.php with group bar%A', $output);
     }
 
     public function testShouldAddTestsWithTheirDefinedDelay()
@@ -268,15 +265,21 @@ class ProcessSetCreatorTest extends TestCase
 
     public function testShouldPropagateCustomOptionsIntoProcess()
     {
-        $this->input = new StringInput(
-            'staging chrome'
-            . ' --' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337'
-            . ' --' . RunCommand::OPTION_FIXTURES_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/')
-            . ' --' . RunCommand::OPTION_LOGS_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-logs-dir/')
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '="enquoted:OS X 10.8"'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=webdriver.foo:false'
-            . ' --' . RunCommand::OPTION_CAPABILITY . '=version:\"14.14393\"'
+        $this->input = new ArgvInput(
+            [
+                'run',
+                'staging',
+                'chrome',
+                '--' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337',
+                '--' . RunCommand::OPTION_FIXTURES_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/'),
+                '--' . RunCommand::OPTION_SERVER_URL . '=' . 'http://foo.bar:1337',
+                '--' . RunCommand::OPTION_FIXTURES_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/'),
+                '--' . RunCommand::OPTION_LOGS_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
+                '--' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log',
+                '--' . RunCommand::OPTION_CAPABILITY . '=whitespaced:OS X 10.8',
+                '--' . RunCommand::OPTION_CAPABILITY . '=webdriver.foo:false',
+                '--' . RunCommand::OPTION_CAPABILITY . '=version:"14.14393"',
+            ]
         );
 
         $this->input->bind($this->command->getDefinition());
@@ -304,8 +307,8 @@ class ProcessSetCreatorTest extends TestCase
                 'SERVER_URL' => 'http://foo.bar:1337',
                 'FIXTURES_DIR' => realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/'),
                 'LOGS_DIR' => realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
-                'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","enquoted":"OS X 10.8","webdriver.foo":false,' .
-                    '"version":"14.14393"}',
+                'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","whitespaced":"OS X 10.8",'
+                    . '"webdriver.foo":false,"version":"14.14393"}',
                 'CAPABILITIES_RESOLVER' => '',
             ],
             $processEnv

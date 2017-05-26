@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Console\Style;
 
+use Lmc\Steward\LineEndingsNormalizerTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Input\StringInput;
@@ -9,6 +10,8 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class StewardStyleTest extends TestCase
 {
+    use LineEndingsNormalizerTrait;
+
     /** @var StewardStyle */
     protected $style;
     /** @var BufferedOutput */
@@ -52,7 +55,10 @@ class StewardStyleTest extends TestCase
     {
         $this->style->section('Section header');
 
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/section.txt', $this->outputBuffer->fetch());
+        $this->assertStringEqualsFile(
+            __DIR__ . '/Fixtures/section.txt',
+            $this->normalizeLineEndings($this->outputBuffer->fetch())
+        );
     }
 
     public function testShouldFormatOutputWithExtraColors()
@@ -141,28 +147,37 @@ HTXT;
     {
         $this->style->text('Text message');
 
-        $this->assertSame("Text message\n", $this->outputBuffer->fetch());
+        $this->assertSame('Text message' . PHP_EOL, $this->outputBuffer->fetch());
     }
 
     public function testShouldFormatSuccess()
     {
         $this->style->success('Success message');
 
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/success.txt', $this->outputBuffer->fetch());
+        $this->assertStringEqualsFile(
+            __DIR__ . '/Fixtures/success.txt',
+            $this->normalizeLineEndings($this->outputBuffer->fetch())
+        );
     }
 
     public function testShouldFormatError()
     {
         $this->style->error('Error message');
 
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/error.txt', $this->outputBuffer->fetch());
+        $this->assertStringEqualsFile(
+            __DIR__ . '/Fixtures/error.txt',
+            $this->normalizeLineEndings($this->outputBuffer->fetch())
+        );
     }
 
     public function testShouldFormatNote()
     {
         $this->style->note('Note message');
 
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/note.txt', $this->outputBuffer->fetch());
+        $this->assertStringEqualsFile(
+            __DIR__ . '/Fixtures/note.txt',
+            $this->normalizeLineEndings($this->outputBuffer->fetch())
+        );
     }
 
     /**
@@ -177,13 +192,16 @@ HTXT;
 
         $inputMock->expects($this->any())
             ->method('getStream')
-            ->willReturn($this->getInputStreamWithUserInput("\n"));
+            ->willReturn($this->getInputStreamWithUserInput(PHP_EOL));
 
         $style = new StewardStyle($inputMock, $this->outputBuffer);
 
         $output = $style->ask('Question?', 'default');
 
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/question.txt', $this->outputBuffer->fetch());
+        $this->assertStringEqualsFile(
+            __DIR__ . '/Fixtures/question.txt',
+            $this->normalizeLineEndings($this->outputBuffer->fetch())
+        );
         $this->assertSame('default', $output);
     }
 
