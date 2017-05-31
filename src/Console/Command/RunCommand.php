@@ -110,21 +110,21 @@ class RunCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with tests',
-                STEWARD_BASE_DIR . '/tests'
+                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'tests'
             )
             ->addOption(
                 self::OPTION_FIXTURES_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Base path to directory with fixture files',
-                STEWARD_BASE_DIR . '/tests'
+                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'tests'
             )
             ->addOption(
                 self::OPTION_LOGS_DIR,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with logs',
-                STEWARD_BASE_DIR . '/logs'
+                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'logs'
             )
             ->addOption(
                 self::OPTION_PATTERN,

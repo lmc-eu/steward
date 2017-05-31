@@ -41,7 +41,7 @@ class SnapshotListener extends BaseTestListener
             return;
         }
 
-        $savePath = ConfigProvider::getInstance()->logsDir . '/';
+        $savePath = ConfigProvider::getInstance()->logsDir . DIRECTORY_SEPARATOR;
         $testIdentifier = $this->assembleTestIdentifier($test);
 
         ob_start();
@@ -90,7 +90,7 @@ class SnapshotListener extends BaseTestListener
                 // from absolute path, remove workspace
                 $path = str_replace(getenv('WORKSPACE'), '', $realPath);
                 // prepend url to artifact
-                $path = getenv('BUILD_URL') . 'artifact/' . $path;
+                $path = getenv('BUILD_URL') . 'artifact' . DIRECTORY_SEPARATOR . $path;
             }
         }
 

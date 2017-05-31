@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Fixed
+- Minor Windows compatibility issues (dir paths passed to run command now respect system directory separator etc.).
 
 ## 2.2.0 - 2017-05-12
 ### Added

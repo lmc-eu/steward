@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\Application;
+use Lmc\Steward\LineEndingsNormalizerTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -13,6 +14,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class ResultsCommandTest extends TestCase
 {
+    use LineEndingsNormalizerTrait;
+
     /** @var ResultsCommand */
     protected $command;
     /** @var CommandTester */
@@ -50,7 +53,7 @@ class ResultsCommandTest extends TestCase
             ]
         );
 
-        $output = $this->tester->getDisplay();
+        $output = $this->normalizeLineEndings($this->tester->getDisplay());
 
         $this->assertSame(0, $this->tester->getStatusCode());
         $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-basic.txt', $output);
@@ -66,7 +69,7 @@ class ResultsCommandTest extends TestCase
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
-        $output = $this->tester->getDisplay();
+        $output = $this->normalizeLineEndings($this->tester->getDisplay());
 
         $this->assertSame(0, $this->tester->getStatusCode());
         $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-with-tests.txt', $output);
@@ -108,7 +111,7 @@ class ResultsCommandTest extends TestCase
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
-        $output = $this->tester->getDisplay();
+        $output = $this->normalizeLineEndings($this->tester->getDisplay());
 
         $this->assertSame(0, $this->tester->getStatusCode());
         $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-fatal.txt', $output);

@@ -50,7 +50,7 @@ class CleanCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with logs',
-                STEWARD_BASE_DIR . '/logs'
+                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'logs'
             );
 
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));

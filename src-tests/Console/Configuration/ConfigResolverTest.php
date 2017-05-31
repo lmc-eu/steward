@@ -5,8 +5,8 @@ namespace Lmc\Steward\Console\Configuration;
 use Assert\InvalidArgumentException;
 use Lmc\Steward\Console\Command\CleanCommand;
 use Lmc\Steward\Console\Command\RunCommand;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,7 +20,7 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $optionsResolver = new OptionsResolver();
         $inputDefinition = new InputDefinition();
         $configResolver = new ConfigResolver($optionsResolver, $inputDefinition);
-        $input = new StringInput('');
+        $input = new ArrayInput([]);
 
         $config = $configResolver->resolve($input, []);
 
@@ -34,11 +34,11 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldResolveDefaultOptionsSpecificForRunCommand()
     {
-        $config = $this->resolveRunCommandConfiguration('', []);
+        $config = $this->resolveRunCommandConfiguration([], []);
 
-        $this->assertStringEndsWith('/steward/tests', $config[ConfigOptions::TESTS_DIR]);
-        $this->assertStringEndsWith('/steward/logs', $config[ConfigOptions::LOGS_DIR]);
-        $this->assertStringEndsWith('/steward/tests', $config[ConfigOptions::FIXTURES_DIR]);
+        $this->assertStringEndsWith('steward' . DIRECTORY_SEPARATOR . 'tests', $config[ConfigOptions::TESTS_DIR]);
+        $this->assertStringEndsWith('steward' . DIRECTORY_SEPARATOR . 'logs', $config[ConfigOptions::LOGS_DIR]);
+        $this->assertStringEndsWith('steward' . DIRECTORY_SEPARATOR . 'tests', $config[ConfigOptions::FIXTURES_DIR]);
     }
 
     public function testShouldResolveDefaultOptionsSpecificForCleanCommand()
@@ -47,12 +47,15 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $cleanCommand = new CleanCommand(new EventDispatcher());
         $configResolver = new ConfigResolver($optionsResolver, $cleanCommand->getDefinition());
 
-        $input = new StringInput('');
+        $input = new ArrayInput([]);
         $input->bind($cleanCommand->getDefinition());
 
         $config = $configResolver->resolve($input, []);
 
-        $this->assertStringEndsWith('/steward/logs', $config[ConfigOptions::LOGS_DIR]);
+        $this->assertStringEndsWith(
+            DIRECTORY_SEPARATOR . 'steward' . DIRECTORY_SEPARATOR . 'logs',
+            $config[ConfigOptions::LOGS_DIR]
+        );
         $this->assertFalse(isset($config[ConfigOptions::TESTS_DIR]));
         $this->assertFalse(isset($config[ConfigOptions::FIXTURES_DIR]));
     }
@@ -65,9 +68,9 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveDirectoryValue($expectedOutputValue, $cliValue, $configFileValue)
     {
-        $cliInput = '';
+        $cliInputParams = [];
         if (!empty($cliValue)) {
-            $cliInput = '--' . RunCommand::OPTION_LOGS_DIR . '=' . $cliValue;
+            $cliInputParams = ['--' . RunCommand::OPTION_LOGS_DIR => $cliValue];
         }
 
         $configFileOptions = [];
@@ -75,7 +78,7 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
             $configFileOptions[ConfigOptions::LOGS_DIR] = $configFileValue;
         }
 
-        $config = $this->resolveRunCommandConfiguration($cliInput, $configFileOptions);
+        $config = $this->resolveRunCommandConfiguration($cliInputParams, $configFileOptions);
 
         $this->assertSame($expectedOutputValue, $config[ConfigOptions::LOGS_DIR]);
     }
@@ -87,15 +90,19 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
     {
         return [
             // $expectedOutputValue, $cliValue, $configFileValue
-            'no custom CLI nor config file option => use input default' => [STEWARD_BASE_DIR . '/logs', '', ''],
+            'no custom CLI nor config file option => use input default' => [
+                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'logs',
+                '',
+                '',
+            ],
             'only config file option => use it instead of default' => [
                 __DIR__ . '/Fixtures/dir-1',
                 '',
                 __DIR__ . '/Fixtures/dir-1',
             ],
             'custom CLI option => use it instead of default' => [
-                __DIR__ . '/Fixtures/dir-1',
-                __DIR__ . '/Fixtures/dir-1',
+                __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'dir-1',
+                __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'dir-1',
                 '',
             ],
             'both custom CLI option and config file option => use CLI option' => [
@@ -120,28 +127,28 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path to directory with tests "/not/existing" does not exist');
-        $this->resolveRunCommandConfiguration('--' . RunCommand::OPTION_TESTS_DIR . '=/not/existing', []);
+        $this->resolveRunCommandConfiguration(['--' . RunCommand::OPTION_TESTS_DIR => '/not/existing'], []);
     }
 
     public function testShouldThrowExceptionIfConfigFileDefinedDirectoryIsNotReadable()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path to directory with tests "/not/existing" does not exist');
-        $this->resolveRunCommandConfiguration('', [ConfigOptions::TESTS_DIR => '/not/existing']);
+        $this->resolveRunCommandConfiguration([], [ConfigOptions::TESTS_DIR => '/not/existing']);
     }
 
     /**
-     * @param string $cliInput
+     * @param array $cliInputParams
      * @param array $configFileInputOptions
      * @return array
      */
-    private function resolveRunCommandConfiguration($cliInput, array $configFileInputOptions)
+    private function resolveRunCommandConfiguration(array $cliInputParams, array $configFileInputOptions)
     {
         $optionsResolver = new OptionsResolver();
         $runCommand = new RunCommand(new EventDispatcher());
         $configResolver = new ConfigResolver($optionsResolver, $runCommand->getDefinition());
 
-        $input = new StringInput($cliInput);
+        $input = new ArrayInput($cliInputParams);
         $input->bind($runCommand->getDefinition());
 
         return $configResolver->resolve($input, $configFileInputOptions);

@@ -1,0 +1,40 @@
+platform:
+  - x64
+
+image: Visual Studio 2017
+
+branches:
+  except:
+    - gh-pages
+
+clone_folder: C:\projects\steward
+
+cache:
+  - C:\tools\php71 -> appveyor.yml
+
+init:
+ - SET PHP=1
+ - SET PATH=C:\tools\php71;%PATH%
+ - SET ANSICON=121x90 (121x90)
+ - git config --global core.autocrlf false
+
+install:
+  - IF EXIST c:\tools\php71 (SET PHP=0)
+  - IF %PHP%==1 cinst -y OpenSSL.Light
+  - IF %PHP%==1 cinst -y php
+  - cd C:\tools\php71
+  - IF %PHP%==1 copy php.ini-production php.ini /Y
+  - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
+  - IF %PHP%==1 echo extension_dir=ext >> php.ini
+  - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
+  - IF %PHP%==1 echo extension=php_mbstring.dll >> php.ini
+  - IF %PHP%==1 echo extension=php_curl.dll >> php.ini
+  - cd C:\projects\steward
+  - appveyor DownloadFile https://getcomposer.org/composer.phar
+  - php composer.phar update --no-interaction --no-progress
+
+test_script:
+  - cd C:\projects\steward\src-tests\
+  - ../vendor/bin/phpunit --colors=always --exclude-group integration
+
+build: false # disable build step (we only run tests)

@@ -57,7 +57,9 @@ class SnapshotListenerTest extends TestCase
 
         $webDriver->expects($this->once())
             ->method('takeScreenshot')
-            ->with($this->matches('%s/src-tests/' . $expectedFileNameBase . '-%c%c%c%c-%c%c-%c%c-%c%c-%c%c-%c%c.png'));
+            ->with(
+                $this->matches('%s%esrc-tests%e' . $expectedFileNameBase . '-%c%c%c%c-%c%c-%c%c-%c%c-%c%c-%c%c.png')
+            );
 
         $webDriver->expects($this->once())
             ->method('getPageSource')
@@ -68,7 +70,7 @@ class SnapshotListenerTest extends TestCase
         $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Listener', 'file_put_contents');
         $fileGetContentsMock->expects($this->once())
             ->with(
-                $this->matches('%s/src-tests/' . $expectedFileNameBase . '-%c%c%c%c-%c%c-%c%c-%c%c-%c%c-%c%c.html'),
+                $this->matches('%s%esrc-tests%e' . $expectedFileNameBase . '-%c%c%c%c-%c%c-%c%c-%c%c-%c%c-%c%c.html'),
                 '<html><body><h1>Foo</h1></body></html>'
             );
 
@@ -79,8 +81,8 @@ class SnapshotListenerTest extends TestCase
         $this->assertStringMatchesFormat(
             '[%s]:%S
 [%s]: [WARN] Test failed on page "http://foo.bar", taking page snapshots:
-[%s]: Screenshot: "%s/steward/src-tests/' . $expectedFileNameBase . '-%s.png"
-[%s]: HTML snapshot: "%s/steward/src-tests/' . $expectedFileNameBase . '-%s.html"
+[%s]: Screenshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.png"
+[%s]: HTML snapshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.html"
 [%s]:%S',
             $output
         );
