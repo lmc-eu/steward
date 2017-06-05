@@ -6,6 +6,7 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class XdebugListener implements EventSubscriberInterface
 {
     const OPTION_XDEBUG = 'xdebug';
+    const DEFAULT_VALUE = 'phpstorm';
     const DOCS_URL = 'https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward';
 
     /** @var string */
@@ -48,7 +50,7 @@ class XdebugListener implements EventSubscriberInterface
             null,
             InputOption::VALUE_OPTIONAL,
             'Start Xdebug debugger on tests; use given IDE key. Default value is used only if empty option is passed.',
-            'phpstorm'
+            self::DEFAULT_VALUE
         );
     }
 
@@ -62,37 +64,35 @@ class XdebugListener implements EventSubscriberInterface
         $input = $event->getInput();
         $output = $event->getOutput();
 
-        // Use the value of --xdebug only if the option was passed.
-        // Don't apply the default if the option was not passed at all.
-        if ($input->getParameterOption('--' . self::OPTION_XDEBUG) !== false) {
-            $this->xdebugIdeKey = $input->getOption(self::OPTION_XDEBUG);
+        $this->xdebugIdeKey = $this->getIdeKeyFromInputOption($input);
+
+        if ($this->xdebugIdeKey === null) {
+            return;
         }
 
-        if ($this->xdebugIdeKey) {
-            if (!extension_loaded('xdebug')) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'Extension Xdebug is not loaded or installed. See %s for help and more information.',
-                        self::DOCS_URL
-                    )
-                );
-            }
-
-            if (!ini_get('xdebug.remote_enable')) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'The xdebug.remote_enable directive must be set to true to enable remote debugging. '
-                        . 'See %s for help and more information.',
-                        self::DOCS_URL
-                    )
-                );
-            }
-
-            $output->writeln(
-                sprintf('Xdebug remote debugging initialized with IDE key: %s', $this->xdebugIdeKey),
-                OutputInterface::VERBOSITY_DEBUG
+        if (!extension_loaded('xdebug')) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Extension Xdebug is not loaded or installed. See %s for help and more information.',
+                    self::DOCS_URL
+                )
             );
         }
+
+        if (!ini_get('xdebug.remote_enable')) {
+            throw new \RuntimeException(
+                sprintf(
+                    'The xdebug.remote_enable directive must be set to true to enable remote debugging. '
+                    . 'See %s for help and more information.',
+                    self::DOCS_URL
+                )
+            );
+        }
+
+        $output->writeln(
+            sprintf('Xdebug remote debugging initialized with IDE key: %s', $this->xdebugIdeKey),
+            OutputInterface::VERBOSITY_DEBUG
+        );
     }
 
     /**
@@ -106,5 +106,26 @@ class XdebugListener implements EventSubscriberInterface
             $event->getProcessBuilder()
                 ->setEnv('XDEBUG_CONFIG', 'idekey=' . $this->xdebugIdeKey);
         }
+    }
+
+    /**
+     * If --xdebug option was not passed at all, return null to not activate the feature.
+     * If the option was used without a value, use the default value.
+     * If the option was passed with custom value, use this value.
+     *
+     * @param InputInterface $input
+     * @return string|null
+     */
+    protected function getIdeKeyFromInputOption(InputInterface $input)
+    {
+        $unparsedOptionValue = $input->getParameterOption('--' . self::OPTION_XDEBUG);
+
+        if ($unparsedOptionValue === null) { // option was passed without value, use the default
+            return self::DEFAULT_VALUE;
+        } elseif ($unparsedOptionValue !== false) { // option was passed with value, use the value
+            return $input->getOption(self::OPTION_XDEBUG);
+        }
+
+        return null;
     }
 }

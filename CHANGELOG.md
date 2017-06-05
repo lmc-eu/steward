@@ -5,6 +5,7 @@
 ## Unreleased
 ### Fixed
 - Minor Windows compatibility issues (dir paths passed to run command now respect system directory separator etc.).
+- Compatibility with Symfony/Console 3.3 (`--xdebug` option behavior was incorrect with symfony/console 3.3.0).
 
 ## 2.2.0 - 2017-05-12
 ### Added
