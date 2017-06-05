@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+
+## 2.2.1 - 2017-06-06
 ### Fixed
 - Minor Windows compatibility issues (dir paths passed to run command now respect system directory separator etc.).
 - Compatibility with Symfony/Console 3.3 (`--xdebug` option behavior was incorrect with symfony/console 3.3.0).
