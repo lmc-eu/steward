@@ -189,7 +189,7 @@ File `timeline.html` will be then generated into `logs/` directory.
 ## License
 Steward is open source software licensed under the [MIT license](LICENCE.md).
 
-[wiki-docker]: https://github.com/lmc-eu/steward/wiki/Selenium-server-&-wiki-drivers#option-2-start-selenium-server--browser-inside-docker-
+[wiki-docker]: https://github.com/lmc-eu/steward/wiki/Selenium-server-&-browser-drivers#option-2-start-selenium-server--browser-inside-docker-
 [wiki-debugging]: https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward
 [wiki-capabilities]: https://github.com/lmc-eu/steward/wiki/Set-custom-capabilities
-[wiki-drivers]: https://github.com/lmc-eu/steward/wiki/Selenium-server-&-wiki-drivers#2-install-browser-driver
+[wiki-drivers]: https://github.com/lmc-eu/steward/wiki/Selenium-server-&-browser-drivers#2-install-browser-driver
