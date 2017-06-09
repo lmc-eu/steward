@@ -182,6 +182,10 @@ class SeleniumServerAdapter
             $urlParts['port'] = $this->guessPort($urlParts['host']);
         }
 
+        if (!empty($urlParts['path'])) {
+            $urlParts['path'] = $this->removeHubEndpointPathIfPresent($urlParts['path']);
+        }
+
         return $urlParts;
     }
 
@@ -200,6 +204,21 @@ class SeleniumServerAdapter
         }
 
         return self::DEFAULT_PORT;
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    protected function removeHubEndpointPathIfPresent($path)
+    {
+        $path = preg_replace(
+            '/^(.*)(' . preg_quote(self::HUB_ENDPOINT, '/') . '\/?)$/',
+            '$1',
+            $path
+        );
+
+        return $path;
     }
 
     /**

@@ -99,6 +99,38 @@ class SeleniumServerAdapterTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider provideServerUrlWithHubEndpoint
+     * @param string $providedServerUrl
+     * @param string $expectedServerUrl
+     */
+    public function testShouldTrimHubEndpointFromTheServerUrl($providedServerUrl, $expectedServerUrl)
+    {
+        $adapter = new SeleniumServerAdapter($providedServerUrl);
+
+        $this->assertSame($expectedServerUrl, $adapter->getServerUrl());
+    }
+
+    /**
+     * @return array[]
+     */
+    public function provideServerUrlWithHubEndpoint()
+    {
+        return [
+            'No endpoint, URL with port' => ['http://localhost:4444', 'http://localhost:4444'],
+            'No endpoint, URL without port' => ['http://localhost', 'http://localhost:4444'],
+            'Endpoint defined, with port' => ['http://localhost:4444/wd/hub', 'http://localhost:4444'],
+            'Endpoint defined, without port' => ['http://localhost/wd/hub', 'http://localhost:4444'],
+            'Endpoint with trailing slash & port' => ['http://localhost:4444/wd/hub/', 'http://localhost:4444'],
+            'Endpoint with trailing slash & without port' => ['http://localhost/wd/hub/', 'http://localhost:4444'],
+            'Not a hub endpoint should be kept' => ['http://localhost/foo/bar', 'http://localhost:4444/foo/bar'],
+            'Not a hub endpoint (with port) should be kept' => [
+                'http://localhost:1337/foo/bar',
+                'http://localhost:1337/foo/bar',
+            ],
+        ];
+    }
+
     public function testShouldReturnTrueIfUrlIsAccessible()
     {
         $dummyResource = fopen(__FILE__, 'r');
