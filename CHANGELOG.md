@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Changed
+- If url endpoint (`/wd/hub`) is passed as part of server URL, it is automatically trimmed, as it is not necessary and will cause connection error.
 
 ## 2.2.1 - 2017-06-06
 ### Fixed
