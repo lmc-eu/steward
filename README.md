@@ -92,6 +92,7 @@ Now the test itself (place it to `selenium-tests/tests/` directory):
 
 namespace My; // Note the "My" namespace maps to the "tests" folder, as defined in the autoload part of `composer.json`.
 
+use Facebook\WebDriver\WebDriverBy;
 use Lmc\Steward\Test\AbstractTestCase;
 
 class TitlePageTest extends AbstractTestCase
