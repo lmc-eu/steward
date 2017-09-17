@@ -9,6 +9,12 @@
     ],
     "license": "MIT",
     "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "LMC s.r.o.",
+            "homepage": "https://github.com/lmc-eu"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Lmc\\Steward\\": "src/"
