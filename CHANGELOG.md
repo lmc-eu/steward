@@ -8,6 +8,7 @@
 
 ### Fixed
 - Base directory (which affects default paths to tests, logs etc.) is now properly detected even when Steward is not installed in `/vendor` directory.
+- Don't rely on default path to PHPUnit binary (`vendor/bin/phpunit`) to allow custom `bin-dir` and `vendor-dir` Composer settings.
 
 ## 2.2.1 - 2017-06-06
 ### Fixed

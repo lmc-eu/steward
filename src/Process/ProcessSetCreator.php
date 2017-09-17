@@ -187,6 +187,8 @@ class ProcessSetCreator
         $capabilities = (new KeyValueCapabilityOptionsParser())
             ->parse($this->input->getOption(RunCommand::OPTION_CAPABILITY));
 
+        $phpunitExecutable = realpath(__DIR__ . '/../../bin/phpunit-steward');
+
         $processBuilder
             ->setEnv('BROWSER_NAME', $this->input->getArgument(RunCommand::ARGUMENT_BROWSER))
             ->setEnv('ENV', mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
@@ -196,7 +198,7 @@ class ProcessSetCreator
             ->setEnv('FIXTURES_DIR', $this->config[ConfigOptions::FIXTURES_DIR])
             ->setEnv('LOGS_DIR', $this->config[ConfigOptions::LOGS_DIR])
             ->setEnv('DEBUG', $this->output->isDebug() ? '1' : '0')
-            ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
+            ->setPrefix($phpunitExecutable)
             ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
             ->setTimeout(3600); // 1 hour timeout to end possibly stuck processes
 
