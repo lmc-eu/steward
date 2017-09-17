@@ -196,7 +196,7 @@ class ProcessSetCreator
             ->setEnv('FIXTURES_DIR', $this->config[ConfigOptions::FIXTURES_DIR])
             ->setEnv('LOGS_DIR', $this->config[ConfigOptions::LOGS_DIR])
             ->setEnv('DEBUG', $this->output->isDebug() ? '1' : '0')
-            ->setPrefix(STEWARD_BASE_DIR . '/vendor/bin/phpunit')
+            ->setPrefix(__DIR__ . '/../../../../phpunit/phpunit/phpunit')
             ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
             ->setTimeout(3600); // 1 hour timeout to end possibly stuck processes
 
