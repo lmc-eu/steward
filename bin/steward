@@ -14,14 +14,21 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 function requireIfExists($file)
 {
-    if (file_exists($file)) {
+    if (is_file($file)) {
         return require_once $file;
     }
+
+    return false;
 }
 
-if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when used directly
-    && !requireIfExists(__DIR__ . '/../../../autoload.php') // when installed as dependency
-) {
+$installedAsDependency = null;
+if (requireIfExists(__DIR__ . '/../vendor/autoload.php')) { // used directly as the main package
+    $installedAsDependency = false;
+} elseif (requireIfExists(__DIR__ . '/../../../autoload.php')) { // installed with Composer as a dependency
+    $installedAsDependency = true;
+}
+
+if ($installedAsDependency === null) {
     die(
         'You must set up the project dependencies, run the following commands:' . PHP_EOL .
         'curl -sS https://getcomposer.org/installer | php' . PHP_EOL .
@@ -29,9 +36,9 @@ if (!requireIfExists(__DIR__ . '/../vendor/autoload.php') // when used directly
     );
 }
 
-if (strpos(__DIR__, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== false) { // when installed as dependency
+if ($installedAsDependency) {
     define('STEWARD_BASE_DIR', realpath(__DIR__ . '/../../../..'));
-} else { // when used directly
+} else {
     define('STEWARD_BASE_DIR', realpath(__DIR__ . '/..'));
 }
 

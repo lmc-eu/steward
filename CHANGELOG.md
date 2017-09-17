@@ -6,6 +6,9 @@
 ### Changed
 - If url endpoint (`/wd/hub`) is passed as part of server URL, it is automatically trimmed, as it is not necessary and will cause connection error.
 
+### Fixed
+- Base directory (which affects default paths to tests, logs etc.) is now properly detected even when Steward is not installed in `/vendor` directory.
+
 ## 2.2.1 - 2017-06-06
 ### Fixed
 - Minor Windows compatibility issues (dir paths passed to run command now respect system directory separator etc.).
