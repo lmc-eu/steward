@@ -1,0 +1,16 @@
+<?php
+
+function requireIfExists($file)
+{
+    if (is_file($file)) {
+        return require_once $file;
+    }
+
+    return false;
+}
+
+requireIfExists(__DIR__ . '/../vendor/autoload.php') || requireIfExists(__DIR__ . '/../../../autoload.php');
+
+date_default_timezone_set('Europe/Prague');
+
+PHPUnit_TextUI_Command::main();
