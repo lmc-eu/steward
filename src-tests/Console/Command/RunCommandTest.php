@@ -359,6 +359,9 @@ class RunCommandTest extends TestCase
         $processSetMock->expects($this->any())
             ->method('count')
             ->willReturn(333);
+        $processSetMock->expects($this->any())
+            ->method('get')
+            ->willReturn([]);
 
         $creatorMock = $this->getMockBuilder(ProcessSetCreator::class)
             ->disableOriginalConstructor()

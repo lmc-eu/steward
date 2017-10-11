@@ -21,6 +21,7 @@ class CapabilitiesResolverTest extends TestCase
     /**
      * @dataProvider provideBrowsers
      * @param string $browser
+     * @requires extension zip
      */
     public function testShouldResolveBasicDesiredCapabilities($browser, callable $extraCallback = null)
     {
@@ -70,6 +71,9 @@ class CapabilitiesResolverTest extends TestCase
         ];
     }
 
+    /**
+     * @requires extension zip
+     */
     public function testShouldResolveExtraDesiredCapabilitiesOnCiServer()
     {
         /** @var AbstractTestCase $test */
