@@ -7,7 +7,7 @@
   </testcase>
   <testcase name="Foo\BazFailedTest" status="done" start="2016-12-29T12:57:28+0200" end="2016-12-29T13:02:16+0200" result="failed">
     <test name="testBarFirstPassed" status="done" start="2016-12-29T12:57:05+0200" end="2016-12-29T12:57:15+0200" result="passed" executor="http://127.0.0.1:5556"/>
-    <test name="testBazSecondBroken" status="done" start="2016-12-29T13:02:10+0200" end="2016-12-29T13:02:15+0200" result="broken" executor="http://127.0.0.1:5558"/>
+    <test name="testBazSecondBroken" status="done" start="2017-01-02T03:02:08+0200" end="2017-01-02T03:05:03+0200" result="broken" executor="http://127.0.0.1:5558"/>
   </testcase>
   <testcase name="Foo\BanRunningTest" status="prepared">
     <!-- Started test, to be ignored in the timeline data -->

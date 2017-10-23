@@ -53,8 +53,8 @@ class TimelineDataBuilder
                 'group' => $this->resolveTestExecutorId($testElement),
                 'content' => (string) $testElement['name'],
                 'title' => $this->assembleFullTestName($testElement),
-                'start' => (string) $testElement['start'],
-                'end' => (string) $testElement['end'],
+                'start' => $this->toCompatibleDateFormat($testElement['start']),
+                'end' => $this->toCompatibleDateFormat($testElement['end']),
                 'className' => (string) $testElement['result'],
             ];
         }
@@ -121,5 +121,19 @@ class TimelineDataBuilder
         }
 
         return 'unknown';
+    }
+
+    /**
+     * Convert ISO date to compatible date format (drop timezone).
+     *
+     * @see https://stackoverflow.com/q/6427204/464890
+     * @param string $isoDate
+     * @return string
+     */
+    private function toCompatibleDateFormat($isoDate)
+    {
+        $date = new \DateTimeImmutable($isoDate);
+
+        return $date->format('Y-m-d\TH:i:s');
     }
 }

@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Fixed
+- Timeline was not working in Safari.
 
 ## 2.3.0 - 2017-10-11
 ### Changed
