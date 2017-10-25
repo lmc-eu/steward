@@ -50,7 +50,7 @@
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.4.1",
         "php-mock/php-mock-phpunit": "~1.0",
-        "satooshi/php-coveralls": "^1.0",
+        "php-coveralls/php-coveralls": "^1.0.2",
         "friendsofphp/php-cs-fixer": "^2.0",
         "symfony/var-dumper": "^3.2"
     },
