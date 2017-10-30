@@ -3,8 +3,10 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+
+## 2.3.1 - 2017-10-30
 ### Fixed
-- Timeline was not working in Safari.
+- HTML timeline generated using `generate-timeline` command was not working properly in Safari.
 
 ## 2.3.0 - 2017-10-11
 ### Changed
