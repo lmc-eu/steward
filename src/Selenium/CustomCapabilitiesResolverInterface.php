@@ -1,4 +1,5 @@
 <?php
+
 namespace Lmc\Steward\Selenium;
 
 use Facebook\WebDriver\Remote\DesiredCapabilities;

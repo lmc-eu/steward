@@ -1,4 +1,5 @@
 <?php
+
 namespace Lmc\Steward\Component;
 
 use Exception;
