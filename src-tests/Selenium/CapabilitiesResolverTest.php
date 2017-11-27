@@ -63,7 +63,7 @@ class CapabilitiesResolverTest extends TestCase
             [
                 WebDriverBrowserType::IE,
                 function ($capabilitiesArray) {
-                    $this->assertSame(true, $capabilitiesArray['ie.ensureCleanSession']);
+                    $this->assertTrue($capabilitiesArray['ie.ensureCleanSession']);
                 },
             ],
             [WebDriverBrowserType::SAFARI],
