@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Changed
+- Increase minimal required version of PHPUnit and nette/reflections to maintain PHP 7.2 compatibility even with lowest possible versions of dependencies.
 
 ## 2.3.1 - 2017-10-30
 ### Fixed
