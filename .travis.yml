@@ -26,10 +26,10 @@ install:
 before_script:
   - mkdir -p src-tests/logs/
   - mkdir -p src-tests/coverage/
-  - SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi 2.53.1)
+  - SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi 3.8.0)
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - java -jar $SELENIUM_JAR -log selenium-server.log &
+  - java -Dwebdriver.firefox.marionette=false -jar $SELENIUM_JAR -enablePassThrough false -log selenium-server.log &
   - until $(echo | nc localhost 4444); do sleep 1; echo Waiting for selenium-server to start...; done;
 
 script:
