@@ -6,6 +6,12 @@
 ### Changed
 - Require PHP 7.1+
 
+### Removed
+- `TestUtils` class which was already deprecated in 2.1.
+    - Instead of `TestUtils::setSelect2Value()` use directly the new `Select2` component and `selectByVisiblePartialText()` method.
+    - Instead of `TestUtils::getFixturePath()` use `Facebook\WebDriver\Remote\FileDetector` instead.
+    - Instead of `TestUtils::sleep()` use `AbstractTestCase::sleep()` method instead.
+
 ## 2.3.2 - 2017-12-02
 ### Changed
 - Increase minimal required version of PHPUnit and nette/reflections to maintain PHP 7.2 compatibility even with lowest possible versions of dependencies.

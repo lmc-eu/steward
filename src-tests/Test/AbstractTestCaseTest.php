@@ -5,7 +5,6 @@ namespace Lmc\Steward\Test;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverOptions;
 use Facebook\WebDriver\WebDriverWindow;
-use Lmc\Steward\Component\TestUtils;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use PHPUnit\Framework\TestCase;
@@ -70,8 +69,6 @@ class AbstractTestCaseTest extends TestCase
         $this->expectOutputRegex(
             '/^' . self::EXPECTED_TIMESTAMP_PATTERN . ': Starting execution of test MockedTest\:\:testMethodDummyName$/'
         );
-
-        $this->assertInstanceOf(TestUtils::class, $this->testCase->utils);
     }
 
     public function testShouldLogTestNameToOutputOnTearDown()
