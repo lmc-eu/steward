@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Event;
 
 use Lmc\Steward\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * Event dispatched from `run` command when initializing PHPUnit Processes.
@@ -13,8 +12,8 @@ use Symfony\Component\Process\ProcessBuilder;
  */
 class RunTestsProcessEvent extends ExtendedConsoleEvent
 {
-    /** @var ProcessBuilder */
-    protected $processBuilder;
+    /** @var array */
+    protected $environmentVars;
     /** @var array */
     protected $args;
 
@@ -22,43 +21,38 @@ class RunTestsProcessEvent extends ExtendedConsoleEvent
      * @param Command $command
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @param ProcessBuilder $processBuilder
+     * @param array $environmentVars Environment variables passed to the process
      * @param array $args Arguments passed to the process
      */
     public function __construct(
         Command $command,
         InputInterface $input,
         OutputInterface $output,
-        ProcessBuilder $processBuilder,
+        array $environmentVars,
         array $args
     ) {
         parent::__construct($command, $input, $output);
 
-        $this->processBuilder = $processBuilder;
+        $this->environmentVars = $environmentVars;
         $this->args = $args;
     }
 
-    /**
-     * @return ProcessBuilder
-     */
-    public function getProcessBuilder()
+    public function getEnvironmentVars(): array
     {
-        return $this->processBuilder;
+        return $this->environmentVars;
     }
 
-    /**
-     * @return array
-     */
-    public function getArgs()
+    public function setEnvironmentVars(array $environmentVars)
+    {
+        $this->environmentVars = $environmentVars;
+    }
+
+    public function getArgs(): array
     {
         return $this->args;
     }
 
-    /**
-     * Allow to update args array
-     * @param array $args
-     */
-    public function setArgs($args)
+    public function setArgs(array $args)
     {
         $this->args = $args;
     }

@@ -14,7 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * Class to encapsulate creation of ProcessSet from files
@@ -170,7 +169,19 @@ class ProcessSetCreator
      */
     protected function buildProcess($fileName, array $phpunitArgs = [])
     {
-        $processBuilder = new ProcessBuilder();
+        $capabilities = (new KeyValueCapabilityOptionsParser())
+            ->parse($this->input->getOption(RunCommand::OPTION_CAPABILITY));
+
+        $env = [
+            'BROWSER_NAME' => $this->input->getArgument(RunCommand::ARGUMENT_BROWSER),
+            'ENV' => mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)),
+            'CAPABILITY' => json_encode($capabilities),
+            'CAPABILITIES_RESOLVER' => $this->config[ConfigOptions::CAPABILITIES_RESOLVER],
+            'SERVER_URL' => $this->input->getOption(RunCommand::OPTION_SERVER_URL),
+            'FIXTURES_DIR' => $this->config[ConfigOptions::FIXTURES_DIR],
+            'LOGS_DIR' => $this->config[ConfigOptions::LOGS_DIR],
+            'DEBUG' => $this->output->isDebug() ? '1' : '0',
+        ];
 
         $dispatcher = $this->command->getDispatcher();
         $dispatcher->dispatch(
@@ -179,30 +190,16 @@ class ProcessSetCreator
                 $this->command,
                 $this->input,
                 $this->output,
-                $processBuilder,
+                $env,
                 $phpunitArgs
             )
         );
 
-        $capabilities = (new KeyValueCapabilityOptionsParser())
-            ->parse($this->input->getOption(RunCommand::OPTION_CAPABILITY));
-
         $phpunitExecutable = realpath(__DIR__ . '/../../bin/phpunit-steward');
 
-        $processBuilder
-            ->setEnv('BROWSER_NAME', $this->input->getArgument(RunCommand::ARGUMENT_BROWSER))
-            ->setEnv('ENV', mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)))
-            ->setEnv('CAPABILITY', json_encode($capabilities))
-            ->setEnv('CAPABILITIES_RESOLVER', $this->config[ConfigOptions::CAPABILITIES_RESOLVER])
-            ->setEnv('SERVER_URL', $this->input->getOption(RunCommand::OPTION_SERVER_URL))
-            ->setEnv('FIXTURES_DIR', $this->config[ConfigOptions::FIXTURES_DIR])
-            ->setEnv('LOGS_DIR', $this->config[ConfigOptions::LOGS_DIR])
-            ->setEnv('DEBUG', $this->output->isDebug() ? '1' : '0')
-            ->setPrefix([PHP_BINARY, $phpunitExecutable])
-            ->setArguments(array_merge($processEvent->getArgs(), [$fileName]))
-            ->setTimeout(3600); // 1 hour timeout to end possibly stuck processes
+        $commandLine = array_merge([PHP_BINARY, $phpunitExecutable], $processEvent->getArgs(), [$fileName]);
 
-        return $processBuilder->getProcess();
+        return new Process($commandLine, STEWARD_BASE_DIR, $processEvent->getEnvironmentVars(), null, 3600);
     }
 
     /**

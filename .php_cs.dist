@@ -12,7 +12,6 @@ return PhpCsFixer\Config::create()
         'cast_spaces' => true,
         'concat_space' => ['spacing' => 'one'],
         'function_typehint_space' => true,
-        'linebreak_after_opening_tag' => true,
         'lowercase_cast' => true,
         'mb_str_functions' => true,
         'method_separation' => true,
