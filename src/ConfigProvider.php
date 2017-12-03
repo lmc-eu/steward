@@ -90,17 +90,6 @@ class ConfigProvider
         $this->customConfigurationOptions = $customConfigurationOptions;
     }
 
-    /**
-     * @deprecated No longer necessary, call the property directly on instance of ConfigProvider
-     * @return $this
-     */
-    public function getConfig()
-    {
-        $this->initialize();
-
-        return $this;
-    }
-
     private function initialize()
     {
         if (!is_null($this->config)) {

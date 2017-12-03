@@ -94,9 +94,6 @@ class ConfigProviderTest extends TestCase
 
         $secondInstance = ConfigProvider::getInstance();
         $this->assertSame($firstInstance, $secondInstance);
-
-        $thirdInstanceDeprecatedRetrieval = ConfigProvider::getInstance()->getConfig();
-        $this->assertSame($firstInstance, $thirdInstanceDeprecatedRetrieval);
     }
 
     public function testShouldFailIfRequiredOptionIsNotDefined()

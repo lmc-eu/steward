@@ -26,7 +26,7 @@
         }
     },
     "require": {
-        "php": "^5.6 || ~7.0",
+        "php": "^7.1",
         "ext-zip": "*",
         "ext-curl": "*",
         "phpunit/phpunit": "^5.7.11",
@@ -43,14 +43,14 @@
         "florianwolters/component-util-singleton": "0.3.2",
         "doctrine/inflector": "~1.0",
         "beberlei/assert": "^2.7",
-        "ondram/ci-detector": "^2.1",
+        "ondram/ci-detector": "^3.0",
         "symfony/yaml": "^3.2",
         "symfony/options-resolver": "^3.2"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^2.4.1",
+        "squizlabs/php_codesniffer": "^3.1",
         "php-mock/php-mock-phpunit": "~1.0",
-        "php-coveralls/php-coveralls": "^1.0.2",
+        "php-coveralls/php-coveralls": "^2.0@dev",
         "friendsofphp/php-cs-fixer": "^2.0",
         "symfony/var-dumper": "^3.2"
     },

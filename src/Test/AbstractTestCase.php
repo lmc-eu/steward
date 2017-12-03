@@ -4,7 +4,6 @@ namespace Lmc\Steward\Test;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverDimension;
-use Lmc\Steward\Component\TestUtils;
 use Lmc\Steward\ConfigProvider;
 
 /**
@@ -21,12 +20,6 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     /** @var int Height of browser window */
     public static $browserHeight = 1024;
 
-    /**
-     * @var TestUtils Common test utils, instantiated on setUp.
-     * @deprecated Do custom instantiation of the Utils if needed. This will be removed in next major release.
-     */
-    public $utils;
-
     /** @var string Log appended to output of this test */
     protected $appendedTestLog;
 
@@ -39,8 +32,6 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
                 new WebDriverDimension(static::$browserWidth, static::$browserHeight)
             );
         }
-
-        $this->utils = new TestUtils($this);
     }
 
     public function tearDown()
