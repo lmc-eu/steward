@@ -4,7 +4,8 @@
 
 ## Unreleased
 ### Changed
-- Require PHP 7.1+
+- Require PHP 7.1+ and Symfony 4 components
+- `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
 
 ### Removed
 - `TestUtils` class which was already deprecated in 2.1.

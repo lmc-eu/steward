@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * @covers Lmc\Steward\Console\EventListener\XdebugListener
@@ -163,16 +162,11 @@ class XdebugListenerTest extends TestCase
         $extendedConsoleEvent = $this->prepareExtendedConsoleEvent($command, $input, $output);
         $this->listener->onCommandRunTestsInit($extendedConsoleEvent);
 
-        $processBuilderMock = $this->getMockBuilder(ProcessBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $processBuilderMock->expects($this->once())
-            ->method('setEnv')
-            ->with('XDEBUG_CONFIG', 'idekey=phpstorm');
-
-        $event = new RunTestsProcessEvent($command, $input, $output, $processBuilderMock, []);
+        $originalEnv = ['FOO' => 'bar'];
+        $event = new RunTestsProcessEvent($command, $input, $output, $originalEnv, []);
         $this->listener->onCommandRunTestsProcess($event);
+
+        $this->assertSame(['FOO' => 'bar', 'XDEBUG_CONFIG' => 'idekey=phpstorm'], $event->getEnvironmentVars());
     }
 
     public function testShouldNotInjectEnvironmentVariableIfXdebugOptionWasNotPassed()
@@ -187,15 +181,11 @@ class XdebugListenerTest extends TestCase
         $extendedConsoleEvent = $this->prepareExtendedConsoleEvent($command, $input, $output);
         $this->listener->onCommandRunTestsInit($extendedConsoleEvent);
 
-        $processBuilderMock = $this->getMockBuilder(ProcessBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $processBuilderMock->expects($this->never())
-            ->method('setEnv');
-
-        $event = new RunTestsProcessEvent($command, $input, $output, $processBuilderMock, []);
+        $originalEnv = ['FOO' => 'bar'];
+        $event = new RunTestsProcessEvent($command, $input, $output, $originalEnv, []);
         $this->listener->onCommandRunTestsProcess($event);
+
+        $this->assertSame($originalEnv, $event->getEnvironmentVars());
     }
 
     /**

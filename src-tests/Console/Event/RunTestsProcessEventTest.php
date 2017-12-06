@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Event;
 
 use Lmc\Steward\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\ProcessBuilder;
 
 class RunTestsProcessEventTest extends ExtendedConsoleEventTest
 {
@@ -15,10 +14,8 @@ class RunTestsProcessEventTest extends ExtendedConsoleEventTest
     protected $outputMock;
     /** @var Command|\PHPUnit_Framework_MockObject_MockObject */
     protected $commandMock;
-    /** @var ProcessBuilder */
-    protected $processBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->commandMock = $this->getMockBuilder(Command::class)
             ->disableOriginalConstructor()
@@ -31,36 +28,40 @@ class RunTestsProcessEventTest extends ExtendedConsoleEventTest
         $this->outputMock = $this->getMockBuilder(OutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->processBuilder = new ProcessBuilder();
     }
 
-    public function testShouldGetPropertiesPassedInConstructor()
+    public function testShouldGetPropertiesPassedInConstructor(): void
     {
         $event = new RunTestsProcessEvent(
             $this->commandMock,
             $this->inputMock,
             $this->outputMock,
-            $this->processBuilder,
+            ['env1' => 'foo', 'env2' => 'bar'],
             ['foo', 'bar']
         );
 
         $this->assertSame($this->commandMock, $event->getCommand());
         $this->assertSame($this->inputMock, $event->getInput());
         $this->assertSame($this->outputMock, $event->getOutput());
-        $this->assertSame($this->processBuilder, $event->getProcessBuilder());
+        $this->assertSame(['env1' => 'foo', 'env2' => 'bar'], $event->getEnvironmentVars());
         $this->assertSame(['foo', 'bar'], $event->getArgs());
     }
 
-    public function testShouldAllowToOverwriteArgsArray()
+    public function testShouldAllowToOverwriteEnvironmentVariablesAndArgsArray(): void
     {
         $event = new RunTestsProcessEvent(
             $this->commandMock,
             $this->inputMock,
             $this->outputMock,
-            $this->processBuilder,
+            ['env1' => 'foo', 'env2' => 'bar'],
             ['foo', 'bar']
         );
+
+        // Set custom env, overwrite those from constructor
+        $event->setEnvironmentVars(['env3' => 'bak', 'env4' => 'bat']);
+
+        // Check they are retrieved using the getter
+        $this->assertSame(['env3' => 'bak', 'env4' => 'bat'], $event->getEnvironmentVars());
 
         // Set custom args, overwrite those from constructor
         $event->setArgs(['baz', 'ban']);

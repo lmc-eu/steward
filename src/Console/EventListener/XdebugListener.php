@@ -41,7 +41,7 @@ class XdebugListener implements EventSubscriberInterface
      */
     public function onCommandConfigure(BasicConsoleEvent $event)
     {
-        if ($event->getCommand()->getName() != 'run') {
+        if ($event->getCommand()->getName() !== 'run') {
             return;
         }
 
@@ -103,8 +103,9 @@ class XdebugListener implements EventSubscriberInterface
     public function onCommandRunTestsProcess(RunTestsProcessEvent $event)
     {
         if ($this->xdebugIdeKey) {
-            $event->getProcessBuilder()
-                ->setEnv('XDEBUG_CONFIG', 'idekey=' . $this->xdebugIdeKey);
+            $env = $event->getEnvironmentVars();
+            $env['XDEBUG_CONFIG'] = 'idekey=' . $this->xdebugIdeKey;
+            $event->setEnvironmentVars($env);
         }
     }
 
