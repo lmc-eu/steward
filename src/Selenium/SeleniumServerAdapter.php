@@ -22,12 +22,9 @@ class SeleniumServerAdapter
     /** @var string */
     protected $lastError;
     /** @var string */
-    protected $cloudService = null;
+    protected $cloudService;
 
-    /**
-     * @param string $serverUrl
-     */
-    public function __construct($serverUrl)
+    public function __construct(string $serverUrl)
     {
         $this->serverUrlParts = $this->parseServerUrl($serverUrl);
     }
@@ -128,7 +125,7 @@ class SeleniumServerAdapter
     public function getCloudService()
     {
         // If cloud service value is not yet initialized, attempt to connect to the server first
-        if (is_null($this->cloudService)) {
+        if ($this->cloudService === null) {
             if (!$this->isSeleniumServer()) {
                 throw new \RuntimeException(sprintf('Unable to connect to remote server: %s', $this->getLastError()));
             }
@@ -167,10 +164,10 @@ class SeleniumServerAdapter
     }
 
     /**
-     * @param $seleniumServerUrl
+     * @param string $seleniumServerUrl
      * @return array URL parts. Scheme, host and port are always non-empty.
      */
-    protected function parseServerUrl($seleniumServerUrl)
+    protected function parseServerUrl(string $seleniumServerUrl): array
     {
         $urlParts = parse_url($seleniumServerUrl);
 

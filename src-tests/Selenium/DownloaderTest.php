@@ -204,6 +204,7 @@ class DownloaderTest extends TestCase
 
     public function testShouldThrowExceptionIfFileCannotBeDownloaded()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Downloader $downloader */
         $downloader = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([__DIR__ . '/Fixtures'])
             ->setMethods(['getFileUrl'])

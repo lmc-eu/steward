@@ -145,7 +145,7 @@ class WebDriverListener extends BaseTestListener
      * Subroutine to encapsulate creation of real WebDriver. Handles some exceptions that may occur etc.
      * The WebDriver instance is stored to $test->wd when created.
      *
-     * @param string AbstractTestCase $test
+     * @param AbstractTestCase $test
      * @param string $remoteServerUrl
      * @param DesiredCapabilities $desiredCapabilities
      * @param DesiredCapabilities $requiredCapabilities
@@ -155,11 +155,11 @@ class WebDriverListener extends BaseTestListener
      */
     protected function createWebDriver(
         AbstractTestCase $test,
-        $remoteServerUrl,
+        string $remoteServerUrl,
         DesiredCapabilities $desiredCapabilities,
         DesiredCapabilities $requiredCapabilities,
-        $connectTimeoutMs,
-        $requestTimeoutMs
+        int $connectTimeoutMs,
+        int $requestTimeoutMs
     ) {
         $browserName = ConfigProvider::getInstance()->browserName;
 

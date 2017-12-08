@@ -70,7 +70,7 @@
             "vendor/bin/phpcbf --standard=ruleset.xml"
         ],
         "analyze": [
-            "vendor/bin/phpstan.phar analyze ./src ./src-tests --level 1 -c phpstan.neon --ansi"
+            "vendor/bin/phpstan.phar analyze ./src ./src-tests --level 2 -c phpstan.neon --ansi"
         ]
     },
     "extra": {

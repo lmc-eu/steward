@@ -59,18 +59,16 @@ class RunCommand extends Command
 
     /**
      * @internal
-     * @param SeleniumServerAdapter $seleniumAdapter
      */
-    public function setSeleniumAdapter(SeleniumServerAdapter $seleniumAdapter)
+    public function setSeleniumAdapter(SeleniumServerAdapter $seleniumAdapter): void
     {
         $this->seleniumAdapter = $seleniumAdapter;
     }
 
     /**
      * @internal
-     * @param ProcessSetCreator $processSetCreator
      */
-    public function setProcessSetCreator(ProcessSetCreator $processSetCreator)
+    public function setProcessSetCreator(ProcessSetCreator $processSetCreator): void
     {
         $this->processSetCreator = $processSetCreator;
     }
@@ -78,7 +76,7 @@ class RunCommand extends Command
     /**
      * Configure command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('run')
             ->setDescription('Run tests planner and execute tests')
@@ -172,11 +170,8 @@ class RunCommand extends Command
 
     /**
      * Initialize, check arguments and options values etc.
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->stopwatch = new Stopwatch();
         $this->stopwatch->start('run');
@@ -238,14 +233,7 @@ class RunCommand extends Command
         }
     }
 
-    /**
-     * Execute command
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->testSeleniumConnection($input->getOption(self::OPTION_SERVER_URL))) {
             return 1;
@@ -308,10 +296,8 @@ class RunCommand extends Command
 
     /**
      * @codeCoverageIgnore
-     * @param string $seleniumServerUrl
-     * @return SeleniumServerAdapter
      */
-    protected function getSeleniumAdapter($seleniumServerUrl)
+    protected function getSeleniumAdapter(string $seleniumServerUrl): SeleniumServerAdapter
     {
         if (!$this->seleniumAdapter) {
             $this->seleniumAdapter = new SeleniumServerAdapter($seleniumServerUrl);
@@ -322,11 +308,8 @@ class RunCommand extends Command
 
     /**
      * @codeCoverageIgnore
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return ProcessSetCreator
      */
-    protected function getProcessSetCreator(InputInterface $input, OutputInterface $output)
+    protected function getProcessSetCreator(InputInterface $input, OutputInterface $output): ProcessSetCreator
     {
         if (!$this->processSetCreator) {
             $xmlPublisher = new XmlPublisher();
@@ -345,7 +328,7 @@ class RunCommand extends Command
      * @param ProcessSet $processSet
      * @return bool Return true if all test returned exit code 0 (or if none test was run)
      */
-    protected function executionLoop(ProcessSet $processSet)
+    protected function executionLoop(ProcessSet $processSet): bool
     {
         $counterWaitingOutput = 1;
         $statusesCountLast = [];
@@ -469,10 +452,8 @@ class RunCommand extends Command
 
     /**
      * Try connection to Selenium server
-     * @param string $seleniumServerUrl
-     * @return bool
      */
-    protected function testSeleniumConnection($seleniumServerUrl)
+    protected function testSeleniumConnection(string $seleniumServerUrl): bool
     {
         $seleniumAdapter = $this->getSeleniumAdapter($seleniumServerUrl);
         $this->io->write(
@@ -532,11 +513,7 @@ class RunCommand extends Command
         return true;
     }
 
-    /**
-     * @param ProcessSet $processSet
-     * @param $testClass
-     */
-    protected function failDependants(ProcessSet $processSet, $testClass)
+    protected function failDependants(ProcessSet $processSet, string $testClass): void
     {
         $failedDependants = $processSet->failDependants($testClass);
 
@@ -553,11 +530,7 @@ class RunCommand extends Command
         }
     }
 
-    /**
-     * @param ProcessSet $processSet
-     * @return array
-     */
-    protected function unqueueDependentProcesses(ProcessSet $processSet)
+    protected function unqueueDependentProcesses(ProcessSet $processSet): void
     {
         // Retrieve names of done tests
         $done = $processSet->get(ProcessWrapper::PROCESS_STATUS_DONE);
@@ -582,11 +555,7 @@ class RunCommand extends Command
         }
     }
 
-    /**
-     * @param ProcessSet $processSet
-     * @param $statusesCount
-     */
-    protected function printExecutionLoopStatus(ProcessSet $processSet, $statusesCount)
+    protected function printExecutionLoopStatus(ProcessSet $processSet, array $statusesCount): void
     {
         $resultsInfo = [];
         $resultsCount = $processSet->countResults();
@@ -616,10 +585,8 @@ class RunCommand extends Command
 
     /**
      * Flush output of the process
-     *
-     * @param ProcessWrapper $processWrapper
      */
-    protected function flushProcessOutput(ProcessWrapper $processWrapper)
+    protected function flushProcessOutput(ProcessWrapper $processWrapper): void
     {
         $this->io->output(
             $processWrapper->getProcess()->getIncrementalOutput(),

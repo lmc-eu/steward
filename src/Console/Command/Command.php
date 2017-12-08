@@ -30,7 +30,7 @@ class Command extends \Symfony\Component\Console\Command\Command
      * @param EventDispatcher $dispatcher
      * @param string $name
      */
-    public function __construct(EventDispatcher $dispatcher, $name = null)
+    public function __construct(EventDispatcher $dispatcher, string $name = null)
     {
         if (!defined('STEWARD_BASE_DIR')) {
             throw new \RuntimeException('The STEWARD_BASE_DIR constant is not defined');
@@ -41,15 +41,12 @@ class Command extends \Symfony\Component\Console\Command\Command
         parent::__construct($name);
     }
 
-    /**
-     * @return EventDispatcher
-     */
-    public function getDispatcher()
+    public function getDispatcher(): EventDispatcher
     {
         return $this->dispatcher;
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->getDispatcher()->dispatch(
             CommandEvents::PRE_INITIALIZE,
@@ -62,11 +59,7 @@ class Command extends \Symfony\Component\Console\Command\Command
         parent::initialize($input, $output);
     }
 
-    /**
-     * @param InputInterface $input
-     * @return array
-     */
-    protected function resolveConfiguration(InputInterface $input)
+    protected function resolveConfiguration(InputInterface $input): array
     {
         $configFileReader = new ConfigFileReader();
 

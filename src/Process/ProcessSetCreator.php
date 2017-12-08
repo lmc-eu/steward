@@ -235,11 +235,7 @@ class ProcessSetCreator
         return $excludingGroups;
     }
 
-    /**
-     * @param $fileName
-     * @return string
-     */
-    private function getClassNameFromFile($fileName)
+    private function getClassNameFromFile(string $fileName): string
     {
         // Parse classes from the testcase file
         $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));

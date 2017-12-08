@@ -41,7 +41,7 @@ class ResultsCommand extends Command
     /**
      * Configure command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('results')
             ->setDescription('Show test results overview')
@@ -56,12 +56,7 @@ class ResultsCommand extends Command
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filePath = $input->getOption(self::OPTION_RESULTS_FILE);
 
@@ -86,11 +81,8 @@ class ResultsCommand extends Command
 
     /**
      * Process results file to simple virtual data structure
-     *
-     * @param string $filePath
-     * @return array
      */
-    private function processResults($filePath)
+    private function processResults(string $filePath): array
     {
         $xml = simplexml_load_file($filePath);
 
@@ -145,11 +137,7 @@ class ResultsCommand extends Command
         return $data;
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param array $data
-     */
-    private function outputFooter(OutputInterface $output, array $data)
+    private function outputFooter(OutputInterface $output, array $data): void
     {
         $isFinished = ($data['tcCount'] == $data['tcDoneCount']);
 
@@ -188,12 +176,7 @@ class ResultsCommand extends Command
         $output->writeln('');
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param array $data
-     * @param bool $showTests
-     */
-    private function outputTable(OutputInterface $output, array $data, $showTests)
+    private function outputTable(OutputInterface $output, array $data, bool $showTests): void
     {
         $table = new Table($output);
         $rightAlignedColumn = new TableStyle();
@@ -253,13 +236,7 @@ class ResultsCommand extends Command
         $table->render();
     }
 
-    /**
-     * @param \DateTimeInterface|null $start
-     * @param \DateTimeInterface|null $end
-     * @param bool $inProgress
-     * @return string
-     */
-    private function formatDiff($start, $end, $inProgress = false)
+    private function formatDiff(?\DateTimeInterface $start, ?\DateTimeInterface $end, $inProgress = false): string
     {
         $output = '';
 
@@ -276,11 +253,7 @@ class ResultsCommand extends Command
         return $output;
     }
 
-    /**
-     * @param \DateTimeInterface|null $date
-     * @return string
-     */
-    private function formatDate($date)
+    private function formatDate(?\DateTimeInterface $date): string
     {
         $output = '';
         if ($date instanceof \DateTimeImmutable) {
@@ -290,16 +263,11 @@ class ResultsCommand extends Command
         return $output;
     }
 
-    /**
-     * @param string $status
-     * @param string $result
-     * @return string
-     */
-    private function formatTestcaseResult($status, $result)
+    private function formatTestcaseResult(string $status, string $result): string
     {
         $output = $result;
 
-        if ($status != ProcessWrapper::PROCESS_STATUS_DONE) {
+        if ($status !== ProcessWrapper::PROCESS_STATUS_DONE) {
             return $output;
         }
 
@@ -310,13 +278,7 @@ class ResultsCommand extends Command
         return $output;
     }
 
-    /**
-     * @param string $result
-     * @param string $status
-     * @param string $parentTestcaseResult
-     * @return string
-     */
-    private function formatTestResult($result, $status, $parentTestcaseResult)
+    private function formatTestResult(string $result, string $status, string $parentTestcaseResult): string
     {
         $output = $result;
 

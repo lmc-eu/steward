@@ -27,9 +27,8 @@ class InstallCommand extends Command
 
     /**
      * @internal
-     * @param Downloader $downloader
      */
-    public function setDownloader(Downloader $downloader)
+    public function setDownloader(Downloader $downloader): void
     {
         $this->downloader = $downloader;
     }
@@ -37,7 +36,7 @@ class InstallCommand extends Command
     /**
      * Configure command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('install')
             ->setDescription('Download latest Selenium standalone server jar file')
@@ -53,12 +52,8 @@ class InstallCommand extends Command
     /**
      * In interactive or very verbose (-vv) mode provide more output, otherwise only output full path to selenium
      * server jar file (so it could be parsed and run).
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $verboseOutput = false;
         if ($input->isInteractive() || $output->isVerbose()) {
@@ -132,9 +127,8 @@ class InstallCommand extends Command
 
     /**
      * @codeCoverageIgnore
-     * @return Downloader
      */
-    protected function getDownloader()
+    protected function getDownloader(): Downloader
     {
         if (!$this->downloader) {
             $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir);
@@ -143,11 +137,7 @@ class InstallCommand extends Command
         return $this->downloader;
     }
 
-    /**
-     * @param $isInteractiveInput
-     * @return string
-     */
-    private function askForVersion($isInteractiveInput)
+    private function askForVersion(bool $isInteractiveInput): string
     {
         $latestVersion = Downloader::getLatestVersion();
 
@@ -172,7 +162,7 @@ class InstallCommand extends Command
         });
     }
 
-    private function printLinkToWiki()
+    private function printLinkToWiki(): void
     {
         $this->io->note(
             'What now? Learn how to start the Selenium server: '
