@@ -1,6 +1,6 @@
 <?php
 
-namespace Lmc\Steward\Timeline;
+namespace Lmc\Steward\Utils;
 
 use Lmc\Steward\Utils\Strings;
 use PHPUnit\Framework\TestCase;

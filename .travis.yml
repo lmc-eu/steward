@@ -15,7 +15,9 @@ matrix:
       before_install:
         - phpenv config-rm xdebug.ini
       before_script: ~
-      script: composer codestyle:check
+      script:
+        - composer codestyle:check
+        - composer analyze
       after_success: ~
 
 install:

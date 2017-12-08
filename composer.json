@@ -52,7 +52,8 @@
         "php-mock/php-mock-phpunit": "~1.0",
         "php-coveralls/php-coveralls": "^2.0@dev",
         "friendsofphp/php-cs-fixer": "^2.0",
-        "symfony/var-dumper": "^4.0"
+        "symfony/var-dumper": "^4.0",
+        "phpstan/phpstan-shim": "^0.9.1"
     },
     "suggest": {
         "ext-posix": "For colored output",
@@ -67,6 +68,9 @@
         "codestyle:fix": [
             "vendor/bin/php-cs-fixer fix --diff || exit 0",
             "vendor/bin/phpcbf --standard=ruleset.xml"
+        ],
+        "analyze": [
+            "vendor/bin/phpstan.phar analyze ./src ./src-tests --level 1 -c phpstan.neon --ansi"
         ]
     },
     "extra": {

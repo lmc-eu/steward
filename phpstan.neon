@@ -1,0 +1,9 @@
+parameters:
+	ignoreErrors:
+		- '#Undefined variable: \$e#'
+		- '#Constructor of class .+ImplementsCapabilitiesResolverInterface has an unused parameter \$config#'
+		- '#Lmc\\Steward\\ConfigProviderHelper::__construct\(\) does not call parent constructor from Lmc\\Steward\\ConfigProvider#'
+		- '#Constructor of class Lmc\\Steward\\Selenium\\Fixtures\\CapabilitiesResolverFixture has an unused parameter \$config#'
+	excludes_analyse:
+		- '%rootDir%/../../../../src-tests/Process/Fixtures/InvalidTests/WrongClassTest.php'
+	bootstrap: %rootDir%/../../../../src-tests/bootstrap.php
