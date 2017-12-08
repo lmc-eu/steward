@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 
 /**
- * @covers Lmc\Steward\Console\Command\RunCommand
+ * @covers \Lmc\Steward\Console\Command\RunCommand
  */
 class RunCommandTest extends TestCase
 {

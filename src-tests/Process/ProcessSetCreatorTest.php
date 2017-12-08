@@ -23,7 +23,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @covers Lmc\Steward\Process\ProcessSetCreator
+ * @covers \Lmc\Steward\Process\ProcessSetCreator
  */
 class ProcessSetCreatorTest extends TestCase
 {

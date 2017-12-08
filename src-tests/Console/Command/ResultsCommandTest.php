@@ -10,7 +10,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
- * @covers Lmc\Steward\Console\Command\ResultsCommand
+ * @covers \Lmc\Steward\Console\Command\ResultsCommand
  */
 class ResultsCommandTest extends TestCase
 {

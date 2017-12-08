@@ -11,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 /**
- * @covers Lmc\Steward\Console\Command\CleanCommand
+ * @covers \Lmc\Steward\Console\Command\CleanCommand
  */
 class CleanCommandTest extends TestCase
 {

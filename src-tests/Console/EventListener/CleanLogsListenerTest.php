@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
- * @covers Lmc\Steward\Console\EventListener\CleanLogsListener
+ * @covers \Lmc\Steward\Console\EventListener\CleanLogsListener
  */
 class CleanLogsListenerTest extends TestCase
 {

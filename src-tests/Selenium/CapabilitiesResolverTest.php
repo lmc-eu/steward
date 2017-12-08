@@ -14,7 +14,7 @@ use OndraM\CiDetector\CiDetector;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Lmc\Steward\Selenium\CapabilitiesResolver
+ * @covers \Lmc\Steward\Selenium\CapabilitiesResolver
  */
 class CapabilitiesResolverTest extends TestCase
 {

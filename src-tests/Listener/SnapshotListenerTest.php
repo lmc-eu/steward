@@ -10,7 +10,7 @@ use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Lmc\Steward\Listener\SnapshotListener
+ * @covers \Lmc\Steward\Listener\SnapshotListener
  */
 class SnapshotListenerTest extends TestCase
 {

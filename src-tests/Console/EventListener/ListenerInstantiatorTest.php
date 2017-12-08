@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
- * @covers Lmc\Steward\Console\EventListener\ListenerInstantiator
+ * @covers \Lmc\Steward\Console\EventListener\ListenerInstantiator
  */
 class ListenerInstantiatorTest extends TestCase
 {

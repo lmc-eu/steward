@@ -15,7 +15,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
- * @covers Lmc\Steward\Console\Command\InstallCommand
+ * @covers \Lmc\Steward\Console\Command\InstallCommand
  */
 class InstallCommandTest extends TestCase
 {

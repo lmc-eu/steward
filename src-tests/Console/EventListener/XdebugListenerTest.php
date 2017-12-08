@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
- * @covers Lmc\Steward\Console\EventListener\XdebugListener
+ * @covers \Lmc\Steward\Console\EventListener\XdebugListener
  */
 class XdebugListenerTest extends TestCase
 {

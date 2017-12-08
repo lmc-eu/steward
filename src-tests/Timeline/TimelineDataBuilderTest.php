@@ -5,7 +5,7 @@ namespace Lmc\Steward\Timeline;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Lmc\Steward\Timeline\TimelineDataBuilder
+ * @covers \Lmc\Steward\Timeline\TimelineDataBuilder
  */
 class TimelineDataBuilderTest extends TestCase
 {

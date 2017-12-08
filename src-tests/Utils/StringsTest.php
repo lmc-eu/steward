@@ -6,7 +6,7 @@ use Lmc\Steward\Utils\Strings;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Lmc\Steward\Utils\Strings
+ * @covers \Lmc\Steward\Utils\Strings
  */
 class StringsTest extends TestCase
 {

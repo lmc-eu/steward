@@ -6,8 +6,8 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\ConfigHelper;
 
 /**
- * @covers Lmc\Steward\Publisher\TestingBotPublisher
- * @covers Lmc\Steward\Publisher\AbstractCloudPublisher
+ * @covers \Lmc\Steward\Publisher\TestingBotPublisher
+ * @covers \Lmc\Steward\Publisher\AbstractCloudPublisher
  */
 class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
 {

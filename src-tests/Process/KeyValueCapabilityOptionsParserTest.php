@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Exception\RuntimeException;
 
 /**
- * @covers Lmc\Steward\Process\KeyValueCapabilityOptionsParser
+ * @covers \Lmc\Steward\Process\KeyValueCapabilityOptionsParser
  */
 class KeyValueCapabilityOptionsParserTest extends TestCase
 {

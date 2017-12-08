@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 /**
  * Run command tests that require real Selenium server to execute the tests.
  *
- * @covers Lmc\Steward\Console\Command\RunCommand
+ * @covers \Lmc\Steward\Console\Command\RunCommand
  * @group integration
  * @runTestsInSeparateProcesses
  */

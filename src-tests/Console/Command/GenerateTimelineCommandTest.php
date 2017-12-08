@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * @covers Lmc\Steward\Console\Command\GenerateTimelineCommand
+ * @covers \Lmc\Steward\Console\Command\GenerateTimelineCommand
  */
 class GenerateTimelineCommandTest extends TestCase
 {

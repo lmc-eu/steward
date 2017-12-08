@@ -8,8 +8,8 @@ use Lmc\Steward\Test\AbstractTestCase;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Lmc\Steward\Component\Legacy
- * @covers Lmc\Steward\Component\LegacyException
+ * @covers \Lmc\Steward\Component\Legacy
+ * @covers \Lmc\Steward\Component\LegacyException
  */
 class LegacyTest extends TestCase
 {

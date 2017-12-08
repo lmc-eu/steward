@@ -12,7 +12,7 @@ use Lmc\Steward\Test\AbstractTestCase;
  *
  * @group integration
  * @group functional
- * @covers Lmc\Steward\Component\Select2
+ * @covers \Lmc\Steward\Component\Select2
  */
 class Select2Test extends AbstractTestCase
 {
