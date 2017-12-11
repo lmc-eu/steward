@@ -22,7 +22,7 @@ class CleanCommand extends Command
     /** @var Filesystem */
     private $filesystem;
 
-    public function __construct(EventDispatcher $dispatcher, $name = null)
+    public function __construct(EventDispatcher $dispatcher, string $name = null)
     {
         $this->filesystem = new Filesystem();
 
@@ -31,9 +31,8 @@ class CleanCommand extends Command
 
     /**
      * @internal
-     * @param Filesystem $filesystem
      */
-    public function setFilesystem(Filesystem $filesystem)
+    public function setFilesystem(Filesystem $filesystem): void
     {
         $this->filesystem = $filesystem;
     }
@@ -41,7 +40,7 @@ class CleanCommand extends Command
     /**
      * Configure command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('clean')
             ->setDescription('Clean logs directory')
@@ -56,7 +55,7 @@ class CleanCommand extends Command
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
 
-    protected function resolveConfiguration(InputInterface $input)
+    protected function resolveConfiguration(InputInterface $input): array
     {
         if ($this->isDefaultLogsDirUsed($input)) {
             $this->createLogsDirectoryIfNotExists(
@@ -67,12 +66,7 @@ class CleanCommand extends Command
         return parent::resolveConfiguration($input);
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $logsDir = $this->config[ConfigOptions::LOGS_DIR];
 
@@ -81,11 +75,7 @@ class CleanCommand extends Command
         return 0;
     }
 
-    /**
-     * @param InputInterface $input
-     * @return bool
-     */
-    protected function isDefaultLogsDirUsed(InputInterface $input)
+    protected function isDefaultLogsDirUsed(InputInterface $input): bool
     {
         $logsDir = $input->getOption(RunCommand::OPTION_LOGS_DIR);
         $defaultLogsDir = $this->getDefinition()->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault();
@@ -93,20 +83,14 @@ class CleanCommand extends Command
         return $logsDir == $defaultLogsDir;
     }
 
-    /**
-     * @param string $logsDir
-     */
-    private function createLogsDirectoryIfNotExists($logsDir)
+    private function createLogsDirectoryIfNotExists(string $logsDir): void
     {
         if (!$this->filesystem->exists($logsDir)) {
             $this->filesystem->mkdir($logsDir);
         }
     }
 
-    /**
-     * @param string $logsDir
-     */
-    private function cleanDirectory($logsDir)
+    private function cleanDirectory(string $logsDir)
     {
         $finder = (new Finder())
             ->files()

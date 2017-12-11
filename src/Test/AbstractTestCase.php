@@ -56,7 +56,7 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
      * Append given output at the end of test's log. This is useful especially when called from
      * Listeners, as the standard output won't be part of test output buffer.
      * @param string $format
-     * @param mixed $args
+     * @param mixed ...$args
      * @see log
      */
     public function appendTestLog($format, ...$args)

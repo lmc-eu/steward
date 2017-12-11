@@ -54,9 +54,9 @@ class ConfigResolver
      */
     protected function setupAndTestDirs(InputInterface $input, array $config)
     {
+        /** @var InputOption[] $relevantDirOptionsForCommand */
         $relevantDirOptionsForCommand = $this->findRelevantDirOptionsForCurrentCommand();
 
-        /** @var $relevantDirOptionsForCommand InputOption[] */
         foreach ($relevantDirOptionsForCommand as $dirOption) {
             $cliOption = $dirOption->getName();
             $cliValue = $input->getOption($dirOption->getName());

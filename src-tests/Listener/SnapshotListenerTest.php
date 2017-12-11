@@ -25,22 +25,15 @@ class SnapshotListenerTest extends TestCase
     /**
      * @dataProvider provideBasicTestEvent
      * @dataProvider provideTestWithDataSet
-     * @param string $method
-     * @param $exception
-     * @param string $testcaseName
-     * @param string $testName
-     * @param string $dataSetName
-     * @param array $dataSet
-     * @param string $expectedFileNameBase
      */
     public function testShouldTakeSnapshot(
-        $method,
-        $exception,
-        $testcaseName,
-        $testName,
-        $dataSetName,
+        string $method,
+        \Exception $exception,
+        string $testcaseName,
+        string $testName,
+        string $dataSetName,
         array $dataSet,
-        $expectedFileNameBase
+        string $expectedFileNameBase
     ) {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(

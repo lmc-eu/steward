@@ -24,7 +24,7 @@ class GenerateTimelineCommand extends Command
     /** @var Filesystem */
     private $filesystem;
 
-    public function __construct(EventDispatcher $dispatcher, $name = null)
+    public function __construct(EventDispatcher $dispatcher, string $name = null)
     {
         $this->filesystem = new Filesystem();
 
@@ -33,9 +33,8 @@ class GenerateTimelineCommand extends Command
 
     /**
      * @internal
-     * @param Filesystem $filesystem
      */
-    public function setFilesystem(Filesystem $filesystem)
+    public function setFilesystem(Filesystem $filesystem): void
     {
         $this->filesystem = $filesystem;
     }
@@ -43,7 +42,7 @@ class GenerateTimelineCommand extends Command
     /**
      * Configure command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('generate-timeline')
             ->setDescription('Generates HTML file with timeline visualisation of test run')
@@ -65,12 +64,7 @@ class GenerateTimelineCommand extends Command
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $inputResultsFilePath = $this->getInputResultsFilePathFromOption($input);
         $outputFilePath = $input->getOption(self::OPTION_OUTPUT_FILE);
@@ -92,12 +86,7 @@ class GenerateTimelineCommand extends Command
         return 0;
     }
 
-    /**
-     * @param array $timelineGroups
-     * @param array $timelineItems
-     * @return string
-     */
-    private function assembleOutputHtml(array $timelineGroups, array $timelineItems)
+    private function assembleOutputHtml(array $timelineGroups, array $timelineItems): string
     {
         $htmlTemplate = $this->getHtmlTemplate();
 
@@ -114,21 +103,12 @@ class GenerateTimelineCommand extends Command
         return $output;
     }
 
-    /**
-     * @return string
-     */
-    private function getHtmlTemplate()
+    private function getHtmlTemplate(): string
     {
-        $html = file_get_contents(__DIR__ . '/../../Resources/timeline-template.html');
-
-        return $html;
+        return file_get_contents(__DIR__ . '/../../Resources/timeline-template.html');
     }
 
-    /**
-     * @param InputInterface $input
-     * @return mixed
-     */
-    protected function getInputResultsFilePathFromOption(InputInterface $input)
+    protected function getInputResultsFilePathFromOption(InputInterface $input): string
     {
         $inputResultsFilePath = $input->getOption(self::OPTION_RESULTS_FILE);
         if (!is_readable($inputResultsFilePath)) {

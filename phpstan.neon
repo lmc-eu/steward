@@ -1,0 +1,13 @@
+parameters:
+	ignoreErrors:
+		- '#Undefined variable: \$e#'
+		- '#Constructor of class .+ImplementsCapabilitiesResolverInterface has an unused parameter \$config#'
+		- '#Lmc\\Steward\\ConfigProviderHelper::__construct\(\) does not call parent constructor from Lmc\\Steward\\ConfigProvider#'
+		- '#Constructor of class Lmc\\Steward\\Selenium\\Fixtures\\CapabilitiesResolverFixture has an unused parameter \$config#'
+		- '#Access to an undefined property PHPUnit_Framework_MockObject_MockObject#'
+		- '#Call to an undefined method PHPUnit_Framework_MockObject_MockObject::setCommandExecutor\(\)#'
+		- '#Call to an undefined method Lmc\\Steward\\Component\\Fixtures\\MockComponent::notExisting\(\)#'
+	excludes_analyse:
+		- '%rootDir%/../../../../src-tests/Process/Fixtures/InvalidTests/WrongClassTest.php'
+		- '%rootDir%/../../../../src-tests/Test/SyntaxSugarTraitTest.php'
+	bootstrap: %rootDir%/../../../../src-tests/bootstrap.php

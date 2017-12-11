@@ -18,11 +18,9 @@ class NullWebDriverTest extends TestCase
     }
 
     /**
-     * @param $methodName
-     * @param $params
      * @dataProvider provideMethodName
      */
-    public function testShouldThrowExceptionWhenInteractingWithInstance($methodName, $params)
+    public function testShouldThrowExceptionWhenInteractingWithInstance(string $methodName, array $params)
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('You cannot interact with NullWebDriver.');
