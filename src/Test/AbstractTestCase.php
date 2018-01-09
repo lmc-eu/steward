@@ -14,11 +14,10 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
 {
     use SyntaxSugarTrait;
 
-    /** @var int Width of browser window */
-    public static $browserWidth = 1280;
-
-    /** @var int Height of browser window */
-    public static $browserHeight = 1024;
+    /** @var int|null Default width of browser window. Use null to disable setting default window size on startup. */
+    public const BROWSER_WIDTH = 1280;
+    /** @var int|null Default height of browser window. Use null to disable setting default window size on startup. */
+    public const BROWSER_HEIGHT = 1024;
 
     /** @var string Log appended to output of this test */
     protected $appendedTestLog;
@@ -27,9 +26,9 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
 
-        if ($this->wd instanceof RemoteWebDriver) {
+        if ($this->wd instanceof RemoteWebDriver && static::BROWSER_WIDTH !== null && static::BROWSER_HEIGHT !== null) {
             $this->wd->manage()->window()->setSize(
-                new WebDriverDimension(static::$browserWidth, static::$browserHeight)
+                new WebDriverDimension(static::BROWSER_WIDTH, static::BROWSER_HEIGHT)
             );
         }
     }
