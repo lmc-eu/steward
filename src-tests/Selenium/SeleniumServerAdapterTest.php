@@ -134,6 +134,18 @@ class SeleniumServerAdapterTest extends TestCase
         $this->assertEquals('error reading server response', $this->adapter->getLastError());
     }
 
+    public function testShouldDetectNotReadySeleniumServer(): void
+    {
+        $notReadyResponse = file_get_contents(__DIR__ . '/Fixtures/response-standalone-w3c-not-ready.json');
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())
+            ->with($this->serverUrl . '/status')
+            ->willReturn($notReadyResponse);
+
+        $this->assertFalse($this->adapter->isSeleniumServer());
+        $this->assertEquals('server is not ready ("No spare hub capacity")', $this->adapter->getLastError());
+    }
+
     public function testShouldReturnJsonErrorDescriptionIfTheServerResponseIsNotJson(): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
@@ -145,35 +157,44 @@ class SeleniumServerAdapterTest extends TestCase
         $this->assertRegExp('/^error parsing server JSON response \(.+\)$/', $this->adapter->getLastError());
     }
 
-    public function testShouldReturnTrueIfServerRespondsWithJsonInNoGridMode(): void
+    /**
+     * @dataProvider provideValidStatusResponses
+     */
+    public function testShouldDetectSeleniumServer(string $responseFixtureFile, string $expectedCloudService): void
     {
-        $response = file_get_contents(__DIR__ . '/Fixtures/response-standalone.json');
+        $response = file_get_contents($responseFixtureFile);
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/status')
             ->willReturn($response);
 
         $this->assertTrue($this->adapter->isSeleniumServer());
-        $this->assertEmpty($this->adapter->getCloudService());
+        $this->assertSame($this->adapter->getCloudService(), $expectedCloudService);
         $this->assertEmpty($this->adapter->getLastError());
     }
 
-    public function testShouldReturnTrueIfServerRespondsWithJsonInGridMode(): void
+    /**
+     * @return array[]
+     */
+    public function provideValidStatusResponses(): array
     {
-        $response = file_get_contents(__DIR__ . '/Fixtures/response-grid.json');
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->once())
-            ->with($this->serverUrl . '/status')
-            ->willReturn($response);
-
-        $this->assertTrue($this->adapter->isSeleniumServer());
-        $this->assertEmpty($this->adapter->getCloudService());
-        $this->assertEmpty($this->adapter->getLastError());
+        return [
+            // $responseData, $expectedCloudService
+            'standalone W3C server (in ready state)' => [__DIR__ . '/Fixtures/response-standalone-w3c-ready.json', ''],
+            'standalone server v2' => [__DIR__ . '/Fixtures/response-standalone-v2.json', ''],
+            'standalone local grid v2' => [__DIR__ . '/Fixtures/response-standalone-hub-v2.json', ''],
+            'Sauce Labs cloud' =>
+                [__DIR__ . '/Fixtures/response-saucelabs.json', SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS],
+            'BrowserStack cloud' =>
+                [__DIR__ . '/Fixtures/response-browserstack.json', SeleniumServerAdapter::CLOUD_SERVICE_BROWSERSTACK],
+            'TestingBot cloud' =>
+                [__DIR__ . '/Fixtures/response-testingbot.json', SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT],
+        ];
     }
 
     public function testShouldConnectToTheServerOnlyOnceWhenAttemptingToGetCloudServiceName(): void
     {
-        $response = file_get_contents(__DIR__ . '/Fixtures/response-standalone.json');
+        $response = file_get_contents(__DIR__ . '/Fixtures/response-standalone-v2.json');
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->once())
             ->with($this->serverUrl . '/status')
@@ -196,41 +217,6 @@ class SeleniumServerAdapterTest extends TestCase
         );
 
         $this->assertEmpty($this->adapter->getCloudService());
-    }
-
-    /**
-     * @dataProvider provideCloudServiceResponse
-     */
-    public function testShouldDetectCloudService(string $responseData, string $expectedCloudService): void
-    {
-        $adapter = new SeleniumServerAdapter('http://such.cloud:80/wd/hub');
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->once())
-            ->with('http://such.cloud:80/wd/hub/status')
-            ->willReturn($responseData);
-
-        $this->assertSame($expectedCloudService, $adapter->getCloudService());
-    }
-
-    /**
-     * @return array[]
-     */
-    public function provideCloudServiceResponse(): array
-    {
-        $responseSauceLabs = file_get_contents(__DIR__ . '/Fixtures/response-saucelabs.json');
-        $responseBrowserStack = file_get_contents(__DIR__ . '/Fixtures/response-browserstack.json');
-        $responseTestingBot = file_get_contents(__DIR__ . '/Fixtures/response-testingbot.json');
-        $responseStandalone = file_get_contents(__DIR__ . '/Fixtures/response-standalone.json');
-        $responseLocalGrid = file_get_contents(__DIR__ . '/Fixtures/response-grid.json');
-
-        return [
-            // $responseData, $expectedCloudService
-            'Sauce Labs' => [$responseSauceLabs, SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS],
-            'BrowserStack' => [$responseBrowserStack, SeleniumServerAdapter::CLOUD_SERVICE_BROWSERSTACK],
-            'TestingBot' => [$responseTestingBot, SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT],
-            'non-cloud local standalone server' => [$responseStandalone, ''],
-            'non-cloud local grid' => [$responseLocalGrid, ''],
-        ];
     }
 
     /**

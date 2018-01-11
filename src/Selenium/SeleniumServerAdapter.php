@@ -82,7 +82,7 @@ class SeleniumServerAdapter
     }
 
     /**
-     * Test if remote server is really a Selenium server
+     * Test if remote server is really a Selenium server and is ready to accept connection
      */
     public function isSeleniumServer(): bool
     {
@@ -96,13 +96,24 @@ class SeleniumServerAdapter
             return false;
         }
 
-        if (!json_decode($responseData)) {
+        $decodedData = json_decode($responseData);
+
+        if (!$decodedData) {
             $this->lastError = 'error parsing server JSON response (' . json_last_error_msg() . ')';
 
             return false;
         }
 
-        $this->cloudService = $this->detectCloudServiceByStatus(json_decode($responseData));
+        // Try to get readiness status from W3C protocol conforming implementations
+        if (isset($decodedData->value, $decodedData->value->ready, $decodedData->value->message)) {
+            if (!$decodedData->value->ready) {
+                $this->lastError = 'server is not ready ("' . $decodedData->value->message . '")';
+
+                return false;
+            }
+        }
+
+        $this->cloudService = $this->detectCloudServiceByStatus($decodedData);
 
         return true;
     }
@@ -209,7 +220,7 @@ class SeleniumServerAdapter
                 return self::CLOUD_SERVICE_SAUCELABS;
             } elseif ($responseData->value->build->version === 'TestingBot') {
                 return self::CLOUD_SERVICE_TESTINGBOT;
-            } elseif (!isset($responseData->class)) {
+            } elseif (!isset($responseData->class) && !isset($responseData->value->ready)) {
                 return self::CLOUD_SERVICE_BROWSERSTACK;
             }
         }
