@@ -102,7 +102,6 @@ class RunCommandTest extends TestCase
         return [
             ['tests-dir', 'Path to directory with tests "/not/accessible" does not exist'],
             ['logs-dir', 'Path to directory with logs "/not/accessible" does not exist'],
-            ['fixtures-dir', 'Base path to directory with fixture files "/not/accessible" does not exist'],
         ];
     }
 
@@ -118,14 +117,12 @@ class RunCommandTest extends TestCase
                 'browser' => 'firefox',
                 '--tests-dir' => __DIR__ . '/Fixtures/DummyTests',
                 '--logs-dir' => __DIR__ . '/Fixtures/logs',
-                '--fixtures-dir' => __DIR__ . '/Fixtures/tests',
                 '--pattern' => 'NotExisting.foo', // so the test stops execution
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
         $output = $this->tester->getDisplay();
-        $this->assertContains('Base path to fixtures results: ' . realpath(__DIR__) . '/Fixtures/tests', $output);
         $this->assertContains('Path to logs: ' . realpath(__DIR__) . '/Fixtures/logs', $output);
         $this->assertContains(' - in directory "' . realpath(__DIR__) . '/Fixtures/DummyTests"', $output);
         $this->assertSame(1, $this->tester->getStatusCode());
@@ -156,7 +153,6 @@ class RunCommandTest extends TestCase
                 'environment' => 'prod',
                 'browser' => $browserName,
                 '--tests-dir' => __DIR__ . '/Fixtures/tests',
-                '--fixtures-dir' => __DIR__,
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );

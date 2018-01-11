@@ -38,7 +38,6 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertStringEndsWith('steward' . DIRECTORY_SEPARATOR . 'tests', $config[ConfigOptions::TESTS_DIR]);
         $this->assertStringEndsWith('steward' . DIRECTORY_SEPARATOR . 'logs', $config[ConfigOptions::LOGS_DIR]);
-        $this->assertStringEndsWith('steward' . DIRECTORY_SEPARATOR . 'tests', $config[ConfigOptions::FIXTURES_DIR]);
     }
 
     public function testShouldResolveDefaultOptionsSpecificForCleanCommand()
@@ -57,7 +56,6 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
             $config[ConfigOptions::LOGS_DIR]
         );
         $this->assertFalse(isset($config[ConfigOptions::TESTS_DIR]));
-        $this->assertFalse(isset($config[ConfigOptions::FIXTURES_DIR]));
     }
 
     /**

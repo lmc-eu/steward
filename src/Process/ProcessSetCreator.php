@@ -178,7 +178,6 @@ class ProcessSetCreator
             'CAPABILITY' => json_encode($capabilities),
             'CAPABILITIES_RESOLVER' => $this->config[ConfigOptions::CAPABILITIES_RESOLVER],
             'SERVER_URL' => $this->input->getOption(RunCommand::OPTION_SERVER_URL),
-            'FIXTURES_DIR' => $this->config[ConfigOptions::FIXTURES_DIR],
             'LOGS_DIR' => $this->config[ConfigOptions::LOGS_DIR],
             'DEBUG' => $this->output->isDebug() ? '1' : '0',
         ];

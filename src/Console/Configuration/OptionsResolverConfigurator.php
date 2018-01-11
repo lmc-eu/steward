@@ -63,7 +63,6 @@ class OptionsResolverConfigurator
         $dirs = [
             ConfigOptions::TESTS_DIR,
             ConfigOptions::LOGS_DIR,
-            ConfigOptions::FIXTURES_DIR,
         ];
 
         foreach ($dirs as $dirOption) {
