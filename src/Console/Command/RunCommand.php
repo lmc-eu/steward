@@ -48,7 +48,6 @@ class RunCommand extends Command
     const OPTION_SERVER_URL = 'server-url';
     const OPTION_CAPABILITY = 'capability';
     const OPTION_TESTS_DIR = 'tests-dir';
-    const OPTION_FIXTURES_DIR = 'fixtures-dir';
     const OPTION_LOGS_DIR = 'logs-dir';
     const OPTION_PATTERN = 'pattern';
     const OPTION_GROUP = 'group';
@@ -108,13 +107,6 @@ class RunCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to directory with tests',
-                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'tests'
-            )
-            ->addOption(
-                self::OPTION_FIXTURES_DIR,
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Base path to directory with fixture files',
                 STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'tests'
             )
             ->addOption(
@@ -221,9 +213,6 @@ class RunCommand extends Command
         );
 
         if ($output->isVeryVerbose()) {
-            $output->writeln(
-                sprintf('Base path to fixtures results: %s', $this->config[ConfigOptions::FIXTURES_DIR])
-            );
             $output->writeln(
                 sprintf('Path to logs: %s', $this->config[ConfigOptions::LOGS_DIR])
             );

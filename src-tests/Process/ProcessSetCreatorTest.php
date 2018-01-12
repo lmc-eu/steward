@@ -71,7 +71,6 @@ class ProcessSetCreatorTest extends TestCase
             $this->publisherMock,
             [
                 ConfigOptions::LOGS_DIR => '/foo/bar/logs',
-                ConfigOptions::FIXTURES_DIR => '/foo/bar/fixtures',
                 ConfigOptions::CAPABILITIES_RESOLVER => '',
             ]
         );
@@ -120,7 +119,6 @@ class ProcessSetCreatorTest extends TestCase
             'BROWSER_NAME' => 'firefox',
             'ENV' => 'staging',
             'SERVER_URL' => $definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(),
-            'FIXTURES_DIR' => '/foo/bar/fixtures',
             'LOGS_DIR' => '/foo/bar/logs',
         ];
         $this->assertArraySubset($expectedEnv, $testEnv);
@@ -271,9 +269,7 @@ class ProcessSetCreatorTest extends TestCase
                 'staging',
                 'chrome',
                 '--' . RunCommand::OPTION_SERVER_URL . '=http://foo.bar:1337',
-                '--' . RunCommand::OPTION_FIXTURES_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/'),
                 '--' . RunCommand::OPTION_SERVER_URL . '=' . 'http://foo.bar:1337',
-                '--' . RunCommand::OPTION_FIXTURES_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/'),
                 '--' . RunCommand::OPTION_LOGS_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
                 '--' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log',
                 '--' . RunCommand::OPTION_CAPABILITY . '=whitespaced:OS X 10.8',
@@ -305,7 +301,6 @@ class ProcessSetCreatorTest extends TestCase
                 'BROWSER_NAME' => 'chrome',
                 'ENV' => 'staging',
                 'SERVER_URL' => 'http://foo.bar:1337',
-                'FIXTURES_DIR' => realpath(__DIR__ . '/Fixtures/custom-fixtures-dir/'),
                 'LOGS_DIR' => realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
                 'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","whitespaced":"OS X 10.8",'
                     . '"webdriver.foo":false,"version":"14.14393"}',

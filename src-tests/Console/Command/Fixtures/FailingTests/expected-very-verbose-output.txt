@@ -1,7 +1,6 @@
 Steward UNKNOWN is running the tests...%S
 Browser: firefox
 Environment: staging
-Base path to fixtures results: %s/tests
 Path to logs: %s/logs
 Ignore delays: no
 Selenium server (hub) url: %s, trying connection...OK

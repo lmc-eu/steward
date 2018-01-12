@@ -89,7 +89,7 @@ class ConfigResolver
     {
         $relevantDirOptionsForCommand = [];
 
-        foreach ([ConfigOptions::TESTS_DIR, ConfigOptions::LOGS_DIR, ConfigOptions::FIXTURES_DIR] as $dirOptionName) {
+        foreach ([ConfigOptions::TESTS_DIR, ConfigOptions::LOGS_DIR] as $dirOptionName) {
             $dirOptionName = str_replace('_', '-', $dirOptionName);
 
             if ($this->inputDefinition->hasOption($dirOptionName)) {
