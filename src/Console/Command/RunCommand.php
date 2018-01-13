@@ -93,7 +93,7 @@ class RunCommand extends Command
                 self::OPTION_SERVER_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Selenium server (hub) URL (may include port numbe)',
+                'Selenium server (hub) URL (may include port number)',
                 'http://localhost:4444'
             )
             ->addOption(
