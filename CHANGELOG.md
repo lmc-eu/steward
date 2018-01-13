@@ -8,6 +8,7 @@
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
 - Default browser size is now defined using class constants instead of class variables. To override the default, instead of `public static $browserWidth = ...;` use `public const BROWSER_WIDTH = ...;`.
 - When test class constants defining default browser width (`BROWSER_WIDTH`) or height (`BROWSER_HEIGHT`) is set to `null`, no default browser window size will be set on test startup.
+- Don't hardcode timezone to `Europe/Prague`. Timezone is now used based on your PHP settings ([date.timezone](http://php.net/manual/en/datetime.configuration.php#ini.date.timezone)).
 
 ### Removed
 - `TestUtils` class which was already deprecated in 2.1.
