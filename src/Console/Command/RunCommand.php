@@ -93,8 +93,8 @@ class RunCommand extends Command
                 self::OPTION_SERVER_URL,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Selenium server (hub) URL (may include port numbe)',
-                'http://localhost:4444'
+                'Selenium server (hub) URL ',
+                'http://localhost:4444/wd/hub'
             )
             ->addOption(
                 self::OPTION_CAPABILITY,
@@ -207,6 +207,10 @@ class RunCommand extends Command
             $output->writeln(sprintf('Environment: %s', $input->getArgument(self::ARGUMENT_ENVIRONMENT)));
         }
 
+        // Initialize Selenium server adapter and normalize server URL
+        $seleniumAdapter = $this->getSeleniumAdapter($input->getOption(self::OPTION_SERVER_URL));
+        $input->setOption(self::OPTION_SERVER_URL, $seleniumAdapter->getServerUrl());
+
         $this->getDispatcher()->dispatch(
             CommandEvents::RUN_TESTS_INIT,
             new ExtendedConsoleEvent($this, $input, $output)
@@ -224,7 +228,7 @@ class RunCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$this->testSeleniumConnection($input->getOption(self::OPTION_SERVER_URL))) {
+        if (!$this->testSeleniumConnection()) {
             return 1;
         }
 
@@ -442,9 +446,9 @@ class RunCommand extends Command
     /**
      * Try connection to Selenium server
      */
-    protected function testSeleniumConnection(string $seleniumServerUrl): bool
+    protected function testSeleniumConnection(): bool
     {
-        $seleniumAdapter = $this->getSeleniumAdapter($seleniumServerUrl);
+        $seleniumAdapter = $this->seleniumAdapter;
         $this->io->write(
             sprintf('Selenium server (hub) url: %s, trying connection...', $seleniumAdapter->getServerUrl()),
             false,

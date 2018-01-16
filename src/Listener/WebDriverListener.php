@@ -8,7 +8,6 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\CapabilitiesResolver;
-use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
@@ -91,7 +90,7 @@ class WebDriverListener extends BaseTestListener
 
         $this->createWebDriver(
             $test,
-            $this->config->serverUrl . SeleniumServerAdapter::HUB_ENDPOINT,
+            $this->config->serverUrl,
             $desiredCapabilities,
             $requiredCapabilities,
             $connectTimeoutMs = 2 * 60 * 1000,

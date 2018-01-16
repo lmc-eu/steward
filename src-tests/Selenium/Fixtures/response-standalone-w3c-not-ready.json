@@ -1,0 +1,20 @@
+{
+  "status": 0,
+  "value": {
+    "ready": false,
+    "message": "No spare hub capacity",
+    "build": {
+      "revision": "6e95a6684b",
+      "time": "2017-12-01T12:00:00.000Z",
+      "version": "3.8.1"
+    },
+    "os": {
+      "arch": "amd64",
+      "name": "Linux",
+      "version": "4.14.12-1-meltdown"
+    },
+    "java": {
+      "version": "1.8.0_144"
+    }
+  }
+}

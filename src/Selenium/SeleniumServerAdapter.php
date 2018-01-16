@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Selenium;
 
@@ -8,19 +8,20 @@ namespace Lmc\Steward\Selenium;
  */
 class SeleniumServerAdapter
 {
-    const HUB_ENDPOINT = '/wd/hub';
-    const STATUS_ENDPOINT = '/wd/hub/status';
-    const TESTSESSION_ENDPOINT = '/grid/api/testsession';
-    const DEFAULT_PORT = 4444;
-    const DEFAULT_PORT_CLOUD_SERVICE = 80;
-    const CLOUD_SERVICE_SAUCELABS = 'saucelabs';
-    const CLOUD_SERVICE_BROWSERSTACK = 'browserstack';
-    const CLOUD_SERVICE_TESTINGBOT = 'testingbot';
+    public const CLOUD_SERVICE_SAUCELABS = 'saucelabs';
+    public const CLOUD_SERVICE_BROWSERSTACK = 'browserstack';
+    public const CLOUD_SERVICE_TESTINGBOT = 'testingbot';
+
+    protected const STATUS_ENDPOINT = '/status';
+    protected const TESTSESSION_ENDPOINT = '/grid/api/testsession';
+    protected const HUB_ENDPOINT = '/wd/hub';
+    protected const DEFAULT_PORT = 4444;
+    protected const DEFAULT_PORT_CLOUD_SERVICE = 80;
 
     /** @var array */
     protected $serverUrlParts;
     /** @var string */
-    protected $lastError;
+    protected $lastError = '';
     /** @var string */
     protected $cloudService;
 
@@ -31,25 +32,18 @@ class SeleniumServerAdapter
 
     /**
      * Get description of last error
-     * @return string|null
      */
-    public function getLastError()
+    public function getLastError(): string
     {
         return $this->lastError;
     }
 
-    /**
-     * @return array
-     */
-    public function getServerUrlParts()
+    public function getServerUrlParts(): array
     {
         return $this->serverUrlParts;
     }
 
-    /**
-     * @return string
-     */
-    public function getServerUrl()
+    public function getServerUrl(): string
     {
         $parts = $this->serverUrlParts;
 
@@ -58,18 +52,16 @@ class SeleniumServerAdapter
         $serverUrl .= isset($parts['pass']) ? ':' . $parts['pass'] : '';
         $serverUrl .= (isset($parts['user']) || isset($parts['pass'])) ? '@' : '';
         $serverUrl .= $parts['host'] . ':' . $parts['port'];
-        $serverUrl .= isset($parts['path']) ? $parts['path'] : '';
+        $serverUrl .= isset($parts['path']) ? rtrim($parts['path'], '/') : '';
         $serverUrl .= isset($parts['query']) ? '?' . $parts['query'] : '';
 
         return $serverUrl;
     }
 
     /**
-     * Test if server URL is accessible
-     *
-     * @return bool
+     * Test if server URL is accessible and we can connected there
      */
-    public function isAccessible()
+    public function isAccessible(): bool
     {
         // Check connection to server is possible
         $seleniumConnection = @fsockopen(
@@ -80,7 +72,7 @@ class SeleniumServerAdapter
             5
         );
         if (!is_resource($seleniumConnection)) {
-            $this->lastError = $connectionError;
+            $this->lastError = $connectionError ?? 'unknown connection error';
 
             return false;
         }
@@ -90,11 +82,9 @@ class SeleniumServerAdapter
     }
 
     /**
-     * Test if server is really an Selenium server
-     *
-     * @return bool
+     * Test if remote server is really a Selenium server and is ready to accept connection
      */
-    public function isSeleniumServer()
+    public function isSeleniumServer(): bool
     {
         // Check server properly responds to http requests
         $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]);
@@ -106,13 +96,24 @@ class SeleniumServerAdapter
             return false;
         }
 
-        if (!json_decode($responseData)) {
+        $decodedData = json_decode($responseData);
+
+        if (!$decodedData) {
             $this->lastError = 'error parsing server JSON response (' . json_last_error_msg() . ')';
 
             return false;
         }
 
-        $this->cloudService = $this->detectCloudServiceByStatus(json_decode($responseData));
+        // Try to get readiness status from W3C protocol conforming implementations
+        if (isset($decodedData->value, $decodedData->value->ready, $decodedData->value->message)) {
+            if (!$decodedData->value->ready) {
+                $this->lastError = 'server is not ready ("' . $decodedData->value->message . '")';
+
+                return false;
+            }
+        }
+
+        $this->cloudService = $this->detectCloudServiceByStatus($decodedData);
 
         return true;
     }
@@ -122,7 +123,7 @@ class SeleniumServerAdapter
      *
      * @return string Cloud service identifier; empty string if no cloud service detected
      */
-    public function getCloudService()
+    public function getCloudService(): string
     {
         // If cloud service value is not yet initialized, attempt to connect to the server first
         if ($this->cloudService === null) {
@@ -142,14 +143,15 @@ class SeleniumServerAdapter
      * @param string $sessionId
      * @return string
      */
-    public function getSessionExecutor($sessionId)
+    public function getSessionExecutor(string $sessionId): string
     {
         $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 1]]);
-        $responseData = @file_get_contents(
-            $this->getServerUrl() . self::TESTSESSION_ENDPOINT . '?session=' . $sessionId,
-            false,
-            $context
-        );
+
+        // Selenium server URL ends with /wd/hub. But the endpoint to get the session info is available on URL
+        // which starts from the same root path as the /wd/hub - thus we must remove this path.
+        $endpointUrl = $this->removeHubEndpointPathIfPresent($this->getServerUrl()) . self::TESTSESSION_ENDPOINT;
+
+        $responseData = @file_get_contents($endpointUrl . '?session=' . $sessionId, false, $context);
 
         if (!$responseData) {
             return '';
@@ -164,7 +166,6 @@ class SeleniumServerAdapter
     }
 
     /**
-     * @param string $seleniumServerUrl
      * @return array URL parts. Scheme, host and port are always non-empty.
      */
     protected function parseServerUrl(string $seleniumServerUrl): array
@@ -179,20 +180,13 @@ class SeleniumServerAdapter
             $urlParts['port'] = $this->guessPort($urlParts['host']);
         }
 
-        if (!empty($urlParts['path'])) {
-            $urlParts['path'] = $this->removeHubEndpointPathIfPresent($urlParts['path']);
-        }
-
         return $urlParts;
     }
 
     /**
      * Guess port for given service
-     *
-     * @param string $host
-     * @return int
      */
-    protected function guessPort($host)
+    protected function guessPort(string $host): int
     {
         foreach (['saucelabs.com', 'browserstack.com', 'testingbot.com'] as $knownCloudHost) {
             if (mb_strpos($host, $knownCloudHost) !== false) {
@@ -203,11 +197,7 @@ class SeleniumServerAdapter
         return self::DEFAULT_PORT;
     }
 
-    /**
-     * @param string $path
-     * @return string
-     */
-    protected function removeHubEndpointPathIfPresent($path)
+    protected function removeHubEndpointPathIfPresent(string $path): string
     {
         $path = preg_replace(
             '/^(.*)(' . preg_quote(self::HUB_ENDPOINT, '/') . '\/?)$/',
@@ -222,18 +212,15 @@ class SeleniumServerAdapter
      * Detect cloud service using server status response
      *
      * @param object $responseData
-     * @return string
      */
-    private function detectCloudServiceByStatus($responseData)
+    private function detectCloudServiceByStatus($responseData): string
     {
         if (isset($responseData->value, $responseData->value->build, $responseData->value->build->version)) {
-            if ($responseData->value->build->version == 'Sauce Labs') {
+            if ($responseData->value->build->version === 'Sauce Labs') {
                 return self::CLOUD_SERVICE_SAUCELABS;
-            } elseif ($responseData->value->build->version == 'TestingBot') {
+            } elseif ($responseData->value->build->version === 'TestingBot') {
                 return self::CLOUD_SERVICE_TESTINGBOT;
-            }
-
-            if (!isset($responseData->class)) {
+            } elseif (!isset($responseData->class) && !isset($responseData->value->ready)) {
                 return self::CLOUD_SERVICE_BROWSERSTACK;
             }
         }
