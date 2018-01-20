@@ -7,7 +7,8 @@
 - Detect readiness state of new Selenium servers (v3.5.3+ running in W3C-protocol mode) during startup, so that eg. no available Selenium server nodes are reported before attempting to start any test.
 
 ### Changed
-- Require PHP 7.1+ and Symfony 4 components
+- Require PHP 7.1+ and Symfony 4 components.
+- Update to namespaced PHPUnit 6.0.
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
 - Default browser size is now defined using class constants instead of class variables. To override the default, instead of `public static $browserWidth = ...;` use `public const BROWSER_WIDTH = ...;`.
 - When test class constants defining default browser width (`BROWSER_WIDTH`) or height (`BROWSER_HEIGHT`) is set to `null`, no default browser window size will be set on test startup.

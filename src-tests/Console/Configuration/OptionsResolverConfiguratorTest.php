@@ -5,13 +5,14 @@ namespace Lmc\Steward\Console\Configuration;
 use Lmc\Steward\Console\Configuration\Fixtures\DoesNotImplementInterface;
 use Lmc\Steward\Console\Configuration\Fixtures\ImplementsCapabilitiesResolverInterface;
 use Lmc\Steward\Selenium\CustomCapabilitiesResolverInterface;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @covers \Lmc\Steward\Console\Configuration\OptionsResolverConfigurator
  */
-class OptionsResolverConfiguratorTest extends \PHPUnit_Framework_TestCase
+class OptionsResolverConfiguratorTest extends TestCase
 {
     public function testShouldConfigureGivenOptionsResolver()
     {

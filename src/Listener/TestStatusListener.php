@@ -10,6 +10,11 @@ use Lmc\Steward\Publisher\TestingBotPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use PHPUnit\Framework\BaseTestListener;
+use PHPUnit\Framework\DataProviderTestSuite;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestSuite;
+use PHPUnit\Framework\WarningTestCase;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.
@@ -69,14 +74,14 @@ class TestStatusListener extends BaseTestListener
         }
     }
 
-    public function startTestSuite(\PHPUnit_Framework_TestSuite $suite)
+    public function startTestSuite(TestSuite $suite)
     {
         $this->startDate = new \DateTimeImmutable();
     }
 
-    public function startTest(\PHPUnit_Framework_Test $test)
+    public function startTest(Test $test)
     {
-        if (!$test instanceof \PHPUnit_Framework_TestCase || $test instanceof \PHPUnit_Framework_WarningTestCase) {
+        if (!$test instanceof TestCase || $test instanceof WarningTestCase) {
             return;
         }
 
@@ -100,9 +105,9 @@ class TestStatusListener extends BaseTestListener
         }
     }
 
-    public function endTest(\PHPUnit_Framework_Test $test, $time)
+    public function endTest(Test $test, $time)
     {
-        if (!$test instanceof \PHPUnit_Framework_TestCase || $test instanceof \PHPUnit_Framework_WarningTestCase) {
+        if (!$test instanceof TestCase || $test instanceof WarningTestCase) {
             return;
         }
 
@@ -128,9 +133,9 @@ class TestStatusListener extends BaseTestListener
         }
     }
 
-    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite)
+    public function endTestSuite(TestSuite $suite)
     {
-        if ($suite instanceof \PHPUnit_Framework_TestSuite_DataProvider) {
+        if ($suite instanceof DataProviderTestSuite) {
             return;
         }
 

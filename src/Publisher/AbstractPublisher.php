@@ -2,6 +2,9 @@
 
 namespace Lmc\Steward\Publisher;
 
+use PHPUnit\Framework\Test;
+use PHPUnit\Runner\BaseTestRunner;
+
 /**
  * Abstract test results publisher could be extended and used for reporting test results into some custom system.
  * Any ancestor class must be registered to TestStatusListener (using phpunit.xml).
@@ -41,11 +44,11 @@ abstract class AbstractPublisher
 
     /** @var array Map of PHPUnit test results constants to our tests results */
     public static $testResultsMap = [
-        \PHPUnit_Runner_BaseTestRunner::STATUS_PASSED => self::TEST_RESULT_PASSED,
-        \PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED => self::TEST_RESULT_SKIPPED,
-        \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE => self::TEST_RESULT_INCOMPLETE,
-        \PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE => self::TEST_RESULT_FAILED,
-        \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR => self::TEST_RESULT_BROKEN,
+        BaseTestRunner::STATUS_PASSED => self::TEST_RESULT_PASSED,
+        BaseTestRunner::STATUS_SKIPPED => self::TEST_RESULT_SKIPPED,
+        BaseTestRunner::STATUS_INCOMPLETE => self::TEST_RESULT_INCOMPLETE,
+        BaseTestRunner::STATUS_FAILURE => self::TEST_RESULT_FAILED,
+        BaseTestRunner::STATUS_ERROR => self::TEST_RESULT_BROKEN,
     ];
 
     /**
@@ -70,7 +73,7 @@ abstract class AbstractPublisher
      *
      * @param string $testCaseName
      * @param string $testName
-     * @param \PHPUnit_Framework_Test $testInstance
+     * @param Test $testInstance
      * @param string $status One of self::$testStatuses
      * @param string $result One of self::$testResults
      * @param string $message
@@ -78,7 +81,7 @@ abstract class AbstractPublisher
     abstract public function publishResult(
         $testCaseName,
         $testName,
-        \PHPUnit_Framework_Test $testInstance,
+        Test $testInstance,
         $status,
         $result = null,
         $message = null

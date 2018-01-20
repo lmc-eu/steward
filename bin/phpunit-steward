@@ -11,4 +11,4 @@ function requireIfExists($file)
 
 requireIfExists(__DIR__ . '/../vendor/autoload.php') || requireIfExists(__DIR__ . '/../../../autoload.php');
 
-PHPUnit_TextUI_Command::main();
+\PHPUnit\TextUI\Command::main();

@@ -13,6 +13,8 @@ use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use Nette\Reflection\AnnotationsParser;
 use PHPUnit\Framework\BaseTestListener;
+use PHPUnit\Framework\Test;
+use PHPUnit\Framework\WarningTestCase;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
@@ -48,9 +50,9 @@ class WebDriverListener extends BaseTestListener
         return $this->capabilitiesResolver;
     }
 
-    public function startTest(\PHPUnit_Framework_Test $test)
+    public function startTest(Test $test)
     {
-        if ($test instanceof \PHPUnit_Framework_WarningTestCase) {
+        if ($test instanceof WarningTestCase) {
             return;
         }
 
@@ -99,9 +101,9 @@ class WebDriverListener extends BaseTestListener
         );
     }
 
-    public function endTest(\PHPUnit_Framework_Test $test, $time)
+    public function endTest(Test $test, $time)
     {
-        if ($test instanceof \PHPUnit_Framework_WarningTestCase) {
+        if ($test instanceof WarningTestCase) {
             return;
         }
 

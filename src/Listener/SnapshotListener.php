@@ -7,21 +7,23 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\Utils\Strings;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\BaseTestListener;
+use PHPUnit\Framework\Test;
 
 /**
  * Listener to take snapshots of the page (screenshot and html snapshot) on each error or failure.
  */
 class SnapshotListener extends BaseTestListener
 {
-    public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
+    public function addError(Test $test, \Exception $e, $time)
     {
         if ($test instanceof AbstractTestCase) {
             $this->takeSnapshot($test);
         }
     }
 
-    public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
+    public function addFailure(Test $test, AssertionFailedError $e, $time)
     {
         if ($test instanceof AbstractTestCase) {
             $this->takeSnapshot($test);

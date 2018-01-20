@@ -9,6 +9,7 @@ use Lmc\Steward\Publisher\SauceLabsPublisher;
 use Lmc\Steward\Publisher\TestingBotPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\WarningTestCase;
 
 class TestStatusListenerTest extends TestCase
 {
@@ -33,7 +34,7 @@ class TestStatusListenerTest extends TestCase
 
         $listener = new TestStatusListener($publishers, $this->seleniumAdapterMock);
 
-        $warningTestCase = new \PHPUnit_Framework_WarningTestCase('Warning');
+        $warningTestCase = new WarningTestCase('Warning');
 
         $listener->startTest($warningTestCase);
         $listener->endTest($warningTestCase, 1);

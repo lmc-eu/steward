@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Listener\Fixtures;
 
 use Lmc\Steward\Publisher\AbstractPublisher;
+use PHPUnit\Framework\Test;
 
 /**
  * Throw an exception anytime its public methods are called
@@ -22,7 +23,7 @@ class ExceptionThrowingPublisher extends AbstractPublisher
     public function publishResult(
         $testCaseName,
         $testName,
-        \PHPUnit_Framework_Test $testInstance,
+        Test $testInstance,
         $status,
         $result = null,
         $message = null

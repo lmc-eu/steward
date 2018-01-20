@@ -40,7 +40,7 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
 
     /**
      * Get output of current test. Parent method is overwritten to include also $appendedTestLog in the output
-     * (called eg. from \PHPUnit_Util_Log_JUnit).
+     * (called eg. from PHPUnit\Util\Log\JUnit).
      * @return string
      */
     public function getActualOutput()

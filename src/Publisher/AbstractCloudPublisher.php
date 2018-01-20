@@ -4,6 +4,7 @@ namespace Lmc\Steward\Publisher;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\Test\AbstractTestCaseBase;
+use PHPUnit\Framework\Test;
 
 /**
  * Abstract publisher for cloud services with HTTP API to store test results
@@ -26,7 +27,7 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
     public function publishResult(
         $testCaseName,
         $testName,
-        \PHPUnit_Framework_Test $testInstance,
+        Test $testInstance,
         $status,
         $result = null,
         $message = null
