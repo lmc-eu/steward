@@ -24,6 +24,7 @@
     - Instead of `TestUtils::sleep()` use `AbstractTestCase::sleep()` method instead.
 - `getConfig()` method of ConfigProvider. Instead call the property directly on instance of the ConfigProvider.
 - `--fixtures-dir` option of the `run` command, `fixtures_dir` option of configuration file and `ConfigProvider->fixturesDir` variable. They were deprecated in version 2.1.0 and no longer used since.
+- `UniqueValue` component. (You may use Faker or some other library for similar use-case.)
 
 ## 2.3.2 - 2017-12-02
 ### Changed
