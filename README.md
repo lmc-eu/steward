@@ -151,7 +151,7 @@ There is also a bunch of useful options of `run` command:
 
 - `--group` - run just specific group(s) of tests
 - `--exclude-group` - exclude some group(s) of tests (can be even combined with `--group`)
-- `--server-url` - set different url of selenium server than the default (http://localhost:4444)
+- `--server-url` - set different url of selenium server than the default (which is `http://localhost:4444/wd/hub`)
 - `--xdebug` - start Xdebug debugger on your tests, so you can debug tests from your IDE ([learn more about tests debugging][wiki-debugging] in our Wiki)
 - `--capability` - directly pass any extra capability to the Selenium WebDriver server ([see wiki][wiki-capabilities] for more information and examples)
 - `--help` - see all other options and default values
