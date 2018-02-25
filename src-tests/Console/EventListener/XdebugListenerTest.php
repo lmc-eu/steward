@@ -108,9 +108,19 @@ class XdebugListenerTest extends TestCase
     public function provideInput()
     {
         return [
-            'use default idekey when no specific value is passed' => ['run --xdebug', 'phpstorm'],
-            'use custom idekey passed as option' => ['run --xdebug=custom', 'custom'],
-            'do nothing if xdebug option not passed' => ['run', null],
+            'option not passed at all => no idekey' => ['run', null],
+            'option passed without custom value => default idekey' => ['run --xdebug', 'phpstorm'],
+            'option passed with empty custom value => no idekey' => ['run --xdebug=""', null],
+            'option passed without custom value => default idekey (combined with another option)' => [
+                'run --xdebug --no-exit',
+                'phpstorm',
+            ],
+            'custom idekey passed' => ['run --xdebug=custom', 'custom'],
+            'custom idekey passed (combined with another option)' => ['run --xdebug=custom --no-exit', 'custom'],
+            'custom idekey passed (but with default value of idekey)' => [
+                'run --xdebug=' . XdebugListener::DEFAULT_VALUE,
+                'phpstorm',
+            ],
         ];
     }
 
