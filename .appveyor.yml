@@ -10,19 +10,19 @@ branches:
 clone_folder: C:\projects\steward
 
 cache:
-  - C:\tools\php71 -> appveyor.yml
+  - C:\tools\php72 -> appveyor.yml
 
 init:
  - SET PHP=1
- - SET PATH=C:\tools\php71;%PATH%
+ - SET PATH=C:\tools\php72;%PATH%
  - SET ANSICON=121x90 (121x90)
  - git config --global core.autocrlf false
 
 install:
-  - IF EXIST c:\tools\php71 (SET PHP=0)
+  - IF EXIST c:\tools\php72 (SET PHP=0)
   - IF %PHP%==1 cinst -y OpenSSL.Light
-  - IF %PHP%==1 cinst -y php
-  - cd C:\tools\php71
+  - IF %PHP%==1 cinst -y php # we could use -version to specify exact version, but we rather use the latest available
+  - cd C:\tools\php72
   - IF %PHP%==1 copy php.ini-production php.ini /Y
   - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
   - IF %PHP%==1 echo extension_dir=ext >> php.ini
