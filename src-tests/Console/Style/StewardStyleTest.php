@@ -26,6 +26,13 @@ class StewardStyleTest extends TestCase
         $this->forceLineLength($this->style);
     }
 
+    public function testShouldGetFormattedTimestampPrefix()
+    {
+        $timestamp = StewardStyle::getTimestampPrefix();
+
+        $this->assertRegExp('/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]$/', $timestamp);
+    }
+
     /**
      * @dataProvider provideRunStatus
      * @param string $method

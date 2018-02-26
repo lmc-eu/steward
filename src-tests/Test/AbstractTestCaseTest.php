@@ -6,12 +6,15 @@ use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverOptions;
 use Facebook\WebDriver\WebDriverWindow;
 use Lmc\Steward\ConfigHelper;
+use Lmc\Steward\MockAbstractTestCaseWithNameTrait;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use PHPUnit\Framework\TestCase;
 
 class AbstractTestCaseTest extends TestCase
 {
-    const EXPECTED_TIMESTAMP_PATTERN = '\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]';
+    use MockAbstractTestCaseWithNameTrait;
+
+    public const EXPECTED_TIMESTAMP_PATTERN = '\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]';
 
     /** @var AbstractTestCase */
     protected $testCase;
@@ -23,22 +26,10 @@ class AbstractTestCaseTest extends TestCase
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $this->testCase = $this->getMockForAbstractClass(
-            AbstractTestCase::class,
-            [],
-            'MockedTest',
-            false,
-            true,
-            true,
-            ['getName']
-        );
-
-        $this->testCase->expects($this->any())
-            ->method('getName')
-            ->willReturn('testMethodDummyName');
+        $this->testCase = $this->getAbstractTestCaseMock('MockedTest', 'testMethodDummyName');
     }
 
-    public function testShouldSetDefaultWindowSizeInitUtilsAndOutputTestNameOnSetUp()
+    public function testShouldSetDefaultWindowSizeInitUtils()
     {
         $wdMock = $this->createMock(RemoteWebDriver::class);
         $wdOptionsMock = $this->createMock(WebDriverOptions::class);
@@ -65,19 +56,6 @@ class AbstractTestCaseTest extends TestCase
         $this->testCase->wd = $wdMock;
 
         $this->testCase->setUp();
-
-        $this->expectOutputRegex(
-            '/^' . self::EXPECTED_TIMESTAMP_PATTERN . ': Starting execution of test MockedTest\:\:testMethodDummyName$/'
-        );
-    }
-
-    public function testShouldLogTestNameToOutputOnTearDown()
-    {
-        $this->testCase->tearDown();
-
-        $this->expectOutputRegex(
-            '/^' . self::EXPECTED_TIMESTAMP_PATTERN . ': Finished execution of test MockedTest\:\:testMethodDummyName$/'
-        );
     }
 
     /**

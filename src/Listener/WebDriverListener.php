@@ -12,8 +12,9 @@ use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use Nette\Reflection\AnnotationsParser;
-use PHPUnit\Framework\BaseTestListener;
 use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
 use PHPUnit\Framework\WarningTestCase;
 
 /**
@@ -24,9 +25,11 @@ use PHPUnit\Framework\WarningTestCase;
  * If taking screenshot using addFailure(), tearDown() would have already been called and the
  * browser would be closed.
  */
-class WebDriverListener extends BaseTestListener
+class WebDriverListener implements TestListener
 {
-    const NO_BROWSER_ANNOTATION = 'noBrowser';
+    use TestListenerDefaultImplementation;
+
+    protected const NO_BROWSER_ANNOTATION = 'noBrowser';
 
     /** @var ConfigProvider */
     protected $config;
@@ -69,9 +72,7 @@ class WebDriverListener extends BaseTestListener
         ) {
             $test->wd = new NullWebDriver();
             $test->log(
-                'Initializing Null WebDriver for "%s::%s" (@%s annotation used %s)',
-                get_class($test),
-                $test->getName(),
+                'Initializing Null WebDriver (@%s annotation used %s)',
                 self::NO_BROWSER_ANNOTATION,
                 isset($testCaseAnnotations[self::NO_BROWSER_ANNOTATION]) ? 'on class' : 'on method'
             );
@@ -80,12 +81,7 @@ class WebDriverListener extends BaseTestListener
         }
 
         // Initialize real WebDriver otherwise
-        $test->log(
-            'Initializing "%s" WebDriver for "%s::%s"',
-            $this->config->browserName,
-            get_class($test),
-            $test->getName()
-        );
+        $test->log('Initializing "%s" WebDriver', $this->config->browserName);
 
         $desiredCapabilities = $this->getCapabilitiesResolver()->resolveDesiredCapabilities($test);
         $requiredCapabilities = $this->getCapabilitiesResolver()->resolveRequiredCapabilities($test);
@@ -116,10 +112,8 @@ class WebDriverListener extends BaseTestListener
             // from this listener would overtake output from the tests itself, what would be confusing. Instead of this,
             // we append them to the output of the test itself, to print them in proper chronological order.
             $test->appendTestLog(
-                'Destroying "%s" WebDriver for "%s::%s" (session %s)',
+                'Destroying "%s" WebDriver for session "%s"',
                 ConfigProvider::getInstance()->browserName,
-                get_class($test),
-                $test->getName(),
                 $test->wd->getSessionID()
             );
 
@@ -127,7 +121,7 @@ class WebDriverListener extends BaseTestListener
             try {
                 // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
                 // Should be removed with PhantomJS 2
-                if (ConfigProvider::getInstance()->browserName == WebDriverBrowserType::PHANTOMJS) {
+                if (ConfigProvider::getInstance()->browserName === WebDriverBrowserType::PHANTOMJS) {
                     $test->wd->execute('deleteAllCookies');
                 }
 
@@ -179,7 +173,7 @@ class WebDriverListener extends BaseTestListener
 
                 return;
             } catch (UnknownServerException $e) {
-                if ($browserName == 'firefox'
+                if ($browserName === 'firefox'
                     && mb_strpos($e->getMessage(), 'Unable to bind to locking port') !== false
                 ) {
                     // As a consequence of Selenium issue #5172 (cannot change locking port), Firefox may on CI server
