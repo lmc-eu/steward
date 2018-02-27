@@ -3,7 +3,7 @@
 namespace Lmc\Steward\Publisher;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
@@ -14,12 +14,12 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
 
     /** @var AbstractCloudPublisher */
     protected $publisher;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTestCaseBase */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTestCase */
     protected $testInstanceMock;
 
     public function setUp()
     {
-        $this->testInstanceMock = $this->getMockBuilder(AbstractTestCaseBase::class)
+        $this->testInstanceMock = $this->getMockBuilder(AbstractTestCase::class)
             ->getMock();
     }
 

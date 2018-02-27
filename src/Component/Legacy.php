@@ -52,7 +52,7 @@
 namespace Lmc\Steward\Component;
 
 use Lmc\Steward\ConfigProvider;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\Utils\Strings;
 
 /**
@@ -72,7 +72,7 @@ class Legacy extends AbstractComponent
     /** @var string */
     protected $fileDir;
 
-    public function __construct(AbstractTestCaseBase $tc)
+    public function __construct(AbstractTestCase $tc)
     {
         parent::__construct($tc);
 

@@ -3,7 +3,7 @@
 namespace Lmc\Steward\Component;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\Test\SyntaxSugarTrait;
 
 /**
@@ -17,7 +17,7 @@ abstract class AbstractComponent
 {
     use SyntaxSugarTrait;
 
-    /** @var AbstractTestCaseBase */
+    /** @var AbstractTestCase */
     protected $tc;
 
     /** @var RemoteWebDriver */
@@ -27,9 +27,9 @@ abstract class AbstractComponent
     protected $componentName;
 
     /**
-     * @param AbstractTestCaseBase $tc TestCase instance
+     * @param AbstractTestCase $tc TestCase instance
      */
-    public function __construct(AbstractTestCaseBase $tc)
+    public function __construct(AbstractTestCase $tc)
     {
         $this->tc = $tc;
         $this->wd = $tc->wd;

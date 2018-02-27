@@ -5,7 +5,7 @@ namespace Lmc\Steward\Publisher;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
 use PHPUnit\Framework\Test;
 
 class XmlPublisher extends AbstractPublisher
@@ -288,7 +288,7 @@ class XmlPublisher extends AbstractPublisher
      */
     protected function getTestExecutor(Test $test)
     {
-        if (!$test instanceof AbstractTestCaseBase || !$test->wd instanceof RemoteWebDriver) {
+        if (!$test instanceof AbstractTestCase || !$test->wd instanceof RemoteWebDriver) {
             return '';
         }
 
