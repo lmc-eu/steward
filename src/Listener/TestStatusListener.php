@@ -71,7 +71,7 @@ class TestStatusListener implements TestListener
                 );
             }
             if ($config->debug) {
-                printf('[%s]: Registering test results publisher "%s"' . "\n", date('Y-m-d H:i:s'), $publisherClass);
+                printf('[%s] Registering test results publisher "%s"' . "\n", date('Y-m-d H:i:s'), $publisherClass);
             }
             $this->publishers[] = $publisher;
         }
@@ -99,7 +99,7 @@ class TestStatusListener implements TestListener
                 );
             } catch (\Exception $e) {
                 printf(
-                    '[%s] [WARN]: Error publishing test started status to "%s" ("%s")' . "\n",
+                    '[%s] [WARN] Error publishing test started status to "%s" ("%s")' . "\n",
                     date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
@@ -127,7 +127,7 @@ class TestStatusListener implements TestListener
                 );
             } catch (\Exception $e) {
                 printf(
-                    '[%s] [WARN]: Error publishing test done status to "%s" ("%s")' . "\n",
+                    '[%s] [WARN] Error publishing test done status to "%s" ("%s")' . "\n",
                     date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()
@@ -154,7 +154,7 @@ class TestStatusListener implements TestListener
                 );
             } catch (\Exception $e) {
                 printf(
-                    '[%s] [WARN]: Error publishing process done status to "%s" ("%s")' . "\n",
+                    '[%s] [WARN] Error publishing process done status to "%s" ("%s")' . "\n",
                     date('Y-m-d H:i:s'),
                     get_class($publisher),
                     $e->getMessage()

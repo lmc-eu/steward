@@ -34,7 +34,7 @@ class AbstractComponentTest extends TestCase
 
     public function testShouldLogWarnings()
     {
-        $this->expectOutputRegex('/.*\[WARN\]: \[MockComponent\] Foo bar.*/');
+        $this->expectOutputRegex('/.*\[WARN\] \[MockComponent\] Foo bar.*/');
         $this->component->warn('Foo %s', 'bar');
     }
 
@@ -45,7 +45,7 @@ class AbstractComponentTest extends TestCase
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $this->expectOutputRegex('/.*\[DEBUG\]: \[MockComponent\] Foo bar.*/');
+        $this->expectOutputRegex('/.*\[DEBUG\] \[MockComponent\] Foo bar.*/');
         $this->component->debug('Foo %s', 'bar');
     }
 

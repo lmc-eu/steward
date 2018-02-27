@@ -68,7 +68,7 @@ class AbstractTestCaseTest extends TestCase
     public function testShouldLogToOutput($expectedOutput, $logMethod, $format, ...$arguments)
     {
         $expectedOutput = preg_quote($expectedOutput);
-        $this->expectOutputRegex('/^' . self::EXPECTED_TIMESTAMP_PATTERN . $expectedOutput . '$/');
+        $this->expectOutputRegex('/^' . self::EXPECTED_TIMESTAMP_PATTERN . ' ' . $expectedOutput . '$/');
 
         if (!empty($arguments)) {
             $this->testCase->$logMethod($format, ...$arguments);
@@ -80,11 +80,11 @@ class AbstractTestCaseTest extends TestCase
     public function provideLogStrings()
     {
         return [
-            'log simple string' => [': This is output', 'log', 'This is output'],
-            'warn simple string' => [' [WARN]: This is warning', 'warn', 'This is warning'],
-            'debug simple string' => [' [DEBUG]: This is debug', 'debug', 'This is debug'],
-            'log with multiple formatted params' => [': Foo 1337 bar baz', 'log', 'Foo %d bar %s', 1337, 'baz'],
-            'log with params passed as an array' => [': 1337-baz-333', 'log', '%d-%s-%d', [1337, 'baz', 333]],
+            'log simple string' => ['This is output', 'log', 'This is output'],
+            'warn simple string' => ['[WARN] This is warning', 'warn', 'This is warning'],
+            'debug simple string' => ['[DEBUG] This is debug', 'debug', 'This is debug'],
+            'log with multiple formatted params' => ['Foo 1337 bar baz', 'log', 'Foo %d bar %s', 1337, 'baz'],
+            'log with params passed as an array' => ['1337-baz-333', 'log', '%d-%s-%d', [1337, 'baz', 333]],
         ];
     }
 
@@ -105,6 +105,6 @@ class AbstractTestCaseTest extends TestCase
 
         $output = $this->testCase->getActualOutput();
 
-        $this->assertRegExp('/^' . self::EXPECTED_TIMESTAMP_PATTERN . ': Appended foo$/', $output);
+        $this->assertRegExp('/^' . self::EXPECTED_TIMESTAMP_PATTERN . ' Appended foo$/', $output);
     }
 }

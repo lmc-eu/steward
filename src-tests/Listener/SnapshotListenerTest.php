@@ -74,11 +74,11 @@ class SnapshotListenerTest extends TestCase
 
         $output = $test->getActualOutput();
         $this->assertStringMatchesFormat(
-            '[%s]:%S
-[%s]: [WARN] Test failed on page "http://foo.bar", taking page snapshots:
-[%s]: Screenshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.png"
-[%s]: HTML snapshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.html"
-[%s]:%S',
+            '[%s]%S
+[%s] [WARN] Test failed on page "http://foo.bar", taking page snapshots:
+[%s] Screenshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.png"
+[%s] HTML snapshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.html"
+[%s]%S',
             $output
         );
     }

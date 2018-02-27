@@ -15,7 +15,11 @@ class TestStartLogListener implements TestListener
     public function startTest(Test $test)
     {
         if ($test instanceof AbstractTestCase) {
-            echo sprintf('%s: --- Starting execution of test "%s" ---', StewardStyle::getTimestampPrefix(), $test->getName());
+            echo sprintf(
+                '%s --- Starting execution of test "%s" ---',
+                StewardStyle::getTimestampPrefix(),
+                $test->getName()
+            );
             echo "\n";
         }
     }

@@ -22,7 +22,7 @@ class TestEndLogListenerTest extends TestCase
 
         $this->assertRegExp(
             '/^' . AbstractTestCaseTest::EXPECTED_TIMESTAMP_PATTERN
-            . ': --- Finished execution of test "testFooBar" ---/',
+            . ' --- Finished execution of test "testFooBar" ---/',
             $testCase->getActualOutput()
         );
     }

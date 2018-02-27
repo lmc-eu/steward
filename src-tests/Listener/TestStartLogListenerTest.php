@@ -22,7 +22,7 @@ class TestStartLogListenerTest extends TestCase
 
         $this->expectOutputRegex(
             '/^' . AbstractTestCaseTest::EXPECTED_TIMESTAMP_PATTERN
-            . ': --- Starting execution of test "testFooBar" ---/'
+            . ' --- Starting execution of test "testFooBar" ---/'
         );
     }
 }

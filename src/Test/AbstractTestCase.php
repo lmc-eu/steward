@@ -114,9 +114,8 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         }
 
         return '[' . date('Y-m-d H:i:s') . ']'
-        . ($type ? " [$type]" : '')
-        . ': '
-        . vsprintf($format, $args)
-        . "\n";
+            . ($type ? " [$type]" : '') . ' '
+            . vsprintf($format, $args)
+            . "\n";
     }
 }
