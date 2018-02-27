@@ -14,7 +14,7 @@ class TestEndLogListener implements TestListener
     public function endTest(Test $test, $time)
     {
         if ($test instanceof AbstractTestCase) {
-            $test->appendTestLog('Finished execution of test ' . get_class($test) . '::' . $test->getName());
+            $test->appendTestLog(sprintf('--- Finished execution of test "%s" ---', $test->getName()));
         }
     }
 }
