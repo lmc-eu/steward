@@ -63,16 +63,25 @@
     "bin": ["bin/steward", "bin/steward.php"],
     "scripts": {
         "codestyle:check": [
-            "vendor/bin/php-cs-fixer fix --diff --dry-run",
-            "vendor/bin/phpcs --standard=ruleset.xml"
+            "vendor/bin/php-cs-fixer fix --diff --diff-format=udiff --dry-run --ansi",
+            "vendor/bin/phpcs --standard=ruleset.xml --colors"
         ],
         "codestyle:fix": [
-            "vendor/bin/php-cs-fixer fix --diff || exit 0",
-            "vendor/bin/phpcbf --standard=ruleset.xml"
+            "vendor/bin/php-cs-fixer fix --diff --diff-format=udiff --ansi || exit 0",
+            "vendor/bin/phpcbf --standard=ruleset.xml --colors"
         ],
         "analyze": [
             "vendor/bin/parallel-lint -j 10 ./bin ./bin/phpunit-steward ./bin/steward ./src ./src-tests",
             "vendor/bin/phpstan.phar analyze ./src ./src-tests --level 2 -c phpstan.neon --ansi"
+        ],
+        "test": [
+            "export COLUMNS=120 && cd src-tests && ../vendor/bin/phpunit --colors=always"
+        ],
+        "all": [
+            "@analyze",
+            "@codestyle:check",
+            "@test"
+
         ]
     },
     "extra": {
