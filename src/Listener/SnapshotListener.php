@@ -8,14 +8,17 @@ use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\Utils\Strings;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\BaseTestListener;
 use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
 
 /**
  * Listener to take snapshots of the page (screenshot and html snapshot) on each error or failure.
  */
-class SnapshotListener extends BaseTestListener
+class SnapshotListener implements TestListener
 {
+    use TestListenerDefaultImplementation;
+
     public function addError(Test $test, \Exception $e, $time)
     {
         if ($test instanceof AbstractTestCase) {

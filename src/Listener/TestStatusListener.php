@@ -9,18 +9,21 @@ use Lmc\Steward\Publisher\SauceLabsPublisher;
 use Lmc\Steward\Publisher\TestingBotPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
-use PHPUnit\Framework\BaseTestListener;
 use PHPUnit\Framework\DataProviderTestSuite;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListenerDefaultImplementation;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\WarningTestCase;
 
 /**
  * Listener to log status of test case and at the end of suite publish them using registered publishers.
  */
-class TestStatusListener extends BaseTestListener
+class TestStatusListener implements TestListener
 {
+    use TestListenerDefaultImplementation;
+
     /** @var AbstractPublisher[] $publishers */
     protected $publishers = [];
 
