@@ -17,17 +17,11 @@ class RunTestsProcessEventTest extends ExtendedConsoleEventTest
 
     protected function setUp(): void
     {
-        $this->commandMock = $this->getMockBuilder(Command::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commandMock = $this->createMock(Command::class);
 
-        $this->inputMock = $this->getMockBuilder(InputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->inputMock = $this->createMock(InputInterface::class);
 
-        $this->outputMock = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->outputMock = $this->createMock(OutputInterface::class);
     }
 
     public function testShouldGetPropertiesPassedInConstructor(): void

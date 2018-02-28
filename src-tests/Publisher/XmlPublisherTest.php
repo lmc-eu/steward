@@ -26,8 +26,7 @@ class XmlPublisherTest extends TestCase
         ConfigHelper::unsetConfigInstance();
 
         $this->publisher = new XmlPublisher();
-        $this->testInstanceMock = $this->getMockBuilder(Test::class)
-            ->getMock();
+        $this->testInstanceMock = $this->createMock(Test::class);
     }
 
     public static function tearDownAfterClass()

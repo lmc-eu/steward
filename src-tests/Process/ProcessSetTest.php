@@ -100,9 +100,7 @@ class ProcessSetTest extends TestCase
 
     public function testShouldPublishProcessWhenAdded()
     {
-        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $publisherMock = $this->createMock(XmlPublisher::class);
 
         $publisherMock->expects($this->once())
             ->method('publishResults')
@@ -122,9 +120,7 @@ class ProcessSetTest extends TestCase
     {
         $set = new ProcessSet();
 
-        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $publisherMock = $this->createMock(XmlPublisher::class);
 
         $publisherMock->expects($this->once())
             ->method('publishResults')
@@ -168,9 +164,7 @@ class ProcessSetTest extends TestCase
 
     public function testShouldCountResultsOfDoneProcesses()
     {
-        $processWrapperMock = $this->getMockBuilder(ProcessWrapper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processWrapperMock = $this->createMock(ProcessWrapper::class);
         $processWrapperMock->expects($this->exactly(4))
             ->method('getClassName')
             ->willReturnOnConsecutiveCalls('Process1', 'Process2', 'Process3', 'Process4');

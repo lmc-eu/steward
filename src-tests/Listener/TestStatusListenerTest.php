@@ -18,9 +18,7 @@ class TestStatusListenerTest extends TestCase
 
     public function setUp()
     {
-        $this->seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->seleniumAdapterMock = $this->createMock(SeleniumServerAdapter::class);
 
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = 1;

@@ -60,9 +60,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->bufferedOutput->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
         $this->bufferedOutput->setDecorated(false);
 
-        $this->publisherMock = $this->getMockBuilder(XmlPublisher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->publisherMock = $this->createMock(XmlPublisher::class);
 
         $this->creator = new ProcessSetCreator(
             $this->command,

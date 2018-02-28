@@ -19,8 +19,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
 
     public function setUp()
     {
-        $this->testInstanceMock = $this->getMockBuilder(AbstractTestCase::class)
-            ->getMock();
+        $this->testInstanceMock = $this->createMock(AbstractTestCase::class);
     }
 
     public function testShouldDoNothingWhenPublishingTestcaseResults()
@@ -83,9 +82,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
 
     public function testShouldThrowExceptionIfPublishToApiFailed()
     {
-        $this->testInstanceMock->wd = $this->getMockBuilder(RemoteWebDriver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->testInstanceMock->wd = $this->createMock(RemoteWebDriver::class);
 
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');
         $curlInitMock->expects($this->any());

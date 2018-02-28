@@ -101,9 +101,7 @@ class ProcessWrapperTest extends TestCase
      */
     public function testShouldResolveAndStoreResultOfDoneProcess($exitCode, $expectedResult)
     {
-        $processMock = $this->getMockBuilder(Process::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processMock = $this->createMock(Process::class);
 
         $processMock->expects($this->once())
             ->method('getExitCode')
@@ -159,9 +157,7 @@ class ProcessWrapperTest extends TestCase
 
     public function testShouldPublishProcessStatusWhenInitializedAndWhenStatusWasSet()
     {
-        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $publisherMock = $this->createMock(XmlPublisher::class);
 
         $publisherMock->expects($this->at(0))
             ->method('publishResults')
@@ -190,9 +186,7 @@ class ProcessWrapperTest extends TestCase
 
     public function testShouldReturnErrorMessageIfProcessTimeoutIsDetected()
     {
-        $processMock = $this->getMockBuilder(Process::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processMock = $this->createMock(Process::class);
 
         $processMock->expects($this->once())
             ->method('checkTimeout')
