@@ -149,7 +149,7 @@ class ProcessSet implements \Countable
             foreach ($this->processes as $className => $processWrapper) {
                 $vertex = $this->graph->getVertex($className);
 
-                if (is_null($processWrapper->getDelayMinutes())) { // doesn't depend on anything => link it to the root
+                if ($processWrapper->getDelayMinutes() === null) { // doesn't depend on anything => link it to the root
                     $root->createEdgeTo($vertex)->setWeight(0);
                 } else { // is dependant => link it to its dependency
                     // Throw error if dependency is to not existing vertex

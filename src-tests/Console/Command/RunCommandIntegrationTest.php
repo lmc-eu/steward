@@ -28,7 +28,9 @@ class RunCommandIntegrationTest extends TestCase
         $application = new Application();
         $application->add(new RunCommand($dispatcher));
 
-        $this->command = $application->find('run');
+        /** @var RunCommand $command */
+        $command = $application->find('run');
+        $this->command = $command;
         $this->tester = new CommandTester($this->command);
     }
 

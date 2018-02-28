@@ -24,7 +24,9 @@ class GenerateTimelineCommandTest extends TestCase
         $application = new Application();
         $application->add(new GenerateTimelineCommand($dispatcher));
 
-        $this->command = $application->find('generate-timeline');
+        /** @var GenerateTimelineCommand $command */
+        $command = $application->find('generate-timeline');
+        $this->command = $command;
         $this->tester = new CommandTester($this->command);
     }
 

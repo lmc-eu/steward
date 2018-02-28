@@ -27,7 +27,9 @@ class CommandTest extends TestCase
         $application = new Application();
         $application->add(new DummyCommand($dispatcher, 'command'));
 
-        $this->command = $application->find('command');
+        /** @var Command $command */
+        $command = $application->find('command');
+        $this->command = $command;
         $this->tester = new CommandTester($this->command);
     }
 

@@ -32,7 +32,9 @@ class InstallCommandTest extends TestCase
         $application = new Application();
         $application->add(new InstallCommand($dispatcher));
 
-        $this->command = $application->find('install');
+        /** @var InstallCommand $command */
+        $command = $application->find('install');
+        $this->command = $command;
         $this->tester = new CommandTester($this->command);
     }
 

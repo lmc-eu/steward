@@ -52,6 +52,10 @@ class NullWebDriverTest extends TestCase
             ['switchTo', []],
             ['takeScreenshot', []],
             ['wait', []],
+            ['executeScript', ['']],
+            ['executeAsyncScript', ['']],
+            ['getKeyboard', []],
+            ['getMouse', []],
         ];
     }
 }

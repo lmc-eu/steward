@@ -27,7 +27,9 @@ class ResultsCommandTest extends TestCase
         $application = new Application();
         $application->add(new ResultsCommand($dispatcher));
 
-        $this->command = $application->find('results');
+        /** @var ResultsCommand $command */
+        $command = $application->find('results');
+        $this->command = $command;
         $this->tester = new CommandTester($this->command);
     }
 

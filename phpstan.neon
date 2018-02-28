@@ -7,6 +7,9 @@ parameters:
 		- '#Access to an undefined property PHPUnit_Framework_MockObject_MockObject#'
 		- '#Call to an undefined method PHPUnit_Framework_MockObject_MockObject::setCommandExecutor\(\)#'
 		- '#Call to an undefined method Lmc\\Steward\\Component\\Fixtures\\MockComponent::notExisting\(\)#'
+		- "#but returns PHPUnit_Framework_MockObject_MockObject#"
+		- "#does not accept PHPUnit_Framework_MockObject_MockObject#"
+		- "#Property Lmc\\\\Steward\\\\Test\\\\AbstractTestCase::\\$wd \\(Facebook\\\\WebDriver\\\\Remote\\\\RemoteWebDriver\\) does not accept Lmc\\\\Steward\\\\WebDriver\\\\NullWebDriver#"
 	excludes_analyse:
 		- '%rootDir%/../../../../src-tests/Process/Fixtures/InvalidTests/WrongClassTest.php'
 		- '%rootDir%/../../../../src-tests/Test/SyntaxSugarTraitTest.php'

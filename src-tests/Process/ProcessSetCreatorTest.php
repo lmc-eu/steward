@@ -29,9 +29,9 @@ class ProcessSetCreatorTest extends TestCase
 {
     /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcherMock;
-    /** @var RunCommand|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RunCommand */
     protected $command;
-    /** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var InputInterface */
     protected $input;
     /** @var BufferedOutput */
     protected $bufferedOutput;

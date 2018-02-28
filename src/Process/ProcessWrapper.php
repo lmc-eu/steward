@@ -47,9 +47,9 @@ class ProcessWrapper
     private $process;
     /** @var string */
     private $className;
-    /** @var string */
+    /** @var string|null */
     private $delayAfter;
-    /** @var float */
+    /** @var float|null */
     private $delayMinutes;
     /** @var string */
     private $status;
@@ -98,7 +98,7 @@ class ProcessWrapper
         Assert::that($minutes)->numeric($assertionError)->greaterOrEqualThan(0, $assertionError);
 
         $this->delayAfter = $afterClass;
-        $this->delayMinutes = (float) $minutes;
+        $this->delayMinutes = $minutes;
     }
 
     /**
@@ -106,15 +106,11 @@ class ProcessWrapper
      */
     public function isDelayed()
     {
-        if (!empty($this->delayAfter)) {
-            return true;
-        }
-
-        return false;
+        return $this->delayAfter !== null;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDelayAfter()
     {
@@ -122,7 +118,7 @@ class ProcessWrapper
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getDelayMinutes()
     {
