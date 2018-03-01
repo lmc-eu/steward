@@ -4,7 +4,7 @@ namespace Lmc\Steward\Publisher;
 
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Publish test results to TestingBot API
@@ -13,7 +13,7 @@ class TestingBotPublisher extends AbstractCloudPublisher
 {
     const API_URL = 'https://api.testingbot.com/v1';
 
-    protected function getEndpointUrl(AbstractTestCaseBase $testInstance)
+    protected function getEndpointUrl(AbstractTestCase $testInstance)
     {
         return sprintf('%s/tests/%s', self::API_URL, $testInstance->wd->getSessionID());
     }
@@ -29,7 +29,7 @@ class TestingBotPublisher extends AbstractCloudPublisher
     protected function getData(
         $testCaseName,
         $testName,
-        AbstractTestCaseBase $testInstance,
+        AbstractTestCase $testInstance,
         $status,
         $result = null,
         $message = null

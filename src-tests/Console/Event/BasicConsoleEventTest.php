@@ -12,9 +12,7 @@ class BasicConsoleEventTest extends TestCase
 
     protected function setUp()
     {
-        $this->commandMock = $this->getMockBuilder(Command::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commandMock = $this->createMock(Command::class);
     }
 
     public function testShouldGetPropertiesPassedInConstructor()

@@ -20,13 +20,18 @@ class StewardStyle extends OutputStyle
         $this->symfonyStyle = new SymfonyStyle($input, $output);
     }
 
+    public static function getTimestampPrefix(): string
+    {
+        return '[' . date('Y-m-d H:i:s') . ']';
+    }
+
     /**
      * Output progress message status
      * @param string $message
      */
     public function runStatus($message)
     {
-        $this->writeln($this->getTimestamp() . $message);
+        $this->writeln($this->getTimestampPrefix() . ' ' . $message);
     }
 
     /**
@@ -186,13 +191,5 @@ class StewardStyle extends OutputStyle
     public function progressFinish()
     {
         throw new \Exception('Method not implemented');
-    }
-
-    /**
-     * @return string
-     */
-    private function getTimestamp()
-    {
-        return '[' . date('Y-m-d H:i:s') . '] ';
     }
 }

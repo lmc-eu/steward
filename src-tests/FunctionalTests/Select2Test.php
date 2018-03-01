@@ -45,6 +45,7 @@ class Select2Test extends AbstractTestCase
         $this->assertContainsOnlyInstancesOf(WebDriverElement::class, $options);
 
         $actualOptions = [];
+        /** @var WebDriverElement $option */
         foreach ($options as $option) {
             $actualOptions[] = $option->getText();
         }

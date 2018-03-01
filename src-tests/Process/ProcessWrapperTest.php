@@ -5,6 +5,7 @@ namespace Lmc\Steward\Process;
 use Assert\InvalidArgumentException;
 use Lmc\Steward\Publisher\XmlPublisher;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\TextUI\TestRunner;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
@@ -100,9 +101,7 @@ class ProcessWrapperTest extends TestCase
      */
     public function testShouldResolveAndStoreResultOfDoneProcess($exitCode, $expectedResult)
     {
-        $processMock = $this->getMockBuilder(Process::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processMock = $this->createMock(Process::class);
 
         $processMock->expects($this->once())
             ->method('getExitCode')
@@ -124,11 +123,9 @@ class ProcessWrapperTest extends TestCase
     {
         return [
             // $exitCode, $expectedResult
-            'Testcase succeeded' => [\PHPUnit_TextUI_TestRunner::SUCCESS_EXIT, ProcessWrapper::PROCESS_RESULT_PASSED],
-            'Exception thrown from PHPUnit' =>
-                [\PHPUnit_TextUI_TestRunner::EXCEPTION_EXIT, ProcessWrapper::PROCESS_RESULT_FAILED],
-            'Some test failed' =>
-                [\PHPUnit_TextUI_TestRunner::FAILURE_EXIT, ProcessWrapper::PROCESS_RESULT_FAILED],
+            'Testcase succeeded' => [TestRunner::SUCCESS_EXIT, ProcessWrapper::PROCESS_RESULT_PASSED],
+            'Exception thrown from PHPUnit' => [TestRunner::EXCEPTION_EXIT, ProcessWrapper::PROCESS_RESULT_FAILED],
+            'Some test failed' => [TestRunner::FAILURE_EXIT, ProcessWrapper::PROCESS_RESULT_FAILED],
             'PHP fatal error' => [255, ProcessWrapper::PROCESS_RESULT_FATAL],
             'Process was killed' => [9, ProcessWrapper::PROCESS_RESULT_FATAL],
             'Process was terminated' => [9, ProcessWrapper::PROCESS_RESULT_FATAL],
@@ -160,9 +157,7 @@ class ProcessWrapperTest extends TestCase
 
     public function testShouldPublishProcessStatusWhenInitializedAndWhenStatusWasSet()
     {
-        $publisherMock = $this->getMockBuilder(XmlPublisher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $publisherMock = $this->createMock(XmlPublisher::class);
 
         $publisherMock->expects($this->at(0))
             ->method('publishResults')
@@ -191,9 +186,7 @@ class ProcessWrapperTest extends TestCase
 
     public function testShouldReturnErrorMessageIfProcessTimeoutIsDetected()
     {
-        $processMock = $this->getMockBuilder(Process::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processMock = $this->createMock(Process::class);
 
         $processMock->expects($this->once())
             ->method('checkTimeout')

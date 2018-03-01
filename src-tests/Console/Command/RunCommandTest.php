@@ -349,9 +349,7 @@ class RunCommandTest extends TestCase
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
 
-        $processSetMock = $this->getMockBuilder(ProcessSet::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processSetMock = $this->createMock(ProcessSet::class);
         $processSetMock->expects($this->any())
             ->method('count')
             ->willReturn(333);
@@ -359,9 +357,7 @@ class RunCommandTest extends TestCase
             ->method('get')
             ->willReturn([]);
 
-        $creatorMock = $this->getMockBuilder(ProcessSetCreator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $creatorMock = $this->createMock(ProcessSetCreator::class);
         $creatorMock->expects($this->once())
             ->method('createFromFiles')
             ->willReturn($processSetMock);
@@ -389,9 +385,7 @@ class RunCommandTest extends TestCase
      */
     protected function getSeleniumAdapterMock()
     {
-        $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $seleniumAdapterMock = $this->createMock(SeleniumServerAdapter::class);
 
         $seleniumAdapterMock->expects($this->any())
             ->method('isAccessible')

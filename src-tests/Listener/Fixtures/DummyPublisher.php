@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Listener\Fixtures;
 
 use Lmc\Steward\Publisher\AbstractPublisher;
+use PHPUnit\Framework\Test;
 
 class DummyPublisher extends AbstractPublisher
 {
@@ -18,7 +19,7 @@ class DummyPublisher extends AbstractPublisher
     public function publishResult(
         $testCaseName,
         $testName,
-        \PHPUnit_Framework_Test $testInstance,
+        Test $testInstance,
         $status,
         $result = null,
         $message = null

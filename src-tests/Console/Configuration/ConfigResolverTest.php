@@ -5,6 +5,7 @@ namespace Lmc\Steward\Console\Configuration;
 use Assert\InvalidArgumentException;
 use Lmc\Steward\Console\Command\CleanCommand;
 use Lmc\Steward\Console\Command\RunCommand;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -13,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * @covers \Lmc\Steward\Console\Configuration\ConfigResolver
  */
-class ConfigResolverTest extends \PHPUnit_Framework_TestCase
+class ConfigResolverTest extends TestCase
 {
     public function testShouldResolveDefaultGeneralOptions()
     {

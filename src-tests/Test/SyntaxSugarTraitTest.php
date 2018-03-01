@@ -17,9 +17,7 @@ class SyntaxSugarTraitTest extends TestCase
     {
         $this->trait = $this->getObjectForTrait('Lmc\Steward\Test\SyntaxSugarTrait');
 
-        $this->trait->wd = $this->getMockBuilder(RemoteWebDriver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->trait->wd = $this->createMock(RemoteWebDriver::class);
     }
 
     /**
@@ -87,9 +85,7 @@ class SyntaxSugarTraitTest extends TestCase
     public function testWaitForMethodsShouldWaitUntilWebDriverExpectedCondition($method, $isElementMethod = true)
     {
         /** @var WebDriverWait|\PHPUnit_Framework_MockObject_MockObject $waitMock */
-        $waitMock = $this->getMockBuilder(WebDriverWait::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $waitMock = $this->createMock(WebDriverWait::class);
 
         // Note the WebDriverExpectedCondition instances are not comparable (as they return callbacks), so we can
         // only check for instance type.

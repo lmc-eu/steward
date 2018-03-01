@@ -4,7 +4,7 @@ namespace Lmc\Steward\Publisher;
 
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Publish test results to SauceLabs API
@@ -14,7 +14,7 @@ class SauceLabsPublisher extends AbstractCloudPublisher
     const API_URL = 'https://saucelabs.com/rest/v1';
     const CONTENT_TYPE = 'application/json';
 
-    protected function getEndpointUrl(AbstractTestCaseBase $testInstance)
+    protected function getEndpointUrl(AbstractTestCase $testInstance)
     {
         $serverUrl = ConfigProvider::getInstance()->serverUrl;
         $serverUrlParts = (new SeleniumServerAdapter($serverUrl))->getServerUrlParts();
@@ -33,7 +33,7 @@ class SauceLabsPublisher extends AbstractCloudPublisher
     protected function getData(
         $testCaseName,
         $testName,
-        AbstractTestCaseBase $testInstance,
+        AbstractTestCase $testInstance,
         $status,
         $result = null,
         $message = null

@@ -8,7 +8,7 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverSelectInterface;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Manipulate the Select2 UI jQuery based component.
@@ -31,10 +31,10 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
     protected $select2Selector;
 
     /**
-     * @param AbstractTestCaseBase $tc
+     * @param AbstractTestCase $tc
      * @param WebDriverElement $element Original HTML element to which is the Select2 attached
      */
-    public function __construct(AbstractTestCaseBase $tc, WebDriverElement $element)
+    public function __construct(AbstractTestCase $tc, WebDriverElement $element)
     {
         parent::__construct($tc);
 

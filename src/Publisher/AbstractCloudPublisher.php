@@ -3,7 +3,8 @@
 namespace Lmc\Steward\Publisher;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Lmc\Steward\Test\AbstractTestCaseBase;
+use Lmc\Steward\Test\AbstractTestCase;
+use PHPUnit\Framework\Test;
 
 /**
  * Abstract publisher for cloud services with HTTP API to store test results
@@ -26,7 +27,7 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
     public function publishResult(
         $testCaseName,
         $testName,
-        \PHPUnit_Framework_Test $testInstance,
+        Test $testInstance,
         $status,
         $result = null,
         $message = null
@@ -38,7 +39,7 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
             return;
         }
 
-        if (!$testInstance instanceof AbstractTestCaseBase || !$testInstance->wd instanceof RemoteWebDriver) {
+        if (!$testInstance instanceof AbstractTestCase || !$testInstance->wd instanceof RemoteWebDriver) {
             return;
         }
 
@@ -81,10 +82,10 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
     /**
      * Get URL of the API endpoint where to put result data
      *
-     * @param AbstractTestCaseBase $testInstance
+     * @param AbstractTestCase $testInstance
      * @return string
      */
-    abstract protected function getEndpointUrl(AbstractTestCaseBase $testInstance);
+    abstract protected function getEndpointUrl(AbstractTestCase $testInstance);
 
     /**
      * Get authentication string
@@ -98,7 +99,7 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
      *
      * @param string $testCaseName
      * @param string $testName
-     * @param AbstractTestCaseBase $testInstance
+     * @param AbstractTestCase $testInstance
      * @param string $status
      * @param string $result
      * @param string $message
@@ -107,7 +108,7 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
     abstract protected function getData(
         $testCaseName,
         $testName,
-        AbstractTestCaseBase $testInstance,
+        AbstractTestCase $testInstance,
         $status,
         $result = null,
         $message = null

@@ -71,15 +71,11 @@ class CleanLogsListenerTest extends TestCase
 
     public function testShouldInvokeCleanCommand()
     {
-        $cleanCommandMock = $this->getMockBuilder(CleanCommand::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $cleanCommandMock = $this->createMock(CleanCommand::class);
         $cleanCommandMock->expects($this->once())
             ->method('run');
 
-        $applicationMock = $this->getMockBuilder(Application::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $applicationMock = $this->createMock(Application::class);
         $applicationMock->expects($this->once())
             ->method('getHelperSet')
             ->willReturn(new HelperSet());
@@ -100,9 +96,7 @@ class CleanLogsListenerTest extends TestCase
 
     public function testShouldNotInvokeCleanCommandFromOtherCommandThanRun()
     {
-        $applicationMock = $this->getMockBuilder(Application::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $applicationMock = $this->createMock(Application::class);
         $applicationMock->expects($this->once())
             ->method('getHelperSet')
             ->willReturn(new HelperSet());
@@ -125,9 +119,7 @@ class CleanLogsListenerTest extends TestCase
 
     public function testShouldNotInvokeCleanIfNoCleanOptionGiven()
     {
-        $applicationMock = $this->getMockBuilder(Application::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $applicationMock = $this->createMock(Application::class);
         $applicationMock->expects($this->once())
             ->method('getHelperSet')
             ->willReturn(new HelperSet());

@@ -6,6 +6,7 @@ use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestCase;
 
 class XmlPublisherTest extends TestCase
@@ -14,7 +15,7 @@ class XmlPublisherTest extends TestCase
 
     /** @var XmlPublisher */
     protected $publisher;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\PHPUnit_Framework_Test */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|Test */
     protected $testInstanceMock;
 
     public function setUp()
@@ -25,8 +26,7 @@ class XmlPublisherTest extends TestCase
         ConfigHelper::unsetConfigInstance();
 
         $this->publisher = new XmlPublisher();
-        $this->testInstanceMock = $this->getMockBuilder(\PHPUnit_Framework_Test::class)
-            ->getMock();
+        $this->testInstanceMock = $this->createMock(Test::class);
     }
 
     public static function tearDownAfterClass()

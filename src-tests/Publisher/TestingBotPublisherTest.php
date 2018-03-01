@@ -31,9 +31,7 @@ class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
      */
     public function testShouldPublishTestResult($testResult, $message, $expectedData)
     {
-        $this->testInstanceMock->wd = $this->getMockBuilder(RemoteWebDriver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->testInstanceMock->wd = $this->createMock(RemoteWebDriver::class);
 
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');
         $curlInitMock->expects($this->once())

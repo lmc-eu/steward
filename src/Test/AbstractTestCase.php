@@ -5,12 +5,13 @@ namespace Lmc\Steward\Test;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverDimension;
 use Lmc\Steward\ConfigProvider;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Abstract test case to be used by all test cases.
  * It adds logging, some common logic and assertions.
  */
-abstract class AbstractTestCase extends AbstractTestCaseBase
+abstract class AbstractTestCase extends TestCase
 {
     use SyntaxSugarTrait;
 
@@ -19,13 +20,14 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     /** @var int|null Default height of browser window. Use null to disable setting default window size on startup. */
     public const BROWSER_HEIGHT = 1024;
 
+    /** @var RemoteWebDriver */
+    public $wd;
+
     /** @var string Log appended to output of this test */
     protected $appendedTestLog;
 
     public function setUp()
     {
-        $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
-
         if ($this->wd instanceof RemoteWebDriver && static::BROWSER_WIDTH !== null && static::BROWSER_HEIGHT !== null) {
             $this->wd->manage()->window()->setSize(
                 new WebDriverDimension(static::BROWSER_WIDTH, static::BROWSER_HEIGHT)
@@ -33,14 +35,9 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         }
     }
 
-    public function tearDown()
-    {
-        $this->log('Finished execution of test ' . get_called_class() . '::' . $this->getName());
-    }
-
     /**
      * Get output of current test. Parent method is overwritten to include also $appendedTestLog in the output
-     * (called eg. from \PHPUnit_Util_Log_JUnit).
+     * (called eg. from PHPUnit\Util\Log\JUnit).
      * @return string
      */
     public function getActualOutput()
@@ -75,16 +72,31 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         $this->appendedTestLog .= $formattedLog;
     }
 
+    /**
+     * Log to output
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
+     * @param mixed ...$args Variable number of parameters inserted into $format string
+     */
     public function log($format, ...$args)
     {
         echo $this->formatOutput($format, $args);
     }
 
+    /**
+     * Log warning to output. Unlike log(), it will be prefixed with "WARN: " and colored.
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
+     * @param mixed ...$args Variable number of parameters inserted into $format string
+     */
     public function warn($format, ...$args)
     {
         echo $this->formatOutput($format, $args, 'WARN');
     }
 
+    /**
+     * Log to output, but only if debug mode is enabled.
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
+     * @param mixed ...$args Variable number of parameters inserted into $format string
+     */
     public function debug($format, ...$args)
     {
         if (ConfigProvider::getInstance()->debug) {
@@ -121,9 +133,8 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         }
 
         return '[' . date('Y-m-d H:i:s') . ']'
-        . ($type ? " [$type]" : '')
-        . ': '
-        . vsprintf($format, $args)
-        . "\n";
+            . ($type ? " [$type]" : '') . ' '
+            . vsprintf($format, $args)
+            . "\n";
     }
 }

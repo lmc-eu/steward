@@ -7,7 +7,9 @@
 - Detect readiness state of new Selenium servers (v3.5.3+ running in W3C-protocol mode) during startup, so that eg. no available Selenium server nodes are reported before attempting to start any test.
 
 ### Changed
-- Require PHP 7.1+ and Symfony 4 components
+- Require PHP 7.1+ and Symfony 4 components.
+- Update to namespaced PHPUnit 6.0.
+- Simplified and improved test output.
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
 - Default browser size is now defined using class constants instead of class variables. To override the default, instead of `public static $browserWidth = ...;` use `public const BROWSER_WIDTH = ...;`.
 - When test class constants defining default browser width (`BROWSER_WIDTH`) or height (`BROWSER_HEIGHT`) is set to `null`, no default browser window size will be set on test startup.
@@ -25,6 +27,7 @@
 - `getConfig()` method of ConfigProvider. Instead call the property directly on instance of the ConfigProvider.
 - `--fixtures-dir` option of the `run` command, `fixtures_dir` option of configuration file and `ConfigProvider->fixturesDir` variable. They were deprecated in version 2.1.0 and no longer used since.
 - `UniqueValue` component. (You may use Faker or some other library for similar use-case.)
+- `AbstractTestCaseBase` class. It should probably not affect anything, as it was only used internally.
 
 ## 2.3.2 - 2017-12-02
 ### Changed

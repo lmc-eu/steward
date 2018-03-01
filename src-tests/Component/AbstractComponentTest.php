@@ -5,6 +5,7 @@ namespace Lmc\Steward\Component;
 use Lmc\Steward\Component\Fixtures\MockComponent;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
+use PHPUnit\Framework\Error\Error;
 use PHPUnit\Framework\TestCase;
 
 class AbstractComponentTest extends TestCase
@@ -33,7 +34,7 @@ class AbstractComponentTest extends TestCase
 
     public function testShouldLogWarnings()
     {
-        $this->expectOutputRegex('/.*\[WARN\]: \[MockComponent\] Foo bar.*/');
+        $this->expectOutputRegex('/.*\[WARN\] \[MockComponent\] Foo bar.*/');
         $this->component->warn('Foo %s', 'bar');
     }
 
@@ -44,7 +45,7 @@ class AbstractComponentTest extends TestCase
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
 
-        $this->expectOutputRegex('/.*\[DEBUG\]: \[MockComponent\] Foo bar.*/');
+        $this->expectOutputRegex('/.*\[DEBUG\] \[MockComponent\] Foo bar.*/');
         $this->component->debug('Foo %s', 'bar');
     }
 
@@ -61,7 +62,7 @@ class AbstractComponentTest extends TestCase
 
     public function testShouldFailIfNotExistingMethodIsCalled()
     {
-        $this->expectException(\PHPUnit_Framework_Error::class);
+        $this->expectException(Error::class);
         $this->expectExceptionMessage(
             'Call to undefined method Lmc\Steward\Component\AbstractComponent::notExisting()'
         );

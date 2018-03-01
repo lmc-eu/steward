@@ -1,5 +1,5 @@
 %a
-Lmc\Steward\Console\Command\Fixtures\NoBrowserTests\NoBrowserTest> [%s]: Initializing Null WebDriver for "Lmc\Steward\Console\Command\Fixtures\NoBrowserTests\NoBrowserTest::testDummy" (@noBrowser annotation used on class)
+Lmc\Steward\Console\Command\Fixtures\NoBrowserTests\NoBrowserTest> [%s] Initializing Null WebDriver (@noBrowser annotation used on class)
 %a
 [%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\NoBrowserTests\NoBrowserTest" (result: passed, time: %f sec)
 %a

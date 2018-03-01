@@ -7,7 +7,9 @@ use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\WarningTestCase;
 
 /**
  * @covers \Lmc\Steward\Listener\SnapshotListener
@@ -72,11 +74,11 @@ class SnapshotListenerTest extends TestCase
 
         $output = $test->getActualOutput();
         $this->assertStringMatchesFormat(
-            '[%s]:%S
-[%s]: [WARN] Test failed on page "http://foo.bar", taking page snapshots:
-[%s]: Screenshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.png"
-[%s]: HTML snapshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.html"
-[%s]:%S',
+            '[%s]%S
+[%s] [WARN] Test failed on page "http://foo.bar", taking page snapshots:
+[%s] Screenshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.png"
+[%s] HTML snapshot: "%s%esteward%esrc-tests%e' . $expectedFileNameBase . '-%s.html"
+[%s]%S',
             $output
         );
     }
@@ -87,7 +89,7 @@ class SnapshotListenerTest extends TestCase
     public function provideBasicTestEvent()
     {
         $dummyException = new \Exception('Error exception', 333);
-        $dummyFailureException = new \PHPUnit_Framework_AssertionFailedError('Failure exception');
+        $dummyFailureException = new AssertionFailedError('Failure exception');
 
         return [
             ['addError', $dummyException, 'FooBarTest', 'testFooBar', '', [], 'FooBarTest-testFooBar'],
@@ -126,11 +128,11 @@ class SnapshotListenerTest extends TestCase
 
     public function testShouldNotTakeSnapshotIfTestIsNotStewardAbstractTestCase()
     {
-        $test = new \PHPUnit_Framework_WarningTestCase('foo');
+        $test = new WarningTestCase('foo');
 
         $listener = new SnapshotListener();
         $listener->addError($test, new \Exception('Error', 333), 3.3);
-        $listener->addFailure($test, new \PHPUnit_Framework_AssertionFailedError('Failure'), 3.3);
+        $listener->addFailure($test, new AssertionFailedError('Failure'), 3.3);
 
         $this->assertEmpty($test->getActualOutput());
     }
