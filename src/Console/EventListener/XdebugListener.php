@@ -49,8 +49,8 @@ class XdebugListener implements EventSubscriberInterface
             self::OPTION_XDEBUG,
             null,
             InputOption::VALUE_OPTIONAL,
-            'Start Xdebug debugger on tests; use given IDE key. Default value is used only if empty option is passed.',
-            self::DEFAULT_VALUE
+            'Start Xdebug debugger on tests. Pass custom IDE key if needed for your IDE settings.',
+            ''
         );
     }
 
@@ -111,22 +111,24 @@ class XdebugListener implements EventSubscriberInterface
 
     /**
      * If --xdebug option was not passed at all, return null to not activate the feature.
-     * If the option was used without a value, use the default value.
-     * If the option was passed with custom value, use this value.
+     * If the option was used without a value, use the default value of idekey.
+     * If the option was passed with custom (not empty) value, use this value.
      *
      * @param InputInterface $input
      * @return string|null
      */
     protected function getIdeKeyFromInputOption(InputInterface $input)
     {
-        $unparsedOptionValue = $input->getParameterOption('--' . self::OPTION_XDEBUG);
+        $optionValue = $input->getOption(self::OPTION_XDEBUG);
 
-        if ($unparsedOptionValue === null) { // option was passed without value, use the default
+        if ($optionValue === null) { // no custom value was passed => use default
             return self::DEFAULT_VALUE;
-        } elseif ($unparsedOptionValue !== false) { // option was passed with value, use the value
-            return $input->getOption(self::OPTION_XDEBUG);
         }
 
-        return null;
+        if ($optionValue === '') { // empty value was passed => do not enable the feature
+            return null;
+        }
+
+        return $optionValue;
     }
 }
