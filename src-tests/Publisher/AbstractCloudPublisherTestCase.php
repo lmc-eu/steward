@@ -17,12 +17,12 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTestCase */
     protected $testInstanceMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testInstanceMock = $this->createMock(AbstractTestCase::class);
     }
 
-    public function testShouldDoNothingWhenPublishingTestcaseResults()
+    public function testShouldDoNothingWhenPublishingTestcaseResults(): void
     {
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');
         $curlInitMock->expects($this->never());
@@ -30,7 +30,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
         $this->publisher->publishResults('testCaseName', AbstractPublisher::TEST_STATUS_DONE);
     }
 
-    public function testShouldDoNothingIfTestStatusIsNotDone()
+    public function testShouldDoNothingIfTestStatusIsNotDone(): void
     {
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');
         $curlInitMock->expects($this->never());
@@ -43,7 +43,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
         );
     }
 
-    public function testShouldDoNothingIfTestResultIsSkippedOrIncomplete()
+    public function testShouldDoNothingIfTestResultIsSkippedOrIncomplete(): void
     {
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');
         $curlInitMock->expects($this->never());
@@ -65,7 +65,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
         );
     }
 
-    public function testShouldDoNothingIfTestContainsInstanceOfNullWebdriver()
+    public function testShouldDoNothingIfTestContainsInstanceOfNullWebdriver(): void
     {
         $this->testInstanceMock->wd = new NullWebDriver();
 
@@ -80,7 +80,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
         );
     }
 
-    public function testShouldThrowExceptionIfPublishToApiFailed()
+    public function testShouldThrowExceptionIfPublishToApiFailed(): void
     {
         $this->testInstanceMock->wd = $this->createMock(RemoteWebDriver::class);
 

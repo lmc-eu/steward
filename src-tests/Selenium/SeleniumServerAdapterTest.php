@@ -114,7 +114,7 @@ class SeleniumServerAdapterTest extends TestCase
         $fsockopenMock = $this->getFunctionMock(__NAMESPACE__, 'fsockopen');
         $fsockopenMock->expects($this->once())
             ->with('selenium.local', '1337')
-            ->willReturnCallback(function ($host, $port, &$connectionErrorNo, &$connectionError, $timeout) {
+            ->willReturnCallback(function ($host, $port, &$connectionErrorNo, &$connectionError, $timeout): void {
                 $connectionErrorNo = 111;
                 $connectionError = 'Connection refused';
             });

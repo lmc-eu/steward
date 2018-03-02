@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Event;
 
@@ -15,7 +15,7 @@ class ExtendedConsoleEventTest extends BasicConsoleEventTest
     /** @var Command|\PHPUnit_Framework_MockObject_MockObject */
     protected $commandMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->commandMock = $this->createMock(Command::class);
 
@@ -24,7 +24,7 @@ class ExtendedConsoleEventTest extends BasicConsoleEventTest
         $this->outputMock = $this->createMock(OutputInterface::class);
     }
 
-    public function testShouldGetPropertiesPassedInConstructor()
+    public function testShouldGetPropertiesPassedInConstructor(): void
     {
         $event = new ExtendedConsoleEvent($this->commandMock, $this->inputMock, $this->outputMock);
         $this->assertSame($this->commandMock, $event->getCommand());

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Configuration;
 
@@ -16,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ConfigResolverTest extends TestCase
 {
-    public function testShouldResolveDefaultGeneralOptions()
+    public function testShouldResolveDefaultGeneralOptions(): void
     {
         $optionsResolver = new OptionsResolver();
         $inputDefinition = new InputDefinition();
@@ -33,7 +33,7 @@ class ConfigResolverTest extends TestCase
         );
     }
 
-    public function testShouldResolveDefaultOptionsSpecificForRunCommand()
+    public function testShouldResolveDefaultOptionsSpecificForRunCommand(): void
     {
         $config = $this->resolveRunCommandConfiguration([], []);
 
@@ -41,7 +41,7 @@ class ConfigResolverTest extends TestCase
         $this->assertStringEndsWith('steward' . DIRECTORY_SEPARATOR . 'logs', $config[ConfigOptions::LOGS_DIR]);
     }
 
-    public function testShouldResolveDefaultOptionsSpecificForCleanCommand()
+    public function testShouldResolveDefaultOptionsSpecificForCleanCommand(): void
     {
         $optionsResolver = new OptionsResolver();
         $cleanCommand = new CleanCommand(new EventDispatcher());
@@ -61,12 +61,12 @@ class ConfigResolverTest extends TestCase
 
     /**
      * @dataProvider provideDirectoryConfiguration
-     * @param string $expectedOutputValue
-     * @param string $cliValue
-     * @param string $configFileValue
      */
-    public function testResolveDirectoryValue($expectedOutputValue, $cliValue, $configFileValue)
-    {
+    public function testResolveDirectoryValue(
+        string $expectedOutputValue,
+        string $cliValue,
+        string $configFileValue
+    ): void {
         $cliInputParams = [];
         if (!empty($cliValue)) {
             $cliInputParams = ['--' . RunCommand::OPTION_LOGS_DIR => $cliValue];
@@ -85,7 +85,7 @@ class ConfigResolverTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideDirectoryConfiguration()
+    public function provideDirectoryConfiguration(): array
     {
         return [
             // $expectedOutputValue, $cliValue, $configFileValue
@@ -122,14 +122,14 @@ class ConfigResolverTest extends TestCase
         ];
     }
 
-    public function testShouldThrowExceptionIfCliDefinedDirectoryIsNotReadable()
+    public function testShouldThrowExceptionIfCliDefinedDirectoryIsNotReadable(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path to directory with tests "/not/existing" does not exist');
         $this->resolveRunCommandConfiguration(['--' . RunCommand::OPTION_TESTS_DIR => '/not/existing'], []);
     }
 
-    public function testShouldThrowExceptionIfConfigFileDefinedDirectoryIsNotReadable()
+    public function testShouldThrowExceptionIfConfigFileDefinedDirectoryIsNotReadable(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path to directory with tests "/not/existing" does not exist');

@@ -1,15 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console;
 
 use Symfony\Component\Console\Application as BaseApplication;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
 class Application extends BaseApplication
 {
-    const OPTION_CONFIGURATION = 'configuration';
+    public const OPTION_CONFIGURATION = 'configuration';
 
-    protected function getDefaultInputDefinition()
+    protected function getDefaultInputDefinition(): InputDefinition
     {
         $inputDefinition = parent::getDefaultInputDefinition();
 

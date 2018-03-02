@@ -11,7 +11,7 @@ use Lmc\Steward\ConfigHelper;
  */
 class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['SERVER_URL'] = 'http://username:pass@hub.testingbot.com:80';
@@ -25,11 +25,8 @@ class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
 
     /**
      * @dataProvider provideTestResult
-     * @param string $testResult
-     * @param string $message
-     * @param string $expectedData
      */
-    public function testShouldPublishTestResult($testResult, $message, $expectedData)
+    public function testShouldPublishTestResult(string $testResult, ?string $message, string $expectedData): void
     {
         $this->testInstanceMock->wd = $this->createMock(RemoteWebDriver::class);
 
@@ -64,7 +61,7 @@ class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
     /**
      * @return array[]
      */
-    public function provideTestResult()
+    public function provideTestResult(): array
     {
         return [
             'Passed test' => [AbstractPublisher::TEST_RESULT_PASSED, null, 'test%5Bsuccess%5D=1'],

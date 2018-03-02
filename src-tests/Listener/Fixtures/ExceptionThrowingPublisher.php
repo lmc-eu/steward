@@ -16,7 +16,7 @@ class ExceptionThrowingPublisher extends AbstractPublisher
         $result = null,
         \DateTimeInterface $startDate = null,
         \DateTimeInterface $endDate = null
-    ) {
+    ): void {
         throw new \LogicException('publishResults() called');
     }
 
@@ -27,7 +27,7 @@ class ExceptionThrowingPublisher extends AbstractPublisher
         $status,
         $result = null,
         $message = null
-    ) {
+    ): void {
         throw new \LogicException('publishResult() called');
     }
 }

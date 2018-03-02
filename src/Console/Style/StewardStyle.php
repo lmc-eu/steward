@@ -27,9 +27,8 @@ class StewardStyle extends OutputStyle
 
     /**
      * Output progress message status
-     * @param string $message
      */
-    public function runStatus($message)
+    public function runStatus(string $message)
     {
         $this->writeln($this->getTimestampPrefix() . ' ' . $message);
     }
@@ -38,7 +37,7 @@ class StewardStyle extends OutputStyle
      * Output success message in progress status
      * @param string $message
      */
-    public function runStatusSuccess($message)
+    public function runStatusSuccess(string $message)
     {
         $this->runStatus('<fg=green>' . $message . '</>');
     }
@@ -47,7 +46,7 @@ class StewardStyle extends OutputStyle
      * Output error message in progress status
      * @param string $message
      */
-    public function runStatusError($message)
+    public function runStatusError(string $message)
     {
         $this->runStatus('<fg=red>' . $message . '</>');
     }
@@ -71,11 +70,8 @@ class StewardStyle extends OutputStyle
 
     /**
      * Print output from process
-     *
-     * @param string $output
-     * @param string $identifier
      */
-    public function output($output, $identifier)
+    public function output(string $output, string $identifier): void
     {
         if (empty($output)) {
             return;
@@ -98,11 +94,8 @@ class StewardStyle extends OutputStyle
 
     /**
      * Print error output from process
-     *
-     * @param string $output
-     * @param string $identifier
      */
-    public function errorOutput($output, $identifier)
+    public function errorOutput(string $output, string $identifier): void
     {
         $output = rtrim($output);
 

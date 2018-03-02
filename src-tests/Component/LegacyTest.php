@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Component;
 
@@ -16,7 +16,7 @@ class LegacyTest extends TestCase
     /** @var AbstractTestCase */
     protected $testCase;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->testCase = $this->getMockBuilder(AbstractTestCase::class)
             ->setMethods(['getName'])
@@ -30,7 +30,7 @@ class LegacyTest extends TestCase
         ConfigHelper::unsetConfigInstance();
     }
 
-    public function testShouldThrowExceptionIfLegacyFileNotFound()
+    public function testShouldThrowExceptionIfLegacyFileNotFound(): void
     {
         $legacy = new Legacy($this->testCase);
         $this->expectOutputRegex('/.*New Legacy instantiated.*/');
@@ -41,7 +41,7 @@ class LegacyTest extends TestCase
         $legacy->loadWithName('not-existing');
     }
 
-    public function testShouldFailIfNotUnserializableFileFound()
+    public function testShouldFailIfNotUnserializableFileFound(): void
     {
         $fn = sys_get_temp_dir() . '/wrong.legacy';
         touch($fn);
@@ -56,7 +56,7 @@ class LegacyTest extends TestCase
         $legacy->loadWithName('wrong');
     }
 
-    public function testShouldReadLegacyFileWithSpecifiedName()
+    public function testShouldReadLegacyFileWithSpecifiedName(): void
     {
         $expectedData = [
             'foo' => 'bar',
@@ -73,7 +73,7 @@ class LegacyTest extends TestCase
         $this->assertEquals($expectedData, $output);
     }
 
-    public function testShouldSaveAndReadLegacyDataWithSpecifiedName()
+    public function testShouldSaveAndReadLegacyDataWithSpecifiedName(): void
     {
         $sampleData = [
             'time' => time(),
@@ -91,7 +91,7 @@ class LegacyTest extends TestCase
         $this->assertSame($sampleData, $output);
     }
 
-    public function testShouldFailIfSavingToNotExistingDirectory()
+    public function testShouldFailIfSavingToNotExistingDirectory(): void
     {
         $legacy = new Legacy($this->testCase);
         $legacy->setFileDir('/notexisting');
@@ -104,7 +104,7 @@ class LegacyTest extends TestCase
         $legacy->saveWithName([], 'baz');
     }
 
-    public function testShouldSaveObjectAndDumpUsingToStringMethodIfObjectHasItAndDebugModeIsEnabled()
+    public function testShouldSaveObjectAndDumpUsingToStringMethodIfObjectHasItAndDebugModeIsEnabled(): void
     {
         // enable debug mode
         $configValues = ConfigHelper::getDummyConfig();
@@ -120,7 +120,7 @@ class LegacyTest extends TestCase
         $this->expectOutputRegex('/.*Legacy data: __toString\(\) called: foobar string.*/');
     }
 
-    public function testShouldNotDumpDataIfDebugModeIsNotEnabled()
+    public function testShouldNotDumpDataIfDebugModeIsNotEnabled(): void
     {
         // disable debug mode
         $configValues = ConfigHelper::getDummyConfig();
@@ -136,7 +136,7 @@ class LegacyTest extends TestCase
         $this->expectOutputRegex('/^((?!foobar string).)*$/s'); // Output should not contain the string
     }
 
-    public function testShouldFailIfTryingToAutomaticallySaveLegacyIfTestDoesntHavePhaseInItsName()
+    public function testShouldFailIfTryingToAutomaticallySaveLegacyIfTestDoesntHavePhaseInItsName(): void
     {
         $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)
             ->setMethods(['log']) // override log method to prevent unwanted output
@@ -154,7 +154,7 @@ class LegacyTest extends TestCase
         $legacy->save('data');
     }
 
-    public function testShouldAutomaticallySaveAndLoadLegacyIfTestsHavePhaseInItsName()
+    public function testShouldAutomaticallySaveAndLoadLegacyIfTestsHavePhaseInItsName(): void
     {
         // save data in first test case
         $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)
@@ -178,7 +178,7 @@ class LegacyTest extends TestCase
         $this->assertEquals('data', $legacy2->load());
     }
 
-    public function testShouldAutomaticallySaveAndLoadLegacyForMethodsWithSameNameInTestsWithPhaseInItsName()
+    public function testShouldAutomaticallySaveAndLoadLegacyForMethodsWithSameNameInTestsWithPhaseInItsName(): void
     {
         // save data in first test case in method 'testMethodFoo'
         $testCasePhase1 = $this->getMockBuilder(AbstractTestCase::class)

@@ -18,12 +18,10 @@ class ListenerInstantiator
 
     /**
      * Instantiate listeners in given directory and register them to given dispatcher
-     * @param EventDispatcher $dispatcher
-     * @param string $dir Directory to search in for listeners
      */
-    public function instantiate(EventDispatcher $dispatcher, $dir)
+    public function instantiate(EventDispatcher $dispatcher, string $dirToSearchForListeners)
     {
-        $listeners = $this->searchListeners($dir);
+        $listeners = $this->searchListeners($dirToSearchForListeners);
 
         foreach ($listeners as $listener) {
             $r = new \ReflectionClass($listener);
@@ -38,11 +36,11 @@ class ListenerInstantiator
     }
 
     /**
-     * @param string $dir Directory to search in
      * @return array Array of listener class names
      */
-    protected function searchListeners($dir)
+    protected function searchListeners(string $dir): array
     {
+        /** @var Finder $files */
         $files = (new Finder())
             ->files()
             ->in($dir)
@@ -61,10 +59,9 @@ class ListenerInstantiator
     /**
      * Set searched pattern path for event listeners.
      *
-     * @param string $searchPathPattern
      * @internal Should be only overridden in testing.
      */
-    public function setSearchPathPattern($searchPathPattern)
+    public function setSearchPathPattern(string $searchPathPattern)
     {
         $this->searchPathPattern = $searchPathPattern;
     }

@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class MaxTotalDelayStrategyTest extends TestCase
 {
-    public function testShouldOptimizeOrderBasedOnMaxSubtreeDelay()
+    public function testShouldOptimizeOrderBasedOnMaxSubtreeDelay(): void
     {
         //     -------ROOT-------
         //    / 0   / 0    \ 0   \ 0

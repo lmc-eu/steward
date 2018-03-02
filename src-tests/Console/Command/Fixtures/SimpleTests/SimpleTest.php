@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command\Fixtures\SimpleTests;
 
@@ -7,7 +7,7 @@ use Lmc\Steward\Test\AbstractTestCase;
 
 class SimpleTest extends AbstractTestCase
 {
-    public function testWebpage()
+    public function testWebpage(): void
     {
         // Test interaction with the WebDriver and browser
         $this->wd->get('file:///' . __DIR__ . '/webpage.html');

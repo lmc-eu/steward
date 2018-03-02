@@ -48,7 +48,7 @@ class SeleniumServerAdapter
         $parts = $this->serverUrlParts;
 
         $serverUrl = $parts['scheme'] . '://';
-        $serverUrl .= isset($parts['user']) ? $parts['user'] : '';
+        $serverUrl .= $parts['user'] ?? '';
         $serverUrl .= isset($parts['pass']) ? ':' . $parts['pass'] : '';
         $serverUrl .= (isset($parts['user']) || isset($parts['pass'])) ? '@' : '';
         $serverUrl .= $parts['host'] . ':' . $parts['port'];

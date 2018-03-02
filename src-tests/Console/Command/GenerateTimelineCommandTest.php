@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -18,7 +18,7 @@ class GenerateTimelineCommandTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -30,7 +30,7 @@ class GenerateTimelineCommandTest extends TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldShowErrorIfResultsFileCannotBeFound()
+    public function testShouldShowErrorIfResultsFileCannotBeFound(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot read results file "/not/accessible.xml"');
@@ -43,7 +43,7 @@ class GenerateTimelineCommandTest extends TestCase
         );
     }
 
-    public function testShouldOutputHtmlFileWithJsonData()
+    public function testShouldOutputHtmlFileWithJsonData(): void
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Filesystem $filesystemMock */
         $filesystemMock = $this->createMock(Filesystem::class);

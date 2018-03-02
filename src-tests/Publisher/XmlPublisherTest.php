@@ -18,7 +18,7 @@ class XmlPublisherTest extends TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|Test */
     protected $testInstanceMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['LOGS_DIR'] = dirname(self::getFilePath());
@@ -29,7 +29,7 @@ class XmlPublisherTest extends TestCase
         $this->testInstanceMock = $this->createMock(Test::class);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // return the file to original state (= empty file)
         $fn = self::getFilePath();
@@ -49,21 +49,21 @@ class XmlPublisherTest extends TestCase
         return __DIR__ . '/Fixtures/' . $fileName;
     }
 
-    public function testShouldAllowToSetCustomFileName()
+    public function testShouldAllowToSetCustomFileName(): void
     {
         $this->assertNotContains('custom.xml', $this->publisher->getFilePath());
         $this->publisher->setFileName('custom.xml');
         $this->assertContains('custom.xml', $this->publisher->getFilePath());
     }
 
-    public function testShouldAllowToOverrideConfigObjectFileDirWithCustomDir()
+    public function testShouldAllowToOverrideConfigObjectFileDirWithCustomDir(): void
     {
         $this->publisher->setFileDir('foo/bar');
 
         $this->assertEquals('foo/bar/results.xml', $this->publisher->getFilePath());
     }
 
-    public function testShouldCleanPreviousResults()
+    public function testShouldCleanPreviousResults(): void
     {
         $fn = self::getFilePath('previous.xml');
         touch($fn);
@@ -77,7 +77,7 @@ class XmlPublisherTest extends TestCase
         $this->assertFileNotExists($fn);
     }
 
-    public function testShouldNotAllowToPublishUnknownTestStatus()
+    public function testShouldNotAllowToPublishUnknownTestStatus(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Tests status must be one of "started, done", but "unknownStatus" given');
@@ -85,7 +85,7 @@ class XmlPublisherTest extends TestCase
         $this->publisher->publishResult('testCaseName', 'testName', $this->testInstanceMock, 'unknownStatus');
     }
 
-    public function testShouldNotAllowToPublishUnknownTestResult()
+    public function testShouldNotAllowToPublishUnknownTestResult(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -118,7 +118,7 @@ class XmlPublisherTest extends TestCase
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
 
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
-        $this->assertEquals(1, count($xml->testcase->test));
+        $this->assertCount(1, $xml->testcase->test);
 
         $this->assertEquals('testNameBar', $xml->testcase->test['name']);
         $this->assertEquals('started', $xml->testcase->test['status']);
@@ -135,7 +135,7 @@ class XmlPublisherTest extends TestCase
      * @depends testShouldAddTestResultToEmptyFile
      * @param array $params
      */
-    public function testShouldUpdateTestStatusWhenTestIsDone(array $params)
+    public function testShouldUpdateTestStatusWhenTestIsDone(array $params): void
     {
         $fileName = $params[0];
         $xml = $params[1];
@@ -152,7 +152,7 @@ class XmlPublisherTest extends TestCase
 
         // still only one test result is present
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
-        $this->assertEquals(1, count($xml->testcase->test));
+        $this->assertCount(1, $xml->testcase->test);
 
         // the status is now updated and result is set
         $this->assertEquals('testNameBar', $xml->testcase->test['name']);
@@ -189,7 +189,7 @@ class XmlPublisherTest extends TestCase
      * @depends testShouldAddTestcaseResultToEmptyFile
      * @param array $params
      */
-    public function testShouldUpdateTestcaseStatusWhenDone($params)
+    public function testShouldUpdateTestcaseStatusWhenDone($params): void
     {
         $fileName = $params[0];
 
@@ -213,7 +213,7 @@ class XmlPublisherTest extends TestCase
         $this->assertNotEmpty($xml->testcase['end']);
     }
 
-    public function testShouldFailIfGivenDirectoryDoesNotExists()
+    public function testShouldFailIfGivenDirectoryDoesNotExists(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['LOGS_DIR'] = '/notexisting';
@@ -228,7 +228,7 @@ class XmlPublisherTest extends TestCase
         $publisher->publishResult('testCaseNameFoo', 'testNameBar', $this->testInstanceMock, 'started');
     }
 
-    public function testShouldNotOverwriteTestsWithSameName()
+    public function testShouldNotOverwriteTestsWithSameName(): void
     {
         $fileName = $this->createEmptyFile();
 
@@ -263,10 +263,8 @@ class XmlPublisherTest extends TestCase
      * its name is appended by PHPUnit.
      *
      * @dataProvider provideTestName
-     * @param string $testCaseName
-     * @param string $testName
      */
-    public function testShouldProperlyHandleTestsWithDataProvider($testCaseName, $testName)
+    public function testShouldProperlyHandleTestsWithDataProvider(string $testCaseName, string $testName): void
     {
         $fileName = $this->createEmptyFile();
 
@@ -281,10 +279,10 @@ class XmlPublisherTest extends TestCase
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
-        $this->assertEquals(1, count($xml->testcase));
+        $this->assertCount(1, $xml->testcase);
         $this->assertEquals($testCaseName, $xml->testcase['name']);
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
-        $this->assertEquals(1, count($xml->testcase->test));
+        $this->assertCount(1, $xml->testcase->test);
         $this->assertEquals($testName, $xml->testcase->test['name']);
         $this->assertEquals(XmlPublisher::TEST_STATUS_STARTED, $xml->testcase->test['status']);
 
@@ -300,10 +298,10 @@ class XmlPublisherTest extends TestCase
         /** @var \SimpleXMLElement $xml */
         $xml = simplexml_load_file($fileName);
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
-        $this->assertEquals(1, count($xml->testcase));
+        $this->assertCount(1, $xml->testcase);
         $this->assertEquals($testCaseName, $xml->testcase['name']);
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase->test);
-        $this->assertEquals(1, count($xml->testcase->test));
+        $this->assertCount(1, $xml->testcase->test);
         $this->assertEquals($testName, $xml->testcase->test['name']);
         $this->assertEquals(XmlPublisher::TEST_STATUS_DONE, $xml->testcase->test['status']);
         $this->assertEquals(XmlPublisher::TEST_RESULT_PASSED, $xml->testcase->test['result']);
@@ -311,12 +309,11 @@ class XmlPublisherTest extends TestCase
 
     /**
      * @dataProvider provideEndpointTestsessionResponse
-     * @param string $testsessionEndpointResponse
-     * @param string|null $expectedExecutor
-     * @internal param string $seleniumResponse
      */
-    public function testShouldLogTestExecutorWhenTestStarted($testsessionEndpointResponse, $expectedExecutor)
-    {
+    public function testShouldLogTestExecutorWhenTestStarted(
+        string $testsessionEndpointResponse,
+        ?string $expectedExecutor
+    ): void {
         $webDriverMock = $this->createMock(RemoteWebDriver::class);
         $webDriverMock->expects($this->once())
             ->method('getSessionID')
@@ -350,7 +347,7 @@ class XmlPublisherTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideEndpointTestsessionResponse()
+    public function provideEndpointTestsessionResponse(): array
     {
         return [
             'executor found' => [
@@ -364,7 +361,7 @@ class XmlPublisherTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideTestName()
+    public function provideTestName(): array
     {
         return [
             // Testcases

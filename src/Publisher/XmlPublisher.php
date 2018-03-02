@@ -94,12 +94,12 @@ class XmlPublisher extends AbstractPublisher
         $result = null,
         $message = null
     ) {
-        if (!in_array($status, self::$testStatuses)) {
+        if (!in_array($status, self::$testStatuses, true)) {
             throw new \InvalidArgumentException(
                 sprintf('Tests status must be one of "%s", but "%s" given', implode(', ', self::$testStatuses), $status)
             );
         }
-        if (!is_null($result) && !in_array($result, self::$testResults)) {
+        if ($result !== null && !in_array($result, self::$testResults, true)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Tests result must be null or one of "%s", but "%s" given',
@@ -128,7 +128,7 @@ class XmlPublisher extends AbstractPublisher
             $testNode['end'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
         }
 
-        if (!is_null($result)) {
+        if ($result !== null) {
             $testNode['result'] = $result;
         }
 

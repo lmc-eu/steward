@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -22,7 +22,7 @@ class RunCommandIntegrationTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -36,10 +36,8 @@ class RunCommandIntegrationTest extends TestCase
 
     /**
      * @dataProvider provideExpectedTestOutput
-     * @param int $outputVerbosity
-     * @param string $expectedOutputFile
      */
-    public function testShouldExecuteSimpleTests($outputVerbosity, $expectedOutputFile)
+    public function testShouldExecuteSimpleTests(int $outputVerbosity, string $expectedOutputFile): void
     {
         $this->tester->execute(
             [
@@ -64,7 +62,7 @@ class RunCommandIntegrationTest extends TestCase
         $simpleTest = $xml->testcase[1];
         $dependantTest = $xml->testcase[0];
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
-        $this->assertSame(2, count($xml->testcase));
+        $this->assertCount(2, $xml->testcase);
         $this->assertEquals('Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest', $dependantTest['name']);
         $this->assertEquals('Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest', $simpleTest['name']);
         $this->assertEquals('done', $dependantTest['status']);
@@ -73,7 +71,7 @@ class RunCommandIntegrationTest extends TestCase
         $this->assertEquals('passed', $simpleTest['result']);
 
         $this->assertInstanceOf(\SimpleXMLElement::class, $simpleTest->test);
-        $this->assertSame(1, count($simpleTest->test));
+        $this->assertCount(1, $simpleTest->test);
         $this->assertEquals('testWebpage', $simpleTest->test['name']);
         $this->assertEquals('done', $simpleTest->test['status']);
         $this->assertEquals('passed', $simpleTest->test['result']);
@@ -82,7 +80,7 @@ class RunCommandIntegrationTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideExpectedTestOutput()
+    public function provideExpectedTestOutput(): array
     {
         return [
             [OutputInterface::VERBOSITY_NORMAL, 'expected-normal-output.txt'],
@@ -92,7 +90,7 @@ class RunCommandIntegrationTest extends TestCase
         ];
     }
 
-    public function testShouldExecuteTestsThatDontNeedBrowser()
+    public function testShouldExecuteTestsThatDontNeedBrowser(): void
     {
         $this->tester->execute(
             [
@@ -112,10 +110,8 @@ class RunCommandIntegrationTest extends TestCase
 
     /**
      * @dataProvider provideExpectedFailingTestOutput
-     * @param int $outputVerbosity
-     * @param string $expectedOutputFile
      */
-    public function testShouldProcessFailedTests($outputVerbosity, $expectedOutputFile)
+    public function testShouldProcessFailedTests(int $outputVerbosity, string $expectedOutputFile): void
     {
         $this->tester->execute(
             [
@@ -136,7 +132,7 @@ class RunCommandIntegrationTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideExpectedFailingTestOutput()
+    public function provideExpectedFailingTestOutput(): array
     {
         return [
             [OutputInterface::VERBOSITY_NORMAL, 'expected-normal-output.txt'],
@@ -146,7 +142,7 @@ class RunCommandIntegrationTest extends TestCase
         ];
     }
 
-    public function testShouldExitWithCode0EvenWithFailedTestsWhenNoExitOptionIsPassed()
+    public function testShouldExitWithCode0EvenWithFailedTestsWhenNoExitOptionIsPassed(): void
     {
         $this->tester->execute(
             [

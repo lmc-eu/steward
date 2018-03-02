@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Configuration;
 
@@ -18,10 +18,6 @@ class ConfigResolver
     /** @var InputDefinition */
     private $inputDefinition;
 
-    /**
-     * @param OptionsResolver $optionsResolver
-     * @param InputDefinition $inputDefinition
-     */
     public function __construct(OptionsResolver $optionsResolver, InputDefinition $inputDefinition)
     {
         $configurator = new OptionsResolverConfigurator();
@@ -30,12 +26,7 @@ class ConfigResolver
         $this->inputDefinition = $inputDefinition;
     }
 
-    /**
-     * @param InputInterface $input
-     * @param array $configFileInputOptions
-     * @return array
-     */
-    public function resolve(InputInterface $input, array $configFileInputOptions)
+    public function resolve(InputInterface $input, array $configFileInputOptions): array
     {
         $config = $this->optionsResolver->resolve($configFileInputOptions);
 
@@ -47,12 +38,9 @@ class ConfigResolver
     /**
      * Setup values of configured directories and ensure the directories are accessible.
      *
-     * @param InputInterface $input
-     * @param array $config Original configuration
      * @throws \RuntimeException Thrown when directory is not accessible
-     * @return array Updated configuration
      */
-    protected function setupAndTestDirs(InputInterface $input, array $config)
+    protected function setupAndTestDirs(InputInterface $input, array $config): array
     {
         /** @var InputOption[] $relevantDirOptionsForCommand */
         $relevantDirOptionsForCommand = $this->findRelevantDirOptionsForCurrentCommand();
@@ -62,7 +50,7 @@ class ConfigResolver
             $cliValue = $input->getOption($dirOption->getName());
             $wasPassedCliValue = ($input->getParameterOption('--' . $cliOption) !== false);
             $configFileOption = str_replace('-', '_', $cliOption);
-            $configFileValue = isset($config[$configFileOption]) ? $config[$configFileOption] : null;
+            $configFileValue = $config[$configFileOption] ?? null;
 
             if ($wasPassedCliValue) { // CLI value has priority when passed
                 $currentValue = $cliValue;
@@ -82,10 +70,7 @@ class ConfigResolver
         return $config;
     }
 
-    /**
-     * @return array
-     */
-    private function findRelevantDirOptionsForCurrentCommand()
+    private function findRelevantDirOptionsForCurrentCommand(): array
     {
         $relevantDirOptionsForCommand = [];
 
@@ -100,11 +85,7 @@ class ConfigResolver
         return $relevantDirOptionsForCommand;
     }
 
-    /**
-     * @param string $dirPath
-     * @param InputOption $dirOption
-     */
-    private function assertIsReadableDirectory($dirPath, InputOption $dirOption)
+    private function assertIsReadableDirectory(string $dirPath, InputOption $dirOption)
     {
         $errorMessage = sprintf(
             '%s "%s" does not exist, make sure it is accessible or define your own path using %s option',

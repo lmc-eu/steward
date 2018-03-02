@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -43,18 +43,18 @@ class RunCommand extends Command
     /** @var Stopwatch */
     private $stopwatch;
 
-    const ARGUMENT_ENVIRONMENT = 'environment';
-    const ARGUMENT_BROWSER = 'browser';
-    const OPTION_SERVER_URL = 'server-url';
-    const OPTION_CAPABILITY = 'capability';
-    const OPTION_TESTS_DIR = 'tests-dir';
-    const OPTION_LOGS_DIR = 'logs-dir';
-    const OPTION_PATTERN = 'pattern';
-    const OPTION_GROUP = 'group';
-    const OPTION_EXCLUDE_GROUP = 'exclude-group';
-    const OPTION_FILTER = 'filter';
-    const OPTION_NO_EXIT = 'no-exit';
-    const OPTION_IGNORE_DELAYS = 'ignore-delays';
+    public const ARGUMENT_ENVIRONMENT = 'environment';
+    public const ARGUMENT_BROWSER = 'browser';
+    public const OPTION_SERVER_URL = 'server-url';
+    public const OPTION_CAPABILITY = 'capability';
+    public const OPTION_TESTS_DIR = 'tests-dir';
+    public const OPTION_LOGS_DIR = 'logs-dir';
+    public const OPTION_PATTERN = 'pattern';
+    public const OPTION_GROUP = 'group';
+    public const OPTION_EXCLUDE_GROUP = 'exclude-group';
+    public const OPTION_FILTER = 'filter';
+    public const OPTION_NO_EXIT = 'no-exit';
+    public const OPTION_IGNORE_DELAYS = 'ignore-delays';
 
     /**
      * @internal
@@ -330,7 +330,7 @@ class RunCommand extends Command
             $prepared = $processSet->get(ProcessWrapper::PROCESS_STATUS_PREPARED);
             $queued = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
 
-            if (count($prepared) == 0 && count($queued) == 0) {
+            if (count($prepared) === 0 && count($queued) === 0) {
                 break;
             }
 
@@ -370,7 +370,7 @@ class RunCommand extends Command
                     // Mark no longer running processes as finished
                     $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
 
-                    $hasProcessPassed = $processWrapper->getResult() == ProcessWrapper::PROCESS_RESULT_PASSED;
+                    $hasProcessPassed = $processWrapper->getResult() === ProcessWrapper::PROCESS_RESULT_PASSED;
 
                     if ($this->io->isDebug()) { // There could be new output since the previous flush
                         $this->flushProcessOutput($processWrapper);
@@ -426,7 +426,7 @@ class RunCommand extends Command
 
         $doneCount = count($processSet->get(ProcessWrapper::PROCESS_STATUS_DONE));
         $resultsCount = $processSet->countResults();
-        $allTestsPassed = ($resultsCount[ProcessWrapper::PROCESS_RESULT_PASSED] == $doneCount);
+        $allTestsPassed = ($resultsCount[ProcessWrapper::PROCESS_RESULT_PASSED] === $doneCount);
         $resultsInfo = [];
         foreach (ProcessWrapper::$processResults as $resultType) {
             if ($resultsCount[$resultType] > 0) {
@@ -537,7 +537,7 @@ class RunCommand extends Command
         foreach ($queued as $testClass => $processWrapper) {
             $delaySeconds = $processWrapper->getDelayMinutes() * 60;
 
-            if (in_array($processWrapper->getDelayAfter(), $doneClasses)
+            if (in_array($processWrapper->getDelayAfter(), $doneClasses, true)
                 && (time() - $done[$processWrapper->getDelayAfter()]->getFinishedTime()) > $delaySeconds
             ) {
                 if ($this->io->isVeryVerbose()) {
@@ -558,7 +558,7 @@ class RunCommand extends Command
                     $resultsInfo[] = sprintf(
                         '%s: <fg=%s>%d</>',
                         $resultType,
-                        $resultType == ProcessWrapper::PROCESS_RESULT_PASSED ? 'green' : 'red',
+                        $resultType === ProcessWrapper::PROCESS_RESULT_PASSED ? 'green' : 'red',
                         $resultsCount[$resultType]
                     );
                 }

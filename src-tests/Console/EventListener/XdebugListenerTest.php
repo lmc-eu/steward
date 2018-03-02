@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\EventListener;
 
@@ -26,12 +26,12 @@ class XdebugListenerTest extends TestCase
     /** @var XdebugListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->listener = new XdebugListener();
     }
 
-    public function testShouldSubscribeToEvents()
+    public function testShouldSubscribeToEvents(): void
     {
         $subscribedEvents = XdebugListener::getSubscribedEvents();
 
@@ -40,7 +40,7 @@ class XdebugListenerTest extends TestCase
         $this->assertArrayHasKey(CommandEvents::RUN_TESTS_PROCESS, $subscribedEvents);
     }
 
-    public function testShouldAddXdebugOptionToRunTestsCommand()
+    public function testShouldAddXdebugOptionToRunTestsCommand(): void
     {
         $command = new RunCommand(new EventDispatcher());
 
@@ -57,7 +57,7 @@ class XdebugListenerTest extends TestCase
         $this->assertArrayHasKey(XdebugListener::OPTION_XDEBUG, $optionsWithXdebug);
     }
 
-    public function testShouldNotAddXdebugOptionToDifferentCommand()
+    public function testShouldNotAddXdebugOptionToDifferentCommand(): void
     {
         $renamedCommand = new RunCommand(new EventDispatcher());
         $renamedCommand->setName('foo-bar');
@@ -75,11 +75,11 @@ class XdebugListenerTest extends TestCase
 
     /**
      * @dataProvider provideInput
-     * @param string $stringInput
-     * @param string|null $expectedIdeKey
      */
-    public function testShouldGetIdeKeyFromCommandOptionOnCommandInitialization($stringInput, $expectedIdeKey)
-    {
+    public function testShouldGetIdeKeyFromCommandOptionOnCommandInitialization(
+        string $stringInput,
+        ?string $expectedIdeKey
+    ): void {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
         $command = new RunCommand(new EventDispatcher());
 
@@ -105,7 +105,10 @@ class XdebugListenerTest extends TestCase
         }
     }
 
-    public function provideInput()
+    /**
+     * @return array[]
+     */
+    public function provideInput(): array
     {
         return [
             'option not passed at all => no idekey' => ['run', null],
@@ -124,7 +127,7 @@ class XdebugListenerTest extends TestCase
         ];
     }
 
-    public function testShouldFailWhenXdebugExtensionIsNotLoaded()
+    public function testShouldFailWhenXdebugExtensionIsNotLoaded(): void
     {
         $this->mockXdebugExtension($isExtensionLoaded = false, $isRemoteEnabled = false);
 
@@ -141,7 +144,7 @@ class XdebugListenerTest extends TestCase
         $this->listener->onCommandRunTestsInit($event);
     }
 
-    public function testShouldFailWhenXdebugExtensionIsLoadedButRemoteDebugIsNotEnabled()
+    public function testShouldFailWhenXdebugExtensionIsLoadedButRemoteDebugIsNotEnabled(): void
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = false);
 
@@ -160,7 +163,7 @@ class XdebugListenerTest extends TestCase
         $this->listener->onCommandRunTestsInit($event);
     }
 
-    public function testShouldInjectEnvironmentVariableOnProcessRunEventIfXdebugOptionWasPassed()
+    public function testShouldInjectEnvironmentVariableOnProcessRunEventIfXdebugOptionWasPassed(): void
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
 
@@ -179,7 +182,7 @@ class XdebugListenerTest extends TestCase
         $this->assertSame(['FOO' => 'bar', 'XDEBUG_CONFIG' => 'idekey=phpstorm'], $event->getEnvironmentVars());
     }
 
-    public function testShouldNotInjectEnvironmentVariableIfXdebugOptionWasNotPassed()
+    public function testShouldNotInjectEnvironmentVariableIfXdebugOptionWasNotPassed(): void
     {
         $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
 
@@ -223,7 +226,7 @@ class XdebugListenerTest extends TestCase
      * @param bool $isExtensionLoaded Mocked extension_loaded('xdebug') value
      * @param bool $isRemoteEnabled Mocked ini_get('xdebug.remote_enable') value
      */
-    protected function mockXdebugExtension($isExtensionLoaded, $isRemoteEnabled)
+    protected function mockXdebugExtension($isExtensionLoaded, $isRemoteEnabled): void
     {
         $extensionLoadedMock = $this->getFunctionMock(__NAMESPACE__, 'extension_loaded');
         $extensionLoadedMock->expects($this->any())

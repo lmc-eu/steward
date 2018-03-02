@@ -12,7 +12,7 @@ class TestStartLogListenerTest extends TestCase
 
     private const EXPECTED_TIMESTAMP_PATTERN = '\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]';
 
-    public function testShouldLogTestNameToOutputOnTestStart()
+    public function testShouldLogTestNameToOutputOnTestStart(): void
     {
         $listener = new TestStartLogListener();
 

@@ -11,7 +11,7 @@ use Symfony\Component\Process\Process;
 
 class ProcessWrapperTest extends TestCase
 {
-    public function testShouldWrapGivenProcess()
+    public function testShouldWrapGivenProcess(): void
     {
         $process = new Process('');
 
@@ -26,9 +26,8 @@ class ProcessWrapperTest extends TestCase
 
     /**
      * @dataProvider provideDelay
-     * @param float $delay
      */
-    public function testShouldSetDelayForTheProcess($delay)
+    public function testShouldSetDelayForTheProcess(float $delay): void
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
         $wrapper->setDelay('Bar', $delay);
@@ -40,7 +39,7 @@ class ProcessWrapperTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideDelay()
+    public function provideDelay(): array
     {
         return [
             'integer value' => [1],
@@ -52,10 +51,11 @@ class ProcessWrapperTest extends TestCase
     /**
      * @dataProvider provideInvalidDelay
      * @param mixed $delay
-     * @param string $expectedExceptionMessage
      */
-    public function testShouldAcceptOnlyNumbersGreaterThanOrEqualToZeroAsDelay($delay, $expectedExceptionMessage)
-    {
+    public function testShouldAcceptOnlyNumbersGreaterThanOrEqualToZeroAsDelay(
+        $delay,
+        string $expectedExceptionMessage
+    ): void {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
         $this->expectException(InvalidArgumentException::class);
@@ -67,7 +67,7 @@ class ProcessWrapperTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideInvalidDelay()
+    public function provideInvalidDelay(): array
     {
         return [
             'negative value' => [
@@ -85,7 +85,7 @@ class ProcessWrapperTest extends TestCase
         ];
     }
 
-    public function testShouldFailIfDependencyWasDefinedButWithoutDelay()
+    public function testShouldFailIfDependencyWasDefinedButWithoutDelay(): void
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
@@ -97,10 +97,8 @@ class ProcessWrapperTest extends TestCase
 
     /**
      * @dataProvider provideProcessResult
-     * @param int $exitCode
-     * @param string $expectedResult
      */
-    public function testShouldResolveAndStoreResultOfDoneProcess($exitCode, $expectedResult)
+    public function testShouldResolveAndStoreResultOfDoneProcess(?int $exitCode, string $expectedResult): void
     {
         $processMock = $this->createMock(Process::class);
 
@@ -120,7 +118,7 @@ class ProcessWrapperTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideProcessResult()
+    public function provideProcessResult(): array
     {
         return [
             // $exitCode, $expectedResult
@@ -135,7 +133,7 @@ class ProcessWrapperTest extends TestCase
         ];
     }
 
-    public function testShouldNotStoreResultAndTimeOfWhenSettingOtherThanDoneStatus()
+    public function testShouldNotStoreResultAndTimeOfWhenSettingOtherThanDoneStatus(): void
     {
         $preparedTest = new ProcessWrapper(new Process(''), 'PreparedTest');
         $preparedTest->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
@@ -144,7 +142,7 @@ class ProcessWrapperTest extends TestCase
         $this->assertNull($preparedTest->getFinishedTime());
     }
 
-    public function testShouldFailIfWrongProcessStatusGiven()
+    public function testShouldFailIfWrongProcessStatusGiven(): void
     {
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
@@ -156,7 +154,7 @@ class ProcessWrapperTest extends TestCase
         $wrapper->setStatus('WrongStatus');
     }
 
-    public function testShouldPublishProcessStatusWhenInitializedAndWhenStatusWasSet()
+    public function testShouldPublishProcessStatusWhenInitializedAndWhenStatusWasSet(): void
     {
         $publisherMock = $this->createMock(XmlPublisher::class);
 
@@ -185,7 +183,7 @@ class ProcessWrapperTest extends TestCase
         $wrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
     }
 
-    public function testShouldReturnErrorMessageIfProcessTimeoutIsDetected()
+    public function testShouldReturnErrorMessageIfProcessTimeoutIsDetected(): void
     {
         $processMock = $this->createMock(Process::class);
 

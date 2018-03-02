@@ -12,7 +12,7 @@ class RemoteWebDriverTest extends TestCase
     /** @var RemoteWebDriver|\PHPUnit_Framework_MockObject_MockObject */
     protected $driver;
 
-    public function setUp()
+    public function setUp(): void
     {
         // We need to create RemoteWebDriver instance without calling create(), and to mock its command executor,
         // so the requests to Selenium don't get actually called
@@ -23,7 +23,7 @@ class RemoteWebDriverTest extends TestCase
         $this->driver->setCommandExecutor(new DummyCommandExecutor());
     }
 
-    public function testShouldWriteLoadedUrlToLogEvenWithDisabledDebugMode()
+    public function testShouldWriteLoadedUrlToLogEvenWithDisabledDebugMode(): void
     {
         $this->setDebugMode(false); // Make debug mode disabled
 
@@ -32,7 +32,7 @@ class RemoteWebDriverTest extends TestCase
         $this->expectOutputRegex('/.*\[WebDriver\] Loading URL "http:\/\/foo.bar"/');
     }
 
-    public function testShouldLogCommandsInDebugMode()
+    public function testShouldLogCommandsInDebugMode(): void
     {
         $this->setDebugMode(true); // Enable debug mode
 
@@ -45,7 +45,7 @@ class RemoteWebDriverTest extends TestCase
         $this->expectOutputRegex('/.*Executing command "getTitle" with params \[\]/');
     }
 
-    public function testShouldNotLogCommandsInNormalMode()
+    public function testShouldNotLogCommandsInNormalMode(): void
     {
         $this->setDebugMode(false); // Make debug mode disabled
 
@@ -58,7 +58,7 @@ class RemoteWebDriverTest extends TestCase
     /**
      * @param bool $enabled
      */
-    protected function setDebugMode($enabled)
+    protected function setDebugMode($enabled): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = $enabled ? 1 : 0;

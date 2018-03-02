@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -20,7 +20,7 @@ class CleanCommandTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -32,7 +32,7 @@ class CleanCommandTest extends TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldShowErrorIfLogsDirectoryIsNotDefaultAndCannotBeFound()
+    public function testShouldShowErrorIfLogsDirectoryIsNotDefaultAndCannotBeFound(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path to directory with logs "/custom/not/accessible/path" does not exist');
@@ -45,7 +45,7 @@ class CleanCommandTest extends TestCase
         );
     }
 
-    public function testShouldCreateLogsDirectoryIfDefaultPathIsUsed()
+    public function testShouldCreateLogsDirectoryIfDefaultPathIsUsed(): void
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Filesystem $filesystemMock */
         $filesystemMock = $this->getMockBuilder(Filesystem::class)
@@ -70,7 +70,7 @@ class CleanCommandTest extends TestCase
         );
     }
 
-    public function testShouldCleanLogsDirectory()
+    public function testShouldCleanLogsDirectory(): void
     {
         $dir = __DIR__ . '/Fixtures/logs/';
         $fs = new Filesystem();

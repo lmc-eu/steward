@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -21,7 +21,7 @@ class ResultsCommandTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -33,7 +33,7 @@ class ResultsCommandTest extends TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldShowErrorIfResultsFileCannotBeFound()
+    public function testShouldShowErrorIfResultsFileCannotBeFound(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot read results file "/not/accessible.xml"');
@@ -46,7 +46,7 @@ class ResultsCommandTest extends TestCase
         );
     }
 
-    public function testShouldOutputTestcasesResult()
+    public function testShouldOutputTestcasesResult(): void
     {
         $this->tester->execute(
             [
@@ -61,7 +61,7 @@ class ResultsCommandTest extends TestCase
         $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-basic.txt', $output);
     }
 
-    public function testShouldOutputTestcasesAndTestsResultInDebugMode()
+    public function testShouldOutputTestcasesAndTestsResultInDebugMode(): void
     {
         $this->tester->execute(
             [
@@ -77,7 +77,7 @@ class ResultsCommandTest extends TestCase
         $this->assertStringEqualsFile(__DIR__ . '/Fixtures/dummy-logs/expected-output-with-tests.txt', $output);
     }
 
-    public function testShouldOutputRunningTimeOfStartedTest()
+    public function testShouldOutputRunningTimeOfStartedTest(): void
     {
         $this->tester->execute(
             [
@@ -103,7 +103,7 @@ class ResultsCommandTest extends TestCase
         );
     }
 
-    public function testShouldNotShowEndingTimeOfFataledTest()
+    public function testShouldNotShowEndingTimeOfFataledTest(): void
     {
         $this->tester->execute(
             [

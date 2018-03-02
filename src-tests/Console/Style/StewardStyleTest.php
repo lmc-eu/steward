@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Style;
 
@@ -17,7 +17,7 @@ class StewardStyleTest extends TestCase
     /** @var BufferedOutput */
     protected $outputBuffer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $input = new StringInput('');
         $this->outputBuffer = new BufferedOutput();
@@ -26,7 +26,7 @@ class StewardStyleTest extends TestCase
         $this->forceLineLength($this->style);
     }
 
-    public function testShouldGetFormattedTimestampPrefix()
+    public function testShouldGetFormattedTimestampPrefix(): void
     {
         $timestamp = StewardStyle::getTimestampPrefix();
 
@@ -35,9 +35,8 @@ class StewardStyleTest extends TestCase
 
     /**
      * @dataProvider provideRunStatus
-     * @param string $method
      */
-    public function testShouldFormatRunStatusWithTimestamp($method)
+    public function testShouldFormatRunStatusWithTimestamp(string $method): void
     {
         call_user_func([$this->style, $method], 'Foo bar');
 
@@ -49,7 +48,7 @@ class StewardStyleTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideRunStatus()
+    public function provideRunStatus(): array
     {
         return [
             ['runStatus'],
@@ -58,7 +57,7 @@ class StewardStyleTest extends TestCase
         ];
     }
 
-    public function testShouldFormatSection()
+    public function testShouldFormatSection(): void
     {
         $this->style->section('Section header');
 
@@ -68,7 +67,7 @@ class StewardStyleTest extends TestCase
         );
     }
 
-    public function testShouldFormatOutputWithExtraColors()
+    public function testShouldFormatOutputWithExtraColors(): void
     {
         $input = new StringInput('');
         $outputMock = $this->getMockBuilder(BufferedOutput::class)
@@ -111,7 +110,7 @@ HTXT;
         $style->output($rawOutput, 'Foo\Bar');
     }
 
-    public function testShouldFormatErrorOutput()
+    public function testShouldFormatErrorOutput(): void
     {
         $input = new StringInput('');
         $outputMock = $this->getMockBuilder(BufferedOutput::class)
@@ -138,26 +137,26 @@ HTXT;
         $style->errorOutput($rawOutput, 'Foo\Bar');
     }
 
-    public function testShouldNotProduceOutputForEmptyOutput()
+    public function testShouldNotProduceOutputForEmptyOutput(): void
     {
         $this->style->output('', 'Foo');
         $this->assertEmpty($this->outputBuffer->fetch());
     }
 
-    public function testShouldNotProduceOutputForEmptyErrorOutput()
+    public function testShouldNotProduceOutputForEmptyErrorOutput(): void
     {
         $this->style->errorOutput('', 'Foo');
         $this->assertEmpty($this->outputBuffer->fetch());
     }
 
-    public function testShouldFormatText()
+    public function testShouldFormatText(): void
     {
         $this->style->text('Text message');
 
         $this->assertSame('Text message' . PHP_EOL, $this->outputBuffer->fetch());
     }
 
-    public function testShouldFormatSuccess()
+    public function testShouldFormatSuccess(): void
     {
         $this->style->success('Success message');
 
@@ -167,7 +166,7 @@ HTXT;
         );
     }
 
-    public function testShouldFormatError()
+    public function testShouldFormatError(): void
     {
         $this->style->error('Error message');
 
@@ -177,7 +176,7 @@ HTXT;
         );
     }
 
-    public function testShouldFormatNote()
+    public function testShouldFormatNote(): void
     {
         $this->style->note('Note message');
 
@@ -190,7 +189,7 @@ HTXT;
     /**
      * @requires function Symfony\Component\Console\Input\StreamableInputInterface::isInteractive
      */
-    public function testShouldFormatQuestion()
+    public function testShouldFormatQuestion(): void
     {
         $inputMock = $this->getMockBuilder(StreamableInputInterface::class)->getMock();
         $inputMock->expects($this->any())
@@ -214,10 +213,8 @@ HTXT;
 
     /**
      * @dataProvider provideNotImplementedMethods
-     * @param string $method
-     * @param array $args
      */
-    public function testShouldThrowExceptionOnNotImplementedMethods($method, array $args)
+    public function testShouldThrowExceptionOnNotImplementedMethods(string $method, array $args): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Method not implemented');
@@ -228,7 +225,7 @@ HTXT;
     /**
      * @return array[]
      */
-    public function provideNotImplementedMethods()
+    public function provideNotImplementedMethods(): array
     {
         return [
             ['title', ['foo']],
@@ -263,7 +260,7 @@ HTXT;
      * Force the line length to ensure a consistent output for expectations
      * @param StewardStyle $style
      */
-    private function forceLineLength(StewardStyle $style)
+    private function forceLineLength(StewardStyle $style): void
     {
         $symfonyStyleProperty = new \ReflectionProperty(get_class($style), 'symfonyStyle');
         $symfonyStyleProperty->setAccessible(true);

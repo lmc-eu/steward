@@ -14,9 +14,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class CleanLogsListener implements EventSubscriberInterface
 {
-    const OPTION_NO_CLEAN = 'no-clean';
+    public const OPTION_NO_CLEAN = 'no-clean';
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             CommandEvents::CONFIGURE => 'onCommandConfigure',
@@ -26,8 +26,6 @@ class CleanLogsListener implements EventSubscriberInterface
 
     /**
      * Add option to `run` command configuration.
-     *
-     * @param BasicConsoleEvent $event
      */
     public function onCommandConfigure(BasicConsoleEvent $event)
     {
@@ -43,9 +41,6 @@ class CleanLogsListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param ExtendedConsoleEvent $event
-     */
     public function onCommandPreInitialize(ExtendedConsoleEvent $event)
     {
         if (!$event->getCommand()->getDefinition()->hasOption(self::OPTION_NO_CLEAN)) {

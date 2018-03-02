@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\EventListener;
 
@@ -23,12 +23,12 @@ class CleanLogsListenerTest extends TestCase
     /** @var CleanLogsListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->listener = new CleanLogsListener();
     }
 
-    public function testShouldSubscribeToEvents()
+    public function testShouldSubscribeToEvents(): void
     {
         $subscribedEvents = CleanLogsListener::getSubscribedEvents();
 
@@ -36,7 +36,7 @@ class CleanLogsListenerTest extends TestCase
         $this->assertArrayHasKey(CommandEvents::PRE_INITIALIZE, $subscribedEvents);
     }
 
-    public function testShouldAddNoCleanOptionToRunTestsCommand()
+    public function testShouldAddNoCleanOptionToRunTestsCommand(): void
     {
         $command = new RunCommand(new EventDispatcher());
 
@@ -53,7 +53,7 @@ class CleanLogsListenerTest extends TestCase
         $this->assertArrayHasKey(CleanLogsListener::OPTION_NO_CLEAN, $optionsWithNoClean);
     }
 
-    public function testShouldNotAddNoCleanOptionToDifferentCommand()
+    public function testShouldNotAddNoCleanOptionToDifferentCommand(): void
     {
         $renamedCommand = new RunCommand(new EventDispatcher());
         $renamedCommand->setName('foo-bar');
@@ -69,7 +69,7 @@ class CleanLogsListenerTest extends TestCase
         $this->assertSame($optionsOriginal, $optionsNew);
     }
 
-    public function testShouldInvokeCleanCommand()
+    public function testShouldInvokeCleanCommand(): void
     {
         $cleanCommandMock = $this->createMock(CleanCommand::class);
         $cleanCommandMock->expects($this->once())
@@ -94,7 +94,7 @@ class CleanLogsListenerTest extends TestCase
         $this->listener->onCommandPreInitialize($event);
     }
 
-    public function testShouldNotInvokeCleanCommandFromOtherCommandThanRun()
+    public function testShouldNotInvokeCleanCommandFromOtherCommandThanRun(): void
     {
         $applicationMock = $this->createMock(Application::class);
         $applicationMock->expects($this->once())
@@ -117,7 +117,7 @@ class CleanLogsListenerTest extends TestCase
         $this->listener->onCommandPreInitialize($event);
     }
 
-    public function testShouldNotInvokeCleanIfNoCleanOptionGiven()
+    public function testShouldNotInvokeCleanIfNoCleanOptionGiven(): void
     {
         $applicationMock = $this->createMock(Application::class);
         $applicationMock->expects($this->once())

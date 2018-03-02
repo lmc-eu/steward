@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Configuration;
 
@@ -7,12 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class ConfigFileReader
 {
-    /**
-     * @param string|null $customPath
-     * @param string $baseDir
-     * @return mixed|string
-     */
-    public function resolvePathToConfigFile($customPath = null, $baseDir = STEWARD_BASE_DIR)
+    public function resolvePathToConfigFile(?string $customPath, string $baseDir = STEWARD_BASE_DIR): string
     {
         if ($customPath !== null) {
             Assertion::file($customPath);
@@ -31,11 +26,7 @@ class ConfigFileReader
         return '';
     }
 
-    /**
-     * @param string $path
-     * @return array
-     */
-    public function readConfigFile($path)
+    public function readConfigFile(string $path): array
     {
         Assertion::file($path);
 

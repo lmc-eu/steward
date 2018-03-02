@@ -16,7 +16,7 @@ class TestStatusListenerTest extends TestCase
     /** @var SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject */
     protected $seleniumAdapterMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->seleniumAdapterMock = $this->createMock(SeleniumServerAdapter::class);
 
@@ -26,7 +26,7 @@ class TestStatusListenerTest extends TestCase
         ConfigHelper::unsetConfigInstance();
     }
 
-    public function testShouldNotDoAnythingWhenWarningTestCaseOccurs()
+    public function testShouldNotDoAnythingWhenWarningTestCaseOccurs(): void
     {
         $publishers = [ExceptionThrowingPublisher::class];
 
@@ -40,7 +40,7 @@ class TestStatusListenerTest extends TestCase
         $this->expectOutputRegex('/^((?!Error publishing).)*$/s');
     }
 
-    public function testShouldRegisterXmlPublisherByDefault()
+    public function testShouldRegisterXmlPublisherByDefault(): void
     {
         new TestStatusListener([], $this->seleniumAdapterMock);
 
@@ -49,15 +49,12 @@ class TestStatusListenerTest extends TestCase
 
     /**
      * @dataProvider provideCloudService
-     * @param string $detectedCloudService
-     * @param array $customPublishers
-     * @param array $expectedExtraPublishers
      */
     public function testShouldRegisterExtraPublishers(
-        $detectedCloudService,
+        string $detectedCloudService,
         array $customPublishers,
         array $expectedExtraPublishers
-    ) {
+    ): void {
         $this->seleniumAdapterMock->expects($this->any())
             ->method('getCloudService')
             ->willReturn($detectedCloudService);
@@ -83,7 +80,7 @@ class TestStatusListenerTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideCloudService()
+    public function provideCloudService(): array
     {
         return [
             'No cloud service, no custom publisher' => ['', [], []],
@@ -98,7 +95,7 @@ class TestStatusListenerTest extends TestCase
         ];
     }
 
-    public function testShouldThrowAnExceptionIfRegisteringNotExistingClassAsPublisher()
+    public function testShouldThrowAnExceptionIfRegisteringNotExistingClassAsPublisher(): void
     {
         $this->expectOutputRegex('/.*/'); // workaround to force PHPUnit to swallow output
 
@@ -108,7 +105,7 @@ class TestStatusListenerTest extends TestCase
         new TestStatusListener(['Foo\NotExistingClass'], $this->seleniumAdapterMock);
     }
 
-    public function testShouldThrowAnExceptionIfRegisteringImproperPublisher()
+    public function testShouldThrowAnExceptionIfRegisteringImproperPublisher(): void
     {
         $this->expectOutputRegex('/.*/'); // workaround to force PHPUnit to swallow output
 

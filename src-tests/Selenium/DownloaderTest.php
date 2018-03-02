@@ -10,7 +10,7 @@ class DownloaderTest extends TestCase
 {
     use PHPMock;
 
-    public function testShouldParseLatestVersion()
+    public function testShouldParseLatestVersion(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response.xml');
 
@@ -22,7 +22,7 @@ class DownloaderTest extends TestCase
         $this->assertEquals('3.0.0-beta1', Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnNullIfRequestToGetLatestVersionFailed()
+    public function testShouldReturnNullIfRequestToGetLatestVersionFailed(): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
@@ -31,7 +31,7 @@ class DownloaderTest extends TestCase
         $this->assertNull(Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnNullIfRequestToGetLatestVersionReturnsInvalidXml()
+    public function testShouldReturnNullIfRequestToGetLatestVersionReturnsInvalidXml(): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
@@ -40,7 +40,7 @@ class DownloaderTest extends TestCase
         $this->assertNull(Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnNullIfLatestVersionCannotBeFound()
+    public function testShouldReturnNullIfLatestVersionCannotBeFound(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-broken.xml');
 
@@ -54,7 +54,7 @@ class DownloaderTest extends TestCase
     /**
      * @group integration
      */
-    public function testShouldReturnValidLinkToSpecifiedVersion()
+    public function testShouldReturnValidLinkToSpecifiedVersion(): void
     {
         $downloader = new Downloader(__DIR__ . '/Fixtures');
         $downloader->setVersion('2.53.1');
@@ -65,7 +65,7 @@ class DownloaderTest extends TestCase
     /**
      * @group integration
      */
-    public function testShouldReadLatestVersionFromTheStorageUrl()
+    public function testShouldReadLatestVersionFromTheStorageUrl(): void
     {
         $latestVersion = Downloader::getLatestVersion();
         $this->assertInternalType('string', $latestVersion);
@@ -75,7 +75,7 @@ class DownloaderTest extends TestCase
         $this->assertIsDownloadable($downloader->getFileUrl());
     }
 
-    public function testShouldGetVersionSetBySetter()
+    public function testShouldGetVersionSetBySetter(): void
     {
         $downloader = new Downloader(__DIR__ . '/Fixtures');
 
@@ -86,7 +86,7 @@ class DownloaderTest extends TestCase
         $this->assertEquals('6.33.6', $downloader->getVersion());
     }
 
-    public function testShouldGetLatestVersionOfNoneVersionSpecified()
+    public function testShouldGetLatestVersionOfNoneVersionSpecified(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response.xml');
 
@@ -99,7 +99,7 @@ class DownloaderTest extends TestCase
         $this->assertEquals('3.0.0-beta1', $downloader->getVersion());
     }
 
-    public function testShouldAssembleTargetFilePath()
+    public function testShouldAssembleTargetFilePath(): void
     {
         $downloader = new Downloader(__DIR__ . '/Fixtures');
         $downloader->setVersion('3.33.6');
@@ -109,10 +109,8 @@ class DownloaderTest extends TestCase
 
     /**
      * @dataProvider provideVersions
-     * @param string $version
-     * @param string $expectedPath
      */
-    public function testShouldAssembleUrlToDownload($version, $expectedPath)
+    public function testShouldAssembleUrlToDownload(string $version, string $expectedPath): void
     {
         $downloader = new Downloader(__DIR__ . '/Fixtures');
         $downloader->setVersion($version);
@@ -126,7 +124,7 @@ class DownloaderTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideVersions()
+    public function provideVersions(): array
     {
         return [
             ['2.53.0', '/2.53/selenium-server-standalone-2.53.0.jar'],
@@ -139,9 +137,8 @@ class DownloaderTest extends TestCase
 
     /**
      * @dataProvider provideInvalidVersion
-     * @param string $version
      */
-    public function testShouldThrowExceptionIfInvalidVersionGiven($version)
+    public function testShouldThrowExceptionIfInvalidVersionGiven(string $version): void
     {
         $downloader = new Downloader(__DIR__ . '/Fixtures');
         $downloader->setVersion($version);
@@ -154,7 +151,7 @@ class DownloaderTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideInvalidVersion()
+    public function provideInvalidVersion(): array
     {
         return [
             [' '],
@@ -164,7 +161,7 @@ class DownloaderTest extends TestCase
         ];
     }
 
-    public function testShouldCheckIfFileWasAlreadyDownloaded()
+    public function testShouldCheckIfFileWasAlreadyDownloaded(): void
     {
         $downloader = new Downloader(__DIR__ . '/Fixtures');
         $downloader->setVersion('2.45.0');
@@ -175,7 +172,7 @@ class DownloaderTest extends TestCase
         $this->assertFalse($downloader->isAlreadyDownloaded());
     }
 
-    public function testShouldStoreDownloadedFileToExpectedLocation()
+    public function testShouldStoreDownloadedFileToExpectedLocation(): void
     {
         // Mock getFileUrl() method to return URL to fixtures on filesystem
         /** @var Downloader|\PHPUnit_Framework_MockObject_MockObject $downloader */
@@ -202,7 +199,7 @@ class DownloaderTest extends TestCase
         unlink($expectedFile);
     }
 
-    public function testShouldThrowExceptionIfFileCannotBeDownloaded()
+    public function testShouldThrowExceptionIfFileCannotBeDownloaded(): void
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Downloader $downloader */
         $downloader = $this->getMockBuilder(Downloader::class)
@@ -224,7 +221,7 @@ class DownloaderTest extends TestCase
         $downloader->download();
     }
 
-    public function testShouldCreateTargetDirectoryIfNotExists()
+    public function testShouldCreateTargetDirectoryIfNotExists(): void
     {
         $expectedDirectory = __DIR__ . '/Fixtures/not/existing/directory';
         $this->assertFileNotExists(
@@ -258,7 +255,7 @@ class DownloaderTest extends TestCase
     /**
      * @param string $url
      */
-    private function assertIsDownloadable($url)
+    private function assertIsDownloadable($url): void
     {
         $context = stream_context_create(['http' => ['method' => 'HEAD', 'ignore_errors' => true]]);
         $fd = fopen($url, 'rb', false, $context);
@@ -271,7 +268,7 @@ class DownloaderTest extends TestCase
     /**
      * @param string $responseHeader
      */
-    private function mockGetHeadersToReturnHeader($responseHeader)
+    private function mockGetHeadersToReturnHeader($responseHeader): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'get_headers');
         $fileGetContentsMock->expects($this->any())
