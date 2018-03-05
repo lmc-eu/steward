@@ -267,7 +267,7 @@ class ProcessSetCreator
         $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
 
         if ($delayAfter) {
-            $processWrapper->setDelay($delayAfter, $delayMinutes);
+            $processWrapper->setDelay($delayAfter, (float) $delayMinutes);
         } elseif ($delayMinutes !== null && empty($delayAfter)) {
             throw new \InvalidArgumentException(
                 sprintf(

@@ -80,7 +80,7 @@ class ConfigProvider
      */
     public function setCustomConfigurationOptions(array $customConfigurationOptions)
     {
-        if (!is_null($this->config)) {
+        if ($this->config !== null) {
             throw new \RuntimeException(
                 'Custom configuration options can be set only before initialization of configuration'
             );
@@ -91,7 +91,7 @@ class ConfigProvider
 
     private function initialize()
     {
-        if (!is_null($this->config)) {
+        if ($this->config !== null) {
             return;
         }
 

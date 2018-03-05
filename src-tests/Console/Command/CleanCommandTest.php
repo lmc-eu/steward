@@ -26,7 +26,9 @@ class CleanCommandTest extends TestCase
         $application = new Application();
         $application->add(new CleanCommand($dispatcher));
 
-        $this->command = $application->find('clean');
+        /** @var CleanCommand $command */
+        $command = $application->find('clean');
+        $this->command = $command;
         $this->tester = new CommandTester($this->command);
     }
 

@@ -21,6 +21,7 @@ class ProcessWrapperTest extends TestCase
         $this->assertSame('ClassName', $wrapper->getClassName());
         $this->assertSame(ProcessWrapper::PROCESS_STATUS_QUEUED, $wrapper->getStatus());
         $this->assertFalse($wrapper->isDelayed());
+        $this->assertNull($wrapper->getDelayMinutes());
     }
 
     /**

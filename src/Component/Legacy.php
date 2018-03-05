@@ -219,7 +219,7 @@ class Legacy extends AbstractComponent
     private function getPrintableValue($obj)
     {
         if (is_object($obj) && method_exists($obj, '__toString')) {
-            return $obj;
+            return (string) $obj;
         }
 
         return print_r($obj, true);

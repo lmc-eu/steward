@@ -23,7 +23,7 @@ class XdebugListenerTest extends TestCase
 {
     use PHPMock;
 
-    /** @var XdebugListener|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var XdebugListener */
     protected $listener;
 
     protected function setUp()
@@ -33,7 +33,7 @@ class XdebugListenerTest extends TestCase
 
     public function testShouldSubscribeToEvents()
     {
-        $subscribedEvents = $this->listener->getSubscribedEvents();
+        $subscribedEvents = XdebugListener::getSubscribedEvents();
 
         $this->assertArrayHasKey(CommandEvents::CONFIGURE, $subscribedEvents);
         $this->assertArrayHasKey(CommandEvents::RUN_TESTS_INIT, $subscribedEvents);
@@ -76,7 +76,7 @@ class XdebugListenerTest extends TestCase
     /**
      * @dataProvider provideInput
      * @param string $stringInput
-     * @param string $expectedIdeKey
+     * @param string|null $expectedIdeKey
      */
     public function testShouldGetIdeKeyFromCommandOptionOnCommandInitialization($stringInput, $expectedIdeKey)
     {
