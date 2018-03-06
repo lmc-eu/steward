@@ -20,7 +20,7 @@ abstract class AbstractPublisher
     const TEST_RESULT_PASSED = 'passed';
     /** Test failed (eg. some assertion does not match) */
     const TEST_RESULT_FAILED = 'failed';
-    /** Test was broken (ie. Exception was thrown) */
+    /** Test was broken (eg. Exception was thrown, PHPUnit returns WarningTestCase etc.) */
     const TEST_RESULT_BROKEN = 'broken';
     /** Test was skipped using markTestSkipped() */
     const TEST_RESULT_SKIPPED = 'skipped';
@@ -49,6 +49,8 @@ abstract class AbstractPublisher
         BaseTestRunner::STATUS_INCOMPLETE => self::TEST_RESULT_INCOMPLETE,
         BaseTestRunner::STATUS_FAILURE => self::TEST_RESULT_FAILED,
         BaseTestRunner::STATUS_ERROR => self::TEST_RESULT_BROKEN,
+        BaseTestRunner::STATUS_RISKY => self::TEST_RESULT_BROKEN,
+        BaseTestRunner::STATUS_WARNING => self::TEST_RESULT_BROKEN,
     ];
 
     /**
