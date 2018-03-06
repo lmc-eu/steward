@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Publisher;
 
+use Assert\Assertion;
 use PHPUnit\Framework\Test;
 use PHPUnit\Runner\BaseTestRunner;
 
@@ -28,22 +29,21 @@ abstract class AbstractPublisher
     const TEST_RESULT_INCOMPLETE = 'incomplete';
 
     /** @var array List of possible test statuses */
-    public static $testStatuses = [
+    public const TEST_STATUSES = [
         self::TEST_STATUS_STARTED,
         self::TEST_STATUS_DONE,
     ];
 
     /** @var array List of possible test results */
-    public static $testResults = [
+    public const TEST_RESULTS = [
         self::TEST_RESULT_PASSED,
         self::TEST_RESULT_FAILED,
         self::TEST_RESULT_BROKEN,
         self::TEST_RESULT_SKIPPED,
         self::TEST_RESULT_INCOMPLETE,
     ];
-
     /** @var array Map of PHPUnit test results constants to our tests results */
-    public static $testResultsMap = [
+    private const TEST_RESULTS_MAP = [
         BaseTestRunner::STATUS_PASSED => self::TEST_RESULT_PASSED,
         BaseTestRunner::STATUS_SKIPPED => self::TEST_RESULT_SKIPPED,
         BaseTestRunner::STATUS_INCOMPLETE => self::TEST_RESULT_INCOMPLETE,
@@ -88,4 +88,15 @@ abstract class AbstractPublisher
         $result = null,
         $message = null
     );
+
+    public static function getResultForPhpUnitTestStatus(int $phpUnitTestStatus): string
+    {
+        Assertion::keyExists(
+            self::TEST_RESULTS_MAP,
+            $phpUnitTestStatus,
+            'PHPUnit test status "%s" is not known to Steward'
+        );
+
+        return self::TEST_RESULTS_MAP[$phpUnitTestStatus];
+    }
 }

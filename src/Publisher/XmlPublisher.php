@@ -94,16 +94,16 @@ class XmlPublisher extends AbstractPublisher
         $result = null,
         $message = null
     ) {
-        if (!in_array($status, self::$testStatuses, true)) {
+        if (!in_array($status, self::TEST_STATUSES, true)) {
             throw new \InvalidArgumentException(
-                sprintf('Tests status must be one of "%s", but "%s" given', implode(', ', self::$testStatuses), $status)
+                sprintf('Tests status must be one of "%s", but "%s" given', implode(', ', self::TEST_STATUSES), $status)
             );
         }
-        if ($result !== null && !in_array($result, self::$testResults, true)) {
+        if ($result !== null && !in_array($result, self::TEST_RESULTS, true)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Tests result must be null or one of "%s", but "%s" given',
-                    implode(', ', self::$testResults),
+                    implode(', ', self::TEST_RESULTS),
                     $result
                 )
             );

@@ -121,8 +121,8 @@ class TestStatusListener implements TestListener
                     get_class($test),
                     $test->getName(),
                     $test,
-                    $status = AbstractPublisher::TEST_STATUS_DONE,
-                    $result = AbstractPublisher::$testResultsMap[$test->getStatus()],
+                    AbstractPublisher::TEST_STATUS_DONE,
+                    AbstractPublisher::getResultForPhpUnitTestStatus($test->getStatus()),
                     $test->getStatusMessage()
                 );
             } catch (\Exception $e) {
@@ -147,8 +147,8 @@ class TestStatusListener implements TestListener
             try {
                 $publisher->publishResults(
                     $suite->getName(),
-                    $status = ProcessWrapper::PROCESS_STATUS_DONE,
-                    $result = null, // do not override, the value is set by ProcessSet::setStatus()
+                    ProcessWrapper::PROCESS_STATUS_DONE,
+                    null, // do not override result, the value is set by ProcessSet::setStatus()
                     $this->startDate,
                     new \DateTimeImmutable()
                 );
