@@ -1,10 +1,9 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.6/phpunit.xsd"
+    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.4/phpunit.xsd"
     bootstrap="./bootstrap.php"
     colors="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
-    backupGlobals="false"
 >
     <testsuite name="Steward">
         <directory>./</directory>
@@ -27,7 +26,7 @@
     <logging>
         <log type="coverage-html" target="./coverage"/>
         <log type="coverage-clover" target="./logs/clover.xml"/>
-        <log type="junit" target="./logs/junit.xml" logIncompleteSkipped="false"/>
-        <log type="testdox-html" target="./logs/testdox.html" />
+        <log type="junit" target="./logs/junit.xml"/>
+        <log type="testdox-html" target="./logs/testdox.html"/>
     </logging>
 </phpunit>

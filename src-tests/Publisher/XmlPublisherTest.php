@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Publisher;
 
@@ -41,10 +41,8 @@ class XmlPublisherTest extends TestCase
 
     /**
      * Get path to xml fixtures file
-     * @param string $fileName
-     * @return string
      */
-    public static function getFilePath($fileName = 'empty.xml')
+    public static function getFilePath(string $fileName = 'empty.xml'): string
     {
         return __DIR__ . '/Fixtures/' . $fileName;
     }
@@ -102,10 +100,7 @@ class XmlPublisherTest extends TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function testShouldAddTestResultToEmptyFile()
+    public function testShouldAddTestResultToEmptyFile(): array
     {
         $fileName = $this->createEmptyFile();
 
@@ -133,7 +128,6 @@ class XmlPublisherTest extends TestCase
 
     /**
      * @depends testShouldAddTestResultToEmptyFile
-     * @param array $params
      */
     public function testShouldUpdateTestStatusWhenTestIsDone(array $params): void
     {
@@ -187,9 +181,8 @@ class XmlPublisherTest extends TestCase
 
     /**
      * @depends testShouldAddTestcaseResultToEmptyFile
-     * @param array $params
      */
-    public function testShouldUpdateTestcaseStatusWhenDone($params): void
+    public function testShouldUpdateTestcaseStatusWhenDone(array $params): void
     {
         $fileName = $params[0];
 
@@ -387,9 +380,8 @@ class XmlPublisherTest extends TestCase
 
     /**
      * Create empty.xml file and sets is as Publisher file
-     * @return string File name
      */
-    protected function createEmptyFile()
+    protected function createEmptyFile(): string
     {
         // create empty file
         $fileName = self::getFilePath('empty.xml');

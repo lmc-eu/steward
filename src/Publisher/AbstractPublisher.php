@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Publisher;
 
@@ -13,20 +13,20 @@ use PHPUnit\Runner\BaseTestRunner;
 abstract class AbstractPublisher
 {
     /** Test started and is currently executed by Selenium */
-    const TEST_STATUS_STARTED = 'started';
+    public const TEST_STATUS_STARTED = 'started';
     /** Test was finished */
-    const TEST_STATUS_DONE = 'done';
+    public const TEST_STATUS_DONE = 'done';
 
     /** Test passed */
-    const TEST_RESULT_PASSED = 'passed';
+    public const TEST_RESULT_PASSED = 'passed';
     /** Test failed (eg. some assertion does not match) */
-    const TEST_RESULT_FAILED = 'failed';
+    public const TEST_RESULT_FAILED = 'failed';
     /** Test was broken (eg. Exception was thrown, PHPUnit returns WarningTestCase etc.) */
-    const TEST_RESULT_BROKEN = 'broken';
+    public const TEST_RESULT_BROKEN = 'broken';
     /** Test was skipped using markTestSkipped() */
-    const TEST_RESULT_SKIPPED = 'skipped';
+    public const TEST_RESULT_SKIPPED = 'skipped';
     /** Test was skipped using markTestIncomplete() */
-    const TEST_RESULT_INCOMPLETE = 'incomplete';
+    public const TEST_RESULT_INCOMPLETE = 'incomplete';
 
     /** @var array List of possible test statuses */
     public const TEST_STATUSES = [
@@ -56,38 +56,31 @@ abstract class AbstractPublisher
     /**
      * Publish testcase result
      *
-     * @param string $testCaseName
      * @param string $status One of ProcessSet::$processStatuses
      * @param string $result One of ProcessSet::$processResults
-     * @param \DateTimeInterface $startDate Testcase start datetime
-     * @param \DateTimeInterface $endDate Testcase end datetime
      */
     abstract public function publishResults(
-        $testCaseName,
-        $status,
-        $result = null,
-        \DateTimeInterface $startDate = null,
-        \DateTimeInterface $endDate = null
-    );
+        string $testCaseName,
+        string $status,
+        string $result = null,
+        \DateTimeInterface $testCaseStartDate = null,
+        \DateTimeInterface $testCaseEndDate = null
+    ): void;
 
     /**
      * Publish results of one single test
      *
-     * @param string $testCaseName
-     * @param string $testName
-     * @param Test $testInstance
      * @param string $status One of self::$testStatuses
      * @param string $result One of self::$testResults
-     * @param string $message
      */
     abstract public function publishResult(
-        $testCaseName,
-        $testName,
+        string $testCaseName,
+        string $testName,
         Test $testInstance,
-        $status,
-        $result = null,
-        $message = null
-    );
+        string $status,
+        string $result = null,
+        string $message = null
+    ): void;
 
     public static function getResultForPhpUnitTestStatus(int $phpUnitTestStatus): string
     {

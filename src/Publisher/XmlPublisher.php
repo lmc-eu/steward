@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Publisher;
 
@@ -11,7 +11,7 @@ use PHPUnit\Framework\Test;
 class XmlPublisher extends AbstractPublisher
 {
     /** @var string Default name of results file. */
-    const FILE_NAME = 'results.xml';
+    public const FILE_NAME = 'results.xml';
     /** @var string */
     protected $fileDir;
     /** @var string */
@@ -23,27 +23,24 @@ class XmlPublisher extends AbstractPublisher
      * Set directory where results file should be stored. Usable when config object is not available (when
      * not called from PHPUnit testcase but from Command). If the file dir is not set, the value from Config object
      * is used.
-     * @param string $dir
      */
-    public function setFileDir($dir)
+    public function setFileDir(string $dir): void
     {
         $this->fileDir = $dir;
     }
 
     /**
      * Change file name from the default. Mostly usable for testing.
-     * @param string $fileName
      */
-    public function setFileName($fileName)
+    public function setFileName(string $fileName): void
     {
         $this->fileName = $fileName;
     }
 
     /**
      * Get full path to results file.
-     * @return string
      */
-    public function getFilePath()
+    public function getFilePath(): string
     {
         if (!$this->fileDir) {
             $this->fileDir = ConfigProvider::getInstance()->logsDir;
@@ -55,7 +52,7 @@ class XmlPublisher extends AbstractPublisher
     /**
      * Clean the file with all previous results (if exists).
      */
-    public function clean()
+    public function clean(): void
     {
         if (file_exists($this->getFilePath())) {
             unlink($this->getFilePath());
@@ -63,12 +60,12 @@ class XmlPublisher extends AbstractPublisher
     }
 
     public function publishResults(
-        $testCaseName,
-        $status,
-        $result = null,
-        \DateTimeInterface $startDate = null,
-        \DateTimeInterface $endDate = null
-    ) {
+        string $testCaseName,
+        string $status,
+        string $result = null,
+        \DateTimeInterface $testCaseStartDate = null,
+        \DateTimeInterface $testCaseEndDate = null
+    ): void {
         $xml = $this->readAndLock();
 
         $testCaseNode = $this->getTestCaseNode($xml, $testCaseName);
@@ -76,24 +73,24 @@ class XmlPublisher extends AbstractPublisher
         if (!empty($result)) {
             $testCaseNode['result'] = $result;
         }
-        if ($startDate) {
-            $testCaseNode['start'] = $startDate->format(\DateTime::ISO8601);
+        if ($testCaseStartDate) {
+            $testCaseNode['start'] = $testCaseStartDate->format(\DateTime::ISO8601);
         }
-        if ($endDate) {
-            $testCaseNode['end'] = $endDate->format(\DateTime::ISO8601);
+        if ($testCaseEndDate) {
+            $testCaseNode['end'] = $testCaseEndDate->format(\DateTime::ISO8601);
         }
 
         $this->writeAndUnlock($xml);
     }
 
     public function publishResult(
-        $testCaseName,
-        $testName,
+        string $testCaseName,
+        string $testName,
         Test $testInstance,
-        $status,
-        $result = null,
-        $message = null
-    ) {
+        string $status,
+        string $result = null,
+        string $message = null
+    ): void {
         if (!in_array($status, self::TEST_STATUSES, true)) {
             throw new \InvalidArgumentException(
                 sprintf('Tests status must be one of "%s", but "%s" given', implode(', ', self::TEST_STATUSES), $status)
@@ -116,7 +113,7 @@ class XmlPublisher extends AbstractPublisher
 
         $testNode['status'] = $status;
 
-        if ($status == self::TEST_STATUS_STARTED) {
+        if ($status === self::TEST_STATUS_STARTED) {
             $testNode['start'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
 
             $executor = $this->getTestExecutor($testInstance);
@@ -124,7 +121,7 @@ class XmlPublisher extends AbstractPublisher
                 $testNode['executor'] = $executor;
             }
         }
-        if ($status == self::TEST_STATUS_DONE) {
+        if ($status === self::TEST_STATUS_DONE) {
             $testNode['end'] = (new \DateTimeImmutable())->format(\DateTime::ISO8601);
         }
 
@@ -137,11 +134,8 @@ class XmlPublisher extends AbstractPublisher
 
     /**
      * Get element for test case of given name. If id does not exist yet, it is created.
-     * @param \SimpleXMLElement $xml
-     * @param string $testCaseName
-     * @return \SimpleXMLElement
      */
-    protected function getTestCaseNode(\SimpleXMLElement $xml, $testCaseName)
+    protected function getTestCaseNode(\SimpleXMLElement $xml, string $testCaseName): \SimpleXMLElement
     {
         $testcaseNode = $xml->xpath(sprintf('//testcase[@name=%s]', $this->quoteXpathAttribute($testCaseName)));
 
@@ -157,12 +151,8 @@ class XmlPublisher extends AbstractPublisher
 
     /**
      * Get element for test of given name. If id does not exist yet, it is created.
-     * @param \SimpleXMLElement $xml
-     * @param string $testCaseName
-     * @param string $testName
-     * @return \SimpleXMLElement
      */
-    protected function getTestNode(\SimpleXMLElement $xml, $testCaseName, $testName)
+    protected function getTestNode(\SimpleXMLElement $xml, string $testCaseName, string $testName): \SimpleXMLElement
     {
         $testNode = $xml->xpath(
             sprintf(
@@ -182,10 +172,7 @@ class XmlPublisher extends AbstractPublisher
         return $testNode;
     }
 
-    /**
-     * @return \SimpleXMLElement
-     */
-    protected function readAndLock()
+    protected function readAndLock(): \SimpleXMLElement
     {
         $file = $this->getFilePath();
         $fileDir = dirname($file);
@@ -206,7 +193,7 @@ class XmlPublisher extends AbstractPublisher
             throw new \RuntimeException(sprintf('Cannot obtain lock for file "%s"', $file));
         }
 
-        if (fstat($this->fileHandle)['size'] == 0) { // new or empty file => create empty xml element and add stylesheet
+        if (fstat($this->fileHandle)['size'] === 0) { // new or empty file => create empty element and add stylesheet
             $xml = new \SimpleXMLElement(
                 '<?xml version="1.0" encoding="utf-8" ?>'
                 . '<?xml-stylesheet type="text/xsl" href="#stylesheet"?>'
@@ -223,10 +210,7 @@ class XmlPublisher extends AbstractPublisher
         return $xml;
     }
 
-    /**
-     * @param \SimpleXMLElement $xml
-     */
-    protected function writeAndUnlock(\SimpleXMLElement $xml)
+    protected function writeAndUnlock(\SimpleXMLElement $xml): void
     {
         if (!$this->fileHandle) {
             throw new \RuntimeException(
@@ -254,10 +238,7 @@ class XmlPublisher extends AbstractPublisher
         $this->fileHandle = null;
     }
 
-    /**
-     * @return string
-     */
-    private function getStylesheet()
+    private function getStylesheet(): string
     {
         $xslPath = __DIR__ . '/../Resources/results.xsl';
         $xsl = file_get_contents($xslPath);
@@ -267,14 +248,16 @@ class XmlPublisher extends AbstractPublisher
 
     /**
      * Encapsulate given attribute value into valid xpath expression.
+     *
      * @param string $input Value of an xpath attribute selector
-     * @return string
      */
-    protected function quoteXpathAttribute($input)
+    protected function quoteXpathAttribute(string $input): string
     {
         if (mb_strpos($input, '\'') === false) { // Selector does not contain single quotes
             return "'$input'"; // Encapsulate with double quotes
-        } elseif (mb_strpos($input, '"') === false) { // Selector contain single quotes but not double quotes
+        }
+
+        if (mb_strpos($input, '"') === false) { // Selector contain single quotes but not double quotes
             return "\"$input\""; // Encapsulate with single quotes
         }
 
@@ -282,11 +265,7 @@ class XmlPublisher extends AbstractPublisher
         return "concat('" . strtr($input, ['\'' => '\', "\'", \'']) . "')";
     }
 
-    /**
-     * @param Test $test
-     * @return string
-     */
-    protected function getTestExecutor(Test $test)
+    protected function getTestExecutor(Test $test): string
     {
         if (!$test instanceof AbstractTestCase || !$test->wd instanceof RemoteWebDriver) {
             return '';

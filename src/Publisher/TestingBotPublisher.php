@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Publisher;
 
@@ -11,14 +11,14 @@ use Lmc\Steward\Test\AbstractTestCase;
  */
 class TestingBotPublisher extends AbstractCloudPublisher
 {
-    const API_URL = 'https://api.testingbot.com/v1';
+    protected const API_URL = 'https://api.testingbot.com/v1';
 
-    protected function getEndpointUrl(AbstractTestCase $testInstance)
+    protected function getEndpointUrl(AbstractTestCase $testInstance): string
     {
         return sprintf('%s/tests/%s', self::API_URL, $testInstance->wd->getSessionID());
     }
 
-    protected function getAuth()
+    protected function getAuth(): string
     {
         $serverUrl = ConfigProvider::getInstance()->serverUrl;
         $serverUrlParts = (new SeleniumServerAdapter($serverUrl))->getServerUrlParts();
@@ -27,14 +27,14 @@ class TestingBotPublisher extends AbstractCloudPublisher
     }
 
     protected function getData(
-        $testCaseName,
-        $testName,
+        string $testCaseName,
+        string $testName,
         AbstractTestCase $testInstance,
-        $status,
-        $result = null,
-        $message = null
-    ) {
-        if ($result == self::TEST_RESULT_PASSED) {
+        string $status,
+        string $result = null,
+        string $message = null
+    ): string {
+        if ($result === self::TEST_RESULT_PASSED) {
             $resultToPublish = 1;
         } else {
             $resultToPublish = 0;
@@ -46,6 +46,6 @@ class TestingBotPublisher extends AbstractCloudPublisher
             $data['test[status_message]'] = $message;
         }
 
-        return http_build_query($data, null, '&');
+        return http_build_query($data, '', '&');
     }
 }

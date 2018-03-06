@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Publisher;
 
@@ -12,30 +12,30 @@ use PHPUnit\Framework\Test;
 abstract class AbstractCloudPublisher extends AbstractPublisher
 {
     /** @var string Content type of the request */
-    const CONTENT_TYPE = 'application/x-www-form-urlencoded';
+    protected const CONTENT_TYPE = 'application/x-www-form-urlencoded';
 
     public function publishResults(
-        $testCaseName,
-        $status,
-        $result = null,
-        \DateTimeInterface $startDate = null,
-        \DateTimeInterface $endDate = null
-    ) {
+        string $testCaseName,
+        string $status,
+        string $result = null,
+        \DateTimeInterface $testCaseStartDate = null,
+        \DateTimeInterface $testCaseEndDate = null
+    ): void {
         // we publish only result for each separate test using publishResult()
     }
 
     public function publishResult(
-        $testCaseName,
-        $testName,
+        string $testCaseName,
+        string $testName,
         Test $testInstance,
-        $status,
-        $result = null,
-        $message = null
-    ) {
-        if ($status != self::TEST_STATUS_DONE) {
+        string $status,
+        string $result = null,
+        string $message = null
+    ): void {
+        if ($status !== self::TEST_STATUS_DONE) {
             return;
         }
-        if ($result == self::TEST_RESULT_SKIPPED || $result == self::TEST_RESULT_INCOMPLETE) {
+        if ($result === self::TEST_RESULT_SKIPPED || $result === self::TEST_RESULT_INCOMPLETE) {
             return;
         }
 
@@ -55,7 +55,7 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
         curl_exec($curl);
 
         if (curl_errno($curl)) {
-            throw new \Exception(
+            throw new \RuntimeException(
                 sprintf('Error publishing results of test %s to API "%s": %s', $testName, $url, curl_error($curl))
             );
         }
@@ -64,11 +64,9 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
     }
 
     /**
-     * @param string $url
-     * @param string $auth
      * @return resource
      */
-    protected function initCurl($url, $auth)
+    protected function initCurl(string $url, string $auth)
     {
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
@@ -81,36 +79,23 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
 
     /**
      * Get URL of the API endpoint where to put result data
-     *
-     * @param AbstractTestCase $testInstance
-     * @return string
      */
-    abstract protected function getEndpointUrl(AbstractTestCase $testInstance);
+    abstract protected function getEndpointUrl(AbstractTestCase $testInstance): string;
 
     /**
      * Get authentication string
-     *
-     * @return string
      */
-    abstract protected function getAuth();
+    abstract protected function getAuth(): string;
 
     /**
      * Get data to be send to the API
-     *
-     * @param string $testCaseName
-     * @param string $testName
-     * @param AbstractTestCase $testInstance
-     * @param string $status
-     * @param string $result
-     * @param string $message
-     * @return mixed
      */
     abstract protected function getData(
-        $testCaseName,
-        $testName,
+        string $testCaseName,
+        string $testName,
         AbstractTestCase $testInstance,
-        $status,
-        $result = null,
-        $message = null
-    );
+        string $status,
+        string $result = null,
+        string $message = null
+    ): string;
 }
