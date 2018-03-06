@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Configuration;
 
@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OptionsResolverConfiguratorTest extends TestCase
 {
-    public function testShouldConfigureGivenOptionsResolver()
+    public function testShouldConfigureGivenOptionsResolver(): void
     {
         $optionsResolver = new OptionsResolver();
         $configurator = new OptionsResolverConfigurator();
@@ -26,7 +26,7 @@ class OptionsResolverConfiguratorTest extends TestCase
         $this->assertNotEmpty($optionsResolver->getDefinedOptions());
     }
 
-    public function testShouldNotAllowNotExistingClassAsCapabilitiesResolverValue()
+    public function testShouldNotAllowNotExistingClassAsCapabilitiesResolverValue(): void
     {
         $optionsResolver = new OptionsResolver();
         $configurator = new OptionsResolverConfigurator();
@@ -39,7 +39,7 @@ class OptionsResolverConfiguratorTest extends TestCase
         $optionsResolver->resolve([ConfigOptions::CAPABILITIES_RESOLVER => '\NotExisting']);
     }
 
-    public function testShouldNotAllowNotCapabilitiesResolverInterfaceClassAsCapabilitiesResolverValue()
+    public function testShouldNotAllowNotCapabilitiesResolverInterfaceClassAsCapabilitiesResolverValue(): void
     {
         $optionsResolver = new OptionsResolver();
         $configurator = new OptionsResolverConfigurator();
@@ -57,7 +57,7 @@ class OptionsResolverConfiguratorTest extends TestCase
         $optionsResolver->resolve([ConfigOptions::CAPABILITIES_RESOLVER => DoesNotImplementInterface::class]);
     }
 
-    public function testShouldAllowCapabilitiesResolverInterfaceClassAsCapabilitiesResolverValue()
+    public function testShouldAllowCapabilitiesResolverInterfaceClassAsCapabilitiesResolverValue(): void
     {
         $optionsResolver = new OptionsResolver();
         $configurator = new OptionsResolverConfigurator();

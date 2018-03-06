@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -21,16 +21,16 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ResultsCommand extends Command
 {
-    const OPTION_RESULTS_FILE = 'results-file';
+    public const OPTION_RESULTS_FILE = 'results-file';
 
     /** @var array */
-    protected $testcaseColorMap = [
+    protected const TESTCASE_COLOR_MAP = [
         ProcessWrapper::PROCESS_RESULT_PASSED => '<fg=green>',
         ProcessWrapper::PROCESS_RESULT_FAILED => '<fg=red>',
         ProcessWrapper::PROCESS_RESULT_FATAL => '<fg=yellow>',
     ];
     /** @var array */
-    protected $testColorMap = [
+    protected const TEST_COLOR_MAP = [
         AbstractPublisher::TEST_RESULT_PASSED => '<fg=green>',
         AbstractPublisher::TEST_RESULT_FAILED => '<fg=red>',
         AbstractPublisher::TEST_RESULT_BROKEN => '<fg=red>',
@@ -114,8 +114,8 @@ class ResultsCommand extends Command
                 'name' => (string) $testcase['name'],
                 'status' => (string) $testcase['status'],
                 'result' => (string) $testcase['result'],
-                'start' => $testcase['start'] ? new \DateTimeImmutable($testcase['start']) : null,
-                'end' => $testcase['end'] ? new \DateTimeImmutable($testcase['end']) : null,
+                'start' => $testcase['start'] ? new \DateTimeImmutable((string) $testcase['start']) : null,
+                'end' => $testcase['end'] ? new \DateTimeImmutable((string) $testcase['end']) : null,
                 'tests' => [],
             ];
 
@@ -124,8 +124,8 @@ class ResultsCommand extends Command
                     'name' => (string) $test['name'],
                     'status' => (string) $test['status'],
                     'result' => (string) $test['result'],
-                    'start' => $test['start'] ? new \DateTimeImmutable($test['start']) : null,
-                    'end' => $test['end'] ? new \DateTimeImmutable($test['end']) : null,
+                    'start' => $test['start'] ? new \DateTimeImmutable((string) $test['start']) : null,
+                    'end' => $test['end'] ? new \DateTimeImmutable((string) $test['end']) : null,
                 ];
 
                 $testcaseData['tests'][] = $testData;
@@ -139,7 +139,7 @@ class ResultsCommand extends Command
 
     private function outputFooter(OutputInterface $output, array $data): void
     {
-        $isFinished = ($data['tcCount'] == $data['tcDoneCount']);
+        $isFinished = ($data['tcCount'] === $data['tcDoneCount']);
 
         $output->writeln(
             sprintf(
@@ -210,14 +210,14 @@ class ResultsCommand extends Command
             if ($showTests) {
                 foreach ($tc['tests'] as $test) {
                     $hasParentTestcaseFataled = false;
-                    if ($test['status'] == AbstractPublisher::TEST_STATUS_STARTED
-                        && $tc['result'] == ProcessWrapper::PROCESS_RESULT_FATAL
+                    if ($test['status'] === AbstractPublisher::TEST_STATUS_STARTED
+                        && $tc['result'] === ProcessWrapper::PROCESS_RESULT_FATAL
                     ) {
                         $hasParentTestcaseFataled = true;
                     }
 
                     $isInProgress = false;
-                    if (!$hasParentTestcaseFataled && $test['status'] == AbstractPublisher::TEST_STATUS_STARTED) {
+                    if (!$hasParentTestcaseFataled && $test['status'] === AbstractPublisher::TEST_STATUS_STARTED) {
                         $isInProgress = true;
                     }
 
@@ -271,8 +271,8 @@ class ResultsCommand extends Command
             return $output;
         }
 
-        if (isset($this->testcaseColorMap[$result])) {
-            $output = $this->testcaseColorMap[$result] . $output . '</>';
+        if (isset(self::TESTCASE_COLOR_MAP[$result])) {
+            $output = self::TESTCASE_COLOR_MAP[$result] . $output . '</>';
         }
 
         return $output;
@@ -282,14 +282,14 @@ class ResultsCommand extends Command
     {
         $output = $result;
 
-        if ($parentTestcaseResult == ProcessWrapper::PROCESS_RESULT_FATAL
-            && $status == AbstractPublisher::TEST_STATUS_STARTED
+        if ($parentTestcaseResult === ProcessWrapper::PROCESS_RESULT_FATAL
+            && $status === AbstractPublisher::TEST_STATUS_STARTED
         ) {
-            return $this->testcaseColorMap[ProcessWrapper::PROCESS_RESULT_FATAL] . 'fatal</>';
+            return self::TESTCASE_COLOR_MAP[ProcessWrapper::PROCESS_RESULT_FATAL] . 'fatal</>';
         }
 
-        if (isset($this->testColorMap[$result])) {
-            $output = $this->testColorMap[$result] . $output . '</>';
+        if (isset(self::TEST_COLOR_MAP[$result])) {
+            $output = self::TEST_COLOR_MAP[$result] . $output . '</>';
         }
 
         return $output;

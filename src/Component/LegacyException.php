@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Component;
 
-use Exception;
-
 /**
- * Exception raised by Legacy
+ * Exception raised by Legacy component
  */
 class LegacyException extends \Exception
 {

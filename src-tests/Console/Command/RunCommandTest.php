@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -9,6 +9,7 @@ use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
+use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,7 +27,7 @@ class RunCommandTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -38,7 +39,7 @@ class RunCommandTest extends TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldFailWithoutArguments()
+    public function testShouldFailWithoutArguments(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not enough arguments (missing: "environment, browser").');
@@ -48,7 +49,7 @@ class RunCommandTest extends TestCase
         );
     }
 
-    public function testShouldFailWithoutBrowserSpecified()
+    public function testShouldFailWithoutBrowserSpecified(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not enough arguments (missing: "browser").');
@@ -58,7 +59,7 @@ class RunCommandTest extends TestCase
         );
     }
 
-    public function testShouldFailWithoutEnvironmentSpecified()
+    public function testShouldFailWithoutEnvironmentSpecified(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Not enough arguments (missing: "environment").');
@@ -70,17 +71,17 @@ class RunCommandTest extends TestCase
 
     /**
      * @dataProvider provideDirectoryOptions
-     * @param string $directoryOption Passed path type option
-     * @param string $errorBeginning Beginning of exception message
      */
-    public function testShouldThrowExceptionIfAnyRequiredDirectoryIsNotAccessible($directoryOption, $errorBeginning)
-    {
+    public function testShouldThrowExceptionIfAnyRequiredDirectoryIsNotAccessible(
+        string $directoryOption,
+        string $expectedExceptionBeginning
+    ): void {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
 
         $expectedError = sprintf(
             '%s, make sure it is accessible or define your own path using --%s option',
-            $errorBeginning,
+            $expectedExceptionBeginning,
             $directoryOption
         );
         $this->expectException(InvalidArgumentException::class);
@@ -97,9 +98,9 @@ class RunCommandTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array[]
      */
-    public function provideDirectoryOptions()
+    public function provideDirectoryOptions(): array
     {
         return [
             ['tests-dir', 'Path to directory with tests "/not/accessible" does not exist'],
@@ -107,7 +108,7 @@ class RunCommandTest extends TestCase
         ];
     }
 
-    public function testShouldOutputAssembledPathsToDirectoriesInDebugMode()
+    public function testShouldOutputAssembledPathsToDirectoriesInDebugMode(): void
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
@@ -132,15 +133,12 @@ class RunCommandTest extends TestCase
 
     /**
      * @dataProvider provideBrowserName
-     * @param string $browserName
-     * @param string $expectedNameInOutput
-     * @param bool $shouldThrowException
      */
     public function testShouldThrowExceptionOnlyIfUnsupportedBrowserSelected(
-        $browserName,
-        $expectedNameInOutput,
-        $shouldThrowException
-    ) {
+        string $browserName,
+        bool $shouldThrowException,
+        ?string $expectedNameInOutput
+    ): void {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
 
@@ -167,24 +165,23 @@ class RunCommandTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array[]
      */
-    public function provideBrowserName()
+    public function provideBrowserName(): array
     {
         return [
-            // $browserName, $expectedNameInOutput, $shouldThrowException
-            'firefox is supported' => ['firefox', 'firefox', false],
-            'chrome is supported' => ['chrome', 'chrome', false],
-            'phantomjs is supported' => ['phantomjs', 'phantomjs', false],
-            'MicrosoftEdge is supported' => ['MicrosoftEdge', 'MicrosoftEdge', false],
-            'MicrosoftEdge is supported in lowercase' => ['microsoftedge', 'MicrosoftEdge', false],
-            'browser name is case insensitive' => ['FIREFOX', 'firefox', false],
-            'not supported browser' => ['mosaic', null, true],
-            'unprintable character in browser name' => ['firefox​', null, true],
+            'firefox is supported' => ['firefox', false, 'firefox'],
+            'chrome is supported' => ['chrome', false, 'chrome'],
+            'phantomjs is supported' => ['phantomjs', false, 'phantomjs'],
+            'MicrosoftEdge is supported' => ['MicrosoftEdge', false, 'MicrosoftEdge'],
+            'MicrosoftEdge is supported in lowercase' => ['microsoftedge', false, 'MicrosoftEdge'],
+            'browser name is case insensitive' => ['FIREFOX', false, 'firefox'],
+            'not supported browser' => ['mosaic', true, null],
+            'unprintable character in browser name' => ['firefox​', true, null],
         ];
     }
 
-    public function testShouldStopIfServerIsNotResponding()
+    public function testShouldStopIfServerIsNotResponding(): void
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
             ->setConstructorArgs(['http://foo.bar:1337'])
@@ -218,7 +215,7 @@ class RunCommandTest extends TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldStopIfServerIsRespondingButIsNotSelenium()
+    public function testShouldStopIfServerIsRespondingButIsNotSelenium(): void
     {
         $seleniumAdapterMock = $this->getMockBuilder(SeleniumServerAdapter::class)
             ->setConstructorArgs(['http://foo.bar:1337'])
@@ -256,7 +253,7 @@ class RunCommandTest extends TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldStopIfNoTestcasesFoundByGivenFilePattern()
+    public function testShouldStopIfNoTestcasesFoundByGivenFilePattern(): void
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
@@ -277,7 +274,7 @@ class RunCommandTest extends TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldDispatchEventsOnExecute()
+    public function testShouldDispatchEventsOnExecute(): void
     {
         $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
             ->setMethods(['dispatch'])
@@ -311,7 +308,7 @@ class RunCommandTest extends TestCase
         );
     }
 
-    public function testShouldStopIfNoTestcasesWereFoundInTheFiles()
+    public function testShouldStopIfNoTestcasesWereFoundInTheFiles(): void
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
         $creatorMock = $this->getMockBuilder(ProcessSetCreator::class)
@@ -347,7 +344,7 @@ class RunCommandTest extends TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldExitSuccessfullyIfNoProcessArePreparedOrQueued()
+    public function testShouldExitSuccessfullyIfNoProcessArePreparedOrQueued(): void
     {
         $seleniumAdapterMock = $this->getSeleniumAdapterMock();
 
@@ -358,6 +355,13 @@ class RunCommandTest extends TestCase
         $processSetMock->expects($this->any())
             ->method('get')
             ->willReturn([]);
+        $processSetMock->expects($this->any())
+            ->method('countResults')
+            ->willReturn([
+                ProcessWrapper::PROCESS_RESULT_PASSED => 0,
+                ProcessWrapper::PROCESS_RESULT_FAILED => 0,
+                ProcessWrapper::PROCESS_RESULT_FATAL => 0,
+            ]);
 
         $creatorMock = $this->createMock(ProcessSetCreator::class);
         $creatorMock->expects($this->once())

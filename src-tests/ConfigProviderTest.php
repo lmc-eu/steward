@@ -9,14 +9,14 @@ class ConfigProviderTest extends TestCase
     /** @var array */
     protected $environmentVariables = [];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->environmentVariables = ConfigHelper::getDummyConfig();
 
         ConfigHelper::unsetConfigInstance();
     }
 
-    public function testShouldRetrieveConfigurationValuesFromEnvironmentAndUseCamelCaseKeysForThem()
+    public function testShouldRetrieveConfigurationValuesFromEnvironmentAndUseCamelCaseKeysForThem(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         $config = ConfigProvider::getInstance();
@@ -26,14 +26,14 @@ class ConfigProviderTest extends TestCase
         $this->assertEquals('firefox', $config->browserName);
     }
 
-    public function testShouldMakeConfigOptionsAccessibleDirectlyThroughConfigProvider()
+    public function testShouldMakeConfigOptionsAccessibleDirectlyThroughConfigProvider(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
 
         $this->assertEquals('http://server.tld:4444', ConfigProvider::getInstance()->serverUrl);
     }
 
-    public function testShouldNotAllowToChangeTheValues()
+    public function testShouldNotAllowToChangeTheValues(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
 
@@ -45,7 +45,7 @@ class ConfigProviderTest extends TestCase
         $config->serverUrl = 'foo';
     }
 
-    public function testShouldNotAllowToUnsetValues()
+    public function testShouldNotAllowToUnsetValues(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
 
@@ -57,7 +57,7 @@ class ConfigProviderTest extends TestCase
         unset($config->serverUrl);
     }
 
-    public function testShouldDetectEmptyConfigOption()
+    public function testShouldDetectEmptyConfigOption(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         $config = ConfigProvider::getInstance();
@@ -76,7 +76,7 @@ class ConfigProviderTest extends TestCase
         $this->assertTrue($config->__isset('capability'));
     }
 
-    public function testShouldThrowExceptionWhenAccessingNotExistingConfigOptionThroughConfigProvider()
+    public function testShouldThrowExceptionWhenAccessingNotExistingConfigOptionThroughConfigProvider(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
 
@@ -86,7 +86,7 @@ class ConfigProviderTest extends TestCase
         ConfigProvider::getInstance()->notExisting;
     }
 
-    public function testShouldOnlyHoldOneInstanceOfConfigObject()
+    public function testShouldOnlyHoldOneInstanceOfConfigObject(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         $firstInstance = ConfigProvider::getInstance();
@@ -96,7 +96,7 @@ class ConfigProviderTest extends TestCase
         $this->assertSame($firstInstance, $secondInstance);
     }
 
-    public function testShouldFailIfRequiredOptionIsNotDefined()
+    public function testShouldFailIfRequiredOptionIsNotDefined(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         putenv('SERVER_URL'); // unset value
@@ -109,7 +109,7 @@ class ConfigProviderTest extends TestCase
         $config->serverUrl;
     }
 
-    public function testShouldAllowToAddCustomConfigurationOptions()
+    public function testShouldAllowToAddCustomConfigurationOptions(): void
     {
         $config = ConfigProvider::getInstance();
 
@@ -122,7 +122,7 @@ class ConfigProviderTest extends TestCase
         $this->assertEquals('new', $config->customOption);
     }
 
-    public function testShouldFailIfSettingCustomConfigurationOptionsAfterFirstInstantiation()
+    public function testShouldFailIfSettingCustomConfigurationOptionsAfterFirstInstantiation(): void
     {
         ConfigHelper::setEnvironmentVariables($this->environmentVariables);
         $config = ConfigProvider::getInstance();

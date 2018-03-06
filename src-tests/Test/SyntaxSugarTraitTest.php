@@ -13,7 +13,7 @@ class SyntaxSugarTraitTest extends TestCase
     /** @var SyntaxSugarTrait|\stdClass */
     protected $trait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->trait = $this->getObjectForTrait('Lmc\Steward\Test\SyntaxSugarTrait');
 
@@ -25,8 +25,10 @@ class SyntaxSugarTraitTest extends TestCase
      * @param string $methodPostfix Shortcut method postfix to call (prefix 'find' is omitted)
      * @param string $expectedWebDriverByStrategy Method of WebDriverBy that is expected to be called
      */
-    public function testFindByMethodsShouldCallFindElement($methodPostfix, $expectedWebDriverByStrategy)
-    {
+    public function testFindByMethodsShouldCallFindElement(
+        string $methodPostfix,
+        string $expectedWebDriverByStrategy
+    ): void {
         $wd = $this->trait->wd;
         /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
         $wd->expects($this->once())
@@ -43,8 +45,10 @@ class SyntaxSugarTraitTest extends TestCase
      * @param string $methodPostfix Shortcut method postfix to call (prefix 'findMultiple' is omitted)
      * @param string $expectedWebDriverByStrategy Method of WebDriverBy that is expected to be called
      */
-    public function testFindMultipleByMethodsShouldCallFindElements($methodPostfix, $expectedWebDriverByStrategy)
-    {
+    public function testFindMultipleByMethodsShouldCallFindElements(
+        string $methodPostfix,
+        string $expectedWebDriverByStrategy
+    ): void {
         $wd = $this->trait->wd;
         /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
         $wd->expects($this->once())
@@ -59,7 +63,7 @@ class SyntaxSugarTraitTest extends TestCase
     /**
      * @return array
      */
-    public function provideFindElementStrategy()
+    public function provideFindElementStrategy(): array
     {
         return [
             // $methodPostfix, $expectedWebDriverByStrategy
@@ -79,11 +83,12 @@ class SyntaxSugarTraitTest extends TestCase
      * WebDriverExpectedCondition instance type but not its content, because they return callback
      * which we cannot compare.
      * @dataProvider provideWaitForMethod
-     * @param string $method
      * @param bool $isElementMethod Is this method working with elements?
      */
-    public function testWaitForMethodsShouldWaitUntilWebDriverExpectedCondition($method, $isElementMethod = true)
-    {
+    public function testWaitForMethodsShouldWaitUntilWebDriverExpectedCondition(
+        string $method,
+        bool $isElementMethod = true
+    ): void {
         /** @var WebDriverWait|\PHPUnit_Framework_MockObject_MockObject $waitMock */
         $waitMock = $this->createMock(WebDriverWait::class);
 
@@ -108,7 +113,7 @@ class SyntaxSugarTraitTest extends TestCase
     /**
      * @return array
      */
-    public function provideWaitForMethod()
+    public function provideWaitForMethod(): array
     {
         return [
             // $method, $isElementMethod

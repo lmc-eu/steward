@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -21,7 +21,7 @@ class CommandTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -33,7 +33,7 @@ class CommandTest extends TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldDispatchPreInitializeEvent()
+    public function testShouldDispatchPreInitializeEvent(): void
     {
         $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
             ->setMethods(['dispatch'])
@@ -52,7 +52,7 @@ class CommandTest extends TestCase
         $tester->execute(['command' => $command]);
     }
 
-    public function testShouldThrowExceptionIfIConfigFileDoesNotExists()
+    public function testShouldThrowExceptionIfIConfigFileDoesNotExists(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('File "/not/existing" was expected to exist.');

@@ -11,10 +11,8 @@ class StringsTest extends TestCase
 {
     /**
      * @dataProvider provideStringToFilename
-     * @param string $string
-     * @param string $expectedFilename
      */
-    public function testShouldCOnvertStringToFilename($string, $expectedFilename)
+    public function testShouldCOnvertStringToFilename(string $string, string $expectedFilename): void
     {
         $this->assertSame($expectedFilename, Strings::toFilename($string));
     }
@@ -22,7 +20,7 @@ class StringsTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideStringToFilename()
+    public function provideStringToFilename(): array
     {
         return [
             'Convert special chars in class name, keep case' => ['Lmc\Foo\FooBarTest', 'Lmc-Foo-FooBarTest'],

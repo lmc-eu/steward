@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Component;
 
@@ -38,10 +38,10 @@ abstract class AbstractComponent
         $this->componentName = $reflection->getShortName();
     }
 
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         // Log methods prepend componentName to message and call the same method on TestCase.
-        if (in_array($name, ['log', 'warn', 'debug'])) {
+        if (in_array($name, ['log', 'warn', 'debug'], true)) {
             $arguments[0] = '[' . $this->componentName . '] ' . $arguments[0];
 
             return call_user_func_array([$this->tc, $name], $arguments);

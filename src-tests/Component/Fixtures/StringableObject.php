@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Component\Fixtures;
 
@@ -10,12 +10,12 @@ class StringableObject
     /** @var string */
     protected $string;
 
-    public function __construct($string)
+    public function __construct(string $string)
     {
         $this->string = $string;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return '__toString() called: ' . $this->string;
     }

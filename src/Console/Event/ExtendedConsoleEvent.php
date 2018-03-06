@@ -17,11 +17,6 @@ class ExtendedConsoleEvent extends BasicConsoleEvent
     /** @var OutputInterface */
     protected $output;
 
-    /**
-     * @param Command $command
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
     public function __construct(Command $command, InputInterface $input, OutputInterface $output)
     {
         parent::__construct($command);
@@ -30,18 +25,12 @@ class ExtendedConsoleEvent extends BasicConsoleEvent
         $this->output = $output;
     }
 
-    /**
-     * @return InputInterface
-     */
-    public function getInput()
+    public function getInput(): InputInterface
     {
         return $this->input;
     }
 
-    /**
-     * @return OutputInterface
-     */
-    public function getOutput()
+    public function getOutput(): OutputInterface
     {
         return $this->output;
     }

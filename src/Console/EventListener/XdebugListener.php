@@ -18,14 +18,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class XdebugListener implements EventSubscriberInterface
 {
-    const OPTION_XDEBUG = 'xdebug';
-    const DEFAULT_VALUE = 'phpstorm';
-    const DOCS_URL = 'https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward';
+    public const OPTION_XDEBUG = 'xdebug';
+    public const DEFAULT_VALUE = 'phpstorm';
+    public const DOCS_URL = 'https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward';
 
     /** @var string */
     protected $xdebugIdeKey;
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             CommandEvents::CONFIGURE => 'onCommandConfigure',
@@ -36,8 +36,6 @@ class XdebugListener implements EventSubscriberInterface
 
     /**
      * Add option to `run` command configuration.
-     *
-     * @param BasicConsoleEvent $event
      */
     public function onCommandConfigure(BasicConsoleEvent $event)
     {
@@ -56,8 +54,6 @@ class XdebugListener implements EventSubscriberInterface
 
     /**
      * Get input option on command initialization
-     *
-     * @param ExtendedConsoleEvent $event
      */
     public function onCommandRunTestsInit(ExtendedConsoleEvent $event)
     {
@@ -97,8 +93,6 @@ class XdebugListener implements EventSubscriberInterface
 
     /**
      * If the $xdebugIdeKey variable is set, pass it to the process as XDEBUG_CONFIG environment variable
-     *
-     * @param RunTestsProcessEvent $event
      */
     public function onCommandRunTestsProcess(RunTestsProcessEvent $event)
     {
@@ -117,7 +111,7 @@ class XdebugListener implements EventSubscriberInterface
      * @param InputInterface $input
      * @return string|null
      */
-    protected function getIdeKeyFromInputOption(InputInterface $input)
+    protected function getIdeKeyFromInputOption(InputInterface $input): ?string
     {
         $optionValue = $input->getOption(self::OPTION_XDEBUG);
 

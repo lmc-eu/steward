@@ -16,12 +16,12 @@ class ProcessSetTest extends TestCase
     /** @var ProcessSet */
     protected $set;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->set = new ProcessSet();
     }
 
-    public function testShouldBeCountable()
+    public function testShouldBeCountable(): void
     {
         $this->assertCount(0, $this->set);
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo'));
@@ -31,7 +31,7 @@ class ProcessSetTest extends TestCase
         $this->assertCount(3, $this->set);
     }
 
-    public function testShouldFailWhenAddingTestWithNonUniqueName()
+    public function testShouldFailWhenAddingTestWithNonUniqueName(): void
     {
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
 
@@ -41,7 +41,7 @@ class ProcessSetTest extends TestCase
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
     }
 
-    public function testShouldHasNewlyAddedProcessInQueuedState()
+    public function testShouldHasNewlyAddedProcessInQueuedState(): void
     {
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo'));
         $this->set->add(new ProcessWrapper(new Process(''), 'Bar'));
@@ -51,7 +51,7 @@ class ProcessSetTest extends TestCase
         $this->assertCount(0, $this->set->get(ProcessWrapper::PROCESS_STATUS_PREPARED));
     }
 
-    public function testShouldAddAndGetWrappedProcesses()
+    public function testShouldAddAndGetWrappedProcesses(): void
     {
         $processFoo = new ProcessWrapper(new Process(''), 'Foo');
         $processBaz = new ProcessWrapper(new Process(''), 'Baz');
@@ -64,7 +64,7 @@ class ProcessSetTest extends TestCase
         $this->assertSame($processFoo, $processes['Foo']);
     }
 
-    public function testShouldRetrieveProcessesByStatus()
+    public function testShouldRetrieveProcessesByStatus(): void
     {
         $doneTest1 = new ProcessWrapper(new Process(''), 'DoneTest1');
         $doneTest2 = new ProcessWrapper(new Process(''), 'DoneTest2');
@@ -98,7 +98,7 @@ class ProcessSetTest extends TestCase
         $this->assertCount(0, $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED));
     }
 
-    public function testShouldPublishProcessWhenAdded()
+    public function testShouldPublishProcessWhenAdded(): void
     {
         $publisherMock = $this->createMock(XmlPublisher::class);
 
@@ -116,7 +116,7 @@ class ProcessSetTest extends TestCase
         $set->add(new ProcessWrapper(new Process(''), 'FooClassName'));
     }
 
-    public function testShouldAllowToDefinePublisherUsingSetter()
+    public function testShouldAllowToDefinePublisherUsingSetter(): void
     {
         $set = new ProcessSet();
 
@@ -136,7 +136,7 @@ class ProcessSetTest extends TestCase
         $set->add(new ProcessWrapper(new Process(''), 'FooClassName'));
     }
 
-    public function testShouldCountStatusesOfWrappedProcesses()
+    public function testShouldCountStatusesOfWrappedProcesses(): void
     {
         $doneTest1 = new ProcessWrapper(new Process(''), 'DoneTest1');
         $doneTest1->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
@@ -162,7 +162,7 @@ class ProcessSetTest extends TestCase
         );
     }
 
-    public function testShouldCountResultsOfDoneProcesses()
+    public function testShouldCountResultsOfDoneProcesses(): void
     {
         $processWrapperMock = $this->createMock(ProcessWrapper::class);
         $processWrapperMock->expects($this->exactly(4))
@@ -196,7 +196,7 @@ class ProcessSetTest extends TestCase
         );
     }
 
-    public function testShouldDequeueProcessesWithoutDelay()
+    public function testShouldDequeueProcessesWithoutDelay(): void
     {
         $noDelayTest = new ProcessWrapper(new Process(''), 'NoDelay');
         $delayedTest = new ProcessWrapper(new Process(''), 'Delayed');
@@ -230,7 +230,7 @@ class ProcessSetTest extends TestCase
         );
     }
 
-    public function testShouldFailBuildingTreeIfTestHasDependencyOnNotExistingTest()
+    public function testShouldFailBuildingTreeIfTestHasDependencyOnNotExistingTest(): void
     {
         $process = new ProcessWrapper(new Process(''), 'Foo');
         $process->setDelay('NotExisting', 5);
@@ -244,7 +244,7 @@ class ProcessSetTest extends TestCase
         $this->set->buildTree();
     }
 
-    public function testShouldFailBuildingTreeIfCycleDetected()
+    public function testShouldFailBuildingTreeIfCycleDetected(): void
     {
         /*
             ROOT
@@ -266,7 +266,7 @@ class ProcessSetTest extends TestCase
         $this->set->buildTree();
     }
 
-    public function testShouldBuildGraphTreeFromProcessDependencies()
+    public function testShouldBuildGraphTreeFromProcessDependencies(): void
     {
         //     ROOT
         //    /    \
@@ -317,7 +317,7 @@ class ProcessSetTest extends TestCase
         $this->assertEquals(5, $verticesToB->getVertexId('D')->getEdgesIn()->getEdgeFirst()->getWeight());
     }
 
-    public function testShouldChangeOrderOfProcessesByGivenStrategy()
+    public function testShouldChangeOrderOfProcessesByGivenStrategy(): void
     {
         //     ROOT
         //    /    \
@@ -348,7 +348,7 @@ class ProcessSetTest extends TestCase
         $this->assertSame(['D', 'C', 'B', 'A'], array_keys($processesAfter));
     }
 
-    public function testShouldFailDependantsOfGivenProcess()
+    public function testShouldFailDependantsOfGivenProcess(): void
     {
         //     ROOT
         //    /    \
@@ -403,7 +403,7 @@ class ProcessSetTest extends TestCase
         $this->assertSame(ProcessWrapper::PROCESS_RESULT_FAILED, $processE->getResult());
     }
 
-    public function testShouldFailWhenFailingDependantsButTheTreeWasNotYetBuilt()
+    public function testShouldFailWhenFailingDependantsButTheTreeWasNotYetBuilt(): void
     {
         $processA = new ProcessWrapper(new Process(''), 'A');
         $processB = new ProcessWrapper(new Process(''), 'B');

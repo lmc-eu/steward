@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 /**
  * Allows sharing data between test-cases and phases of tests
  *
@@ -60,8 +61,8 @@ use Lmc\Steward\Utils\Strings;
  */
 class Legacy extends AbstractComponent
 {
-    const LEGACY_TYPE_CASE = 'CASE';
-    const LEGACY_TYPE_TEST = 'TEST';
+    public const LEGACY_TYPE_CASE = 'CASE';
+    public const LEGACY_TYPE_TEST = 'TEST';
 
     /** @var string */
     protected $testClassName;
@@ -88,10 +89,8 @@ class Legacy extends AbstractComponent
 
     /**
      * Set directory where results file should be stored. Usable eg. when LOGS_DIR constant was not set.
-     *
-     * @param string $dir
      */
-    public function setFileDir($dir)
+    public function setFileDir(string $dir): void
     {
         $this->fileDir = $dir;
     }
@@ -102,9 +101,8 @@ class Legacy extends AbstractComponent
      * @param string $type LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @throws LegacyException
-     * @return string
      */
-    protected function getLegacyName($type)
+    protected function getLegacyName(string $type): string
     {
         $name = $this->testClassName;
 
@@ -126,11 +124,8 @@ class Legacy extends AbstractComponent
 
     /**
      * Gets a path to file with legacy data
-     *
-     * @param string $filename
-     * @return string
      */
-    protected function getLegacyFullPath($filename)
+    protected function getLegacyFullPath(string $filename): string
     {
         return $this->fileDir . '/' . $filename . $this->extension;
     }
@@ -143,7 +138,7 @@ class Legacy extends AbstractComponent
      *      from the test class name
      * @throws LegacyException
      */
-    public function saveWithName($data, $legacyName)
+    public function saveWithName($data, string $legacyName): void
     {
         $filename = $this->getLegacyFullPath($legacyName);
         $this->log('Saving data as Legacy "%s" to file "%s"', $legacyName, $filename);
@@ -162,7 +157,7 @@ class Legacy extends AbstractComponent
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @throws LegacyException
      */
-    public function save($data, $type = self::LEGACY_TYPE_CASE)
+    public function save($data, string $type = self::LEGACY_TYPE_CASE): void
     {
         $this->saveWithName($data, $this->getLegacyName($type));
     }
@@ -176,7 +171,7 @@ class Legacy extends AbstractComponent
      * @throws LegacyException
      * @return mixed
      */
-    public function load($type = self::LEGACY_TYPE_CASE)
+    public function load(string $type = self::LEGACY_TYPE_CASE)
     {
         return $this->loadWithName($this->getLegacyName($type));
     }
@@ -189,7 +184,7 @@ class Legacy extends AbstractComponent
      * @throws LegacyException
      * @return mixed
      */
-    public function loadWithName($legacyName)
+    public function loadWithName(string $legacyName)
     {
         $filename = $this->getLegacyFullPath($legacyName);
 
@@ -216,7 +211,7 @@ class Legacy extends AbstractComponent
      * @param mixed $obj
      * @return string
      */
-    private function getPrintableValue($obj)
+    private function getPrintableValue($obj): string
     {
         if (is_object($obj) && method_exists($obj, '__toString')) {
             return (string) $obj;

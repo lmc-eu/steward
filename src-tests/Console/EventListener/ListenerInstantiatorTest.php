@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\EventListener;
 
@@ -13,13 +13,13 @@ class ListenerInstantiatorTest extends TestCase
     /** @var ListenerInstantiator */
     protected $instantiator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->instantiator = new ListenerInstantiator();
         $this->instantiator->setSearchPathPattern('Fixtures/');
     }
 
-    public function testShouldFindAndAttachListenersToDispatcher()
+    public function testShouldFindAndAttachListenersToDispatcher(): void
     {
         $dispatcher = new EventDispatcher();
         // There are no listeners on new dispatcher

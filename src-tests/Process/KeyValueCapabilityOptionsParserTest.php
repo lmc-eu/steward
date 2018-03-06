@@ -12,10 +12,8 @@ class KeyValueCapabilityOptionsParserTest extends TestCase
 {
     /**
      * @dataProvider provideCapabilities
-     * @param array $capabilityOption
-     * @param array $expectedCapabilities
      */
-    public function testShouldPropagateCapabilities(array $capabilityOption, array $expectedCapabilities)
+    public function testShouldPropagateCapabilities(array $capabilityOption, array $expectedCapabilities): void
     {
         $parser = new KeyValueCapabilityOptionsParser();
 
@@ -27,7 +25,7 @@ class KeyValueCapabilityOptionsParserTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideCapabilities()
+    public function provideCapabilities(): array
     {
         return [
             'string value' => [['stringValue:thisIsString'], ['stringValue' => 'thisIsString']],
@@ -72,7 +70,7 @@ class KeyValueCapabilityOptionsParserTest extends TestCase
         ];
     }
 
-    public function testShouldNotAcceptCapabilitiesInWrongFormat()
+    public function testShouldNotAcceptCapabilitiesInWrongFormat(): void
     {
         $parser = new KeyValueCapabilityOptionsParser();
 

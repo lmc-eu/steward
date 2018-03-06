@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -80,7 +80,7 @@ class CleanCommand extends Command
         $logsDir = $input->getOption(RunCommand::OPTION_LOGS_DIR);
         $defaultLogsDir = $this->getDefinition()->getOption(RunCommand::OPTION_LOGS_DIR)->getDefault();
 
-        return $logsDir == $defaultLogsDir;
+        return $logsDir === $defaultLogsDir;
     }
 
     private function createLogsDirectoryIfNotExists(string $logsDir): void
@@ -90,8 +90,9 @@ class CleanCommand extends Command
         }
     }
 
-    private function cleanDirectory(string $logsDir)
+    private function cleanDirectory(string $logsDir): void
     {
+        /** @var Finder $finder */
         $finder = (new Finder())
             ->files()
             ->in($logsDir)

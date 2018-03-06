@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console;
 
@@ -15,7 +15,7 @@ final class CommandEvents
      *
      * @var string
      */
-    const CONFIGURE = 'command.configure';
+    public const CONFIGURE = 'command.configure';
 
     /**
      * The PRE_INITIALIZE event allows you to attach listeners before initialization of any command is started, ie.
@@ -25,7 +25,7 @@ final class CommandEvents
      *
      * @var string
      */
-    const PRE_INITIALIZE = 'command.pre_initialize';
+    public const PRE_INITIALIZE = 'command.pre_initialize';
 
     /**
      * The RUN_TESTS_INIT event is dispatched after basic initialization of Run Command.
@@ -35,7 +35,7 @@ final class CommandEvents
      *
      * @var string
      */
-    const RUN_TESTS_INIT = 'command.run_tests_init';
+    public const RUN_TESTS_INIT = 'command.run_tests_init';
 
     /**
      * The RUN_TESTS_PROCESS event is dispatched right after instance of each Process has been created.
@@ -45,5 +45,5 @@ final class CommandEvents
      *
      * @var string
      */
-    const RUN_TESTS_PROCESS = 'command.run_tests_process';
+    public const RUN_TESTS_PROCESS = 'command.run_tests_process';
 }

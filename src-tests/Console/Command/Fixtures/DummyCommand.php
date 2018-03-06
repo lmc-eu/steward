@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command\Fixtures;
 
@@ -9,7 +9,7 @@ use Symfony\Component\VarDumper\VarDumper;
 
 class DummyCommand extends Command
 {
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         return 0;
     }

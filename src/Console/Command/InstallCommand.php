@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -143,7 +143,7 @@ class InstallCommand extends Command
 
         $questionText = 'Enter Selenium server version to install';
 
-        if (!empty($latestVersion)) {
+        if ($latestVersion !== null) {
             return $this->io->ask($questionText, $latestVersion);
         }
 

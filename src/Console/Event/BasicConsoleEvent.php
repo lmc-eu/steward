@@ -13,18 +13,12 @@ class BasicConsoleEvent extends Event
     /** @var Command */
     protected $command;
 
-    /**
-     * @param Command $command
-     */
     public function __construct(Command $command)
     {
         $this->command = $command;
     }
 
-    /**
-     * @return Command A Command instance
-     */
-    public function getCommand()
+    public function getCommand(): Command
     {
         return $this->command;
     }

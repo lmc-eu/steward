@@ -11,7 +11,7 @@ class TestEndLogListenerTest extends TestCase
 {
     use MockAbstractTestCaseWithNameTrait;
 
-    public function testShouldLogTestNameToOutputOnTestEnd()
+    public function testShouldLogTestNameToOutputOnTestEnd(): void
     {
         $listener = new TestEndLogListener();
 

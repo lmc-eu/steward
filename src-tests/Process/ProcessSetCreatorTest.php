@@ -45,7 +45,7 @@ class ProcessSetCreatorTest extends TestCase
     const NAME_BAR_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupBarTest';
     const NAME_FOO_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupFooTest';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
             ->setMethods(['dispatch'])
@@ -74,7 +74,7 @@ class ProcessSetCreatorTest extends TestCase
         );
     }
 
-    public function testShouldCreateEmptyProcessSetIfNoFilesGiven()
+    public function testShouldCreateEmptyProcessSetIfNoFilesGiven(): void
     {
         $finderMock = $this->getMockBuilder(Finder::class)
             ->setMethods(['getIterator'])
@@ -90,7 +90,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertCount(0, $processSet);
     }
 
-    public function testShouldCreateProcessSetFromGivenFiles()
+    public function testShouldCreateProcessSetFromGivenFiles(): void
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], [], '');
 
@@ -122,7 +122,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertArraySubset($expectedEnv, $testEnv);
     }
 
-    public function testShouldThrowExceptionIfAddingFileWithNoClass()
+    public function testShouldThrowExceptionIfAddingFileWithNoClass(): void
     {
         $files = $this->findDummyTests('NoClassTest.php', 'InvalidTests');
 
@@ -132,7 +132,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->creator->createFromFiles($files, [], []);
     }
 
-    public function testShouldThrowExceptionIfAddingClassWithNameMismatchingTheFileName()
+    public function testShouldThrowExceptionIfAddingClassWithNameMismatchingTheFileName(): void
     {
         $files = $this->findDummyTests('WrongClassTest.php', 'InvalidTests');
 
@@ -145,7 +145,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->creator->createFromFiles($files, [], []);
     }
 
-    public function testShouldThrowExceptionIfMultipleClassesAreDefinedInFile()
+    public function testShouldThrowExceptionIfMultipleClassesAreDefinedInFile(): void
     {
         $files = $this->findDummyTests('MultipleClassesInFileTest.php', 'InvalidTests');
 
@@ -156,7 +156,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->creator->createFromFiles($files, [], []);
     }
 
-    public function testShouldOnlyAddTestsOfGivenGroups()
+    public function testShouldOnlyAddTestsOfGivenGroups(): void
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), ['bar', 'foo'], []);
 
@@ -168,7 +168,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertStringMatchesFormat('%AFound testcase file #2 in group foo: %A%eGroupFooTest.php%A', $output);
     }
 
-    public function testShouldExcludeTestsOfGivenGroups()
+    public function testShouldExcludeTestsOfGivenGroups(): void
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], ['bar', 'foo']);
 
@@ -180,7 +180,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupFooTest.php with group foo%A', $output);
     }
 
-    public function testShouldAddTestsOfGivenGroupsButExcludeFromThemThoseOfExcludedGroups()
+    public function testShouldAddTestsOfGivenGroupsButExcludeFromThemThoseOfExcludedGroups(): void
     {
         // group "both" gets included (incl. GroupFooTest and GroupBarTest), but "GroupBarTest" gets excluded
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), ['both'], ['bar']);
@@ -194,7 +194,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupBarTest.php with group bar%A', $output);
     }
 
-    public function testShouldAddTestsWithTheirDefinedDelay()
+    public function testShouldAddTestsWithTheirDefinedDelay(): void
     {
         $files = $this->findDummyTests('*Test.php', 'DelayedTests');
         $processSet = $this->creator->createFromFiles($files, [], []);
@@ -216,7 +216,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertSame(3.33, $delayedTest->getDelayMinutes());
     }
 
-    public function testShouldIgnoreTestsDelays()
+    public function testShouldIgnoreTestsDelays(): void
     {
         $files = $this->findDummyTests('*Test.php', 'DelayedTests');
         $processSet = $this->creator->createFromFiles($files, [], [], null, true);
@@ -232,7 +232,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertFalse($delayedTest->isDelayed());
     }
 
-    public function testShouldThrowExceptionIfAddingTestWithDelayTimeButWithoutDelayedClass()
+    public function testShouldThrowExceptionIfAddingTestWithDelayTimeButWithoutDelayedClass(): void
     {
         $files = $this->findDummyTests('InvalidDelayTest.php', 'InvalidTests');
 
@@ -245,7 +245,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->creator->createFromFiles($files, [], []);
     }
 
-    public function testShouldPassFilterOptionToPhpunitProcess()
+    public function testShouldPassFilterOptionToPhpunitProcess(): void
     {
         $processSet = $this->creator->createFromFiles($this->findDummyTests(), [], [], 'testCase::testName');
 
@@ -259,7 +259,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertContains('--filter=testCase::testName', $testCommand);
     }
 
-    public function testShouldPropagateCustomOptionsIntoProcess()
+    public function testShouldPropagateCustomOptionsIntoProcess(): void
     {
         $this->input = new ArgvInput(
             [
@@ -308,7 +308,7 @@ class ProcessSetCreatorTest extends TestCase
         );
     }
 
-    public function testShouldSetPHPUnitColoredOptionOnlyIfTheOutputIsDecorated()
+    public function testShouldSetPHPUnitColoredOptionOnlyIfTheOutputIsDecorated(): void
     {
         $files = $this->findDummyTests('DummyTest.php');
 
@@ -334,7 +334,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertContains('--colors=always', $commandWithColors);
     }
 
-    public function testShouldDispatchProcessEvent()
+    public function testShouldDispatchProcessEvent(): void
     {
         $this->dispatcherMock->expects($this->at(0))
             ->method('dispatch')
@@ -361,7 +361,7 @@ class ProcessSetCreatorTest extends TestCase
      * @param string[] $expectedTestNames
      * @param ProcessSet $processSet
      */
-    protected function assertQueuedTests(array $expectedTestNames, $processSet)
+    protected function assertQueuedTests(array $expectedTestNames, $processSet): void
     {
         $this->assertInstanceOf(ProcessSet::class, $processSet);
         $this->assertCount(count($expectedTestNames), $processSet);

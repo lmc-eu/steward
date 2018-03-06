@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  */
 class TimelineDataBuilderTest extends TestCase
 {
-    public function testShouldNotIncludeStartedTestsInTimelineData()
+    public function testShouldNotIncludeStartedTestsInTimelineData(): void
     {
         $xml = simplexml_load_file(__DIR__ . '/Fixtures/results-with-only-started-tests.xml');
         $builder = new TimelineDataBuilder($xml);
@@ -18,7 +18,7 @@ class TimelineDataBuilderTest extends TestCase
         $this->assertSame([], $builder->buildTimelineItems());
     }
 
-    public function testShouldAppendUnknownGroupIfExecutorOfAnyTestIsNotDefined()
+    public function testShouldAppendUnknownGroupIfExecutorOfAnyTestIsNotDefined(): void
     {
         $xml = simplexml_load_file(__DIR__ . '/Fixtures/results-with-unknown-executor.xml');
         $builder = new TimelineDataBuilder($xml);
@@ -40,7 +40,7 @@ class TimelineDataBuilderTest extends TestCase
         );
     }
 
-    public function testShouldBuildGroupsForEachUniqueExecutor()
+    public function testShouldBuildGroupsForEachUniqueExecutor(): void
     {
         $xml = simplexml_load_file(__DIR__ . '/Fixtures/results.xml');
         $builder = new TimelineDataBuilder($xml);
@@ -72,7 +72,7 @@ class TimelineDataBuilderTest extends TestCase
         );
     }
 
-    public function testShouldBuildTimelineItemsForAllDoneTests()
+    public function testShouldBuildTimelineItemsForAllDoneTests(): void
     {
         $xml = simplexml_load_file(__DIR__ . '/Fixtures/results.xml');
         $builder = new TimelineDataBuilder($xml);
@@ -124,7 +124,7 @@ class TimelineDataBuilderTest extends TestCase
         );
     }
 
-    public function testShouldProcessEmptyResults()
+    public function testShouldProcessEmptyResults(): void
     {
         $xml = simplexml_load_string('<?xml version="1.0" encoding="utf-8"?><testcases/>');
         $builder = new TimelineDataBuilder($xml);

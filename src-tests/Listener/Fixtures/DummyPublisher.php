@@ -13,7 +13,7 @@ class DummyPublisher extends AbstractPublisher
         $result = null,
         \DateTimeInterface $startDate = null,
         \DateTimeInterface $endDate = null
-    ) {
+    ): void {
     }
 
     public function publishResult(
@@ -23,6 +23,6 @@ class DummyPublisher extends AbstractPublisher
         $status,
         $result = null,
         $message = null
-    ) {
+    ): void {
     }
 }

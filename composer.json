@@ -54,7 +54,7 @@
         "friendsofphp/php-cs-fixer": "^2.0",
         "symfony/var-dumper": "^4.0",
         "phpstan/phpstan-shim": "^0.9.2",
-        "jakub-onderka/php-parallel-lint": "^0.9.2"
+        "jakub-onderka/php-parallel-lint": "^1.0.0"
     },
     "suggest": {
         "ext-posix": "For colored output",
@@ -63,11 +63,11 @@
     "bin": ["bin/steward", "bin/steward.php"],
     "scripts": {
         "codestyle:check": [
-            "vendor/bin/php-cs-fixer fix --diff --diff-format=udiff --dry-run --ansi",
+            "vendor/bin/php-cs-fixer fix --diff --diff-format=udiff --dry-run --ansi -vvv",
             "vendor/bin/phpcs --standard=ruleset.xml --colors"
         ],
         "codestyle:fix": [
-            "vendor/bin/php-cs-fixer fix --diff --diff-format=udiff --ansi || exit 0",
+            "vendor/bin/php-cs-fixer fix --diff --diff-format=udiff --ansi -vvv || exit 0",
             "vendor/bin/phpcbf --standard=ruleset.xml --colors"
         ],
         "analyze": [

@@ -12,7 +12,7 @@ class NullWebDriverTest extends TestCase
      */
     protected $webdriver;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->webdriver = new NullWebDriver();
     }
@@ -20,7 +20,7 @@ class NullWebDriverTest extends TestCase
     /**
      * @dataProvider provideMethodName
      */
-    public function testShouldThrowExceptionWhenInteractingWithInstance(string $methodName, array $params)
+    public function testShouldThrowExceptionWhenInteractingWithInstance(string $methodName, array $params): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('You cannot interact with NullWebDriver.');
@@ -33,7 +33,7 @@ class NullWebDriverTest extends TestCase
      *
      * @return array
      */
-    public function provideMethodName()
+    public function provideMethodName(): array
     {
         return [
             ['close', []],

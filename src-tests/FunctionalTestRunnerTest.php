@@ -25,7 +25,7 @@ class FunctionalTestRunnerTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -44,7 +44,7 @@ class FunctionalTestRunnerTest extends TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldExecuteSimpleTests()
+    public function testShouldExecuteSimpleTests(): void
     {
         $this->tester->execute(
             [

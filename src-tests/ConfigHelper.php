@@ -8,7 +8,7 @@ class ConfigHelper
      * Unset config value from the singleton, so next time the config will be get, it will be recreated from
      * current (and possibly adjusted to our needs) environment variables.
      */
-    public static function unsetConfigInstance()
+    public static function unsetConfigInstance(): void
     {
         $configProviderSingleton = ConfigProvider::getInstance();
         $reflection = new \ReflectionClass($configProviderSingleton);
@@ -39,7 +39,7 @@ class ConfigHelper
      * Set environment variables from given array
      * @param array $variables
      */
-    public static function setEnvironmentVariables(array $variables)
+    public static function setEnvironmentVariables(array $variables): void
     {
         foreach ($variables as $key => $value) {
             putenv($key . '=' . $value);

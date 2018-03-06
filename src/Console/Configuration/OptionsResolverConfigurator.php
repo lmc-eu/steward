@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Configuration;
 
@@ -11,11 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OptionsResolverConfigurator
 {
-    /**
-     * @param OptionsResolver $optionsResolver
-     * @return OptionsResolver
-     */
-    public function configure(OptionsResolver $optionsResolver)
+    public function configure(OptionsResolver $optionsResolver): OptionsResolver
     {
         $this->configureCapabilitiesResolverOption($optionsResolver);
         $this->configureDirsOption($optionsResolver);
@@ -23,11 +19,11 @@ class OptionsResolverConfigurator
         return $optionsResolver;
     }
 
-    private function configureCapabilitiesResolverOption(OptionsResolver $optionsResolver)
+    private function configureCapabilitiesResolverOption(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefault(ConfigOptions::CAPABILITIES_RESOLVER, '');
 
-        $optionsResolver->setAllowedValues(ConfigOptions::CAPABILITIES_RESOLVER, function ($value) {
+        $optionsResolver->setAllowedValues(ConfigOptions::CAPABILITIES_RESOLVER, function ($value): bool {
             if (empty($value)) {
                 return true;
             }
@@ -58,7 +54,7 @@ class OptionsResolverConfigurator
         });
     }
 
-    private function configureDirsOption(OptionsResolver $optionsResolver)
+    private function configureDirsOption(OptionsResolver $optionsResolver): void
     {
         $dirs = [
             ConfigOptions::TESTS_DIR,

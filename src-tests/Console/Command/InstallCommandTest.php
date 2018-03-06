@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -26,7 +26,7 @@ class InstallCommandTest extends TestCase
     /** @var CommandTester */
     protected $tester;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $dispatcher = new EventDispatcher();
         $application = new Application();
@@ -38,7 +38,7 @@ class InstallCommandTest extends TestCase
         $this->tester = new CommandTester($this->command);
     }
 
-    public function testShouldDownloadWithoutAskingForInputWhenVersionIsDefinedAsOption()
+    public function testShouldDownloadWithoutAskingForInputWhenVersionIsDefinedAsOption(): void
     {
         $this->command->setDownloader($this->getDownloadMock($expectedFileSize = 2 * 1024 * 1024));
 
@@ -64,7 +64,7 @@ class InstallCommandTest extends TestCase
     /**
      * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
      */
-    public function testShouldDownloadLatestVersionIfUserDoesNotEnterItsOwn()
+    public function testShouldDownloadLatestVersionIfUserDoesNotEnterItsOwn(): void
     {
         $this->command->setDownloader($this->getDownloadMock());
         $this->mockLatestVersionCheck();
@@ -92,7 +92,7 @@ class InstallCommandTest extends TestCase
     /**
      * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
      */
-    public function testShouldDownloadVersionEnteredByUser()
+    public function testShouldDownloadVersionEnteredByUser(): void
     {
         $this->command->setDownloader($this->getDownloadMock());
         $this->mockLatestVersionCheck();
@@ -117,7 +117,7 @@ class InstallCommandTest extends TestCase
     /**
      * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
      */
-    public function testShouldRequireVersionToBeEnteredIfLastVersionCheckFails()
+    public function testShouldRequireVersionToBeEnteredIfLastVersionCheckFails(): void
     {
         $this->command->setDownloader($this->getDownloadMock());
         $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');
@@ -137,7 +137,7 @@ class InstallCommandTest extends TestCase
         $this->assertContains('Downloading Selenium standalone server version 6.6.6...', $output);
     }
 
-    public function testShouldPrintErrorIfDownloadFails()
+    public function testShouldPrintErrorIfDownloadFails(): void
     {
         $this->command->setDownloader($this->getDownloadMock($expectedFileSize = false));
 
@@ -147,7 +147,7 @@ class InstallCommandTest extends TestCase
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
-    public function testShouldThrowAnExceptionInNonInteractiveModeIfLastVersionCheckFailsAndNoVersionWasProvided()
+    public function testShouldThrowAnExceptionInNonInteractiveModeIfLastVersionCheckFailsAndNoVersionWasProvided(): void
     {
         $downloaderMock = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([__DIR__ . '/Fixtures/vendor/bin'])
@@ -167,7 +167,7 @@ class InstallCommandTest extends TestCase
         );
     }
 
-    public function testShouldOutputOnlyFilePathInNonInteractiveModeAndDownloadVersionProvidedAsOption()
+    public function testShouldOutputOnlyFilePathInNonInteractiveModeAndDownloadVersionProvidedAsOption(): void
     {
         // Path to an existing file
         $filePath = __DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-6.33.6.jar';
@@ -186,7 +186,7 @@ class InstallCommandTest extends TestCase
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
-    public function testShouldOutputOnlyFilePathInNonInteractiveModeAndDownloadLatestVersionIfNoneProvided()
+    public function testShouldOutputOnlyFilePathInNonInteractiveModeAndDownloadLatestVersionIfNoneProvided(): void
     {
         // Path to an existing file
         $filePath = __DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-2.34.5.jar';
@@ -207,7 +207,7 @@ class InstallCommandTest extends TestCase
     /**
      * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
      */
-    public function testShouldNotDownloadTheFileAgainIfAlreadyExists()
+    public function testShouldNotDownloadTheFileAgainIfAlreadyExists(): void
     {
         $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
 
@@ -225,7 +225,7 @@ class InstallCommandTest extends TestCase
     /**
      * @requires function Symfony\Component\Console\Tester\CommandTester::setInputs
      */
-    public function testShouldNotDownloadTheFileAgainIfAlreadyExistsOutputOnlyFilePathInNonInteractiveMode()
+    public function testShouldNotDownloadTheFileAgainIfAlreadyExistsOutputOnlyFilePathInNonInteractiveMode(): void
     {
         $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
 
@@ -243,7 +243,7 @@ class InstallCommandTest extends TestCase
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
-    public function testShouldDispatchEventsOnExecute()
+    public function testShouldDispatchEventsOnExecute(): void
     {
         $dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
             ->setMethods(['dispatch'])
@@ -271,7 +271,7 @@ class InstallCommandTest extends TestCase
      * @param int|bool $expectedFileSize
      * @return Downloader|\PHPUnit_Framework_MockObject_MockObject $downloaderMock
      */
-    protected function getDownloadMock($expectedFileSize = 123)
+    protected function getDownloadMock($expectedFileSize = 123): \PHPUnit_Framework_MockObject_MockObject
     {
         $downloaderMock = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([__DIR__ . '/Fixtures/vendor/bin'])
@@ -293,7 +293,7 @@ class InstallCommandTest extends TestCase
     /**
      * Make latest version check to return version 2.34.5
      */
-    protected function mockLatestVersionCheck()
+    protected function mockLatestVersionCheck(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-minimal.xml');
         $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');

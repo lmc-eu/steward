@@ -18,7 +18,7 @@ class SnapshotListenerTest extends TestCase
 {
     use PHPMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         ConfigHelper::setEnvironmentVariables(ConfigHelper::getDummyConfig());
         ConfigHelper::unsetConfigInstance();
@@ -36,7 +36,7 @@ class SnapshotListenerTest extends TestCase
         string $dataSetName,
         array $dataSet,
         string $expectedFileNameBase
-    ) {
+    ): void {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(
             AbstractTestCase::class,
@@ -86,7 +86,7 @@ class SnapshotListenerTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideBasicTestEvent()
+    public function provideBasicTestEvent(): array
     {
         $dummyException = new \Exception('Error exception', 333);
         $dummyFailureException = new AssertionFailedError('Failure exception');
@@ -100,7 +100,7 @@ class SnapshotListenerTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideTestWithDataSet()
+    public function provideTestWithDataSet(): array
     {
         $dummyException = new \Exception('Error exception', 333);
 
@@ -126,7 +126,7 @@ class SnapshotListenerTest extends TestCase
         ];
     }
 
-    public function testShouldNotTakeSnapshotIfTestIsNotStewardAbstractTestCase()
+    public function testShouldNotTakeSnapshotIfTestIsNotStewardAbstractTestCase(): void
     {
         $test = new WarningTestCase('foo');
 
@@ -137,7 +137,7 @@ class SnapshotListenerTest extends TestCase
         $this->assertEmpty($test->getActualOutput());
     }
 
-    public function testShouldAppendErrorOutputIfWebDriverIsNotAvailable()
+    public function testShouldAppendErrorOutputIfWebDriverIsNotAvailable(): void
     {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['testFooBar'], 'FooBarTest');
@@ -148,7 +148,7 @@ class SnapshotListenerTest extends TestCase
         $this->assertContains('[WARN] WebDriver instance not found, cannot take snapshot.', $test->getActualOutput());
     }
 
-    public function testShouldAppendErrorOutputIfWebDriverThrowsException()
+    public function testShouldAppendErrorOutputIfWebDriverThrowsException(): void
     {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['testFooBar'], 'FooBarTest');

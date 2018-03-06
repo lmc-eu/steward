@@ -24,18 +24,18 @@ class Select2Test extends AbstractTestCase
     /**
      * @before
      */
-    public function init()
+    public function init(): void
     {
         $this->wd->get('file:///' . __DIR__ . '/Web/select2v3.html');
     }
 
     /**
      * @dataProvider provideSelectSelector
-     * @param string $selector
-     * @param bool $shouldBeMultiple
      */
-    public function testShouldCreateNewInstanceForSelect2AndDetectIfItIsMultiple($selector, $shouldBeMultiple)
-    {
+    public function testShouldCreateNewInstanceForSelect2AndDetectIfItIsMultiple(
+        string $selector,
+        bool $shouldBeMultiple
+    ): void {
         $element = $this->findByCss($selector);
         $select2 = new Select2($this, $element);
 
@@ -65,7 +65,7 @@ class Select2Test extends AbstractTestCase
     /**
      * @return array[]
      */
-    public function provideSelectSelector()
+    public function provideSelectSelector(): array
     {
         return [
             'simple <select>' => [self::SELECT_SIMPLE_SELECTOR, false],
@@ -75,7 +75,7 @@ class Select2Test extends AbstractTestCase
         ];
     }
 
-    public function testShouldGetDefaultSelectedOptionOfSimpleSelect()
+    public function testShouldGetDefaultSelectedOptionOfSimpleSelect(): void
     {
         $element = $this->findByCss(self::SELECT_SIMPLE_SELECTOR);
         $select2 = new Select2($this, $element);
@@ -91,7 +91,7 @@ class Select2Test extends AbstractTestCase
         $this->assertSame('First', $firstSelectedOption->getText());
     }
 
-    public function testShouldReturnEmptyArrayIfNoOptionsOfMultipleSelectSelected()
+    public function testShouldReturnEmptyArrayIfNoOptionsOfMultipleSelectSelected(): void
     {
         $element = $this->findByCss(self::SELECT_MULTIPLE_SELECTOR);
         $select2 = new Select2($this, $element);
@@ -101,7 +101,7 @@ class Select2Test extends AbstractTestCase
         $this->assertSame([], $selectedOptions);
     }
 
-    public function testShouldThrowExceptionIfThereIsNoFirstSelectedOptionOfMultipleSelect()
+    public function testShouldThrowExceptionIfThereIsNoFirstSelectedOptionOfMultipleSelect(): void
     {
         $element = $this->findByCss(self::SELECT_MULTIPLE_SELECTOR);
         $select2 = new Select2($this, $element);
@@ -111,7 +111,7 @@ class Select2Test extends AbstractTestCase
         $select2->getFirstSelectedOption();
     }
 
-    public function testShouldSelectOptionOfSimpleSelectByVisiblePartialText()
+    public function testShouldSelectOptionOfSimpleSelectByVisiblePartialText(): void
     {
         $element = $this->findByCss(self::SELECT_SIMPLE_SELECTOR);
         $select2 = new Select2($this, $element);
@@ -124,7 +124,7 @@ class Select2Test extends AbstractTestCase
         $this->assertSame('Fifth surrounded by spaces', $select2->getFirstSelectedOption()->getText());
     }
 
-    public function testShouldSelectOptionOfMultipleSelectByVisiblePartialText()
+    public function testShouldSelectOptionOfMultipleSelectByVisiblePartialText(): void
     {
         $element = $this->findByCss(self::SELECT_MULTIPLE_SELECTOR);
         $select2 = new Select2($this, $element);

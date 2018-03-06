@@ -20,10 +20,9 @@ class CapabilitiesResolverTest extends TestCase
 {
     /**
      * @dataProvider provideBrowsers
-     * @param string $browser
      * @requires extension zip
      */
-    public function testShouldResolveBasicDesiredCapabilities($browser, callable $extraCallback = null)
+    public function testShouldResolveBasicDesiredCapabilities(string $browser, callable $extraCallback = null): void
     {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');
@@ -49,12 +48,12 @@ class CapabilitiesResolverTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideBrowsers()
+    public function provideBrowsers(): array
     {
         return [
             [
                 WebDriverBrowserType::FIREFOX,
-                function ($capabilitiesArray) {
+                function ($capabilitiesArray): void {
                     $this->assertNotEmpty($capabilitiesArray['firefox_profile']);
                 },
             ],
@@ -62,7 +61,7 @@ class CapabilitiesResolverTest extends TestCase
             [WebDriverBrowserType::MICROSOFT_EDGE],
             [
                 WebDriverBrowserType::IE,
-                function ($capabilitiesArray) {
+                function ($capabilitiesArray): void {
                     $this->assertTrue($capabilitiesArray['ie.ensureCleanSession']);
                 },
             ],
@@ -74,7 +73,7 @@ class CapabilitiesResolverTest extends TestCase
     /**
      * @requires extension zip
      */
-    public function testShouldResolveExtraDesiredCapabilitiesOnCiServer()
+    public function testShouldResolveExtraDesiredCapabilitiesOnCiServer(): void
     {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');
@@ -101,7 +100,7 @@ class CapabilitiesResolverTest extends TestCase
         $this->assertEquals(['staging', 'Jenkins', 'FooBarTest'], $desiredCapabilitiesArray['tags']);
     }
 
-    public function testShouldResolveRequiredCapabilities()
+    public function testShouldResolveRequiredCapabilities(): void
     {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name']);
@@ -116,7 +115,7 @@ class CapabilitiesResolverTest extends TestCase
         $this->assertSame([], $requiredCapabilities->toArray());
     }
 
-    public function testShouldCallCustomCapabilitiesResolverIfDefined()
+    public function testShouldCallCustomCapabilitiesResolverIfDefined(): void
     {
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');

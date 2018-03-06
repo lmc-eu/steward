@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command;
 
@@ -17,9 +17,9 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class GenerateTimelineCommand extends Command
 {
-    const OPTION_RESULTS_FILE = 'results-file';
-    const OPTION_OUTPUT_FILE = 'output-file';
-    const DEFAULT_OUTPUT_FILENAME = 'timeline.html';
+    public const OPTION_RESULTS_FILE = 'results-file';
+    public const OPTION_OUTPUT_FILE = 'output-file';
+    public const DEFAULT_OUTPUT_FILENAME = 'timeline.html';
 
     /** @var Filesystem */
     private $filesystem;

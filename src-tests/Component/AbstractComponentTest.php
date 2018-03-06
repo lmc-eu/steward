@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Component;
 
@@ -16,7 +16,7 @@ class AbstractComponentTest extends TestCase
     /** @var MockComponent */
     protected $component;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->testCase = $this->getMockBuilder(AbstractTestCase::class)
             ->setMethods(null)
@@ -25,20 +25,20 @@ class AbstractComponentTest extends TestCase
         $this->component = new MockComponent($this->testCase);
     }
 
-    public function testShouldLogStandardOutput()
+    public function testShouldLogStandardOutput(): void
     {
         $this->expectOutputRegex('/.*\[MockComponent\] Foo bar.*/');
 
         $this->component->log('Foo %s', 'bar');
     }
 
-    public function testShouldLogWarnings()
+    public function testShouldLogWarnings(): void
     {
         $this->expectOutputRegex('/.*\[WARN\] \[MockComponent\] Foo bar.*/');
         $this->component->warn('Foo %s', 'bar');
     }
 
-    public function testShouldLogDebugInDebugMode()
+    public function testShouldLogDebugInDebugMode(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = 1;
@@ -49,7 +49,7 @@ class AbstractComponentTest extends TestCase
         $this->component->debug('Foo %s', 'bar');
     }
 
-    public function testShouldNotLogDebugMessagesIfDebugModeIsNotEnabled()
+    public function testShouldNotLogDebugMessagesIfDebugModeIsNotEnabled(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = 0;
@@ -60,7 +60,7 @@ class AbstractComponentTest extends TestCase
         $this->component->debug('Foo %s', 'bar');
     }
 
-    public function testShouldFailIfNotExistingMethodIsCalled()
+    public function testShouldFailIfNotExistingMethodIsCalled(): void
     {
         $this->expectException(Error::class);
         $this->expectExceptionMessage(

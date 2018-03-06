@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Configuration;
 
@@ -7,9 +7,9 @@ namespace Lmc\Steward\Console\Configuration;
  */
 final class ConfigOptions
 {
-    const CAPABILITIES_RESOLVER = 'capabilities_resolver';
-    const TESTS_DIR = 'tests_dir';
-    const LOGS_DIR = 'logs_dir';
+    public const CAPABILITIES_RESOLVER = 'capabilities_resolver';
+    public const TESTS_DIR = 'tests_dir';
+    public const LOGS_DIR = 'logs_dir';
 
     private function __construct()
     {

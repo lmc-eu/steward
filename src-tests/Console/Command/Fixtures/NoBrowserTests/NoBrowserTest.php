@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Command\Fixtures\NoBrowserTests;
 
@@ -10,7 +10,7 @@ use Lmc\Steward\Test\AbstractTestCase;
  */
 class NoBrowserTest extends AbstractTestCase
 {
-    public function testDummy()
+    public function testDummy(): void
     {
         $this->assertTrue(true);
     }

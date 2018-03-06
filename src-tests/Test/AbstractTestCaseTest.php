@@ -19,7 +19,7 @@ class AbstractTestCaseTest extends TestCase
     /** @var AbstractTestCase */
     protected $testCase;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = 1;
@@ -29,7 +29,7 @@ class AbstractTestCaseTest extends TestCase
         $this->testCase = $this->getAbstractTestCaseMock('MockedTest', 'testMethodDummyName');
     }
 
-    public function testShouldSetDefaultWindowSizeInitUtils()
+    public function testShouldSetDefaultWindowSizeInitUtils(): void
     {
         $wdMock = $this->createMock(RemoteWebDriver::class);
         $wdOptionsMock = $this->createMock(WebDriverOptions::class);
@@ -60,14 +60,14 @@ class AbstractTestCaseTest extends TestCase
 
     /**
      * @dataProvider provideLogStrings
-     * @param string $expectedOutput
-     * @param string $logMethod
-     * @param string $format
-     * @param array ...$arguments
      */
-    public function testShouldLogToOutput($expectedOutput, $logMethod, $format, ...$arguments)
-    {
-        $expectedOutput = preg_quote($expectedOutput);
+    public function testShouldLogToOutput(
+        string $expectedOutput,
+        string $logMethod,
+        string $format,
+        ...$arguments
+    ): void {
+        $expectedOutput = preg_quote($expectedOutput, '/');
         $this->expectOutputRegex('/^' . self::EXPECTED_TIMESTAMP_PATTERN . ' ' . $expectedOutput . '$/');
 
         if (!empty($arguments)) {
@@ -77,7 +77,10 @@ class AbstractTestCaseTest extends TestCase
         }
     }
 
-    public function provideLogStrings()
+    /**
+     * @return array[]
+     */
+    public function provideLogStrings(): array
     {
         return [
             'log simple string' => ['This is output', 'log', 'This is output'],
@@ -88,7 +91,7 @@ class AbstractTestCaseTest extends TestCase
         ];
     }
 
-    public function testShouldNotLogDebugOutputIfDebugModeIsNotEnabled()
+    public function testShouldNotLogDebugOutputIfDebugModeIsNotEnabled(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = 0;
@@ -99,7 +102,7 @@ class AbstractTestCaseTest extends TestCase
         $this->testCase->debug('Output that should not be printed');
     }
 
-    public function testCurrentOutputShouldAlsoContainAppendedOutput()
+    public function testCurrentOutputShouldAlsoContainAppendedOutput(): void
     {
         $this->testCase->appendTestLog('Appended %s', 'foo');
 

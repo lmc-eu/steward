@@ -37,7 +37,7 @@ class TestStatusListener implements TestListener
     public function __construct(array $customTestPublishers, SeleniumServerAdapter $seleniumServerAdapter = null)
     {
         $config = ConfigProvider::getInstance();
-        if (is_null($seleniumServerAdapter)) {
+        if ($seleniumServerAdapter === null) {
             $seleniumServerAdapter = new SeleniumServerAdapter($config->serverUrl);
         }
 

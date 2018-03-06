@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console;
 
@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase
 {
-    public function testShouldAddCustomInputDefinition()
+    public function testShouldAddCustomInputDefinition(): void
     {
         $application = new Application();
 

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Component;
 
@@ -18,10 +18,10 @@ use Lmc\Steward\Test\AbstractTestCase;
  */
 class Select2 extends AbstractComponent implements WebDriverSelectInterface
 {
-    const DROPDOWN_SELECTOR = '#select2-drop';
-    const DROPDOWN_OPTIONS_SELECTOR = '.select2-results > li';
-    const SIMPLESELECT_SELECTED_OPTION_SELECTOR = '.select2-chosen';
-    const MULTISELECT_SELECTED_OPTIONS_SELECTOR = '.select2-choices > li.select2-search-choice';
+    protected const DROPDOWN_SELECTOR = '#select2-drop';
+    protected const DROPDOWN_OPTIONS_SELECTOR = '.select2-results > li';
+    protected const SIMPLESELECT_SELECTED_OPTION_SELECTOR = '.select2-chosen';
+    protected const MULTISELECT_SELECTED_OPTIONS_SELECTOR = '.select2-choices > li.select2-search-choice';
 
     /** @var bool */
     protected $multiple;
@@ -41,10 +41,10 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
         $this->element = $element;
         $this->select2Selector = '#s2id_' . $this->element->getAttribute('id');
         $select2Element = $this->waitForCss($this->select2Selector);
-        $this->multiple = $this->detectMultipleFromSelect2($select2Element);
+        $this->multiple = $this->detectIfSelect2IsMultiple($select2Element);
     }
 
-    public function isMultiple()
+    public function isMultiple(): bool
     {
         return $this->multiple;
     }
@@ -98,7 +98,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @param int $index
      * @throws UnsupportedOperationException
      */
-    public function selectByIndex($index)
+    public function selectByIndex($index): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
@@ -108,7 +108,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @param string $value
      * @throws UnsupportedOperationException
      */
-    public function selectByValue($value)
+    public function selectByValue($value): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
@@ -118,7 +118,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @param string $text
      * @throws UnsupportedOperationException
      */
-    public function selectByVisibleText($text)
+    public function selectByVisibleText($text): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
@@ -128,7 +128,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      *
      * @param string $text
      */
-    public function selectByVisiblePartialText($text)
+    public function selectByVisiblePartialText($text): void
     {
         $this->openDropdownOptions();
 
@@ -160,7 +160,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @codeCoverageIgnore
      * @throws UnsupportedOperationException
      */
-    public function deselectAll()
+    public function deselectAll(): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
@@ -170,7 +170,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @param int $index
      * @throws UnsupportedOperationException
      */
-    public function deselectByIndex($index)
+    public function deselectByIndex($index): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
@@ -180,7 +180,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @param string $value
      * @throws UnsupportedOperationException
      */
-    public function deselectByValue($value)
+    public function deselectByValue($value): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
@@ -190,7 +190,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @param string $text
      * @throws UnsupportedOperationException
      */
-    public function deselectByVisibleText($text)
+    public function deselectByVisibleText($text): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
@@ -200,12 +200,12 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @param string $text
      * @throws UnsupportedOperationException
      */
-    public function deselectByVisiblePartialText($text)
+    public function deselectByVisiblePartialText($text): void
     {
         throw new UnsupportedOperationException('Method not is not implemented');
     }
 
-    public function openDropdownOptions()
+    public function openDropdownOptions(): void
     {
         // Wait for select2 to appear
         $select2link = $this->tc->wd->wait()->until(
@@ -218,13 +218,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
         $select2link->click();
     }
 
-    /**
-     * Detect if given Select2 element is multiple
-     *
-     * @param WebDriverElement $select2Element
-     * @return bool
-     */
-    protected function detectMultipleFromSelect2(WebDriverElement $select2Element)
+    protected function detectIfSelect2IsMultiple(WebDriverElement $select2Element): bool
     {
         $select2Classes = $select2Element->getAttribute('class');
 

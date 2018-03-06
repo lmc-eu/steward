@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Configuration;
 
@@ -12,11 +12,8 @@ class ConfigFileReaderTest extends TestCase
 {
     /**
      * @dataProvider providePathToConfigFile
-     * @param string|null $customPath
-     * @param string $subdir
-     * @param string $expectedPath
      */
-    public function testShouldResolvePathToConfigFile($customPath, $subdir, $expectedPath)
+    public function testShouldResolvePathToConfigFile(?string $customPath, string $subdir, string $expectedPath): void
     {
         $fileReader = new ConfigFileReader();
 
@@ -28,7 +25,7 @@ class ConfigFileReaderTest extends TestCase
     /**
      * @return array[]
      */
-    public function providePathToConfigFile()
+    public function providePathToConfigFile(): array
     {
         $subdirWithDistConfig = 'with-only-dist';
         $subdirWithLocalConfig = 'with-only-local';
@@ -48,7 +45,7 @@ class ConfigFileReaderTest extends TestCase
         ];
     }
 
-    public function testShouldReadYamlConfigFile()
+    public function testShouldReadYamlConfigFile(): void
     {
         $fileReader = new ConfigFileReader();
 
@@ -61,14 +58,14 @@ class ConfigFileReaderTest extends TestCase
         );
     }
 
-    public function testShouldReturnEmptyArrayIfFileIsEmpty()
+    public function testShouldReturnEmptyArrayIfFileIsEmpty(): void
     {
         $fileReader = new ConfigFileReader();
 
         $this->assertSame([], $fileReader->readConfigFile(__DIR__ . '/Fixtures/empty.yml'));
     }
 
-    public function testShouldThrowExceptionIfFileToReadNotExists()
+    public function testShouldThrowExceptionIfFileToReadNotExists(): void
     {
         $fileReader = new ConfigFileReader();
 
