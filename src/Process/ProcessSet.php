@@ -93,7 +93,7 @@ class ProcessSet implements \Countable
      */
     public function get($status)
     {
-        Assertion::choice($status, ProcessWrapper::$processStatuses);
+        Assertion::choice($status, ProcessWrapper::PROCESS_STATUSES);
 
         $return = [];
         foreach ($this->processes as $className => $processWrapper) {
@@ -209,7 +209,7 @@ class ProcessSet implements \Countable
     public function countStatuses()
     {
         $statusesCount = [];
-        foreach (ProcessWrapper::$processStatuses as $status) {
+        foreach (ProcessWrapper::PROCESS_STATUSES as $status) {
             $statusesCount[$status] = count($this->get($status));
         }
 

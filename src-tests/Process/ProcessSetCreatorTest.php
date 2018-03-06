@@ -41,9 +41,9 @@ class ProcessSetCreatorTest extends TestCase
     protected $publisherMock;
 
     // Fully classified names of dummy tests
-    const NAME_DUMMY_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\DummyTest';
-    const NAME_BAR_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupBarTest';
-    const NAME_FOO_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupFooTest';
+    private const NAME_DUMMY_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\DummyTest';
+    private const NAME_BAR_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupBarTest';
+    private const NAME_FOO_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupFooTest';
 
     public function setUp(): void
     {

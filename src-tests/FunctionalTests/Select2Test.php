@@ -16,10 +16,10 @@ use Lmc\Steward\Test\AbstractTestCase;
  */
 class Select2Test extends AbstractTestCase
 {
-    const SELECT_SIMPLE_SELECTOR = '#select';
-    const INPUT_SIMPLE_SELECTOR = '#input';
-    const SELECT_MULTIPLE_SELECTOR = '#select-multiple';
-    const INPUT_MULTIPLE_SELECTOR = '#input-multiple';
+    protected const SELECT_SIMPLE_SELECTOR = '#select';
+    protected const INPUT_SIMPLE_SELECTOR = '#input';
+    protected const SELECT_MULTIPLE_SELECTOR = '#select-multiple';
+    protected const INPUT_MULTIPLE_SELECTOR = '#input-multiple';
 
     /**
      * @before
