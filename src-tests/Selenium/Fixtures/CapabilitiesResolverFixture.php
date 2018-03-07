@@ -9,8 +9,8 @@ use Lmc\Steward\Test\AbstractTestCase;
 
 class CapabilitiesResolverFixture implements CustomCapabilitiesResolverInterface
 {
-    const CUSTOM_DESIRED_CAPABILITY = 'customDesiredCapability';
-    const CUSTOM_REQUIRED_CAPABILITY = 'customRequiredCapability';
+    public const CUSTOM_DESIRED_CAPABILITY = 'customDesiredCapability';
+    public const CUSTOM_REQUIRED_CAPABILITY = 'customRequiredCapability';
 
     public function __construct(ConfigProvider $config)
     {

@@ -15,27 +15,27 @@ use Symfony\Component\Process\Process;
 class ProcessWrapper
 {
     /** Process prepared to be run */
-    const PROCESS_STATUS_PREPARED = 'prepared';
+    public const PROCESS_STATUS_PREPARED = 'prepared';
     /** Finished process */
-    const PROCESS_STATUS_DONE = 'done';
+    public const PROCESS_STATUS_DONE = 'done';
     /** Process in queue  - waiting to be prepared */
-    const PROCESS_STATUS_QUEUED = 'queued';
+    public const PROCESS_STATUS_QUEUED = 'queued';
 
     /** Process failed - some tests have failed or are broken */
-    const PROCESS_RESULT_FAILED = 'failed';
+    public const PROCESS_RESULT_FAILED = 'failed';
     /** Process fatally failed (PHP fatal error occurred - eg. no WebDriver available) */
-    const PROCESS_RESULT_FATAL = 'fatal';
+    public const PROCESS_RESULT_FATAL = 'fatal';
     /** Process passed successful (with all its tests passing) */
-    const PROCESS_RESULT_PASSED = 'passed';
+    public const PROCESS_RESULT_PASSED = 'passed';
 
     /** @var array List of possible process statuses */
-    public static $processStatuses = [
+    public const PROCESS_STATUSES = [
         self::PROCESS_STATUS_PREPARED,
         self::PROCESS_STATUS_QUEUED,
         self::PROCESS_STATUS_DONE,
     ];
     /** @var array List of possible process results */
-    public static $processResults = [
+    public const PROCESS_RESULTS = [
         self::PROCESS_RESULT_PASSED,
         self::PROCESS_RESULT_FAILED,
         self::PROCESS_RESULT_FATAL,
@@ -146,7 +146,7 @@ class ProcessWrapper
      */
     public function setStatus($status)
     {
-        Assertion::choice($status, self::$processStatuses);
+        Assertion::choice($status, self::PROCESS_STATUSES);
 
         $this->status = $status;
 

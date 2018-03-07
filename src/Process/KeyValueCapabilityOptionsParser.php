@@ -9,7 +9,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
  */
 class KeyValueCapabilityOptionsParser
 {
-    const DELIMITER = ':';
+    private const DELIMITER = ':';
 
     /**
      * @param array $capabilities
