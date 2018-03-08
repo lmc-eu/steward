@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Listener\Fixtures;
 
@@ -11,22 +11,22 @@ use PHPUnit\Framework\Test;
 class ExceptionThrowingPublisher extends AbstractPublisher
 {
     public function publishResults(
-        $testCaseName,
-        $status,
-        $result = null,
-        \DateTimeInterface $startDate = null,
-        \DateTimeInterface $endDate = null
+        string $testCaseName,
+        string $status,
+        string $result = null,
+        \DateTimeInterface $testCaseStartDate = null,
+        \DateTimeInterface $testCaseEndDate = null
     ): void {
         throw new \LogicException('publishResults() called');
     }
 
     public function publishResult(
-        $testCaseName,
-        $testName,
+        string $testCaseName,
+        string $testName,
         Test $testInstance,
-        $status,
-        $result = null,
-        $message = null
+        string $status,
+        string $result = null,
+        string $message = null
     ): void {
         throw new \LogicException('publishResult() called');
     }

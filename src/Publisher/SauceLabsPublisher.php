@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Publisher;
 
@@ -11,10 +11,10 @@ use Lmc\Steward\Test\AbstractTestCase;
  */
 class SauceLabsPublisher extends AbstractCloudPublisher
 {
-    const API_URL = 'https://saucelabs.com/rest/v1';
-    const CONTENT_TYPE = 'application/json';
+    protected const API_URL = 'https://saucelabs.com/rest/v1';
+    protected const CONTENT_TYPE = 'application/json';
 
-    protected function getEndpointUrl(AbstractTestCase $testInstance)
+    protected function getEndpointUrl(AbstractTestCase $testInstance): string
     {
         $serverUrl = ConfigProvider::getInstance()->serverUrl;
         $serverUrlParts = (new SeleniumServerAdapter($serverUrl))->getServerUrlParts();
@@ -22,7 +22,7 @@ class SauceLabsPublisher extends AbstractCloudPublisher
         return sprintf('%s/%s/jobs/%s', self::API_URL, $serverUrlParts['user'], $testInstance->wd->getSessionID());
     }
 
-    protected function getAuth()
+    protected function getAuth(): string
     {
         $serverUrl = ConfigProvider::getInstance()->serverUrl;
         $serverUrlParts = (new SeleniumServerAdapter($serverUrl))->getServerUrlParts();
@@ -31,14 +31,14 @@ class SauceLabsPublisher extends AbstractCloudPublisher
     }
 
     protected function getData(
-        $testCaseName,
-        $testName,
+        string $testCaseName,
+        string $testName,
         AbstractTestCase $testInstance,
-        $status,
-        $result = null,
-        $message = null
-    ) {
-        $data = ['passed' => ($result == self::TEST_RESULT_PASSED)];
+        string $status,
+        string $result = null,
+        string $message = null
+    ): string {
+        $data = ['passed' => ($result === self::TEST_RESULT_PASSED)];
 
         if (!empty($message)) {
             $data['custom-data'] = ['message' => $message];
