@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\EventListener;
 
@@ -37,7 +37,7 @@ class XdebugListener implements EventSubscriberInterface
     /**
      * Add option to `run` command configuration.
      */
-    public function onCommandConfigure(BasicConsoleEvent $event)
+    public function onCommandConfigure(BasicConsoleEvent $event): void
     {
         if ($event->getCommand()->getName() !== 'run') {
             return;
@@ -55,7 +55,7 @@ class XdebugListener implements EventSubscriberInterface
     /**
      * Get input option on command initialization
      */
-    public function onCommandRunTestsInit(ExtendedConsoleEvent $event)
+    public function onCommandRunTestsInit(ExtendedConsoleEvent $event): void
     {
         $input = $event->getInput();
         $output = $event->getOutput();
@@ -94,7 +94,7 @@ class XdebugListener implements EventSubscriberInterface
     /**
      * If the $xdebugIdeKey variable is set, pass it to the process as XDEBUG_CONFIG environment variable
      */
-    public function onCommandRunTestsProcess(RunTestsProcessEvent $event)
+    public function onCommandRunTestsProcess(RunTestsProcessEvent $event): void
     {
         if ($this->xdebugIdeKey) {
             $env = $event->getEnvironmentVars();
@@ -107,9 +107,6 @@ class XdebugListener implements EventSubscriberInterface
      * If --xdebug option was not passed at all, return null to not activate the feature.
      * If the option was used without a value, use the default value of idekey.
      * If the option was passed with custom (not empty) value, use this value.
-     *
-     * @param InputInterface $input
-     * @return string|null
      */
     protected function getIdeKeyFromInputOption(InputInterface $input): ?string
     {

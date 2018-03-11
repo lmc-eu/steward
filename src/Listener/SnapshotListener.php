@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Listener;
 
@@ -19,14 +19,14 @@ class SnapshotListener implements TestListener
 {
     use TestListenerDefaultImplementation;
 
-    public function addError(Test $test, \Exception $e, $time)
+    public function addError(Test $test, \Exception $e, $time): void
     {
         if ($test instanceof AbstractTestCase) {
             $this->takeSnapshot($test);
         }
     }
 
-    public function addFailure(Test $test, AssertionFailedError $e, $time)
+    public function addFailure(Test $test, AssertionFailedError $e, $time): void
     {
         if ($test instanceof AbstractTestCase) {
             $this->takeSnapshot($test);
@@ -35,10 +35,8 @@ class SnapshotListener implements TestListener
 
     /**
      * Take screenshot and HTML snapshot of the page and save it.
-     *
-     * @param AbstractTestCase $test
      */
-    protected function takeSnapshot(AbstractTestCase $test)
+    protected function takeSnapshot(AbstractTestCase $test): void
     {
         if (!$test->wd instanceof RemoteWebDriver) {
             $test->appendTestLog('[WARN] WebDriver instance not found, cannot take snapshot.');
@@ -83,11 +81,8 @@ class SnapshotListener implements TestListener
     /**
      * Get url based on relative path of specific snapshot.
      * In our implementation we prepend artifact's URL to given relative path to make it clickable in Jenkins output.
-     *
-     * @param string $path
-     * @return string
      */
-    protected function getSnapshotUrl($path)
+    protected function getSnapshotUrl(string $path): string
     {
         if (getenv('JENKINS_URL') && getenv('BUILD_URL') && getenv('WORKSPACE')) {
             $realPath = realpath($path);
@@ -102,11 +97,7 @@ class SnapshotListener implements TestListener
         return $path;
     }
 
-    /**
-     * @param AbstractTestCase $testCase
-     * @return string
-     */
-    private function assembleTestIdentifier(AbstractTestCase $testCase)
+    private function assembleTestIdentifier(AbstractTestCase $testCase): string
     {
         return sprintf(
             '%s-%s-%s',

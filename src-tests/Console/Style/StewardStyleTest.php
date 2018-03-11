@@ -244,10 +244,9 @@ HTXT;
     }
 
     /**
-     * @param string $input
      * @return resource
      */
-    private function getInputStreamWithUserInput($input)
+    private function getInputStreamWithUserInput(string $input)
     {
         $stream = fopen('php://memory', 'r+', false);
         fwrite($stream, $input);
@@ -258,6 +257,7 @@ HTXT;
 
     /**
      * Force the line length to ensure a consistent output for expectations
+     *
      * @param StewardStyle $style
      */
     private function forceLineLength(StewardStyle $style): void

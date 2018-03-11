@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Selenium;
 
@@ -42,7 +42,18 @@ class DownloaderTest extends TestCase
 
     public function testShouldReturnNullIfLatestVersionCannotBeFound(): void
     {
-        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-broken.xml');
+        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-missing.xml');
+
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->any())
+            ->willReturn($releasesDummyResponse);
+
+        $this->assertNull(Downloader::getLatestVersion());
+    }
+
+    public function testShouldReturnNullIfLatestVersionIsInvalid(): void
+    {
+        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-invalid-version.xml');
 
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
@@ -252,10 +263,7 @@ class DownloaderTest extends TestCase
         rmdir($expectedDirectory);
     }
 
-    /**
-     * @param string $url
-     */
-    private function assertIsDownloadable($url): void
+    private function assertIsDownloadable(string $url): void
     {
         $context = stream_context_create(['http' => ['method' => 'HEAD', 'ignore_errors' => true]]);
         $fd = fopen($url, 'rb', false, $context);
@@ -265,10 +273,7 @@ class DownloaderTest extends TestCase
         $this->assertContains('200 OK', $responseCode);
     }
 
-    /**
-     * @param string $responseHeader
-     */
-    private function mockGetHeadersToReturnHeader($responseHeader): void
+    private function mockGetHeadersToReturnHeader(string $responseHeader): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'get_headers');
         $fileGetContentsMock->expects($this->any())

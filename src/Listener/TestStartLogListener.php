@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Listener;
 
@@ -12,7 +12,7 @@ class TestStartLogListener implements TestListener
 {
     use TestListenerDefaultImplementation;
 
-    public function startTest(Test $test)
+    public function startTest(Test $test): void
     {
         if ($test instanceof AbstractTestCase) {
             echo sprintf(

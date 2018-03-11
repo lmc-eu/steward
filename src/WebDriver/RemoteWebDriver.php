@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\WebDriver;
 
@@ -9,7 +9,7 @@ use Lmc\Steward\ConfigProvider;
  */
 class RemoteWebDriver extends \Facebook\WebDriver\Remote\RemoteWebDriver
 {
-    public function get($url)
+    public function get($url): \Facebook\WebDriver\Remote\RemoteWebDriver
     {
         $this->log('Loading URL "%s"', $url);
 
@@ -31,16 +31,15 @@ class RemoteWebDriver extends \Facebook\WebDriver\Remote\RemoteWebDriver
 
     /**
      * Log to output
+     *
      * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
-     * @param mixed $args,... OPTIONAL Variable number of parameters inserted into $format string
+     * @param mixed ...$args Variable number of parameters inserted into $format string
      */
-    protected function log($format, $args = null)
+    protected function log(string $format, ...$args): void
     {
-        $argv = func_get_args();
-        $format = array_shift($argv);
         echo '[' . date('Y-m-d H:i:s') . ']'
             . ' [WebDriver] '
-            . vsprintf($format, $argv)
+            . vsprintf($format, $args)
             . "\n";
     }
 }

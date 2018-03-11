@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Test;
 
@@ -22,11 +22,10 @@ abstract class AbstractTestCase extends TestCase
 
     /** @var RemoteWebDriver */
     public $wd;
-
     /** @var string Log appended to output of this test */
-    protected $appendedTestLog;
+    protected $appendedTestLog = '';
 
-    public function setUp()
+    public function setUp(): void
     {
         if ($this->wd instanceof RemoteWebDriver && static::BROWSER_WIDTH !== null && static::BROWSER_HEIGHT !== null) {
             $this->wd->manage()->window()->setSize(
@@ -38,9 +37,8 @@ abstract class AbstractTestCase extends TestCase
     /**
      * Get output of current test. Parent method is overwritten to include also $appendedTestLog in the output
      * (called eg. from PHPUnit\Util\Log\JUnit).
-     * @return string
      */
-    public function getActualOutput()
+    public function getActualOutput(): string
     {
         $output = parent::getActualOutput();
         $output .= $this->appendedTestLog;
@@ -50,12 +48,11 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Append given output at the end of test's log. This is useful especially when called from
-     * Listeners, as the standard output won't be part of test output buffer.
-     * @param string $format
-     * @param mixed ...$args
+     * Listeners, as the standard output won't be part of test output buffer
+     *
      * @see log
      */
-    public function appendTestLog($format, ...$args)
+    public function appendTestLog(string $format, ...$args): void
     {
         $output = $this->formatOutput($format, $args);
         $this->appendedTestLog .= $output;
@@ -64,40 +61,42 @@ abstract class AbstractTestCase extends TestCase
     /**
      * Append already formatted log (including timestamp, newlines etc.) to end of test's log.
      *
-     * @param string $formattedLog
      * @see appendTestLog
      */
-    public function appendFormattedTestLog($formattedLog)
+    public function appendFormattedTestLog(string $formattedLog): void
     {
         $this->appendedTestLog .= $formattedLog;
     }
 
     /**
      * Log to output
+     *
      * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
      * @param mixed ...$args Variable number of parameters inserted into $format string
      */
-    public function log($format, ...$args)
+    public function log(string $format, ...$args): void
     {
         echo $this->formatOutput($format, $args);
     }
 
     /**
      * Log warning to output. Unlike log(), it will be prefixed with "WARN: " and colored.
+     *
      * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
      * @param mixed ...$args Variable number of parameters inserted into $format string
      */
-    public function warn($format, ...$args)
+    public function warn(string $format, ...$args): void
     {
         echo $this->formatOutput($format, $args, 'WARN');
     }
 
     /**
      * Log to output, but only if debug mode is enabled.
+     *
      * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
      * @param mixed ...$args Variable number of parameters inserted into $format string
      */
-    public function debug($format, ...$args)
+    public function debug(string $format, ...$args): void
     {
         if (ConfigProvider::getInstance()->debug) {
             echo $this->formatOutput($format, $args, 'DEBUG');
@@ -105,12 +104,12 @@ abstract class AbstractTestCase extends TestCase
     }
 
     /**
-     * Sleep for given amount of seconds.
-     * Unlike sleep(), also the float values are supported.
-     * ALWAYS TRY TO USE WAIT() INSTEAD!
-     * @param float $seconds
+     * Sleep for given amount of seconds. Unlike sleep(), also the float values are supported.
+     * ALWAYS TRY TO USE WAIT() AND EXPLICIT WAITS INSTEAD!
+     *
+     * @see https://github.com/facebook/php-webdriver/wiki/HowTo-Wait
      */
-    public static function sleep($seconds)
+    public static function sleep(float $seconds): void
     {
         $fullSecond = (int) floor($seconds);
         $microseconds = fmod($seconds, 1) * 1000000000;
@@ -120,12 +119,13 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Format output
+     *
      * @param string $format
      * @param array $args Array of arguments passed to original sprintf()-like function
      * @param string $type Specific log severity type (WARN, DEBUG) prefixed to output
      * @return string Formatted output
      */
-    protected function formatOutput($format, array $args, $type = '')
+    protected function formatOutput(string $format, array $args, string $type = ''): string
     {
         // If first item of arguments contains another array use it as arguments
         if (!empty($args) && is_array($args[0])) {

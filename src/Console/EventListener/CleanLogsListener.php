@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\EventListener;
 
@@ -27,7 +27,7 @@ class CleanLogsListener implements EventSubscriberInterface
     /**
      * Add option to `run` command configuration.
      */
-    public function onCommandConfigure(BasicConsoleEvent $event)
+    public function onCommandConfigure(BasicConsoleEvent $event): void
     {
         if ($event->getCommand()->getName() !== 'run') {
             return;
@@ -41,7 +41,7 @@ class CleanLogsListener implements EventSubscriberInterface
         );
     }
 
-    public function onCommandPreInitialize(ExtendedConsoleEvent $event)
+    public function onCommandPreInitialize(ExtendedConsoleEvent $event): void
     {
         if (!$event->getCommand()->getDefinition()->hasOption(self::OPTION_NO_CLEAN)) {
             return;

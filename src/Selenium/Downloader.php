@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Selenium;
 
@@ -19,16 +19,15 @@ class Downloader
     /**
      * @param string $targetDir Target directory where should be the file saved
      */
-    public function __construct($targetDir)
+    public function __construct(string $targetDir)
     {
         $this->targetDir = rtrim($targetDir, '/');
     }
 
     /**
      * Get latest released version of Selenium server. If not found, null is returned.
-     * @return string|null
      */
-    public static function getLatestVersion()
+    public static function getLatestVersion(): ?string
     {
         $data = @file_get_contents(self::$storageUrl);
         if (!$data) {
@@ -43,9 +42,14 @@ class Downloader
 
         $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
         $lastRelease = end($releases); // something like "2.42/selenium-server-standalone-2.42.2.jar"
+        if ($lastRelease === false) {
+            return null;
+        }
 
-        $lastVersion = preg_replace('/.*standalone-(.*)\.jar/', '$1', $lastRelease);
-        if ($lastRelease == $lastVersion) { // regexp not matched
+        $lastRelease = (string) $lastRelease;
+
+        $lastVersion = preg_replace('/.*standalone-(.+)\.jar/', '$1', $lastRelease);
+        if ($lastRelease === $lastVersion) { // regexp not matched
             return null;
         }
 
@@ -55,16 +59,15 @@ class Downloader
     /**
      * @param string $version Version to download
      */
-    public function setVersion($version)
+    public function setVersion(string $version): void
     {
         $this->version = $version;
     }
 
     /**
      * Get version that should be downloaded; if not set, attempt to retrieve latest released version
-     * @return string|null
      */
-    public function getVersion()
+    public function getVersion(): ?string
     {
         if (!$this->version) {
             $this->version = self::getLatestVersion();
@@ -75,27 +78,24 @@ class Downloader
 
     /**
      * Check if file of given version was already downloaded to given directory
-     * @return bool
      */
-    public function isAlreadyDownloaded()
+    public function isAlreadyDownloaded(): bool
     {
         return file_exists($this->getFilePath());
     }
 
     /**
      * Get target path of the file
-     * @return string
      */
-    public function getFilePath()
+    public function getFilePath(): string
     {
         return $this->targetDir . '/' . $this->getFileName();
     }
 
     /**
      * Get complete URL of the file to download
-     * @return string
      */
-    public function getFileUrl()
+    public function getFileUrl(): string
     {
         $version = $this->getVersion();
         Assert::that($version, 'Invalid version (expected format is X.Y.Z)')
@@ -119,9 +119,9 @@ class Downloader
     /**
      * Execute the download
      * @throws \RuntimeException Thrown when file cannot be downloaded
-     * @return int Downloaded size in bytes or false on failure
+     * @return int Downloaded size in bytes. Zero on failure.
      */
-    public function download()
+    public function download(): int
     {
         $targetPath = $this->getFilePath();
 
@@ -131,7 +131,7 @@ class Downloader
 
         $fileUrl = $this->getFileUrl();
 
-        $fp = @fopen($fileUrl, 'r');
+        $fp = @fopen($fileUrl, 'rb');
         $responseHeaders = get_headers($fileUrl);
         if (mb_strpos($responseHeaders[0], '200 OK') === false) {
             throw new \RuntimeException(sprintf('Error downloading file "%s" (%s)', $fileUrl, $responseHeaders[0]));
@@ -139,14 +139,17 @@ class Downloader
 
         $downloadedSize = file_put_contents($targetPath, $fp);
 
+        if ($downloadedSize === false) {
+            return 0;
+        }
+
         return $downloadedSize;
     }
 
     /**
      * Get name of the jar file
-     * @return string
      */
-    protected function getFileName()
+    protected function getFileName(): string
     {
         return 'selenium-server-standalone-' . $this->getVersion() . '.jar';
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward;
 
@@ -7,10 +7,9 @@ trait LineEndingsNormalizerTrait
     /**
      * Normalize line-endings to LF (\n)
      *
-     * @param string $string
      * @return mixed
      */
-    private function normalizeLineEndings($string)
+    private function normalizeLineEndings(string $string)
     {
         $string = preg_replace('~(*BSR_ANYCRLF)\R~', "\n", $string);
 

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Process;
 
@@ -33,13 +33,6 @@ class ProcessSetCreator
     /** @var array */
     protected $config;
 
-    /**
-     * @param RunCommand $command
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param AbstractPublisher $publisher
-     * @param array $config
-     */
     public function __construct(
         RunCommand $command,
         InputInterface $input,
@@ -57,20 +50,18 @@ class ProcessSetCreator
     /**
      * Create ProcessSet from given files, optionally filtering by given $groups and $excludeGroups
      *
-     * @param Finder $files
      * @param array $groups Groups to be run
      * @param array $excludeGroups Groups to be excluded
-     * @param string $filter filter test cases by name
+     * @param string $filter Filter test cases by given name
      * @param bool $ignoreDelays Should test delays be ignored?
-     * @return ProcessSet
      */
     public function createFromFiles(
         Finder $files,
         array $groups,
         array $excludeGroups,
-        $filter = null,
-        $ignoreDelays = false
-    ) {
+        string $filter = null,
+        bool $ignoreDelays = false
+    ): ProcessSet {
         $files->sortByName();
         $processSet = $this->getProcessSet();
 
@@ -162,12 +153,8 @@ class ProcessSetCreator
 
     /**
      * Build Process instance for each testcase file
-     *
-     * @param string $fileName
-     * @param array $phpunitArgs
-     * @return Process
      */
-    protected function buildProcess($fileName, array $phpunitArgs = [])
+    protected function buildProcess(string $fileName, array $phpunitArgs = []): Process
     {
         $capabilities = (new KeyValueCapabilityOptionsParser())
             ->parse($this->input->getOption(RunCommand::OPTION_CAPABILITY));
@@ -201,10 +188,7 @@ class ProcessSetCreator
         return new Process($commandLine, STEWARD_BASE_DIR, $processEvent->getEnvironmentVars(), null, 3600);
     }
 
-    /**
-     * @return ProcessSet
-     */
-    protected function getProcessSet()
+    protected function getProcessSet(): ProcessSet
     {
         if (!$this->processSet) {
             $this->processSet = new ProcessSet();
@@ -217,11 +201,9 @@ class ProcessSetCreator
     /**
      * Get array of groups that cause this class to be excluded.
      *
-     * @param array $excludeGroups
-     * @param array $annotations
-     * @return array Empty if class should not be excluded.
+     * @return array Empty array is returned if class should not be excluded.
      */
-    private function getExcludingGroups(array $excludeGroups, array $annotations)
+    private function getExcludingGroups(array $excludeGroups, array $annotations): array
     {
         $excludingGroups = [];
 
@@ -257,17 +239,13 @@ class ProcessSetCreator
         return key($classes);
     }
 
-    /**
-     * @param ProcessWrapper $processWrapper
-     * @param array $annotations
-     */
-    private function setupProcessDelays(ProcessWrapper $processWrapper, array $annotations)
+    private function setupProcessDelays(ProcessWrapper $processWrapper, array $annotations): void
     {
         $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
         $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
 
         if ($delayAfter) {
-            $processWrapper->setDelay($delayAfter, (float) $delayMinutes);
+            $processWrapper->setDelay($delayAfter, $delayMinutes);
         } elseif ($delayMinutes !== null && empty($delayAfter)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -282,17 +260,11 @@ class ProcessSetCreator
 
     /**
      * Get annotations for the first class in testcase (one file = one class)
-     *
-     * @param string $className
-     * @param string $fileName
-     * @return array
      */
-    private function getClassAnnotations($className, $fileName)
+    private function getClassAnnotations(string $className, string $fileName): array
     {
         try {
-            $annotations = AnnotationsParser::getAll(new \ReflectionClass($className));
-
-            return $annotations;
+            return AnnotationsParser::getAll(new \ReflectionClass($className));
         } catch (\ReflectionException $e) {
             throw new \RuntimeException(
                 sprintf(

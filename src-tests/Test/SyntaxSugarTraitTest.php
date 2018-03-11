@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Test;
 
+use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverWait;
@@ -33,7 +34,8 @@ class SyntaxSugarTraitTest extends TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
         $wd->expects($this->once())
             ->method('findElement')
-            ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'));
+            ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'))
+            ->willReturn($this->createMock(RemoteWebElement::class));
 
         $method = 'find' . $methodPostfix;
 
@@ -53,7 +55,8 @@ class SyntaxSugarTraitTest extends TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
         $wd->expects($this->once())
             ->method('findElements')
-            ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'));
+            ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'))
+            ->willReturn([]);
 
         $method = 'findMultiple' . $methodPostfix;
 
@@ -61,7 +64,7 @@ class SyntaxSugarTraitTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array[]
      */
     public function provideFindElementStrategy(): array
     {
@@ -82,6 +85,7 @@ class SyntaxSugarTraitTest extends TestCase
      * Test that waitFor...() methods waits for instance of WebDriverExpectedCondition. Note we only test the
      * WebDriverExpectedCondition instance type but not its content, because they return callback
      * which we cannot compare.
+     *
      * @dataProvider provideWaitForMethod
      * @param bool $isElementMethod Is this method working with elements?
      */
@@ -96,7 +100,8 @@ class SyntaxSugarTraitTest extends TestCase
         // only check for instance type.
         $waitMock->expects($this->exactly($isElementMethod ? 2 : 1))
             ->method('until')
-            ->with($this->isInstanceOf(WebDriverExpectedCondition::class));
+            ->with($this->isInstanceOf(WebDriverExpectedCondition::class))
+            ->willReturn($this->createMock(RemoteWebElement::class));
 
         $this->trait->wd->expects($this->exactly($isElementMethod ? 2 : 1))
             ->method('wait')
@@ -111,7 +116,7 @@ class SyntaxSugarTraitTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array[]
      */
     public function provideWaitForMethod(): array
     {

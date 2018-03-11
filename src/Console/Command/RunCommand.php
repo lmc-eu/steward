@@ -318,7 +318,6 @@ class RunCommand extends Command
     /**
      * Start planner execution loop
      *
-     * @param ProcessSet $processSet
      * @return bool Return true if all test returned exit code 0 (or if none test was run)
      */
     protected function executionLoop(ProcessSet $processSet): bool

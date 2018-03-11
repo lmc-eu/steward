@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Test;
 
@@ -23,7 +23,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findByClass($className)
+    public function findByClass(string $className): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::className($className));
     }
@@ -34,7 +34,7 @@ trait SyntaxSugarTrait
      * @param string $className
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleByClass($className)
+    public function findMultipleByClass(string $className): array
     {
         return $this->wd->findElements(WebDriverBy::className($className));
     }
@@ -46,7 +46,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement
      */
-    public function waitForClass($className, $mustBeVisible = false)
+    public function waitForClass(string $className, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::className($className), $mustBeVisible);
     }
@@ -58,7 +58,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findByCss($cssSelector)
+    public function findByCss(string $cssSelector): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::cssSelector($cssSelector));
     }
@@ -69,7 +69,7 @@ trait SyntaxSugarTrait
      * @param string $cssSelector
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleByCss($cssSelector)
+    public function findMultipleByCss(string $cssSelector): array
     {
         return $this->wd->findElements(WebDriverBy::cssSelector($cssSelector));
     }
@@ -81,7 +81,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement
      */
-    public function waitForCss($cssSelector, $mustBeVisible = false)
+    public function waitForCss(string $cssSelector, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::cssSelector($cssSelector), $mustBeVisible);
     }
@@ -93,7 +93,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findById($id)
+    public function findById(string $id): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::id($id));
     }
@@ -104,7 +104,7 @@ trait SyntaxSugarTrait
      * @param string $id
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleById($id)
+    public function findMultipleById(string $id): array
     {
         return $this->wd->findElements(WebDriverBy::id($id));
     }
@@ -116,7 +116,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement
      */
-    public function waitForId($id, $mustBeVisible = false)
+    public function waitForId(string $id, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::id($id), $mustBeVisible);
     }
@@ -128,7 +128,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findByName($name)
+    public function findByName(string $name): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::name($name));
     }
@@ -139,7 +139,7 @@ trait SyntaxSugarTrait
      * @param string $name
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleByName($name)
+    public function findMultipleByName(string $name): array
     {
         return $this->wd->findElements(WebDriverBy::name($name));
     }
@@ -151,7 +151,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement
      */
-    public function waitForName($name, $mustBeVisible = false)
+    public function waitForName(string $name, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::name($name), $mustBeVisible);
     }
@@ -163,7 +163,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findByLinkText($linkText)
+    public function findByLinkText(string $linkText): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::linkText($linkText));
     }
@@ -174,7 +174,7 @@ trait SyntaxSugarTrait
      * @param string $linkText
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleByLinkText($linkText)
+    public function findMultipleByLinkText(string $linkText): array
     {
         return $this->wd->findElements(WebDriverBy::linkText($linkText));
     }
@@ -186,7 +186,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement
      */
-    public function waitForLinkText($linkText, $mustBeVisible = false)
+    public function waitForLinkText(string $linkText, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::linkText($linkText), $mustBeVisible);
     }
@@ -198,7 +198,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findByPartialLinkText($partialLinkText)
+    public function findByPartialLinkText(string $partialLinkText): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::partialLinkText($partialLinkText));
     }
@@ -209,7 +209,7 @@ trait SyntaxSugarTrait
      * @param string $partialLinkText
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleByPartialLinkText($partialLinkText)
+    public function findMultipleByPartialLinkText(string $partialLinkText): array
     {
         return $this->wd->findElements(WebDriverBy::partialLinkText($partialLinkText));
     }
@@ -221,7 +221,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement
      */
-    public function waitForPartialLinkText($partialLinkText, $mustBeVisible = false)
+    public function waitForPartialLinkText(string $partialLinkText, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::partialLinkText($partialLinkText), $mustBeVisible);
     }
@@ -233,7 +233,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findByTag($tagName)
+    public function findByTag(string $tagName): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::tagName($tagName));
     }
@@ -244,7 +244,7 @@ trait SyntaxSugarTrait
      * @param string $tagName
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleByTag($tagName)
+    public function findMultipleByTag(string $tagName): array
     {
         return $this->wd->findElements(WebDriverBy::tagName($tagName));
     }
@@ -256,7 +256,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement
      */
-    public function waitForTag($tagName, $mustBeVisible = false)
+    public function waitForTag(string $tagName, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::tagName($tagName), $mustBeVisible);
     }
@@ -268,7 +268,7 @@ trait SyntaxSugarTrait
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
-    public function findByXpath($xpath)
+    public function findByXpath(string $xpath): RemoteWebElement
     {
         return $this->wd->findElement(WebDriverBy::xpath($xpath));
     }
@@ -279,7 +279,7 @@ trait SyntaxSugarTrait
      * @param string $xpath
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
-    public function findMultipleByXpath($xpath)
+    public function findMultipleByXpath(string $xpath): array
     {
         return $this->wd->findElements(WebDriverBy::xpath($xpath));
     }
@@ -289,9 +289,8 @@ trait SyntaxSugarTrait
      *
      * @param string $xpath
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
-    public function waitForXpath($xpath, $mustBeVisible = false)
+    public function waitForXpath(string $xpath, bool $mustBeVisible = false): RemoteWebElement
     {
         return $this->waitForElement(WebDriverBy::xpath($xpath), $mustBeVisible);
     }
@@ -300,11 +299,10 @@ trait SyntaxSugarTrait
      * Wait until page title exactly matches given string
      *
      * @param string $title The expected title, which must be an exact match.
-     * @return RemoteWebElement|array
      */
-    public function waitForTitle($title)
+    public function waitForTitle(string $title): void
     {
-        return $this->wd->wait()->until(
+        $this->wd->wait()->until(
             WebDriverExpectedCondition::titleIs($title)
         );
     }
@@ -313,11 +311,10 @@ trait SyntaxSugarTrait
      * Wait until page title partially matches given string
      *
      * @param string $title The expected title substring
-     * @return RemoteWebElement|array
      */
-    public function waitForPartialTitle($title)
+    public function waitForPartialTitle(string $title): void
     {
-        return $this->wd->wait()->until(
+        $this->wd->wait()->until(
             WebDriverExpectedCondition::titleContains($title)
         );
     }
@@ -326,11 +323,10 @@ trait SyntaxSugarTrait
      * Wait until page title partially matches given regular expression
      *
      * @param string $titleRegepx The expected title regular expression
-     * @return RemoteWebElement|array
      */
-    public function waitForTitleRegexp($titleRegepx)
+    public function waitForTitleRegexp(string $titleRegepx): void
     {
-        return $this->wd->wait()->until(
+        $this->wd->wait()->until(
             WebDriverExpectedCondition::titleMatches($titleRegepx)
         );
     }
@@ -342,7 +338,7 @@ trait SyntaxSugarTrait
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      * @return RemoteWebElement The element which is located
      */
-    private function waitForElement(WebDriverBy $by, $mustBeVisible = false)
+    private function waitForElement(WebDriverBy $by, bool $mustBeVisible = false): RemoteWebElement
     {
         if ($mustBeVisible) {
             $condition = 'visibilityOfElementLocated';

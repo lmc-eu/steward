@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward;
 
@@ -20,9 +20,8 @@ class ConfigHelper
 
     /**
      * Get minimal array of required environment config options
-     * @return array
      */
-    public static function getDummyConfig()
+    public static function getDummyConfig(): array
     {
         return [
             'BROWSER_NAME' => 'firefox',
@@ -37,7 +36,6 @@ class ConfigHelper
 
     /**
      * Set environment variables from given array
-     * @param array $variables
      */
     public static function setEnvironmentVariables(array $variables): void
     {

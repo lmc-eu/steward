@@ -203,14 +203,12 @@ class XdebugListenerTest extends TestCase
 
     /**
      * Prepare ExtendedConsoleEvent that could be passed to onCommandRunTestsInit().
-     *
-     * @param Command $command
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return ExtendedConsoleEvent
      */
-    protected function prepareExtendedConsoleEvent($command, $input, $output)
-    {
+    protected function prepareExtendedConsoleEvent(
+        Command $command,
+        InputInterface $input,
+        OutputInterface $output
+    ): ExtendedConsoleEvent {
         // Trigger event to add the xdebug option to the command and bind the definition to the input
         $this->listener->onCommandConfigure(new BasicConsoleEvent($command));
         $input->bind($command->getDefinition());
@@ -226,7 +224,7 @@ class XdebugListenerTest extends TestCase
      * @param bool $isExtensionLoaded Mocked extension_loaded('xdebug') value
      * @param bool $isRemoteEnabled Mocked ini_get('xdebug.remote_enable') value
      */
-    protected function mockXdebugExtension($isExtensionLoaded, $isRemoteEnabled): void
+    protected function mockXdebugExtension(bool $isExtensionLoaded, bool $isRemoteEnabled): void
     {
         $extensionLoadedMock = $this->getFunctionMock(__NAMESPACE__, 'extension_loaded');
         $extensionLoadedMock->expects($this->any())

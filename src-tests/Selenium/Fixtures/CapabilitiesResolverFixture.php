@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Selenium\Fixtures;
 
@@ -16,15 +16,19 @@ class CapabilitiesResolverFixture implements CustomCapabilitiesResolverInterface
     {
     }
 
-    public function resolveDesiredCapabilities(AbstractTestCase $test, DesiredCapabilities $capabilities)
-    {
+    public function resolveDesiredCapabilities(
+        AbstractTestCase $test,
+        DesiredCapabilities $capabilities
+    ): DesiredCapabilities {
         $capabilities->setCapability('customDesiredCapability', true);
 
         return $capabilities;
     }
 
-    public function resolveRequiredCapabilities(AbstractTestCase $test, DesiredCapabilities $capabilities)
-    {
+    public function resolveRequiredCapabilities(
+        AbstractTestCase $test,
+        DesiredCapabilities $capabilities
+    ): DesiredCapabilities {
         $capabilities->setCapability('customRequiredCapability', true);
 
         return $capabilities;

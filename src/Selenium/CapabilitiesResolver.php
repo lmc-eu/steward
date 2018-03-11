@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Selenium;
 
@@ -32,11 +32,7 @@ final class CapabilitiesResolver
         $this->ciDetector = new CiDetector();
     }
 
-    /**
-     * @param AbstractTestCase $test
-     * @return DesiredCapabilities
-     */
-    public function resolveDesiredCapabilities(AbstractTestCase $test)
+    public function resolveDesiredCapabilities(AbstractTestCase $test): DesiredCapabilities
     {
         $capabilities = new DesiredCapabilities(
             [
@@ -66,11 +62,7 @@ final class CapabilitiesResolver
         return $capabilities;
     }
 
-    /**
-     * @param AbstractTestCase $test
-     * @return DesiredCapabilities
-     */
-    public function resolveRequiredCapabilities(AbstractTestCase $test)
+    public function resolveRequiredCapabilities(AbstractTestCase $test): DesiredCapabilities
     {
         $capabilities = new DesiredCapabilities();
 
@@ -83,21 +75,19 @@ final class CapabilitiesResolver
 
     /**
      * @internal
-     * @param CiDetector $ciDetector
      */
-    public function setCiDetector(CiDetector $ciDetector)
+    public function setCiDetector(CiDetector $ciDetector): void
     {
         $this->ciDetector = $ciDetector;
     }
 
     /**
      * Setup capabilities specific for continuous integration server
-     * @param DesiredCapabilities $capabilities
-     * @param AbstractTestCase $test
-     * @return DesiredCapabilities
      */
-    protected function setupCiCapabilities(DesiredCapabilities $capabilities, AbstractTestCase $test)
-    {
+    protected function setupCiCapabilities(
+        DesiredCapabilities $capabilities,
+        AbstractTestCase $test
+    ): DesiredCapabilities {
         $ci = $this->ciDetector->detect();
         $capabilities->setCapability(
             'build',
@@ -111,14 +101,10 @@ final class CapabilitiesResolver
         return $capabilities;
     }
 
-    /**
-     * Setup browser-specific custom capabilities.
-     * @param DesiredCapabilities $capabilities
-     * @param string $browser Browser name
-     * @return DesiredCapabilities
-     */
-    protected function setupBrowserSpecificCapabilities(DesiredCapabilities $capabilities, $browser)
-    {
+    protected function setupBrowserSpecificCapabilities(
+        DesiredCapabilities $capabilities,
+        string $browser
+    ): DesiredCapabilities {
         switch ($browser) {
             case WebDriverBrowserType::FIREFOX:
                 $capabilities = $this->setupFirefoxCapabilities($capabilities);
@@ -131,12 +117,7 @@ final class CapabilitiesResolver
         return $capabilities;
     }
 
-    /**
-     * Set up Firefox-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupFirefoxCapabilities(DesiredCapabilities $capabilities)
+    protected function setupFirefoxCapabilities(DesiredCapabilities $capabilities): DesiredCapabilities
     {
         // Firefox does not (as a intended feature) trigger "change" and "focus" events in javascript if not in active
         // (focused) window. This would be a problem for concurrent testing - solution is to use focusmanager.testmode.
@@ -149,12 +130,7 @@ final class CapabilitiesResolver
         return $capabilities;
     }
 
-    /**
-     * Set up Internet Explorer-specific capabilities
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
-     */
-    protected function setupInternetExplorerCapabilities(DesiredCapabilities $capabilities)
+    protected function setupInternetExplorerCapabilities(DesiredCapabilities $capabilities): DesiredCapabilities
     {
         // Clears cache, cookies, history, and saved form data of MSIE.
         $capabilities->setCapability('ie.ensureCleanSession', true);

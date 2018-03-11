@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Process;
 
@@ -11,11 +11,7 @@ class KeyValueCapabilityOptionsParser
 {
     private const DELIMITER = ':';
 
-    /**
-     * @param array $capabilities
-     * @return array
-     */
-    public function parse(array $capabilities)
+    public function parse(array $capabilities): array
     {
         $outputCapabilities = [];
 
@@ -37,12 +33,9 @@ class KeyValueCapabilityOptionsParser
     }
 
     /**
-     * Guest most appropriate data type acceptable by JSON
-     *
-     * @param string $value
-     * @return mixed
+     * Guess most appropriate data type acceptable by JSON
      */
-    private function castToGuessedDataType($value)
+    private function castToGuessedDataType(string $value)
     {
         $stringValueWithoutQuotes = $this->removeEncapsulatingQuotes($value);
         if ($stringValueWithoutQuotes !== null) {
@@ -67,11 +60,7 @@ class KeyValueCapabilityOptionsParser
         return $value;
     }
 
-    /**
-     * @param mixed $value
-     * @return string|null
-     */
-    private function removeEncapsulatingQuotes($value)
+    private function removeEncapsulatingQuotes(string $value): ?string
     {
         $withoutDoubleQuotes = preg_replace('/^"(.+)"$/', '$1', $value);
         if ($withoutDoubleQuotes !== $value) {

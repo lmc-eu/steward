@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Timeline;
 
@@ -18,14 +18,10 @@ class TimelineDataBuilder
     public function __construct(\SimpleXMLElement $xml)
     {
         $this->xml = $xml;
-
         $this->executors = $this->getExecutors();
     }
 
-    /**
-     * @return array
-     */
-    public function buildTimelineGroups()
+    public function buildTimelineGroups(): array
     {
         $timelineGroups = [];
 
@@ -40,10 +36,7 @@ class TimelineDataBuilder
         return $timelineGroups;
     }
 
-    /**
-     * @return array
-     */
-    public function buildTimelineItems()
+    public function buildTimelineItems(): array
     {
         $testElements = $this->xml->xpath('//testcase/test[@status="done"]');
         $timelineItems = [];
@@ -53,8 +46,8 @@ class TimelineDataBuilder
                 'group' => $this->resolveTestExecutorId($testElement),
                 'content' => (string) $testElement['name'],
                 'title' => $this->assembleFullTestName($testElement),
-                'start' => $this->toCompatibleDateFormat($testElement['start']),
-                'end' => $this->toCompatibleDateFormat($testElement['end']),
+                'start' => $this->toCompatibleDateFormat((string) $testElement['start']),
+                'end' => $this->toCompatibleDateFormat((string) $testElement['end']),
                 'className' => (string) $testElement['result'],
             ];
         }
@@ -67,7 +60,7 @@ class TimelineDataBuilder
      *
      * @return array Array of executors, key = executor URL, value = executor ID
      */
-    private function getExecutors()
+    private function getExecutors(): array
     {
         $testElements = $this->xml->xpath('//testcase/test[@status="done"]');
         $hasTestWithoutExecutor = false;
@@ -96,11 +89,7 @@ class TimelineDataBuilder
         return $executors;
     }
 
-    /**
-     * @param \SimpleXMLElement $testElement
-     * @return string
-     */
-    private function assembleFullTestName(\SimpleXMLElement $testElement)
+    private function assembleFullTestName(\SimpleXMLElement $testElement): string
     {
         $parentElement = $testElement->xpath('..');
         $testcaseName = (string) reset($parentElement)['name'];
@@ -108,16 +97,12 @@ class TimelineDataBuilder
         return $testcaseName . '::' . $testElement['name'];
     }
 
-    /**
-     * @param \SimpleXMLElement $testElement
-     * @return string
-     */
-    private function resolveTestExecutorId(\SimpleXMLElement $testElement)
+    private function resolveTestExecutorId(\SimpleXMLElement $testElement): string
     {
         $testExecutor = (string) $testElement['executor'];
 
         if (!empty($testExecutor) && isset($this->executors[$testExecutor])) {
-            return $this->executors[$testExecutor];
+            return (string) $this->executors[$testExecutor];
         }
 
         return 'unknown';
@@ -127,10 +112,8 @@ class TimelineDataBuilder
      * Convert ISO date to compatible date format (drop timezone).
      *
      * @see https://stackoverflow.com/q/6427204/464890
-     * @param string $isoDate
-     * @return string
      */
-    private function toCompatibleDateFormat($isoDate)
+    private function toCompatibleDateFormat(string $isoDate): string
     {
         $date = new \DateTimeImmutable($isoDate);
 

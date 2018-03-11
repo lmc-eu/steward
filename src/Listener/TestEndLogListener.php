@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Listener;
 
@@ -11,7 +11,7 @@ class TestEndLogListener implements TestListener
 {
     use TestListenerDefaultImplementation;
 
-    public function endTest(Test $test, $time)
+    public function endTest(Test $test, $time): void
     {
         if ($test instanceof AbstractTestCase) {
             $test->appendTestLog(sprintf('--- Finished execution of test "%s" ---', $test->getName()));

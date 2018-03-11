@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Selenium;
 
@@ -11,29 +11,24 @@ use Lmc\Steward\Test\AbstractTestCase;
  */
 interface CustomCapabilitiesResolverInterface
 {
-    /**
-     * @param ConfigProvider $config
-     */
     public function __construct(ConfigProvider $config);
 
     /**
      * Resolve desired capabilities for given test.
-     *
-     * @param AbstractTestCase $test
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
      */
-    public function resolveDesiredCapabilities(AbstractTestCase $test, DesiredCapabilities $capabilities);
+    public function resolveDesiredCapabilities(
+        AbstractTestCase $test,
+        DesiredCapabilities $capabilities
+    ): DesiredCapabilities;
 
     /**
      * Resolve required capabilities for given test.
      *
      * Please note "required capabilities" are implemented inconsistently in current WebDriver backends, so you should
      * most probably set only "desired capabilities" until backends conforms the W3C WebDriver spec.
-     *
-     * @param AbstractTestCase $test
-     * @param DesiredCapabilities $capabilities
-     * @return DesiredCapabilities
      */
-    public function resolveRequiredCapabilities(AbstractTestCase $test, DesiredCapabilities $capabilities);
+    public function resolveRequiredCapabilities(
+        AbstractTestCase $test,
+        DesiredCapabilities $capabilities
+    ): DesiredCapabilities;
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\WebDriver;
 
@@ -55,10 +55,7 @@ class RemoteWebDriverTest extends TestCase
         $this->expectOutputString('');
     }
 
-    /**
-     * @param bool $enabled
-     */
-    protected function setDebugMode($enabled): void
+    protected function setDebugMode(bool $enabled): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['DEBUG'] = $enabled ? 1 : 0;

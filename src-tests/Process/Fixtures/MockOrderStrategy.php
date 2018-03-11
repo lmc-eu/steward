@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Process\Fixtures;
 
@@ -10,11 +10,8 @@ class MockOrderStrategy implements OptimizeOrderInterface
 {
     /**
      * Dummy strategy to return as order value index of the vertex
-     *
-     * @param OutTree $tree
-     * @return array
      */
-    public function optimize(OutTree $tree)
+    public function optimize(OutTree $tree): array
     {
         $vertices = $tree->getVerticesDescendant($tree->getVertexRoot());
 

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\WebDriver;
 
@@ -15,107 +15,107 @@ use Facebook\WebDriver\WebDriverHasInputDevices;
  */
 class NullWebDriver implements WebDriver, JavaScriptExecutor, WebDriverHasInputDevices
 {
-    protected function throwException()
+    protected function throwException(): void
     {
         throw new \Exception('You cannot interact with NullWebDriver.');
     }
 
-    public function close()
+    public function close(): void
     {
         $this->throwException();
     }
 
-    public function get($url)
+    public function get($url): void
     {
         $this->throwException();
     }
 
-    public function getCurrentURL()
+    public function getCurrentURL(): void
     {
         $this->throwException();
     }
 
-    public function getPageSource()
+    public function getPageSource(): void
     {
         $this->throwException();
     }
 
-    public function getTitle()
+    public function getTitle(): void
     {
         $this->throwException();
     }
 
-    public function getWindowHandle()
+    public function getWindowHandle(): void
     {
         $this->throwException();
     }
 
-    public function getWindowHandles()
+    public function getWindowHandles(): void
     {
         $this->throwException();
     }
 
-    public function quit()
+    public function quit(): void
     {
         $this->throwException();
     }
 
-    public function takeScreenshot($save_as = null)
+    public function takeScreenshot($save_as = null): void
     {
         $this->throwException();
     }
 
-    public function wait($timeout_in_second = 30, $interval_in_millisecond = 250)
+    public function wait($timeout_in_second = 30, $interval_in_millisecond = 250): void
     {
         $this->throwException();
     }
 
-    public function manage()
+    public function manage(): void
     {
         $this->throwException();
     }
 
-    public function navigate()
+    public function navigate(): void
     {
         $this->throwException();
     }
 
-    public function switchTo()
+    public function switchTo(): void
     {
         $this->throwException();
     }
 
-    public function execute($name, $params)
+    public function execute($name, $params): void
     {
         $this->throwException();
     }
 
-    public function findElement(WebDriverBy $locator)
+    public function findElement(WebDriverBy $locator): void
     {
         $this->throwException();
     }
 
-    public function findElements(WebDriverBy $locator)
+    public function findElements(WebDriverBy $locator): void
     {
         $this->throwException();
     }
 
-    public function executeScript($script, array $arguments = [])
+    public function executeScript($script, array $arguments = []): void
     {
         $this->throwException();
     }
 
-    public function executeAsyncScript($script, array $arguments = [])
+    public function executeAsyncScript($script, array $arguments = []): void
     {
         $this->throwException();
     }
 
-    public function getKeyboard()
+    public function getKeyboard(): void
     {
         $this->throwException();
     }
 
-    public function getMouse()
+    public function getMouse(): void
     {
         $this->throwException();
     }
