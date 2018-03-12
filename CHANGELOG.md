@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Fixed
+- Selenium server releases were incorrectly parsed, meaning `steward install` command will detect version 3.9.1 as the latest one (even though there are already released newer versions of Selenium server).
 
 ## 2.3.2 - 2017-12-02
 ### Changed

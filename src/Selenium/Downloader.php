@@ -42,14 +42,23 @@ class Downloader
         }
 
         $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
-        $lastRelease = end($releases); // something like "2.42/selenium-server-standalone-2.42.2.jar"
+        $availableVersions = [];
+        foreach ($releases as $release) {
+            $parsedVersion = preg_replace('/.*standalone-(.+)\.jar/', '$1', $release);
+            if ((string) $release === $parsedVersion) { // regexp did not match
+                continue;
+            }
 
-        $lastVersion = preg_replace('/.*standalone-(.*)\.jar/', '$1', $lastRelease);
-        if ($lastRelease == $lastVersion) { // regexp not matched
+            $availableVersions[] = $parsedVersion;
+        }
+
+        if (!$availableVersions) {
             return null;
         }
 
-        return $lastVersion;
+        natcasesort($availableVersions);
+
+        return end($availableVersions);
     }
 
     /**
