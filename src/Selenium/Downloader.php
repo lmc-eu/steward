@@ -119,7 +119,7 @@ class Downloader
     /**
      * Execute the download
      * @throws \RuntimeException Thrown when file cannot be downloaded
-     * @return int Downloaded size in bytes. Zero on failure.
+     * @return int Downloaded size in bytes.
      */
     public function download(): int
     {
@@ -138,10 +138,11 @@ class Downloader
         }
 
         $downloadedSize = file_put_contents($targetPath, $fp);
-
-        if ($downloadedSize === false) {
-            return 0;
+        // @codeCoverageIgnoreStart
+        if (!$downloadedSize) {
+            throw new \RuntimeException(sprintf('Error saving file to path "%s"', $targetPath));
         }
+        // @codeCoverageIgnoreEnd
 
         return $downloadedSize;
     }
