@@ -31,7 +31,6 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
     protected $select2Selector;
 
     /**
-     * @param AbstractTestCase $tc
      * @param WebDriverElement $element Original HTML element to which is the Select2 attached
      */
     public function __construct(AbstractTestCase $tc, WebDriverElement $element)

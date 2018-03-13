@@ -9,6 +9,7 @@
 ### Changed
 - Require PHP 7.1+ and Symfony 4 components.
 - Update to namespaced PHPUnit 6.0.
+- Methods now uses strict type-hints and return type-hints. Inherited classes and interfaces (eg. `CustomCapabilitiesResolverInterface`, `OptimizeOrderInterface` etc.) may require to be changed in accordance with this.
 - Simplified and improved test output.
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
 - Default browser size is now defined using class constants instead of class variables. To override the default, instead of `public static $browserWidth = ...;` use `public const BROWSER_WIDTH = ...;`.

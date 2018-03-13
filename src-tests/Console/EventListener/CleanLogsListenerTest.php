@@ -137,11 +137,7 @@ class CleanLogsListenerTest extends TestCase
         $this->listener->onCommandPreInitialize($event);
     }
 
-    /**
-     * @param Application $application
-     * @return RunCommand
-     */
-    private function initializeRunCommandWithApplication(Application $application)
+    private function initializeRunCommandWithApplication(Application $application): RunCommand
     {
         $command = new RunCommand(new EventDispatcher());
         $command->setApplication($application);

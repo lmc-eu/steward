@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\WebDriver;
 
@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class NullWebDriverTest extends TestCase
 {
-    /**
-     * @var NullWebDriver
-     */
+    /** @var NullWebDriver */
     protected $webdriver;
 
     public function setUp(): void
@@ -31,7 +29,7 @@ class NullWebDriverTest extends TestCase
     /**
      * Return method names of WebDriver interface
      *
-     * @return array
+     * @return array[]
      */
     public function provideMethodName(): array
     {

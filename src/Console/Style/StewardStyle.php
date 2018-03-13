@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\Style;
 
@@ -28,35 +28,33 @@ class StewardStyle extends OutputStyle
     /**
      * Output progress message status
      */
-    public function runStatus(string $message)
+    public function runStatus(string $message): void
     {
         $this->writeln($this->getTimestampPrefix() . ' ' . $message);
     }
 
     /**
      * Output success message in progress status
-     * @param string $message
      */
-    public function runStatusSuccess(string $message)
+    public function runStatusSuccess(string $message): void
     {
         $this->runStatus('<fg=green>' . $message . '</>');
     }
 
     /**
      * Output error message in progress status
-     * @param string $message
      */
-    public function runStatusError(string $message)
+    public function runStatusError(string $message): void
     {
         $this->runStatus('<fg=red>' . $message . '</>');
     }
 
-    public function title($message)
+    public function title($message): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function section($message)
+    public function section($message): void
     {
         $this->newLine();
         $this->writeln([
@@ -111,42 +109,42 @@ class StewardStyle extends OutputStyle
         }
     }
 
-    public function listing(array $elements)
+    public function listing(array $elements): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function text($message)
+    public function text($message): void
     {
         $this->writeln($message);
     }
 
-    public function success($message)
+    public function success($message): void
     {
         $this->symfonyStyle->block($message, 'OK', 'fg=black;bg=green', ' ', true);
     }
 
-    public function error($message)
+    public function error($message): void
     {
         $this->symfonyStyle->block($message, 'ERROR', 'fg=white;bg=red', ' ', true);
     }
 
-    public function warning($message)
+    public function warning($message): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function note($message)
+    public function note($message): void
     {
         $this->symfonyStyle->block($message, 'NOTE', 'fg=yellow', ' ');
     }
 
-    public function caution($message)
+    public function caution($message): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function table(array $headers, array $rows)
+    public function table(array $headers, array $rows): void
     {
         throw new \Exception('Method not implemented');
     }
@@ -156,32 +154,32 @@ class StewardStyle extends OutputStyle
         return $this->symfonyStyle->ask($question, $default, $validator);
     }
 
-    public function askHidden($question, $validator = null)
+    public function askHidden($question, $validator = null): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function confirm($question, $default = true)
+    public function confirm($question, $default = true): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function choice($question, array $choices, $default = null)
+    public function choice($question, array $choices, $default = null): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function progressStart($max = 0)
+    public function progressStart($max = 0): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function progressAdvance($step = 1)
+    public function progressAdvance($step = 1): void
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function progressFinish()
+    public function progressFinish(): void
     {
         throw new \Exception('Method not implemented');
     }

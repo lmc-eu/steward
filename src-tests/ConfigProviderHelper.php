@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward;
 
@@ -10,17 +10,17 @@ class ConfigProviderHelper extends ConfigProvider
 {
     protected $config = [];
 
-    public function __construct($config)
+    public function __construct(array $config)
     {
         $this->config = $config;
     }
 
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->config[$name];
     }
 
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($this->config[$name]);
     }

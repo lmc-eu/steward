@@ -106,12 +106,6 @@ class InstallCommand extends Command
         $downloadedSize = $downloader->download();
         $downloadedFilePath = realpath($downloader->getFilePath());
 
-        if (!$downloadedSize) {
-            $this->io->error('Error downloading file :-(');
-
-            return 1;
-        }
-
         if ($verboseOutput) {
             $this->io->success(
                 sprintf('Downloaded %d MB, file saved successfully.', round($downloadedSize / 1024 / 1024, 1))

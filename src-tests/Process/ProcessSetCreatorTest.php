@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Process;
 
@@ -343,12 +343,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->creator->createFromFiles($this->findDummyTests(), [], ['bar', 'foo']);
     }
 
-    /**
-     * @param string $pattern
-     * @param string $directory
-     * @return Finder
-     */
-    protected function findDummyTests($pattern = '*Test.php', $directory = 'DummyTests')
+    protected function findDummyTests(string $pattern = '*Test.php', string $directory = 'DummyTests'): Finder
     {
         return (new Finder())
             ->files()
@@ -358,10 +353,8 @@ class ProcessSetCreatorTest extends TestCase
 
     /**
      * Assert ProcessSet consists only of tests of expected names
-     * @param string[] $expectedTestNames
-     * @param ProcessSet $processSet
      */
-    protected function assertQueuedTests(array $expectedTestNames, $processSet): void
+    protected function assertQueuedTests(array $expectedTestNames, ProcessSet $processSet): void
     {
         $this->assertInstanceOf(ProcessSet::class, $processSet);
         $this->assertCount(count($expectedTestNames), $processSet);
@@ -373,10 +366,7 @@ class ProcessSetCreatorTest extends TestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    private function resolveConfig()
+    private function resolveConfig(): array
     {
         return (new ConfigResolver(new OptionsResolver(), $this->command->getDefinition()))->resolve($this->input, []);
     }

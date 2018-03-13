@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Process;
 
@@ -20,7 +20,7 @@ class ProcessSet implements \Countable
      */
     protected $processes = [];
 
-    /** @var AbstractPublisher */
+    /** @var AbstractPublisher|null */
     protected $publisher;
 
     /** @var Graph */
@@ -32,7 +32,6 @@ class ProcessSet implements \Countable
     /**
      * Instantiate processSet to manage processes in different states,
      * If publisher is passed, it is used to publish process statuses after status changes.
-     * @param AbstractPublisher $publisher OPTIONAL
      */
     public function __construct(AbstractPublisher $publisher = null)
     {
@@ -41,29 +40,23 @@ class ProcessSet implements \Countable
         $this->graph = new Graph();
     }
 
-    /**
-     * @param AbstractPublisher $publisher
-     */
-    public function setPublisher(AbstractPublisher $publisher)
+    public function setPublisher(AbstractPublisher $publisher): void
     {
         $this->publisher = $publisher;
     }
 
     /**
      * Get count of all processes in the set
-     * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->processes);
     }
 
     /**
      * Add new process to the set.
-     *
-     * @param ProcessWrapper $processWrapper Wrapped process
      */
-    public function add(ProcessWrapper $processWrapper)
+    public function add(ProcessWrapper $processWrapper): void
     {
         $className = $processWrapper->getClassName();
         if (isset($this->processes[$className])) {
@@ -87,17 +80,15 @@ class ProcessSet implements \Countable
     /**
      * Get array of processes in the set having given status
      *
-     * @param string $status {prepared, queued, done}
-     *
      * @return ProcessWrapper[]
      */
-    public function get($status)
+    public function get(string $status): array
     {
         Assertion::choice($status, ProcessWrapper::PROCESS_STATUSES);
 
         $return = [];
         foreach ($this->processes as $className => $processWrapper) {
-            if ($processWrapper->getStatus() == $status) {
+            if ($processWrapper->getStatus() === $status) {
                 $return[$className] = $processWrapper;
             }
         }
@@ -107,9 +98,9 @@ class ProcessSet implements \Countable
 
     /**
      * Set queued processes without delay as prepared
-     * @param OutputInterface $output If provided, list of dequeued and queued processes will be printed
+     * @param OutputInterface $output Where list of dequeued and queued processes will be printed
      */
-    public function dequeueProcessesWithoutDelay(OutputInterface $output)
+    public function dequeueProcessesWithoutDelay(OutputInterface $output): void
     {
         $queuedProcesses = $this->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
 
@@ -137,10 +128,9 @@ class ProcessSet implements \Countable
     /**
      * Build out-tree graph from defined Processes and their relations.
      *
-     * @internal
-     * @return OutTree
+     * @internal Should be called directly only in unit-testing
      */
-    public function buildTree()
+    public function buildTree(): OutTree
     {
         if (!$this->tree) {
             $root = $this->graph->createVertex(0);
@@ -183,10 +173,8 @@ class ProcessSet implements \Countable
 
     /**
      * Optimize order of processes using given strategy.
-     *
-     * @param OptimizeOrderInterface $optimizeStrategy
      */
-    public function optimizeOrder(OptimizeOrderInterface $optimizeStrategy)
+    public function optimizeOrder(OptimizeOrderInterface $optimizeStrategy): void
     {
         $optimizedOrder = $optimizeStrategy->optimize($this->buildTree());
 
@@ -203,10 +191,8 @@ class ProcessSet implements \Countable
 
     /**
      * Get count of processes status
-     *
-     * @return array
      */
-    public function countStatuses()
+    public function countStatuses(): array
     {
         $statusesCount = [];
         foreach (ProcessWrapper::PROCESS_STATUSES as $status) {
@@ -218,10 +204,8 @@ class ProcessSet implements \Countable
 
     /**
      * Get result counts of done processes
-     *
-     * @return array
      */
-    public function countResults()
+    public function countResults(): array
     {
         $done = $this->get(ProcessWrapper::PROCESS_STATUS_DONE);
         $doneClasses = [];
@@ -243,16 +227,15 @@ class ProcessSet implements \Countable
     /**
      * Mark all dependant processes of given process as failed
      *
-     * @param string $className
      * @return ProcessWrapper[] Processes that has been failed
      */
-    public function failDependants($className)
+    public function failDependants(string $className): array
     {
         $descendantProcesses = $this->getDependencyTree($className);
 
         $failedProcesses = [];
-        foreach ($descendantProcesses as $className => $processWrapper) {
-            $failedProcesses[$className] = $processWrapper;
+        foreach ($descendantProcesses as $processClassName => $processWrapper) {
+            $failedProcesses[$processClassName] = $processWrapper;
             $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
         }
 
@@ -262,10 +245,9 @@ class ProcessSet implements \Countable
     /**
      * Get all wrapped processes that depends on process of given name.
      *
-     * @param string $className
      * @return ProcessWrapper[]
      */
-    protected function getDependencyTree($className)
+    protected function getDependencyTree(string $className): array
     {
         Assertion::notEmpty($this->tree, 'Cannot get dependency tree - the tree was not yet build using buildTree()');
 

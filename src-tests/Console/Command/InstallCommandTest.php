@@ -137,16 +137,6 @@ class InstallCommandTest extends TestCase
         $this->assertContains('Downloading Selenium standalone server version 6.6.6...', $output);
     }
 
-    public function testShouldPrintErrorIfDownloadFails(): void
-    {
-        $this->command->setDownloader($this->getDownloadMock($expectedFileSize = false));
-
-        $this->tester->execute(['command' => $this->command->getName(), 'version' => '6.3.6']);
-
-        $this->assertContains('Error downloading file :-(', $this->tester->getDisplay());
-        $this->assertSame(1, $this->tester->getStatusCode());
-    }
-
     public function testShouldThrowAnExceptionInNonInteractiveModeIfLastVersionCheckFailsAndNoVersionWasProvided(): void
     {
         $downloaderMock = $this->getMockBuilder(Downloader::class)

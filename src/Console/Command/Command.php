@@ -26,10 +26,6 @@ class Command extends \Symfony\Component\Console\Command\Command
     /** @var array */
     protected $config = [];
 
-    /**
-     * @param EventDispatcher $dispatcher
-     * @param string $name
-     */
     public function __construct(EventDispatcher $dispatcher, string $name = null)
     {
         if (!defined('STEWARD_BASE_DIR')) {

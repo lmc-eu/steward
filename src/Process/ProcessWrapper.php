@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Process;
 
@@ -41,7 +41,7 @@ class ProcessWrapper
         self::PROCESS_RESULT_FATAL,
     ];
 
-    /** @var AbstractPublisher */
+    /** @var AbstractPublisher|null */
     private $publisher;
     /** @var Process */
     private $process;
@@ -58,12 +58,7 @@ class ProcessWrapper
     /** @var int */
     private $finishedTime;
 
-    /**
-     * @param Process $process Instance of PHPUnit process
-     * @param string $className Tested class fully qualified name
-     * @param AbstractPublisher $publisher
-     */
-    public function __construct(Process $process, $className, AbstractPublisher $publisher = null)
+    public function __construct(Process $process, string $className, AbstractPublisher $publisher = null)
     {
         $this->process = $process;
         $this->className = $className;
@@ -71,19 +66,16 @@ class ProcessWrapper
         $this->setStatus(self::PROCESS_STATUS_QUEUED);
     }
 
-    /**
-     * @return string
-     */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }
 
     /**
      * @param string $afterClass Fully qualified class name after which this test should be run.
-     * @param float $minutes Delay execution for that much $minutes after $afterClass test.
+     * @param mixed $minutes Delay execution for that much $minutes after $afterClass test.
      */
-    public function setDelay($afterClass, $minutes)
+    public function setDelay(string $afterClass, $minutes): void
     {
         Assertion::notNull(
             $minutes,
@@ -98,59 +90,41 @@ class ProcessWrapper
         Assert::that($minutes)->numeric($assertionError)->greaterOrEqualThan(0, $assertionError);
 
         $this->delayAfter = $afterClass;
-        $this->delayMinutes = $minutes;
+        $this->delayMinutes = (float) $minutes;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDelayed()
+    public function isDelayed(): bool
     {
         return $this->delayAfter !== null;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDelayAfter()
+    public function getDelayAfter(): ?string
     {
         return $this->delayAfter;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getDelayMinutes()
+    public function getDelayMinutes(): ?float
     {
         return $this->delayMinutes;
     }
 
-    /**
-     * @return Process
-     */
-    public function getProcess()
+    public function getProcess(): Process
     {
         return $this->process;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @param string $status
-     */
-    public function setStatus($status)
+    public function setStatus(string $status): void
     {
         Assertion::choice($status, self::PROCESS_STATUSES);
 
         $this->status = $status;
 
-        if ($status == self::PROCESS_STATUS_DONE) {
+        if ($status === self::PROCESS_STATUS_DONE) {
             $this->result = $this->resolveResult();
             $this->finishedTime = time();
         }
@@ -160,27 +134,21 @@ class ProcessWrapper
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getResult()
+    public function getResult(): ?string
     {
         return $this->result;
     }
 
-    /**
-     * @return int
-     */
-    public function getFinishedTime()
+    public function getFinishedTime(): ?int
     {
         return $this->finishedTime;
     }
 
     /**
      * Check if process is not running longer then specified timeout, return error message if so.
-     * @return null|string Error message if process timeout exceeded
+     * @return string Non-empty error message if process timeout exceeded
      */
-    public function checkProcessTimeout()
+    public function checkProcessTimeout(): ?string
     {
         try {
             $this->getProcess()->checkTimeout();
@@ -199,10 +167,8 @@ class ProcessWrapper
 
     /**
      * Resolve result of finished process
-     *
-     * @return string
      */
-    private function resolveResult()
+    private function resolveResult(): string
     {
         $exitCode = $this->getProcess()->getExitCode();
 

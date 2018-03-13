@@ -85,7 +85,7 @@ class ConfigResolver
         return $relevantDirOptionsForCommand;
     }
 
-    private function assertIsReadableDirectory(string $dirPath, InputOption $dirOption)
+    private function assertIsReadableDirectory(string $dirPath, InputOption $dirOption): void
     {
         $errorMessage = sprintf(
             '%s "%s" does not exist, make sure it is accessible or define your own path using %s option',

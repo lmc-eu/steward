@@ -139,9 +139,6 @@ class SeleniumServerAdapter
      * Get URL of the concrete executor (node) of given session.
      * Note this is specific non-standard feature of Selenium server (and available only in grid mode), so empty string
      * will be returned if the server does not provide this functionality.
-     *
-     * @param string $sessionId
-     * @return string
      */
     public function getSessionExecutor(string $sessionId): string
     {

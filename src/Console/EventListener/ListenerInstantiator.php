@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Console\EventListener;
 
@@ -19,7 +19,7 @@ class ListenerInstantiator
     /**
      * Instantiate listeners in given directory and register them to given dispatcher
      */
-    public function instantiate(EventDispatcher $dispatcher, string $dirToSearchForListeners)
+    public function instantiate(EventDispatcher $dispatcher, string $dirToSearchForListeners): void
     {
         $listeners = $this->searchListeners($dirToSearchForListeners);
 
@@ -61,7 +61,7 @@ class ListenerInstantiator
      *
      * @internal Should be only overridden in testing.
      */
-    public function setSearchPathPattern(string $searchPathPattern)
+    public function setSearchPathPattern(string $searchPathPattern): void
     {
         $this->searchPathPattern = $searchPathPattern;
     }

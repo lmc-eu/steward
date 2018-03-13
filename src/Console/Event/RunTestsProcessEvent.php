@@ -18,9 +18,6 @@ class RunTestsProcessEvent extends ExtendedConsoleEvent
     protected $args;
 
     /**
-     * @param Command $command
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @param array $environmentVars Environment variables passed to the process
      * @param array $args Arguments passed to the process
      */
@@ -42,7 +39,7 @@ class RunTestsProcessEvent extends ExtendedConsoleEvent
         return $this->environmentVars;
     }
 
-    public function setEnvironmentVars(array $environmentVars)
+    public function setEnvironmentVars(array $environmentVars): void
     {
         $this->environmentVars = $environmentVars;
     }
@@ -52,7 +49,7 @@ class RunTestsProcessEvent extends ExtendedConsoleEvent
         return $this->args;
     }
 
-    public function setArgs(array $args)
+    public function setArgs(array $args): void
     {
         $this->args = $args;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward;
 
@@ -27,11 +27,7 @@ class ConfigProvider
     /** @var array Array of custom configuration options that should be added to the default ones */
     private $customConfigurationOptions = [];
 
-    /**
-     * @param string $name
-     * @return array
-     */
-    public function __get($name)
+    public function __get(string $name)
     {
         $this->initialize();
 
@@ -42,28 +38,17 @@ class ConfigProvider
         throw new \DomainException(sprintf('Configuration option "%s" was not defined', $name));
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value)
+    public function __set(string $name, $value): void
     {
         throw new \LogicException('Configuration values are immutable after initialization and cannot be changed');
     }
 
-    /**
-     * @param string $name
-     */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         throw new \LogicException('Configuration values are immutable after initialization and cannot be changed');
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         $this->initialize();
 
@@ -78,7 +63,7 @@ class ConfigProvider
      *
      * @param array $customConfigurationOptions Array with values = configuration options (environment variables)
      */
-    public function setCustomConfigurationOptions(array $customConfigurationOptions)
+    public function setCustomConfigurationOptions(array $customConfigurationOptions): void
     {
         if ($this->config !== null) {
             throw new \RuntimeException(
@@ -89,7 +74,7 @@ class ConfigProvider
         $this->customConfigurationOptions = $customConfigurationOptions;
     }
 
-    private function initialize()
+    private function initialize(): void
     {
         if ($this->config !== null) {
             return;
@@ -105,7 +90,7 @@ class ConfigProvider
      *
      * @return array Default required configuration options
      */
-    private function assembleConfigurationOptions()
+    private function assembleConfigurationOptions(): array
     {
         $defaultConfigurationOptions = [
             'BROWSER_NAME',
@@ -126,11 +111,10 @@ class ConfigProvider
     /**
      * Retrieve given configuration options values from environment. If value is not found, throw and exception.
      *
-     * @param array $options
      * @throws \RuntimeException
      * @return array Option => value option name is converted from CAPS_WITH_UNDERSCORES to camelCase
      */
-    private function retrieveConfigurationValues($options)
+    private function retrieveConfigurationValues(array $options): array
     {
         $outputValues = [];
 

@@ -136,12 +136,7 @@ class ConfigResolverTest extends TestCase
         $this->resolveRunCommandConfiguration([], [ConfigOptions::TESTS_DIR => '/not/existing']);
     }
 
-    /**
-     * @param array $cliInputParams
-     * @param array $configFileInputOptions
-     * @return array
-     */
-    private function resolveRunCommandConfiguration(array $cliInputParams, array $configFileInputOptions)
+    private function resolveRunCommandConfiguration(array $cliInputParams, array $configFileInputOptions): array
     {
         $optionsResolver = new OptionsResolver();
         $runCommand = new RunCommand(new EventDispatcher());

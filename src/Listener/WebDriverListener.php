@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Listener;
 
@@ -41,10 +41,7 @@ class WebDriverListener implements TestListener
         $this->config = ConfigProvider::getInstance();
     }
 
-    /**
-     * @return CapabilitiesResolver
-     */
-    protected function getCapabilitiesResolver()
+    protected function getCapabilitiesResolver(): CapabilitiesResolver
     {
         if ($this->capabilitiesResolver === null) {
             $this->capabilitiesResolver = new CapabilitiesResolver($this->config);
@@ -53,7 +50,7 @@ class WebDriverListener implements TestListener
         return $this->capabilitiesResolver;
     }
 
-    public function startTest(Test $test)
+    public function startTest(Test $test): void
     {
         if ($test instanceof WarningTestCase) {
             return;
@@ -97,7 +94,7 @@ class WebDriverListener implements TestListener
         );
     }
 
-    public function endTest(Test $test, $time)
+    public function endTest(Test $test, $time): void
     {
         if ($test instanceof WarningTestCase) {
             return;
@@ -140,12 +137,6 @@ class WebDriverListener implements TestListener
      * Subroutine to encapsulate creation of real WebDriver. Handles some exceptions that may occur etc.
      * The WebDriver instance is stored to $test->wd when created.
      *
-     * @param AbstractTestCase $test
-     * @param string $remoteServerUrl
-     * @param DesiredCapabilities $desiredCapabilities
-     * @param DesiredCapabilities $requiredCapabilities
-     * @param int $connectTimeoutMs
-     * @param int $requestTimeoutMs
      * @throws UnknownServerException
      */
     protected function createWebDriver(
@@ -155,21 +146,20 @@ class WebDriverListener implements TestListener
         DesiredCapabilities $requiredCapabilities,
         int $connectTimeoutMs,
         int $requestTimeoutMs
-    ) {
+    ): void {
         $browserName = ConfigProvider::getInstance()->browserName;
 
         for ($startAttempts = 0; $startAttempts < 4; $startAttempts++) {
             try {
-                $test->wd =
-                    RemoteWebDriver::create(
-                        $remoteServerUrl,
-                        $desiredCapabilities,
-                        $connectTimeoutMs,
-                        $requestTimeoutMs,
-                        null,
-                        null,
-                        $requiredCapabilities
-                    );
+                $test->wd = RemoteWebDriver::create(
+                    $remoteServerUrl,
+                    $desiredCapabilities,
+                    $connectTimeoutMs,
+                    $requestTimeoutMs,
+                    null,
+                    null,
+                    $requiredCapabilities
+                );
 
                 return;
             } catch (UnknownServerException $e) {

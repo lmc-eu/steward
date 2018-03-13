@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Lmc\Steward\Listener;
 
@@ -77,12 +77,12 @@ class TestStatusListener implements TestListener
         }
     }
 
-    public function startTestSuite(TestSuite $suite)
+    public function startTestSuite(TestSuite $suite): void
     {
         $this->startDate = new \DateTimeImmutable();
     }
 
-    public function startTest(Test $test)
+    public function startTest(Test $test): void
     {
         if (!$test instanceof TestCase || $test instanceof WarningTestCase) {
             return;
@@ -108,7 +108,7 @@ class TestStatusListener implements TestListener
         }
     }
 
-    public function endTest(Test $test, $time)
+    public function endTest(Test $test, $time): void
     {
         if (!$test instanceof TestCase || $test instanceof WarningTestCase) {
             return;
@@ -136,7 +136,7 @@ class TestStatusListener implements TestListener
         }
     }
 
-    public function endTestSuite(TestSuite $suite)
+    public function endTestSuite(TestSuite $suite): void
     {
         if ($suite instanceof DataProviderTestSuite) {
             return;
