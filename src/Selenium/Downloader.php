@@ -29,31 +29,59 @@ class Downloader
      */
     public static function getLatestVersion(): ?string
     {
+        $availableVersions = self::getAvailableVersions();
+
+        if (!$availableVersions) {
+            return null;
+        }
+
+        return end($availableVersions);
+    }
+
+    public static function getAvailableVersions(): array
+    {
         $data = @file_get_contents(self::$storageUrl);
         if (!$data) {
-            return null;
+            return [];
         }
 
         libxml_use_internal_errors(true); // disable errors from being thrown
         $xml = simplexml_load_string($data);
         if (!$xml) {
-            return null;
+            return [];
         }
 
         $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
-        $lastRelease = end($releases); // something like "2.42/selenium-server-standalone-2.42.2.jar"
-        if ($lastRelease === false) {
-            return null;
+        $availableVersions = [];
+        foreach ($releases as $release) {
+            $parsedVersion = preg_replace('/.*standalone-(.+)\.jar/', '$1', $release);
+            if ((string) $release === $parsedVersion) { // regexp did not match
+                continue;
+            }
+
+            $availableVersions[] = $parsedVersion;
         }
 
-        $lastRelease = (string) $lastRelease;
+        self::sortVersions($availableVersions);
 
-        $lastVersion = preg_replace('/.*standalone-(.+)\.jar/', '$1', $lastRelease);
-        if ($lastRelease === $lastVersion) { // regexp not matched
-            return null;
-        }
+        return $availableVersions;
+    }
 
-        return $lastVersion;
+    private static function sortVersions(array &$versions): void
+    {
+        // Sort naturally, but versions like 3.0.0 must be after 3.0.0-beta, so we must take care of them explicitly
+        usort($versions, function (string $a, string $b): int {
+            $aParts = explode('-', $a);
+            $bParts = explode('-', $b);
+
+            // First part is the same (3.0.0), but one string does have second part (-beta) while the other one does not
+            if ($aParts[0] === $bParts[0] && (count($aParts) !== count($bParts))) {
+                // The one with less parts should be ordered after the longer one
+                return count($bParts) <=> count($aParts);
+            }
+
+            return strnatcmp(mb_strtolower($a), mb_strtolower($b));
+        });
     }
 
     /**
