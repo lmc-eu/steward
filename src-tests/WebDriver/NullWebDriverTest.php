@@ -20,7 +20,7 @@ class NullWebDriverTest extends TestCase
      */
     public function testShouldThrowExceptionWhenInteractingWithInstance(string $methodName, array $params): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('You cannot interact with NullWebDriver.');
 
         call_user_func_array([$this->webdriver, $methodName], $params);

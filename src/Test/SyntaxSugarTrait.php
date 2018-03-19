@@ -12,6 +12,7 @@ use Lmc\Steward\WebDriver\RemoteWebDriver;
  * Adds WebDriver syntax sugar methods.
  * Needs to be used in context where $wd property holding instance of RemoteWebDriver is present (like
  * AbstractTestCase or AbstractComponent).
+ *
  * @property RemoteWebDriver $wd
  */
 trait SyntaxSugarTrait

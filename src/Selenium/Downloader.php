@@ -118,6 +118,7 @@ class Downloader
 
     /**
      * Execute the download
+     *
      * @throws \RuntimeException Thrown when file cannot be downloaded
      * @return int Downloaded size in bytes.
      */

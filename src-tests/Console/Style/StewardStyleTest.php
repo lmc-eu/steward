@@ -216,7 +216,7 @@ HTXT;
      */
     public function testShouldThrowExceptionOnNotImplementedMethods(string $method, array $args): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('Method not implemented');
 
         call_user_func_array([$this->style, $method], $args);

@@ -51,7 +51,7 @@ class StewardStyle extends OutputStyle
 
     public function title($message): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function section($message): void
@@ -111,7 +111,7 @@ class StewardStyle extends OutputStyle
 
     public function listing(array $elements): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function text($message): void
@@ -131,7 +131,7 @@ class StewardStyle extends OutputStyle
 
     public function warning($message): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function note($message): void
@@ -141,12 +141,12 @@ class StewardStyle extends OutputStyle
 
     public function caution($message): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function table(array $headers, array $rows): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function ask($question, $default = null, $validator = null)
@@ -156,31 +156,31 @@ class StewardStyle extends OutputStyle
 
     public function askHidden($question, $validator = null): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function confirm($question, $default = true): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function choice($question, array $choices, $default = null): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function progressStart($max = 0): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function progressAdvance($step = 1): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 
     public function progressFinish(): void
     {
-        throw new \Exception('Method not implemented');
+        throw new \BadMethodCallException('Method not implemented');
     }
 }
