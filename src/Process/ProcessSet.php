@@ -16,6 +16,7 @@ class ProcessSet implements \Countable
 {
     /**
      * Array of wrapped Processes, indexed by testcase fully qualified name
+     *
      * @var ProcessWrapper[]
      */
     protected $processes = [];
@@ -98,6 +99,7 @@ class ProcessSet implements \Countable
 
     /**
      * Set queued processes without delay as prepared
+     *
      * @param OutputInterface $output Where list of dequeued and queued processes will be printed
      */
     public function dequeueProcessesWithoutDelay(OutputInterface $output): void

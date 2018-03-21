@@ -49,6 +49,7 @@ class SnapshotListener implements TestListener
 
         ob_start();
         $outputBufferClosed = false;
+
         try {
             $currentUrl = $test->wd->getCurrentURL();
             // Save PNG screenshot

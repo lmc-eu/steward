@@ -21,6 +21,7 @@ class InstallCommand extends Command
 
     /**
      * Target directory to store the selenium server (relatively to STEWARD_BASE_DIR)
+     *
      * @var string
      */
     protected $targetDir = '/vendor/bin';

@@ -17,7 +17,7 @@ class NullWebDriver implements WebDriver, JavaScriptExecutor, WebDriverHasInputD
 {
     protected function throwException(): void
     {
-        throw new \Exception('You cannot interact with NullWebDriver.');
+        throw new \LogicException('You cannot interact with NullWebDriver.');
     }
 
     public function close(): void

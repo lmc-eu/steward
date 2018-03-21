@@ -97,7 +97,7 @@ class TestStatusListener implements TestListener
                     $test,
                     $status = AbstractPublisher::TEST_STATUS_STARTED
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 printf(
                     '[%s] [WARN] Error publishing test started status to "%s" ("%s")' . "\n",
                     date('Y-m-d H:i:s'),
@@ -125,7 +125,7 @@ class TestStatusListener implements TestListener
                     AbstractPublisher::getResultForPhpUnitTestStatus($test->getStatus()),
                     $test->getStatusMessage()
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 printf(
                     '[%s] [WARN] Error publishing test done status to "%s" ("%s")' . "\n",
                     date('Y-m-d H:i:s'),
@@ -152,7 +152,7 @@ class TestStatusListener implements TestListener
                     $this->startDate,
                     new \DateTimeImmutable()
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 printf(
                     '[%s] [WARN] Error publishing process done status to "%s" ("%s")' . "\n",
                     date('Y-m-d H:i:s'),

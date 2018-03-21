@@ -146,6 +146,7 @@ class ProcessWrapper
 
     /**
      * Check if process is not running longer then specified timeout, return error message if so.
+     *
      * @return string Non-empty error message if process timeout exceeded
      */
     public function checkProcessTimeout(): ?string
