@@ -10,7 +10,7 @@ class DownloaderTest extends TestCase
 {
     use PHPMock;
 
-    public function testShouldParseLatestVersion(): void
+    public function testShouldGetAvailableVersions(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response.xml');
 
@@ -19,28 +19,64 @@ class DownloaderTest extends TestCase
             ->with('https://selenium-release.storage.googleapis.com')
             ->willReturn($releasesDummyResponse);
 
-        $this->assertEquals('3.0.0-beta1', Downloader::getLatestVersion());
+        $this->assertEquals(
+            [
+                '2.43.0',
+                '2.43.1',
+                '2.53.0',
+                '2.53.1',
+                '3.0.0-beta1',
+                '3.0.0-beta2',
+                '3.0.0-beta3',
+                '3.0.0-beta3',
+                '3.0.0-beta4',
+                '3.0.0',
+                '3.0.1',
+                '3.1.0',
+                '3.2.0',
+                '3.4.0',
+                '3.9.0',
+                '3.9.1',
+                '3.10.0',
+                '3.11.0',
+            ],
+            Downloader::getAvailableVersions()
+        );
     }
 
-    public function testShouldReturnNullIfRequestToGetLatestVersionFailed(): void
+    public function testShouldGetLatestVersion(): void
+    {
+        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response.xml');
+
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+        $fileGetContentsMock->expects($this->any())
+            ->with('https://selenium-release.storage.googleapis.com')
+            ->willReturn($releasesDummyResponse);
+
+        $this->assertEquals('3.11.0', Downloader::getLatestVersion());
+    }
+
+    public function testShouldReturnEmptyArrayOfAvailableVersionsIfRequestToGetVersionFailed(): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
             ->willReturn(false);
 
+        $this->assertSame([], Downloader::getAvailableVersions());
         $this->assertNull(Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnNullIfRequestToGetLatestVersionReturnsInvalidXml(): void
+    public function testShouldReturnEmptyArrayOfAvailableVersionsIfRequestToGetLatestVersionReturnsInvalidXml(): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
         $fileGetContentsMock->expects($this->any())
             ->willReturn('is not XML');
 
+        $this->assertSame([], Downloader::getAvailableVersions());
         $this->assertNull(Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnNullIfLatestVersionCannotBeFound(): void
+    public function testShouldReturnEmptyArrayOfAvailableVersionsIfLatestVersionCannotBeFound(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-missing.xml');
 
@@ -48,10 +84,11 @@ class DownloaderTest extends TestCase
         $fileGetContentsMock->expects($this->any())
             ->willReturn($releasesDummyResponse);
 
+        $this->assertSame([], Downloader::getAvailableVersions());
         $this->assertNull(Downloader::getLatestVersion());
     }
 
-    public function testShouldReturnNullIfLatestVersionIsInvalid(): void
+    public function testShouldNotIncludeInvalidVersionsInAvailableVersions(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-invalid-version.xml');
 
@@ -59,7 +96,7 @@ class DownloaderTest extends TestCase
         $fileGetContentsMock->expects($this->any())
             ->willReturn($releasesDummyResponse);
 
-        $this->assertNull(Downloader::getLatestVersion());
+        $this->assertSame(['3.1.0', '3.10.0'], Downloader::getAvailableVersions());
     }
 
     /**
@@ -107,7 +144,7 @@ class DownloaderTest extends TestCase
             ->willReturn($releasesDummyResponse);
 
         $downloader = new Downloader(__DIR__ . '/Fixtures');
-        $this->assertEquals('3.0.0-beta1', $downloader->getVersion());
+        $this->assertEquals('3.11.0', $downloader->getVersion());
     }
 
     public function testShouldAssembleTargetFilePath(): void
