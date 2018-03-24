@@ -3,16 +3,17 @@
 namespace Lmc\Steward\Console\Event;
 
 use Lmc\Steward\Console\Command\Command;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ExtendedConsoleEventTest extends BasicConsoleEventTest
 {
-    /** @var InputInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var InputInterface|MockObject */
     protected $inputMock;
-    /** @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OutputInterface|MockObject */
     protected $outputMock;
-    /** @var Command|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Command|MockObject */
     protected $commandMock;
 
     protected function setUp(): void

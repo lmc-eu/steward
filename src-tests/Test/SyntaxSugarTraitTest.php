@@ -7,6 +7,7 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Facebook\WebDriver\WebDriverWait;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SyntaxSugarTraitTest extends TestCase
@@ -31,7 +32,7 @@ class SyntaxSugarTraitTest extends TestCase
         string $expectedWebDriverByStrategy
     ): void {
         $wd = $this->trait->wd;
-        /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
+        /** @var MockObject $wd */
         $wd->expects($this->once())
             ->method('findElement')
             ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'))
@@ -52,7 +53,7 @@ class SyntaxSugarTraitTest extends TestCase
         string $expectedWebDriverByStrategy
     ): void {
         $wd = $this->trait->wd;
-        /** @var \PHPUnit_Framework_MockObject_MockObject $wd */
+        /** @var MockObject $wd */
         $wd->expects($this->once())
             ->method('findElements')
             ->with(WebDriverBy::$expectedWebDriverByStrategy('foobar'))
@@ -93,7 +94,7 @@ class SyntaxSugarTraitTest extends TestCase
         string $method,
         bool $isElementMethod = true
     ): void {
-        /** @var WebDriverWait|\PHPUnit_Framework_MockObject_MockObject $waitMock */
+        /** @var WebDriverWait|MockObject $waitMock */
         $waitMock = $this->createMock(WebDriverWait::class);
 
         // Note the WebDriverExpectedCondition instances are not comparable (as they return callbacks), so we can

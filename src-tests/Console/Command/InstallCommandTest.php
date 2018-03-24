@@ -8,6 +8,7 @@ use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -259,9 +260,9 @@ class InstallCommandTest extends TestCase
     /**
      * Get Downloader mock mocking isAlreadyDownloaded and download method to act like file is being downloaded
      * @param int|bool $expectedFileSize
-     * @return Downloader|\PHPUnit_Framework_MockObject_MockObject $downloaderMock
+     * @return Downloader|MockObject $downloaderMock
      */
-    protected function getDownloadMock($expectedFileSize = 123): \PHPUnit_Framework_MockObject_MockObject
+    protected function getDownloadMock($expectedFileSize = 123): MockObject
     {
         $downloaderMock = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([__DIR__ . '/Fixtures/vendor/bin'])

@@ -8,6 +8,7 @@ use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\WarningTestCase;
 
@@ -44,7 +45,7 @@ class SnapshotListenerTest extends TestCase
             $testcaseName
         );
 
-        /** @var RemoteWebDriver|\PHPUnit_Framework_MockObject_MockObject $webDriver */
+        /** @var RemoteWebDriver|MockObject $webDriver */
         $webDriver = $this->createMock(RemoteWebDriver::class);
         $webDriver->expects($this->once())
             ->method('getCurrentURL')
@@ -153,7 +154,7 @@ class SnapshotListenerTest extends TestCase
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['testFooBar'], 'FooBarTest');
 
-        /** @var RemoteWebDriver|\PHPUnit_Framework_MockObject_MockObject $webDriver */
+        /** @var RemoteWebDriver|MockObject $webDriver */
         $webDriver = $this->createMock(RemoteWebDriver::class);
         $webDriver->expects($this->once())
             ->method('getCurrentURL')

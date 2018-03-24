@@ -12,6 +12,7 @@ use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedTest;
 use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +28,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProcessSetCreatorTest extends TestCase
 {
-    /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcher|MockObject */
     protected $dispatcherMock;
     /** @var RunCommand */
     protected $command;
@@ -37,7 +38,7 @@ class ProcessSetCreatorTest extends TestCase
     protected $bufferedOutput;
     /** @var ProcessSetCreator */
     protected $creator;
-    /** @var AbstractPublisher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractPublisher|MockObject */
     protected $publisherMock;
 
     // Fully classified names of dummy tests

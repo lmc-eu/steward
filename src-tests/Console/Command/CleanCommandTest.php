@@ -4,6 +4,7 @@ namespace Lmc\Steward\Console\Command;
 
 use Assert\InvalidArgumentException;
 use Lmc\Steward\Console\Application;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -47,7 +48,7 @@ class CleanCommandTest extends TestCase
 
     public function testShouldCreateLogsDirectoryIfDefaultPathIsUsed(): void
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Filesystem $filesystemMock */
+        /** @var MockObject|Filesystem $filesystemMock */
         $filesystemMock = $this->getMockBuilder(Filesystem::class)
             ->setMethods(['exists', 'mkdir'])
             ->getMock();

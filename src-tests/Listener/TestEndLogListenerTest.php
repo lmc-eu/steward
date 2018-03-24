@@ -5,6 +5,7 @@ namespace Lmc\Steward\Listener;
 use Lmc\Steward\MockAbstractTestCaseWithNameTrait;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\Test\AbstractTestCaseTest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class TestEndLogListenerTest extends TestCase
@@ -15,7 +16,7 @@ class TestEndLogListenerTest extends TestCase
     {
         $listener = new TestEndLogListener();
 
-        /** @var AbstractTestCase|\PHPUnit_Framework_MockObject_MockObject $testCase */
+        /** @var AbstractTestCase|MockObject $testCase */
         $testCase = $this->getAbstractTestCaseMock('MockedTest', 'testFooBar');
 
         $listener->endTest($testCase, 1);

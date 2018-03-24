@@ -8,12 +8,13 @@ use Lmc\Steward\Listener\Fixtures\ExceptionThrowingPublisher;
 use Lmc\Steward\Publisher\SauceLabsPublisher;
 use Lmc\Steward\Publisher\TestingBotPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\WarningTestCase;
 
 class TestStatusListenerTest extends TestCase
 {
-    /** @var SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SeleniumServerAdapter|MockObject */
     protected $seleniumAdapterMock;
 
     public function setUp(): void
