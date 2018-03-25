@@ -108,7 +108,7 @@ class TestStatusListener implements TestListener
         }
     }
 
-    public function endTest(Test $test, $time): void
+    public function endTest(Test $test, float $time): void
     {
         if (!$test instanceof TestCase || $test instanceof WarningTestCase) {
             return;

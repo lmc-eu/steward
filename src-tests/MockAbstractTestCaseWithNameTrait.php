@@ -17,12 +17,9 @@ trait MockAbstractTestCaseWithNameTrait
         $callAutoload = true,
         $mockedMethods = [],
         $cloneArguments = false
-    );
+    ): MockObject;
 
-    /**
-     * @return AnyInvokedCount
-     */
-    abstract public static function any();
+    abstract public static function any(): AnyInvokedCount;
 
     /**
      * @return AbstractTestCase|MockObject
