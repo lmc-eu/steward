@@ -3,11 +3,12 @@
 namespace Lmc\Steward\Console\Event;
 
 use Lmc\Steward\Console\Command\Command;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class BasicConsoleEventTest extends TestCase
 {
-    /** @var Command|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Command|MockObject */
     protected $commandMock;
 
     protected function setUp(): void

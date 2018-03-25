@@ -4,6 +4,7 @@ namespace Lmc\Steward\Selenium;
 
 use Assert\InvalidArgumentException;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DownloaderTest extends TestCase
@@ -223,7 +224,7 @@ class DownloaderTest extends TestCase
     public function testShouldStoreDownloadedFileToExpectedLocation(): void
     {
         // Mock getFileUrl() method to return URL to fixtures on filesystem
-        /** @var Downloader|\PHPUnit_Framework_MockObject_MockObject $downloader */
+        /** @var Downloader|MockObject $downloader */
         $downloader = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([__DIR__ . '/Fixtures'])
             ->setMethods(['getFileUrl'])
@@ -249,7 +250,7 @@ class DownloaderTest extends TestCase
 
     public function testShouldThrowExceptionIfFileCannotBeDownloaded(): void
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Downloader $downloader */
+        /** @var MockObject|Downloader $downloader */
         $downloader = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([__DIR__ . '/Fixtures'])
             ->setMethods(['getFileUrl'])
@@ -277,7 +278,7 @@ class DownloaderTest extends TestCase
             'Directory already exists, though it should be created only by the test'
         );
 
-        /** @var Downloader|\PHPUnit_Framework_MockObject_MockObject $downloader */
+        /** @var Downloader|MockObject $downloader */
         $downloader = $this->getMockBuilder(Downloader::class)
             ->setConstructorArgs([$expectedDirectory])
             ->setMethods(['getFileUrl'])

@@ -3,6 +3,8 @@
 namespace Lmc\Steward;
 
 use Lmc\Steward\Test\AbstractTestCase;
+use PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount;
+use PHPUnit\Framework\MockObject\MockObject;
 
 trait MockAbstractTestCaseWithNameTrait
 {
@@ -18,18 +20,18 @@ trait MockAbstractTestCaseWithNameTrait
     );
 
     /**
-     * @return \PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount
+     * @return AnyInvokedCount
      */
     abstract public static function any();
 
     /**
-     * @return AbstractTestCase|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractTestCase|MockObject
      */
     public function getAbstractTestCaseMock(
         string $testCaseName,
         string $testMethodName
-    ): \PHPUnit_Framework_MockObject_MockObject {
-        /** @var AbstractTestCase|\PHPUnit_Framework_MockObject_MockObject $testCase */
+    ): MockObject {
+        /** @var AbstractTestCase|MockObject $testCase */
         $testCase = $this->getMockForAbstractClass(
             AbstractTestCase::class,
             [],

@@ -4,11 +4,11 @@ parameters:
 		- '#Constructor of class .+ImplementsCapabilitiesResolverInterface has an unused parameter \$config#'
 		- '#Lmc\\Steward\\ConfigProviderHelper::__construct\(\) does not call parent constructor from Lmc\\Steward\\ConfigProvider#'
 		- '#Constructor of class Lmc\\Steward\\Selenium\\Fixtures\\CapabilitiesResolverFixture has an unused parameter \$config#'
-		- '#Access to an undefined property PHPUnit_Framework_MockObject_MockObject#'
-		- '#Call to an undefined method PHPUnit_Framework_MockObject_MockObject::setCommandExecutor\(\)#'
+		- '#Access to an undefined property PHPUnit\\Framework\\MockObject\\MockObject#'
+		- '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject::setCommandExecutor\(\)#'
 		- '#Call to an undefined method Lmc\\Steward\\Component\\Fixtures\\MockComponent::notExisting\(\)#'
-		- "#but returns PHPUnit_Framework_MockObject_MockObject#"
-		- "#does not accept PHPUnit_Framework_MockObject_MockObject#"
+		- "#but returns PHPUnit\\\\Framework\\\\MockObject\\\\MockObject#"
+		- "#does not accept PHPUnit\\\\Framework\\\\MockObject\\\\MockObject#"
 		- "#Property Lmc\\\\Steward\\\\Test\\\\AbstractTestCase::\\$wd \\(Facebook\\\\WebDriver\\\\Remote\\\\RemoteWebDriver\\) does not accept Lmc\\\\Steward\\\\WebDriver\\\\NullWebDriver#"
 	excludes_analyse:
 		- '%rootDir%/../../../../src-tests/Process/Fixtures/InvalidTests/WrongClassTest.php'

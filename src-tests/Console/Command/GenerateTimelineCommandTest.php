@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\Application;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -45,7 +46,7 @@ class GenerateTimelineCommandTest extends TestCase
 
     public function testShouldOutputHtmlFileWithJsonData(): void
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Filesystem $filesystemMock */
+        /** @var MockObject|Filesystem $filesystemMock */
         $filesystemMock = $this->createMock(Filesystem::class);
         $filesystemMock->expects($this->once())
             ->method('dumpFile')

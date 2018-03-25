@@ -11,6 +11,7 @@ use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -387,7 +388,7 @@ class RunCommandTest extends TestCase
     /**
      * Mock Selenium adapter as if connection is OK
      *
-     * @return SeleniumServerAdapter|\PHPUnit_Framework_MockObject_MockObject
+     * @return SeleniumServerAdapter|MockObject
      */
     protected function getSeleniumAdapterMock()
     {
