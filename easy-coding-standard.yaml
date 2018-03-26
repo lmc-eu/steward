@@ -1,0 +1,17 @@
+imports:
+    - { resource: '%vendor_dir%/lmc/coding-standard/easy-coding-standard.yaml' }
+
+parameters:
+    skip:
+        PHP_CodeSniffer\Standards\Generic\Sniffs\PHP\ForbiddenFunctionsSniff:
+            - 'src/bootstrap.php'
+            - 'src-tests/bootstrap.php'
+            - 'src/Listener/TestStartLogListener.php'
+            - 'src/Listener/TestStatusListener.php'
+            - 'src/Test/AbstractTestCase.php'
+            - 'src/WebDriver/RemoteWebDriver.php'
+        PHP_CodeSniffer\Standards\Generic\Sniffs\Files\OneClassPerFileSniff.MultipleFound:
+            - 'src-tests/Process/Fixtures/InvalidTests/MultipleClassesInFileTest.php'
+    exclude_files:
+        - 'src-tests/coverage/*'
+        - 'src-tests/FunctionalTests/logs/coverage/*'

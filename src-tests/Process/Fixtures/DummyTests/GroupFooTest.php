@@ -6,6 +6,7 @@ use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Dummy test without group "foo" and group "both"
+ *
  * @group foo
  * @group both
  */
