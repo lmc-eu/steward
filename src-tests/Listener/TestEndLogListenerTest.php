@@ -19,7 +19,7 @@ class TestEndLogListenerTest extends TestCase
         /** @var AbstractTestCase|MockObject $testCase */
         $testCase = $this->getAbstractTestCaseMock('MockedTest', 'testFooBar');
 
-        $listener->endTest($testCase, 1);
+        $listener->endTest($testCase, 1.0);
 
         $this->assertRegExp(
             '/^' . AbstractTestCaseTest::EXPECTED_TIMESTAMP_PATTERN

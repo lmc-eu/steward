@@ -11,7 +11,7 @@ class TestEndLogListener implements TestListener
 {
     use TestListenerDefaultImplementation;
 
-    public function endTest(Test $test, $time): void
+    public function endTest(Test $test, float $time): void
     {
         if ($test instanceof AbstractTestCase) {
             $test->appendTestLog(sprintf('--- Finished execution of test "%s" ---', $test->getName()));
