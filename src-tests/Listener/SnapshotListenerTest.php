@@ -31,7 +31,7 @@ class SnapshotListenerTest extends TestCase
      */
     public function testShouldTakeSnapshot(
         string $method,
-        \Exception $exception,
+        \Throwable $exception,
         string $testcaseName,
         string $testName,
         string $dataSetName,

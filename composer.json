@@ -23,7 +23,8 @@
     "autoload-dev": {
         "psr-4": {
             "Lmc\\Steward\\": "src-tests/"
-        }
+        },
+        "exclude-from-classmap": ["/src-tests/Process/Fixtures/InvalidTests/*"]
     },
     "require": {
         "php": "^7.1",
