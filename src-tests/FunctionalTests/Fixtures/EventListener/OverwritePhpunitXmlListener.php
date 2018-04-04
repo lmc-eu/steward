@@ -20,6 +20,7 @@ class OverwritePhpunitXmlListener implements EventSubscriberInterface
 
     /**
      * Set custom phpunit.xml to override the default one
+     *
      * @param RunTestsProcessEvent $event
      */
     public function onCommandRunTestsProcess(RunTestsProcessEvent $event): void

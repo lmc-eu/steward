@@ -6,6 +6,7 @@ use Lmc\Steward\Test\AbstractTestCase;
 
 /**
  * Tests that don't need a browser
+ *
  * @noBrowser
  */
 class NoBrowserTest extends AbstractTestCase
