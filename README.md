@@ -7,50 +7,59 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
 [![License](https://img.shields.io/packagist/l/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
 
-Steward is set of libraries made to simplify writing and running robust functional system tests in
+Steward is a set of libraries made to simplify writing and running robust functional system tests in
 [PHPUnit](https://phpunit.de/) using [Selenium WebDriver](http://www.seleniumhq.org/).
 
 ## What's great about Steward?
-- It allows you to start writing complex test cases in a minute.
-- It makes a lot of work for you: download and install Selenium server with one command; set-up browser of your choice; automatically take a screenshot on failed assertion; produce test results in JUnit format (easily processable e.g. by Jenkins and other tools) and more.
-- Your tests are run in a parallel, so the bottleneck is just the amount of Selenium nodes you start simultaneously.
-- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/facebook/php-webdriver/wiki/Example-command-reference) can help you shorten your tests and make them more readable.
-- If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all.
-- Allows you to plan tests dependencies - need to wait 2 minutes until some event gets through your message queue so you could test the result? No problem! The order of tests is even optimized to minimize the total execution time.
-- Status of the tests could be clearly watched during tests execution, so you will easily know how many tests were already finished and what was their result.
-- You can extend it easily by e.g. registering custom events to EventDispatcher. Thus you can, for example, add custom configuration options or change parameters passed to child PHPUnit processes.
-- Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated, giving you a possibility to run tests with even less setup and without own infrastructure.
-- It is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain quality of our various products thanks to hundreds of test-cases. The library itself is also extensively covered with unit tests.
+- It allows you to start writing complex test cases in a minute
+- It performs a lot of work for you:
+   - downloads and installs Selenium server with one command
+   - sets-up browser of your choice
+   - automatically takes a screenshot on failed assertions
+   - produces test results in JUnit format (easily processable e.g. by Jenkins and other tools)
+   - and more...
+- Tests are run in parallel, so the only bottleneck is the number of Selenium nodes you start simultaneously
+- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/facebook/php-webdriver/wiki/Example-command-reference) helps shorten your tests and improve readability
+- If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all
+- Allows you to plan test dependencies
+   - Ex. need to wait 2 minutes until some event gets through your message queue before testing the result? No problem! The order of tests is optimized to minimize the total execution time
+- Status of tests can be clearly watched during test execution, so you will easily know how many tests have finished and what their results are
+- You can extend Steward easily by registering custom events to EventDispatcher.
+   - Ex. you can add custom configuration options or change parameters passed to child PHPUnit processes
+- Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated giving you a chance to run tests with less setup and without your own infrastructure
+- Steward is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain the quality of our products thanks to hundreds of test-cases
+   - the library itself is also extensively covered by unit tests
 - Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
 [php-webdriver](https://github.com/facebook/php-webdriver) is the most used and developed Selenium language binding for PHP,
-[PHPUnit](https://phpunit.de/) is well known and widely used testing framework and
-[Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications.
+[PHPUnit](https://phpunit.de/) is a well known and widely used testing framework, and
+[Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications
 
 ## Example usage
 To see how to use and extend Steward, have a look at our [example project](https://github.com/lmc-eu/steward-example).
 
 ## Changelog
-For latest changes see [CHANGELOG.md](CHANGELOG.md) file. We follow [Semantic Versioning](http://semver.org/).
+For the latest changes see the [CHANGELOG.md](CHANGELOG.md) file. We follow [Semantic Versioning](http://semver.org/).
 
 ## Getting started
 ### 1. Install Steward
 For most cases we recommend having functional tests in the same repository as your application but in a separate folder.
-So let's suggest we put them in `selenium-tests/` directory.
+We suggest putting them in a `selenium-tests/` directory.
 
-**In this directory** then simply install Steward:
+**In this directory**, simply install Steward with the following command:
 
 ```sh
 $ composer require lmc/steward
 ```
 
-Note you will need to have [Composer](https://getcomposer.org/) installed to do this.
+**Note:** you will need to have [Composer](https://getcomposer.org/) installed to do this.
 
-### 2. Download Selenium server and browser driver
-You can download and run Selenium standalone server and the browser locally right on your computer.
-Another possibility is to [start Selenium server + browser inside Docker container][wiki-docker].
-To run Selenium locally:
+### 2. Download Selenium Server and browser drivers
+You can download and run Selenium Standalone Server with the test browser opening locally right on your computer.
+Another possibility is to [start Selenium Server and test browser inside a Docker container][wiki-docker].
 
-#### Get Selenium standalone server
+####To run Selenium locally:
+
+#### Get Selenium Standalone Server
 You need to download Selenium server so it can execute commands in the specified browser.
 In the root directory of your tests (e.g. `selenium-tests/`)  simply run:
 
@@ -58,22 +67,22 @@ In the root directory of your tests (e.g. `selenium-tests/`)  simply run:
 $ ./vendor/bin/steward install
 ```
 
-This will check for the latest released version of Selenium standalone server and download it for you (the jar file will
-be placed into `./vendor/bin` directory).
+This will check for the latest version of Selenium Standalone Server and download it for you (the jar file will
+be placed into the `./vendor/bin` directory).
 
-You may want to run this command as part of your CI server build - then simply use the `--no-interaction` option to
-download the Selenium without any interaction and print absolute path to the jar file as the sole output.
+You may want to run this command as part of your CI server build, then simply use the `--no-interaction` option to
+download Selenium without any interaction and print the absolute path to the jar file as the sole output.
 
-#### Download browser driver
-If it is not already installed on your system, you will need to download Selenium driver for the browser you want to
-use for the tests. See dedicated page [Selenium server & browser drivers][wiki-drivers]
+#### Download browser drivers
+If it is not already installed on your system, you will need to download Selenium driver for the browser(s) you want to
+use for the tests. See [Selenium server & browser drivers][wiki-drivers]
 in our wiki for more information.
 
 ### 3. Write the first test
-To provide you the Steward functionality, your tests have to extend the `Lmc\Steward\Test\AbstractTestCase` class.
+To provide you with Steward functionality, your tests have to extend the `Lmc\Steward\Test\AbstractTestCase` class.
 
 You must also configure [PSR-4 autoloading](http://www.php-fig.org/psr/psr-4/) so that your tests could be found by
-Steward. For the following example it is as easy as adding following to your `composer.json`:
+Steward. It is as easy as adding the following to your `composer.json` file:
 
 ```json
     "autoload": {
@@ -82,9 +91,9 @@ Steward. For the following example it is as easy as adding following to your `co
         }
     }
 ```
-Don't forget to create the `selenium-tests/tests/` directory and to run `composer dump-autoload` afterward.
+Don't forget to create the `selenium-tests/tests/` directory and to run `composer dump-autoload` afterwards.
 
-Now the test itself (place it to `selenium-tests/tests/` directory):
+For the test itself, place it in the `selenium-tests/tests/` directory:
 
 ```php
 <?php
@@ -122,68 +131,69 @@ class TitlePageTest extends AbstractTestCase
 
 ### 4. Run your tests
 #### Start Selenium server
-Now you need to start Selenium server, which will listen and execute commands sent from your tests.
+Now you need to start Selenium server, which will listen for and execute commands sent from your tests.
 
 ```sh
 $ java -jar ./vendor/bin/selenium-server-standalone-3.4.0.jar # the version may differ
 ```
 
-This will start single Selenium server instance (listening on port 4444) in "no-grid" mode (meaning the server receives
-and also executes the commands itself). You may want to run the Selenium  server in a grid mode (when the hub is
-receiving the commands and multiple nodes are executing them) - please consult help and especially the `-role` option
-of the Selenium server.
+This will start a single Selenium Server instance (listening on port 4444) in "no-grid" mode (meaning the server receives
+and executes the commands itself).
+
+**Note:** You may want to run Selenium  Server in a grid mode. This has the *hub* receiving commands while multiple *nodes* execute them. 
+Consult --help and the `-role` option of Selenium server.
 
 #### Run Steward!
-Having your Selenium server listening, let's launch your test! Use the  `run` command:
+Now that Selenium Server is listening, let's launch your test! Use the  `run` command:
 
 ```sh
 ./vendor/bin/steward run staging firefox
 ```
 
-In few moments you should see Firefox window appearing, then the http://www.w3.org/ site (as defined in the example tests)
-should be loaded and the window will be instantly closed. See the output of the command to check the test result.
+In a few moments you should see a Firefox window appear, then the http://www.w3.org/ site (as defined in the example tests)
+should be loaded before the window instantly closes. See the output of the command to check the test result.
 
-The `run` command has two required arguments - the name of environment and browser:
-- The environment argument has no effect by default, but it is accessible in your tests making it easy to e.g. change the base URL of your tested site - for example, your local server or staging environment
-- The browser name could be any name of browser supported by Selenium. Most common are "firefox", "chrome", "phantomjs", "safari" and "internet explorer". See our wiki for more info related to [installing browser drivers][wiki-drivers].
+The `run` command has two required arguments: the name of the environment and the browser:
+- The environment argument has no effect by default, but is accessible in your tests making it easy to, for example, change the base URL of your tested site. This would be useful for testing between your local server and staging environments
+- The browser name could be any browser name supported by Selenium. Most common are "firefox", "chrome", "phantomjs", "safari" and "internet explorer". See our wiki for more info related to [installing browser drivers][wiki-drivers].
 
-There is also a bunch of useful options of `run` command:
+There is also a bunch of useful options for the `run` command:
 
-- `--group` - run just specific group(s) of tests
+- `--group` - only run specific group(s) of tests
 - `--exclude-group` - exclude some group(s) of tests (can be even combined with `--group`)
 - `--server-url` - set different url of selenium server than the default (which is `http://localhost:4444/wd/hub`)
-- `--xdebug` - start Xdebug debugger on your tests, so you can debug tests from your IDE ([learn more about tests debugging][wiki-debugging] in our Wiki)
+- `--xdebug` - start Xdebug debugger on your tests. Allows you to debug tests from your IDE ([learn more about tests debugging][wiki-debugging] in our Wiki)
 - `--capability` - directly pass any extra capability to the Selenium WebDriver server ([see wiki][wiki-capabilities] for more information and examples)
 - `--help` - see all other options and default values
-- **adjust output levels:** by default, only test results summary is printed to the output; the verbosity could be changed like this:
+- **adjust output levels:** by default, only the test results summary is printed to the output; the verbosity could be changed by the following:
     - `-v` - to instantly output name of failed test(s)
-    - `-vv` - print also progress information during run (which tests were started/finished etc); if any test fails, its output will by printed to the console
+    - `-vv` - also print progress information during run (which tests were started/finished etc); if any test fails, its output will by printed to the console
     - `-vvv` - output everything, including all output from the tests
 
 ### 5. See the results and screenshots
-The log is printed to the console where you run the `run` command. But this could be a bit confusing, especially if you run multiple tests in parallel.
+The log is printed to the console where you run the `run` command. This could be a bit confusing, especially if you run multiple tests in parallel.
 
-So for each testcase there is a separate file in JUnit XML format, placed in `logs/` directory. Also, screenshots and HTML snapshots are saved into this directory (they are automatically generated on failed assertion or if some WebDriver command fails).
+As a solution, for each testcase there is a separate file in JUnit XML format, placed in `logs/` directory. Screenshots and HTML snapshots are also saved into this directory (they are automatically generated on failed assertion or if a WebDriver command fails).
 
-To see the current status of tests during (or after) tests execution, open file `logs/results.xml` in your browser:
+To see the current status of tests during (or after) test execution, open the `logs/results.xml` file in your browser:
 
 ![Example output as displayed in logs/results.xml file](https://lmc-eu.github.io/steward/images/results-output-example.png)
 
-Similar output but in command line interface could be obtained using `steward results` command - see below. You can also add `-vvv` to see results of each individual test.
+Similar output in the command line interface can be obtained using the `./vendor/bin/steward results` command (see below). You can also add `-vvv` to see results of each individual test.
 
 ![Example output of results command](https://lmc-eu.github.io/steward/images/results-output-cli.png)
 
 ### 6. See test execution timeline
-Steward provides a visual representation of test execution timeline. When used with Selenium server grid you can see which
+Steward provides a visual representation of the test execution timeline. When used with Selenium Server in "grid" mode you can see which
 Selenium node executed which testcase, identify possible bottlenecks and so on.
 
-To generate the timeline, simply run after your test build is finished the command `generate-timeline`:
+To generate the timeline, simply run the `generate-timeline` command after your test build is finished:
 
 ```sh
 ./vendor/bin/steward generate-timeline
 ```
 
-File `timeline.html` will be then generated into `logs/` directory.
+File `timeline.html` will then be generated into the `logs/` directory.
 
 ![Example timeline visualization](https://lmc-eu.github.io/steward/images/timeline.png)
 
