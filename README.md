@@ -11,28 +11,27 @@ Steward is a set of libraries made to simplify writing and running robust functi
 [PHPUnit](https://phpunit.de/) using [Selenium WebDriver](http://www.seleniumhq.org/).
 
 ## What's great about Steward?
-- It allows you to start writing complex test cases in a minute
+- It allows you to start writing complex test cases in a minute.
 - It performs a lot of work for you:
    - downloads and installs Selenium server with one command
    - sets-up browser of your choice
    - automatically takes a screenshot on failed assertions
-   - produces test results in JUnit format (easily processable e.g. by Jenkins and other tools)
+   - produces test results in JUnit format (easily processable, for example, by Jenkins and other tools)
    - and more...
-- Tests are run in parallel, so the only bottleneck is the number of Selenium nodes you start simultaneously
-- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/facebook/php-webdriver/wiki/Example-command-reference) helps shorten your tests and improve readability
-- If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all
-- Allows you to plan test dependencies
-   - Ex. need to wait 2 minutes until some event gets through your message queue before testing the result? No problem! The order of tests is optimized to minimize the total execution time
-- Status of tests can be clearly watched during test execution, so you will easily know how many tests have finished and what their results are
+- Tests are run in parallel, so the only bottleneck is the number of Selenium nodes you start simultaneously.
+- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/facebook/php-webdriver/wiki/Example-command-reference) helps shorten your tests and improve readability.
+- If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all.
+- Allows you to plan test dependencies.
+   - For example, if you need to wait 2 minutes until some event gets through your message queue before testing the result? No problem! The order of tests is optimized to minimize the total execution time.
+- Status of tests can be clearly watched during test execution, so you will easily know how many tests have finished and what their results are.
 - You can extend Steward easily by registering custom events to EventDispatcher.
-   - Ex. you can add custom configuration options or change parameters passed to child PHPUnit processes
-- Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated giving you a chance to run tests with less setup and without your own infrastructure
-- Steward is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain the quality of our products thanks to hundreds of test-cases
-   - the library itself is also extensively covered by unit tests
+   - For example if you can add custom configuration options or change parameters passed to child PHPUnit processes.
+- Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated giving you a chance to run tests with less setup and without your own infrastructure.
+- Steward is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain the quality of our products thanks to hundreds of test-cases. The library itself is also extensively covered by unit tests.
 - Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
 [php-webdriver](https://github.com/facebook/php-webdriver) is the most used and developed Selenium language binding for PHP,
 [PHPUnit](https://phpunit.de/) is a well known and widely used testing framework, and
-[Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications
+[Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications.
 
 ## Example usage
 To see how to use and extend Steward, have a look at our [example project](https://github.com/lmc-eu/steward-example).
@@ -54,10 +53,8 @@ $ composer require lmc/steward
 **Note:** you will need to have [Composer](https://getcomposer.org/) installed to do this.
 
 ### 2. Download Selenium Server and browser drivers
-You can download and run Selenium Standalone Server with the test browser opening locally right on your computer.
+The following step only applies if you want to download and run Selenium Standalone Server with the test browser locally right on your computer.
 Another possibility is to [start Selenium Server and test browser inside a Docker container][wiki-docker].
-
-####To run Selenium locally:
 
 #### Get Selenium Standalone Server
 You need to download Selenium server so it can execute commands in the specified browser.
