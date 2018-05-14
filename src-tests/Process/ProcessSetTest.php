@@ -16,7 +16,7 @@ class ProcessSetTest extends TestCase
     /** @var ProcessSet */
     protected $set;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->set = new ProcessSet();
     }

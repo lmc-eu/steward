@@ -10,7 +10,7 @@ class NullWebDriverTest extends TestCase
     /** @var NullWebDriver */
     protected $webdriver;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->webdriver = new NullWebDriver();
     }

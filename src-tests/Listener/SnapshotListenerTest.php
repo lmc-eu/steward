@@ -19,7 +19,7 @@ class SnapshotListenerTest extends TestCase
 {
     use PHPMock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         ConfigHelper::setEnvironmentVariables(ConfigHelper::getDummyConfig());
         ConfigHelper::unsetConfigInstance();

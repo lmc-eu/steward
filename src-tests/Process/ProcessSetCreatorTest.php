@@ -46,7 +46,7 @@ class ProcessSetCreatorTest extends TestCase
     private const NAME_BAR_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupBarTest';
     private const NAME_FOO_TEST = 'Lmc\Steward\Process\Fixtures\DummyTests\GroupFooTest';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->dispatcherMock = $this->getMockBuilder(EventDispatcher::class)
             ->setMethods(['dispatch'])

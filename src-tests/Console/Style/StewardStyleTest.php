@@ -17,7 +17,7 @@ class StewardStyleTest extends TestCase
     /** @var BufferedOutput */
     protected $outputBuffer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $input = new StringInput('');
         $this->outputBuffer = new BufferedOutput();

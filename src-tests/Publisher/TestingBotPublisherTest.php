@@ -11,7 +11,7 @@ use Lmc\Steward\ConfigHelper;
  */
 class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['SERVER_URL'] = 'http://username:pass@hub.testingbot.com:80';

@@ -16,7 +16,7 @@ class LegacyTest extends TestCase
     /** @var AbstractTestCase */
     protected $testCase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->testCase = $this->getMockBuilder(AbstractTestCase::class)
             ->setMethods(['getName'])

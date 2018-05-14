@@ -13,7 +13,7 @@ class RemoteWebDriverTest extends TestCase
     /** @var RemoteWebDriver|MockObject */
     protected $driver;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         // We need to create RemoteWebDriver instance without calling create(), and to mock its command executor,
         // so the requests to Selenium don't get actually called

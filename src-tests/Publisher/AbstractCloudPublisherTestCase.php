@@ -18,7 +18,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
     /** @var MockObject|AbstractTestCase */
     protected $testInstanceMock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->testInstanceMock = $this->createMock(AbstractTestCase::class);
     }

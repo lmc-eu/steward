@@ -25,7 +25,7 @@ abstract class AbstractTestCase extends TestCase
     /** @var string Log appended to output of this test */
     protected $appendedTestLog = '';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         if ($this->wd instanceof RemoteWebDriver && static::BROWSER_WIDTH !== null && static::BROWSER_HEIGHT !== null) {
             $this->wd->manage()->window()->setSize(

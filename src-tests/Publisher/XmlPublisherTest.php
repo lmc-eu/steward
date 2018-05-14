@@ -19,7 +19,7 @@ class XmlPublisherTest extends TestCase
     /** @var MockObject|Test */
     protected $testInstanceMock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $configValues = ConfigHelper::getDummyConfig();
         $configValues['LOGS_DIR'] = dirname(self::getFilePath());

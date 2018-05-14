@@ -17,7 +17,7 @@ class TestStatusListenerTest extends TestCase
     /** @var SeleniumServerAdapter|MockObject */
     protected $seleniumAdapterMock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->seleniumAdapterMock = $this->createMock(SeleniumServerAdapter::class);
 
