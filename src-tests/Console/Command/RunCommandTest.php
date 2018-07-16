@@ -20,6 +20,7 @@ use Symfony\Component\Finder\Finder;
 
 /**
  * @covers \Lmc\Steward\Console\Command\RunCommand
+ * @covers \Lmc\Steward\Process\ExecutionLoop
  */
 class RunCommandTest extends TestCase
 {
