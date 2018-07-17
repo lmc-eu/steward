@@ -18,7 +18,7 @@ class ProcessWrapper
     public const PROCESS_STATUS_PREPARED = 'prepared';
     /** Finished process */
     public const PROCESS_STATUS_DONE = 'done';
-    /** Process in queue  - waiting to be prepared */
+    /** Process in queue - waiting to be prepared */
     public const PROCESS_STATUS_QUEUED = 'queued';
 
     /** Process failed - some tests have failed or are broken */

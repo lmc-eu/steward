@@ -63,7 +63,7 @@ class ProcessSet implements \Countable
         if (isset($this->processes[$className])) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Testcase with name "%s" was already added, make sure you don\'t have duplicate class name.',
+                    'Testcase with name "%s" was already added, make sure you don\'t have duplicate class names.',
                     $className
                 )
             );

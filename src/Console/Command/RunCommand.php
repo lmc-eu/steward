@@ -7,10 +7,9 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use Lmc\Steward\Process\ExecutionLoop;
 use Lmc\Steward\Process\MaxTotalDelayStrategy;
-use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
-use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Selenium\SeleniumServerAdapter;
 use OndraM\CiDetector\CiDetector;
@@ -19,7 +18,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * Run tests command is used to start Steward test planner and execute tests one by one,
@@ -40,8 +38,6 @@ class RunCommand extends Command
         'safari' => WebDriverBrowserType::SAFARI,
         'phantomjs' => WebDriverBrowserType::PHANTOMJS,
     ];
-    /** @var Stopwatch */
-    private $stopwatch;
 
     public const ARGUMENT_ENVIRONMENT = 'environment';
     public const ARGUMENT_BROWSER = 'browser';
@@ -165,9 +161,6 @@ class RunCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        $this->stopwatch = new Stopwatch();
-        $this->stopwatch->start('run');
-
         parent::initialize($input, $output);
 
         $output->writeln(
@@ -270,15 +263,9 @@ class RunCommand extends Command
             return 1;
         }
 
-        // Optimize processes order
-        $processSet->optimizeOrder(new MaxTotalDelayStrategy());
+        $executionLoop = new ExecutionLoop($processSet, $this->io, new MaxTotalDelayStrategy());
 
-        // Initialize first processes that should be run
-        $processSet->dequeueProcessesWithoutDelay($this->io);
-
-        // Start execution loop
-        $this->io->isVeryVerbose() ? $this->io->section('Starting execution of testcases') : $this->io->newLine();
-        $allTestsPassed = $this->executionLoop($processSet);
+        $allTestsPassed = $executionLoop->start();
 
         if ($input->getOption(self::OPTION_NO_EXIT)) {
             return 0;
@@ -313,133 +300,6 @@ class RunCommand extends Command
         }
 
         return $this->processSetCreator;
-    }
-
-    /**
-     * Start planner execution loop
-     *
-     * @return bool Return true if all test returned exit code 0 (or if none test was run)
-     */
-    protected function executionLoop(ProcessSet $processSet): bool
-    {
-        $counterWaitingOutput = 1;
-        $statusesCountLast = [];
-        // Iterate over prepared and queued until everything is done
-        while (true) {
-            $prepared = $processSet->get(ProcessWrapper::PROCESS_STATUS_PREPARED);
-            $queued = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
-
-            if (count($prepared) === 0 && count($queued) === 0) {
-                break;
-            }
-
-            // Start all prepared tasks and set status of not running as finished
-            foreach ($prepared as $testClass => $processWrapper) {
-                if (!$processWrapper->getProcess()->isStarted()) {
-                    if ($this->io->isVeryVerbose()) {
-                        $this->io->runStatus(
-                            sprintf(
-                                'Execution of testcase "%s" started%s',
-                                $testClass,
-                                $this->io->isDebug() ?
-                                    " with command:\n" . $processWrapper->getProcess()->getCommandLine() : ''
-                            )
-                        );
-                    }
-
-                    $this->stopwatch->start($testClass);
-                    $processWrapper->getProcess()->start();
-                    usleep(50000); // wait for a while (0,05 sec) to let processes be started in intended order
-
-                    continue;
-                }
-
-                if ($timeoutError = $processWrapper->checkProcessTimeout()) {
-                    if ($this->io->isVeryVerbose()) {
-                        $this->io->error($timeoutError);
-                    }
-                }
-
-                if ($this->io->isDebug()) { // In debug mode print all output as it comes
-                    $this->flushProcessOutput($processWrapper);
-                }
-
-                if (!$processWrapper->getProcess()->isRunning()) {
-                    $testcaseEnd = $this->stopwatch->stop($testClass);
-                    // Mark no longer running processes as finished
-                    $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
-
-                    $hasProcessPassed = $processWrapper->getResult() === ProcessWrapper::PROCESS_RESULT_PASSED;
-
-                    if ($this->io->isDebug()) { // There could be new output since the previous flush
-                        $this->flushProcessOutput($processWrapper);
-                    }
-
-                    if ($this->io->isVeryVerbose()) {
-                        $processOutput = $processErrorOutput = '';
-                        if (!$hasProcessPassed) { // If process failed, collect its output
-                            $processOutput = $processWrapper->getProcess()->getIncrementalOutput();
-                            $processErrorOutput = $processWrapper->getProcess()->getIncrementalErrorOutput();
-                        }
-
-                        $testcaseFinishedMessage = sprintf(
-                            'Finished execution of testcase "%s" (result: %s, time: %.1F sec)%s',
-                            $testClass,
-                            $processWrapper->getResult(),
-                            $testcaseEnd->getDuration() / 1000,
-                            (!empty($processOutput) || !empty($processErrorOutput) ? ', output:' : '')
-                        );
-                        $hasProcessPassed ? $this->io->runStatusSuccess($testcaseFinishedMessage)
-                            : $this->io->runStatusError($testcaseFinishedMessage);
-
-                        $this->io->output($processOutput, $processWrapper->getClassName());
-                        $this->io->errorOutput($processErrorOutput, $processWrapper->getClassName());
-                    } elseif ($this->io->isVerbose() && !$hasProcessPassed) {
-                        $this->io->runStatusError(
-                            sprintf('Testcase "%s" %s', $testClass, $processWrapper->getResult())
-                        );
-                    }
-
-                    // Fail also process dependencies
-                    if (!$hasProcessPassed) {
-                        $this->failDependants($processSet, $testClass);
-                    }
-                }
-            }
-
-            $this->unqueueDependentProcesses($processSet);
-
-            $statusesCount = $processSet->countStatuses();
-
-            // if the output didn't change, wait 100 iterations (10 seconds) before printing it again
-            if ($statusesCount === $statusesCountLast && $counterWaitingOutput % 100 !== 0) {
-                $counterWaitingOutput++;
-            } else {
-                $this->printExecutionLoopStatus($processSet, $statusesCount);
-                $counterWaitingOutput = 1;
-            }
-
-            $statusesCountLast = $statusesCount;
-            usleep(100000); // 0,1 sec
-        }
-
-        $doneCount = count($processSet->get(ProcessWrapper::PROCESS_STATUS_DONE));
-        $resultsCount = $processSet->countResults();
-        $allTestsPassed = ($resultsCount[ProcessWrapper::PROCESS_RESULT_PASSED] === $doneCount);
-        $resultsInfo = [];
-        foreach (ProcessWrapper::PROCESS_RESULTS as $resultType) {
-            if ($resultsCount[$resultType] > 0) {
-                $resultsInfo[] = sprintf('%s: %d', $resultType, $resultsCount[$resultType]);
-            }
-        }
-
-        $event = $this->stopwatch->stop('run');
-        $this->io->runStatus(sprintf('All testcases done in %.1F seconds', $event->getDuration() / 1000));
-
-        $resultMessage = sprintf('Testcases executed: %d (%s)', $doneCount, implode(', ', $resultsInfo));
-        $allTestsPassed ? $this->io->success($resultMessage) : $this->io->error($resultMessage);
-
-        return $allTestsPassed;
     }
 
     /**
@@ -503,90 +363,5 @@ class RunCommand extends Command
         }
 
         return true;
-    }
-
-    protected function failDependants(ProcessSet $processSet, string $testClass): void
-    {
-        $failedDependants = $processSet->failDependants($testClass);
-
-        if ($this->io->isVerbose()) {
-            foreach ($failedDependants as $failedClass => $failedProcessWrapper) {
-                $this->io->runStatusError(
-                    sprintf(
-                        'Failing testcase "%s", because it was depending on failed "%s"',
-                        $failedClass,
-                        $testClass
-                    )
-                );
-            }
-        }
-    }
-
-    protected function unqueueDependentProcesses(ProcessSet $processSet): void
-    {
-        // Retrieve names of done tests
-        $done = $processSet->get(ProcessWrapper::PROCESS_STATUS_DONE);
-        $doneClasses = [];
-        foreach ($done as $testClass => $processWrapper) {
-            $doneClasses[] = $testClass;
-        }
-
-        // Set queued tasks as prepared if their dependent task is done and delay has passed
-        $queued = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
-        foreach ($queued as $testClass => $processWrapper) {
-            $delaySeconds = $processWrapper->getDelayMinutes() * 60;
-
-            if (in_array($processWrapper->getDelayAfter(), $doneClasses, true)
-                && (time() - $done[$processWrapper->getDelayAfter()]->getFinishedTime()) > $delaySeconds
-            ) {
-                if ($this->io->isVeryVerbose()) {
-                    $this->io->runStatus(sprintf('Unqueing testcase "%s"', $testClass));
-                }
-                $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
-            }
-        }
-    }
-
-    protected function printExecutionLoopStatus(ProcessSet $processSet, array $statusesCount): void
-    {
-        $resultsInfo = [];
-        $resultsCount = $processSet->countResults();
-        if ($statusesCount[ProcessWrapper::PROCESS_STATUS_DONE] > 0) {
-            foreach (ProcessWrapper::PROCESS_RESULTS as $resultType) {
-                if ($resultsCount[$resultType] > 0) {
-                    $resultsInfo[] = sprintf(
-                        '%s: <fg=%s>%d</>',
-                        $resultType,
-                        $resultType === ProcessWrapper::PROCESS_RESULT_PASSED ? 'green' : 'red',
-                        $resultsCount[$resultType]
-                    );
-                }
-            }
-        }
-
-        $this->io->runStatus(
-            sprintf(
-                'Waiting (running: %d, queued: %d, done: %d%s)',
-                $statusesCount[ProcessWrapper::PROCESS_STATUS_PREPARED],
-                $statusesCount[ProcessWrapper::PROCESS_STATUS_QUEUED],
-                $statusesCount[ProcessWrapper::PROCESS_STATUS_DONE],
-                count($resultsInfo) ? ' [' . implode(', ', $resultsInfo) . ']' : ''
-            )
-        );
-    }
-
-    /**
-     * Flush output of the process
-     */
-    protected function flushProcessOutput(ProcessWrapper $processWrapper): void
-    {
-        $this->io->output(
-            $processWrapper->getProcess()->getIncrementalOutput(),
-            $processWrapper->getClassName()
-        );
-        $this->io->errorOutput(
-            $processWrapper->getProcess()->getIncrementalErrorOutput(),
-            $processWrapper->getClassName()
-        );
     }
 }
