@@ -7,8 +7,6 @@ use Graphp\Algorithms\Tree\OutTree;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
 use Lmc\Steward\Publisher\XmlPublisher;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Process\Process;
 
 class ProcessSetTest extends TestCase
@@ -193,40 +191,6 @@ class ProcessSetTest extends TestCase
                 ProcessWrapper::PROCESS_RESULT_FATAL => 1,
             ],
             $this->set->countResults()
-        );
-    }
-
-    public function testShouldDequeueProcessesWithoutDelay(): void
-    {
-        $noDelayTest = new ProcessWrapper(new Process(''), 'NoDelay');
-        $delayedTest = new ProcessWrapper(new Process(''), 'Delayed');
-        $delayedTest->setDelay('NoDelay', 3.3);
-        $this->set->add($noDelayTest);
-        $this->set->add($delayedTest);
-        $outputBuffer = new BufferedOutput(Output::VERBOSITY_DEBUG);
-
-        // Preconditions - both processes should be queued after being added
-        $processes = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
-        $this->assertCount(2, $processes);
-
-        // Should Dequeue process without delay
-        $this->set->dequeueProcessesWithoutDelay($outputBuffer);
-
-        // The process without delay should be prepared now
-        $prepared = $this->set->get(ProcessWrapper::PROCESS_STATUS_PREPARED);
-        $this->assertCount(1, $prepared);
-        $this->assertSame($noDelayTest, $prepared['NoDelay']);
-
-        // The other process with delay should be kept as queued
-        $queued = $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
-        $this->assertCount(1, $queued);
-        $this->assertSame($delayedTest, $queued['Delayed']);
-
-        $output = $outputBuffer->fetch();
-        $this->assertContains('Testcase "NoDelay" is prepared to be run', $output);
-        $this->assertContains(
-            'Testcase "Delayed" is queued to be run 3.3 minutes after testcase "NoDelay" is finished',
-            $output
         );
     }
 

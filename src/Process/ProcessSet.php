@@ -7,7 +7,6 @@ use Fhaculty\Graph\Graph;
 use Fhaculty\Graph\Vertex;
 use Graphp\Algorithms\Tree\OutTree;
 use Lmc\Steward\Publisher\AbstractPublisher;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Set of Test processes.
@@ -92,36 +91,6 @@ class ProcessSet implements \Countable
         }
 
         return $return;
-    }
-
-    /**
-     * Set queued processes without delay as prepared
-     *
-     * @param OutputInterface $output Where list of dequeued and queued processes will be printed
-     */
-    public function dequeueProcessesWithoutDelay(OutputInterface $output): void
-    {
-        $queuedProcesses = $this->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
-
-        foreach ($queuedProcesses as $className => $processWrapper) {
-            if (!$processWrapper->isDelayed()) {
-                $output->writeln(
-                    sprintf('Testcase "%s" is prepared to be run', $className),
-                    OutputInterface::VERBOSITY_DEBUG
-                );
-                $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
-            } else {
-                $output->writeln(
-                    sprintf(
-                        'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
-                        $className,
-                        $processWrapper->getDelayMinutes(),
-                        $processWrapper->getDelayAfter()
-                    ),
-                    OutputInterface::VERBOSITY_DEBUG
-                );
-            }
-        }
     }
 
     /**
