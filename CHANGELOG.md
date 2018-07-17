@@ -4,6 +4,7 @@
 
 ## Unreleased
 ### Added
+- `--parallel-limit` (`-l`) option of `run` command to allow limiting maximum number of tests being run simultaneously.
 - Show test duration in timeline tooltips.
 
 ### Changed

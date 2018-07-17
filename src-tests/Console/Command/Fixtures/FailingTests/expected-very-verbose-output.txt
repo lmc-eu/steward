@@ -3,6 +3,7 @@ Browser: chrome
 Environment: staging
 Path to logs: %s/logs
 Ignore delays: no
+Parallel limit: 50
 Selenium server (hub) url: %s, trying connection...OK
 Searching for testcases:
  - in directory %s/src-tests/Console/Command/Fixtures/FailingTests"
