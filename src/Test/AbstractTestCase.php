@@ -30,7 +30,7 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
     /** @var string Log appended to output of this test */
     protected $appendedTestLog;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->log('Starting execution of test ' . get_called_class() . '::' . $this->getName());
 
@@ -43,7 +43,7 @@ abstract class AbstractTestCase extends AbstractTestCaseBase
         $this->utils = new TestUtils($this);
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         $this->log('Finished execution of test ' . get_called_class() . '::' . $this->getName());
     }
