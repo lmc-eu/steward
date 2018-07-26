@@ -45,7 +45,7 @@ if ($installedAsDependency) {
 date_default_timezone_set('Europe/Prague');
 
 $dispatcher = new EventDispatcher();
-$application = new Application('Steward', '2.3.3');
+$application = new Application('Steward', '2.3.4');
 $application->setDispatcher($dispatcher);
 
 // Search for listeners and attach them to dispatcher

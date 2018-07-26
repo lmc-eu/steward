@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+
+## 2.3.4 - 2018-07-27
 ### Fixed
 - Backport visibility fix of `setUp()` and `tearDown()` methods of AbstractTestCase (to eg. allow use of [lmc/coding-standard](https://github.com/lmc-eu/php-coding-standard/) in projects using Steward).
 
