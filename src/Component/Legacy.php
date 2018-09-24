@@ -133,7 +133,6 @@ class Legacy extends AbstractComponent
     /**
      * Store legacy of test under a custom name
      *
-     * @param mixed $data
      * @param string $legacyName filename to store the data if null getLegacyFilename is called to generate filename
      *      from the test class name
      * @throws LegacyException
@@ -152,7 +151,6 @@ class Legacy extends AbstractComponent
     /**
      * Store legacy of test getLegacyFilename is called to generate filename from the test class name
      *
-     * @param mixed $data
      * @param string $type LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @throws LegacyException
@@ -169,7 +167,6 @@ class Legacy extends AbstractComponent
      * @param string $type LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
      * @throws LegacyException
-     * @return mixed
      */
     public function load(string $type = self::LEGACY_TYPE_CASE)
     {
@@ -182,7 +179,6 @@ class Legacy extends AbstractComponent
      *
      * @param string $legacyName filename to store the data from the test class name
      * @throws LegacyException
-     * @return mixed
      */
     public function loadWithName(string $legacyName)
     {
@@ -208,8 +204,6 @@ class Legacy extends AbstractComponent
     /**
      * Converts legacy value to string that can be printed (e.g. in log)
      * calls __toString on the object if it's defined otherwise print_r()
-     *
-     * @param mixed $object
      */
     private function getPrintableValue($object): string
     {
