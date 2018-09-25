@@ -6,8 +6,6 @@ trait LineEndingsNormalizerTrait
 {
     /**
      * Normalize line-endings to LF (\n)
-     *
-     * @return mixed
      */
     private function normalizeLineEndings(string $string)
     {

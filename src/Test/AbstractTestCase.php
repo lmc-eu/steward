@@ -120,7 +120,7 @@ abstract class AbstractTestCase extends TestCase
     /**
      * Format output
      *
-     * @param string $format
+     * @param string $format The format string. May use "%" placeholders, in a same way as sprintf()
      * @param array $args Array of arguments passed to original sprintf()-like function
      * @param string $type Specific log severity type (WARN, DEBUG) prefixed to output
      * @return string Formatted output

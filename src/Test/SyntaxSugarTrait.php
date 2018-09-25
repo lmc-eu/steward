@@ -20,7 +20,6 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose class name contains the search value; compound class names are not permitted.
      *
-     * @param string $className
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -32,7 +31,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all elements whose class name contains the search value; compound class names are not permitted.
      *
-     * @param string $className
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleByClass(string $className): array
@@ -43,9 +41,7 @@ trait SyntaxSugarTrait
     /**
      * Wait for element whose class name contains the search value; compound class names are not permitted.
      *
-     * @param string $className
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
     public function waitForClass(string $className, bool $mustBeVisible = false): RemoteWebElement
     {
@@ -55,7 +51,6 @@ trait SyntaxSugarTrait
     /**
      * Locates element matching a CSS selector.
      *
-     * @param string $cssSelector
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -67,7 +62,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all elements matching a CSS selector.
      *
-     * @param string $cssSelector
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleByCss(string $cssSelector): array
@@ -78,9 +72,7 @@ trait SyntaxSugarTrait
     /**
      * Wait for element matching a CSS selector.
      *
-     * @param string $cssSelector
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
     public function waitForCss(string $cssSelector, bool $mustBeVisible = false): RemoteWebElement
     {
@@ -90,7 +82,6 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose ID attribute matches the search value.
      *
-     * @param string $id
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -102,7 +93,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all elements whose ID attribute matches the search value.
      *
-     * @param string $id
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleById(string $id): array
@@ -113,9 +103,7 @@ trait SyntaxSugarTrait
     /**
      * Wait for element whose ID attribute matches the search value.
      *
-     * @param string $id
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
     public function waitForId(string $id, bool $mustBeVisible = false): RemoteWebElement
     {
@@ -125,7 +113,6 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose NAME attribute matches the search value.
      *
-     * @param string $name
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -137,7 +124,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all elements whose NAME attribute matches the search value.
      *
-     * @param string $name
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleByName(string $name): array
@@ -148,9 +134,7 @@ trait SyntaxSugarTrait
     /**
      * Wait for element whose NAME attribute matches the search value.
      *
-     * @param string $name
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
     public function waitForName(string $name, bool $mustBeVisible = false): RemoteWebElement
     {
@@ -160,7 +144,6 @@ trait SyntaxSugarTrait
     /**
      * Locates anchor element whose visible text matches the search value.
      *
-     * @param string $linkText
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -172,7 +155,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all anchor elements whose visible text matches the search value.
      *
-     * @param string $linkText
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleByLinkText(string $linkText): array
@@ -183,9 +165,7 @@ trait SyntaxSugarTrait
     /**
      * Wait for anchor element whose visible text matches the search value.
      *
-     * @param string $linkText
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
     public function waitForLinkText(string $linkText, bool $mustBeVisible = false): RemoteWebElement
     {
@@ -195,7 +175,6 @@ trait SyntaxSugarTrait
     /**
      * Locates anchor element whose visible text partially matches the search value.
      *
-     * @param string $partialLinkText
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -207,7 +186,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all anchor elements whose visible text partially matches the search value.
      *
-     * @param string $partialLinkText
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleByPartialLinkText(string $partialLinkText): array
@@ -218,9 +196,7 @@ trait SyntaxSugarTrait
     /**
      * Wait for anchor element whose visible text partially matches the search value.
      *
-     * @param string $partialLinkText
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
     public function waitForPartialLinkText(string $partialLinkText, bool $mustBeVisible = false): RemoteWebElement
     {
@@ -230,7 +206,6 @@ trait SyntaxSugarTrait
     /**
      * Locates element whose tag name matches the search value.
      *
-     * @param string $tagName
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -242,7 +217,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all elements whose tag name matches the search value.
      *
-     * @param string $tagName
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleByTag(string $tagName): array
@@ -253,9 +227,7 @@ trait SyntaxSugarTrait
     /**
      * Wait for element whose tag name matches the search value.
      *
-     * @param string $tagName
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
-     * @return RemoteWebElement
      */
     public function waitForTag(string $tagName, bool $mustBeVisible = false): RemoteWebElement
     {
@@ -265,7 +237,6 @@ trait SyntaxSugarTrait
     /**
      * Locates element matching an XPath expression.
      *
-     * @param string $xpath
      * @throws NoSuchElementException
      * @return RemoteWebElement The first element located using the mechanism. Exception is thrown if no element found.
      */
@@ -277,7 +248,6 @@ trait SyntaxSugarTrait
     /**
      * Locates all elements matching an XPath expression.
      *
-     * @param string $xpath
      * @return RemoteWebElement[] A list of all elements, or an empty array if nothing matches
      */
     public function findMultipleByXpath(string $xpath): array
@@ -288,7 +258,6 @@ trait SyntaxSugarTrait
     /**
      * Wait for element that matches an XPath expression.
      *
-     * @param string $xpath
      * @param bool $mustBeVisible Pass true to check if element is also visible. False only checks presence in DOM.
      */
     public function waitForXpath(string $xpath, bool $mustBeVisible = false): RemoteWebElement

@@ -50,7 +50,6 @@ class ProcessWrapperTest extends TestCase
 
     /**
      * @dataProvider provideInvalidDelay
-     * @param mixed $delay
      */
     public function testShouldAcceptOnlyNumbersGreaterThanOrEqualToZeroAsDelay(
         $delay,

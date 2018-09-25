@@ -257,8 +257,6 @@ HTXT;
 
     /**
      * Force the line length to ensure a consistent output for expectations
-     *
-     * @param StewardStyle $style
      */
     private function forceLineLength(StewardStyle $style): void
     {
