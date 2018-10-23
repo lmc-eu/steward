@@ -51,7 +51,7 @@
         "graphp/algorithms": "^0.8.1",
         "florianwolters/component-util-singleton": "0.3.2",
         "doctrine/inflector": "~1.0",
-        "beberlei/assert": "^2.7",
+        "beberlei/assert": "^3.0",
         "ondram/ci-detector": "^3.0"
     },
     "require-dev": {
@@ -59,10 +59,11 @@
         "phpunit/php-code-coverage": "^6.0",
         "php-coveralls/php-coveralls": "^2.0",
         "symfony/var-dumper": "^4.0",
-        "phpstan/phpstan-shim": "^0.9.2",
+        "phpstan/phpstan-shim": "^0.10.5",
         "jakub-onderka/php-parallel-lint": "^1.0.0",
         "lmc/coding-standard": "^1.0.0",
-        "squizlabs/php_codesniffer": "^3.2.3"
+        "squizlabs/php_codesniffer": "^3.2.3",
+        "phpstan/phpstan-phpunit": "^0.10.0"
     },
     "suggest": {
         "ext-posix": "For colored output",

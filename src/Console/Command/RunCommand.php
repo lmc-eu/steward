@@ -279,7 +279,7 @@ class RunCommand extends Command
      */
     protected function getSeleniumAdapter(string $seleniumServerUrl): SeleniumServerAdapter
     {
-        if (!$this->seleniumAdapter) {
+        if ($this->seleniumAdapter === null) {
             $this->seleniumAdapter = new SeleniumServerAdapter($seleniumServerUrl);
         }
 
@@ -291,7 +291,7 @@ class RunCommand extends Command
      */
     protected function getProcessSetCreator(InputInterface $input, OutputInterface $output): ProcessSetCreator
     {
-        if (!$this->processSetCreator) {
+        if ($this->processSetCreator === null) {
             $xmlPublisher = new XmlPublisher();
             $xmlPublisher->setFileDir($this->config[ConfigOptions::LOGS_DIR]);
             $xmlPublisher->clean();

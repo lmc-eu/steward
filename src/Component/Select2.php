@@ -48,7 +48,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
         return $this->multiple;
     }
 
-    public function getOptions()
+    public function getOptions(): array
     {
         $this->openDropdownOptions();
 
@@ -60,7 +60,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
     /**
      * @return WebDriverElement[] All selected options belonging to this select tag.
      */
-    public function getAllSelectedOptions()
+    public function getAllSelectedOptions(): array
     {
         if (!$this->isMultiple()) {
             return [$this->getFirstSelectedOption()];
@@ -75,7 +75,7 @@ class Select2 extends AbstractComponent implements WebDriverSelectInterface
      * @return WebDriverElement The first selected option in multi-select (or the currently selected option
      * in a normal select)
      */
-    public function getFirstSelectedOption()
+    public function getFirstSelectedOption(): WebDriverElement
     {
         if (!$this->isMultiple()) {
             return $this->findByCss($this->select2Selector . ' ' . self::SIMPLESELECT_SELECTED_OPTION_SELECTOR);

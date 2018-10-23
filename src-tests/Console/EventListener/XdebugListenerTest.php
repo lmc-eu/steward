@@ -213,9 +213,7 @@ class XdebugListenerTest extends TestCase
         $this->listener->onCommandConfigure(new BasicConsoleEvent($command));
         $input->bind($command->getDefinition());
 
-        $event = new ExtendedConsoleEvent($command, $input, $output);
-
-        return $event;
+        return new ExtendedConsoleEvent($command, $input, $output);
     }
 
     /**
