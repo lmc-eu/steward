@@ -1,5 +1,5 @@
 Steward UNKNOWN is running the tests...%S
-Browser: firefox
+Browser: chrome
 Environment: staging
 Path to logs: %s/logs
 Ignore delays: no
