@@ -125,7 +125,7 @@ class InstallCommand extends Command
      */
     protected function getDownloader(): Downloader
     {
-        if (!$this->downloader) {
+        if ($this->downloader === null) {
             $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir);
         }
 

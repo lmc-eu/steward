@@ -51,14 +51,14 @@ class GenerateTimelineCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to test results xml file',
-                realpath(STEWARD_BASE_DIR . '/logs/' . XmlPublisher::FILE_NAME)
+                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . XmlPublisher::FILE_NAME
             )
             ->addOption(
                 self::OPTION_OUTPUT_FILE,
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Path to output html file',
-                realpath(STEWARD_BASE_DIR . '/logs/') . '/' . self::DEFAULT_OUTPUT_FILENAME
+                STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . self::DEFAULT_OUTPUT_FILENAME
             );
 
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));

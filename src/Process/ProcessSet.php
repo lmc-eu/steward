@@ -20,13 +20,10 @@ class ProcessSet implements \Countable
      * @var ProcessWrapper[]
      */
     protected $processes = [];
-
     /** @var AbstractPublisher|null */
     protected $publisher;
-
     /** @var Graph */
     protected $graph;
-
     /** @var OutTree */
     protected $tree;
 
@@ -134,7 +131,7 @@ class ProcessSet implements \Countable
      */
     public function buildTree(): OutTree
     {
-        if (!$this->tree) {
+        if ($this->tree === null) {
             $root = $this->graph->createVertex(0);
 
             // Create edges directed from the root node

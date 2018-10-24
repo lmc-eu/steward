@@ -190,7 +190,7 @@ class ProcessSetCreator
 
     protected function getProcessSet(): ProcessSet
     {
-        if (!$this->processSet) {
+        if ($this->processSet === null) {
             $this->processSet = new ProcessSet();
             $this->processSet->setPublisher($this->publisher);
         }
