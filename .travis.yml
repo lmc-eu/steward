@@ -4,6 +4,11 @@ php:
   - 7.1
   - 7.2
 
+env:
+  global:
+    - SELENIUM_VERSION="3.14.0"
+    - CHROMEDRIVER_VERSION="2.43"
+
 matrix:
   include:
     - php: 7.1
@@ -27,10 +32,12 @@ install:
 before_script:
   - mkdir -p src-tests/logs/
   - mkdir -p src-tests/coverage/
-  - SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi 3.8.0)
+  - mkdir chromedriver; wget -q -t 3 https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip; unzip chromedriver_linux64.zip -d chromedriver
+  - CHROMEDRIVER_PATH=$PWD/chromedriver/chromedriver
+  - SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi $SELENIUM_VERSION)
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - java -Dwebdriver.firefox.marionette=false -jar $SELENIUM_JAR -enablePassThrough false -log selenium-server.log &
+  - java -Dwebdriver.chrome.driver="$CHROMEDRIVER_PATH" -jar $SELENIUM_JAR -log selenium-server.log &
   - until $(echo | nc localhost 4444); do sleep 1; echo Waiting for selenium-server to start...; done;
 
 script:
@@ -48,4 +55,4 @@ cache:
     - $HOME/.composer/cache
 
 addons:
-  firefox: "45.8.0esr"
+  chrome: stable

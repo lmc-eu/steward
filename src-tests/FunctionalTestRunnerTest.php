@@ -50,7 +50,7 @@ class FunctionalTestRunnerTest extends TestCase
             [
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
-                'browser' => 'firefox',
+                'browser' => 'chrome',
                 '--tests-dir' => __DIR__ . '/FunctionalTests',
                 '--logs-dir' => __DIR__ . '/FunctionalTests/logs',
             ],

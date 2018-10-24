@@ -44,7 +44,7 @@ class RunCommandIntegrationTest extends TestCase
             [
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
-                'browser' => 'firefox',
+                'browser' => 'chrome',
                 '--tests-dir' => __DIR__ . '/Fixtures/SimpleTests',
             ],
             ['verbosity' => $outputVerbosity]
@@ -118,7 +118,7 @@ class RunCommandIntegrationTest extends TestCase
             [
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
-                'browser' => 'firefox',
+                'browser' => 'chrome',
                 '--tests-dir' => __DIR__ . '/Fixtures/FailingTests',
             ],
             ['verbosity' => $outputVerbosity]
@@ -149,7 +149,7 @@ class RunCommandIntegrationTest extends TestCase
             [
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
-                'browser' => 'firefox',
+                'browser' => 'chrome',
                 '--no-exit' => true,
                 '--tests-dir' => __DIR__ . '/Fixtures/FailingTests',
             ],

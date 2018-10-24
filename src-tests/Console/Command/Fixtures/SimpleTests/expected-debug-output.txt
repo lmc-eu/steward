@@ -1,5 +1,5 @@
 Steward UNKNOWN is running the tests...%S
-Browser: firefox
+Browser: chrome
 Environment: staging
 Path to logs: %s/logs
 Ignore delays: no
@@ -18,18 +18,18 @@ Testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" is prepar
 [%s] Waiting (running: 1, queued: 1, done: 0)%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] Registering test results publisher "Lmc\Steward\Publisher\XmlPublisher"%a
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] --- Starting execution of test "testWebpage" ---%A
-Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] Initializing "firefox" WebDriver%a[%s] [WebDriver] Executing command "setWindowSize" with params {"width":1280,"height":1024,":windowHandle":"current"}%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] Initializing "chrome" WebDriver%a[%s] [WebDriver] Executing command "setWindowSize" with params {"width":1280,"height":1024,":windowHandle":"current"}%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Loading URL "file:///%s/src-tests/Console/Command/Fixtures/SimpleTests/webpage.html"%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Executing command "get" with params {"url":"file:///%s/webpage.html"}%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Executing command "findElement" with params {"using":"css selector","value":"h1"}%A
-Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Executing command "getElementText" with params {":id":"0"}%A
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Executing command "getElementText" with params {":id":"%s"}%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [Legacy] New Legacy instantiated in class "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest"
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [Legacy] Saving data as Legacy "dummy-data" to file "%s/dummy-data.legacy"
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [DEBUG] [Legacy] Legacy data: Array
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> (
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest>     [0] => fooBarData
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> )%A
-Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] Destroying "firefox" WebDriver for session "%s"
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] Destroying "chrome" WebDriver for session "%s"
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Executing command "close" with params []%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Executing command "quit" with params []%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] --- Finished execution of test "testWebpage" ---%A
@@ -40,14 +40,14 @@ Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> OK (1 test, 1 asser
 '%s/steward/bin/phpunit-steward' '--log-junit=%s/logs/Lmc-Steward-Console-Command-Fixtures-SimpleTests-DependantTest.xml' '--configuration=%s/phpunit.xml' '%s/DependantTest.php'
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] Registering test results publisher "Lmc\Steward\Publisher\XmlPublisher"%a
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] --- Starting execution of test "testFooBar" ---%A
-Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] Initializing "firefox" WebDriver%a[%s] [WebDriver] Executing command "setWindowSize" with params {"width":1280,"height":1024,":windowHandle":"current"}
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] Initializing "chrome" WebDriver%a[%s] [WebDriver] Executing command "setWindowSize" with params {"width":1280,"height":1024,":windowHandle":"current"}
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] [Legacy] New Legacy instantiated in class "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest"
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] [Legacy] Reading Legacy "dummy-data" from file "%s/dummy-data.legacy"
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] [DEBUG] [Legacy] Legacy data: Array
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> (
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest>     [0] => fooBarData
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> )%A
-Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] Destroying "firefox" WebDriver for session "%s"
+Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] Destroying "chrome" WebDriver for session "%s"
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] [WebDriver] Executing command "close" with params []%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] [WebDriver] Executing command "quit" with params []%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] --- Finished execution of test "testFooBar" ---%A

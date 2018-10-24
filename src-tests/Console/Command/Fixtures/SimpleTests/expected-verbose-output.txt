@@ -1,5 +1,5 @@
 Steward UNKNOWN is running the tests...%S
-Browser: firefox
+Browser: chrome
 Environment: staging
 
 [%s] Waiting (running: 1, queued: 1, done: 0)%A
