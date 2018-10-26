@@ -27,9 +27,10 @@ class ExecutionLoopTest extends TestCase
         );
 
         $result = $loop->start();
+        $output = $outputBuffer->fetch();
 
-        $this->assertTrue($result);
-        $this->assertContains('[OK] Testcases executed: 0', $outputBuffer->fetch());
+        $this->assertTrue($result, 'Exception loop did not finish successfully, output was: ' . "\n" . $output);
+        $this->assertContains('[OK] Testcases executed: 0', $output);
     }
 
     /** @test */
@@ -55,9 +56,9 @@ class ExecutionLoopTest extends TestCase
         );
 
         $result = $loop->start();
-        $this->assertTrue($result);
-
         $output = $outputBuffer->fetch();
+
+        $this->assertTrue($result, 'Exception loop did not finish successfully, output was: ' . "\n" . $output);
 
         $this->assertContains('Testcase "NoDelay" is prepared to be run', $output);
         $this->assertContains(
