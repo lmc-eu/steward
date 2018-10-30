@@ -3,9 +3,6 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
-### Added
-- Detect readiness state of new Selenium servers (v3.5.3+ running in W3C-protocol mode) during startup, so that eg. no available Selenium server nodes are reported before attempting to start any test.
-
 ### Changed
 - Require PHP 7.1+ and Symfony 4 components.
 - Update to namespaced PHPUnit 7.0.

@@ -104,15 +104,6 @@ class SeleniumServerAdapter
             return false;
         }
 
-        // Try to get readiness status from W3C protocol conforming implementations
-        if (isset($decodedData->value, $decodedData->value->ready, $decodedData->value->message)) {
-            if (!$decodedData->value->ready) {
-                $this->lastError = 'server is not ready ("' . $decodedData->value->message . '")';
-
-                return false;
-            }
-        }
-
         $this->cloudService = $this->detectCloudServiceByStatus($decodedData);
 
         return true;
