@@ -163,9 +163,7 @@ class WebDriverListener implements TestListener
 
                 return;
             } catch (UnknownServerException $e) {
-                if ($browserName === 'firefox'
-                    && mb_strpos($e->getMessage(), 'Unable to bind to locking port') !== false
-                ) {
+                if ($this->cannotBindToFirefoxLockingPort($browserName, $e->getMessage())) {
                     // As a consequence of Selenium issue #5172 (cannot change locking port), Firefox may on CI server
                     // collide with other FF instance. As a workaround, we try to start it again after a short delay.
                     $test->warn(
@@ -175,14 +173,40 @@ class WebDriverListener implements TestListener
                     );
                     sleep(1);
                     continue;
-                } elseif (mb_strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
+                }
+
+                if (mb_strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
                     $test->warn('Cannot execute test on the node. Maybe you started just the hub and not the node?');
                 }
+
+                throw $e;
+            } catch (WebDriverException $e) {
+                if ($this->mayBeMissingFullServerUrl($remoteServerUrl, $e->getMessage())) {
+                    $test->warn('Unable to initialize new WebDriver session.');
+                    $test->warn(
+                        'Server URL ("%s") appears to be missing "/wd/hub" part, so make sure you are ussing full URL'
+                        . ' of the server (not just a hostname and port).',
+                        $remoteServerUrl
+                    );
+                }
+
                 throw $e;
             }
         }
 
         $test->warn('All %d attempts to instantiate Firefox WebDriver failed', $startAttempts + 1);
         throw $e;
+    }
+
+    private function cannotBindToFirefoxLockingPort(string $browserName, string $exceptionMessage): bool
+    {
+        return $browserName === 'firefox'
+            && mb_strpos($exceptionMessage, 'Unable to bind to locking port') !== false;
+    }
+
+    private function mayBeMissingFullServerUrl(string $remoteServerUrl, string $exceptionMessage): bool
+    {
+        return mb_strpos($exceptionMessage, 'JSON decoding of remote response failed.') !== false
+            && mb_strpos($remoteServerUrl, 'wd/hub') === false;
     }
 }
