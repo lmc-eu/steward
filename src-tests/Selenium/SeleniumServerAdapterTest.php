@@ -134,18 +134,6 @@ class SeleniumServerAdapterTest extends TestCase
         $this->assertEquals('error reading server response', $this->adapter->getLastError());
     }
 
-    public function testShouldDetectNotReadySeleniumServer(): void
-    {
-        $notReadyResponse = file_get_contents(__DIR__ . '/Fixtures/response-standalone-w3c-not-ready.json');
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->once())
-            ->with($this->serverUrl . '/status')
-            ->willReturn($notReadyResponse);
-
-        $this->assertFalse($this->adapter->isSeleniumServer());
-        $this->assertEquals('server is not ready ("No spare hub capacity")', $this->adapter->getLastError());
-    }
-
     public function testShouldReturnJsonErrorDescriptionIfTheServerResponseIsNotJson(): void
     {
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
@@ -181,6 +169,10 @@ class SeleniumServerAdapterTest extends TestCase
         return [
             // $responseData, $expectedCloudService
             'standalone W3C server (in ready state)' => [__DIR__ . '/Fixtures/response-standalone-w3c-ready.json', ''],
+            'standalone W3C server (in not ready state - but tests could wait in queue)' => [
+                __DIR__ . '/Fixtures/response-standalone-w3c-not-ready.json',
+                '',
+            ],
             'standalone server v2' => [__DIR__ . '/Fixtures/response-standalone-v2.json', ''],
             'standalone local grid v2' => [__DIR__ . '/Fixtures/response-standalone-hub-v2.json', ''],
             'Sauce Labs cloud' =>
