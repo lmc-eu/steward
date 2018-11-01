@@ -51,6 +51,8 @@ abstract class AbstractPublisher
         BaseTestRunner::STATUS_ERROR => self::TEST_RESULT_BROKEN,
         BaseTestRunner::STATUS_RISKY => self::TEST_RESULT_BROKEN,
         BaseTestRunner::STATUS_WARNING => self::TEST_RESULT_BROKEN,
+        // @todo Remove after https://github.com/sebastianbergmann/phpunit/issues/3379 is fixed
+        BaseTestRunner::STATUS_UNKNOWN => self::TEST_RESULT_SKIPPED,
     ];
 
     /**
