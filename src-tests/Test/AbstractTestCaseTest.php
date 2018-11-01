@@ -8,11 +8,13 @@ use Facebook\WebDriver\WebDriverWindow;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\MockAbstractTestCaseWithNameTrait;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 
 class AbstractTestCaseTest extends TestCase
 {
     use MockAbstractTestCaseWithNameTrait;
+    use PHPMock;
 
     public const EXPECTED_TIMESTAMP_PATTERN = '\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]';
 
@@ -109,5 +111,14 @@ class AbstractTestCaseTest extends TestCase
         $output = $this->testCase->getActualOutput();
 
         $this->assertRegExp('/^' . self::EXPECTED_TIMESTAMP_PATTERN . ' Appended foo$/', $output);
+    }
+
+    public function testShouldSleep(): void
+    {
+        $fsockopenMock = $this->getFunctionMock(__NAMESPACE__, 'time_nanosleep');
+        $fsockopenMock->expects($this->once())
+            ->with(1, 633000000);
+
+        $this->testCase::sleep(1.633);
     }
 }

@@ -112,7 +112,7 @@ abstract class AbstractTestCase extends TestCase
     public static function sleep(float $seconds): void
     {
         $fullSecond = (int) floor($seconds);
-        $microseconds = fmod($seconds, 1) * 1000000000;
+        $microseconds = (int) (fmod($seconds, 1) * 1000000000);
 
         time_nanosleep($fullSecond, $microseconds);
     }
