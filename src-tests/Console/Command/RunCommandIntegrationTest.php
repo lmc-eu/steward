@@ -12,6 +12,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * Run command tests that require real Selenium server to execute the tests.
  *
  * @covers \Lmc\Steward\Console\Command\RunCommand
+ * @covers \Lmc\Steward\Listener\WebDriverListener
  * @covers \Lmc\Steward\Process\ExecutionLoop
  * @group integration
  * @runTestsInSeparateProcesses
@@ -157,5 +158,20 @@ class RunCommandIntegrationTest extends TestCase
         );
 
         $this->assertSame(0, $this->tester->getStatusCode());
+    }
+
+    public function testShouldNotStartBrowserForSkippedTests(): void
+    {
+        $this->tester->execute(
+            [
+                'command' => $this->command->getName(),
+                'environment' => 'staging',
+                'browser' => 'chrome',
+                '--tests-dir' => __DIR__ . '/Fixtures/SkippedTests',
+            ],
+            ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
+        );
+
+        $this->assertSame(1, mb_substr_count($this->tester->getDisplay(), 'Initializing "chrome" WebDriver'));
     }
 }
