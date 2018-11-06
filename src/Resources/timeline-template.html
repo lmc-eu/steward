@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <title>Execution timeline | Steward</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.17.0/vis.min.css" rel="stylesheet"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.17.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
 
     <style>
         body {
@@ -71,7 +71,8 @@
     var options = {
         'orientation': 'top',
         'stack': true,
-        'showCurrentTime': false
+        'showCurrentTime': false,
+        'selectable': false
     };
 
     var groups = new vis.DataSet(
