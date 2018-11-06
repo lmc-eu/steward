@@ -3,6 +3,9 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Added
+- Show test duration in timeline tooltips.
+
 ### Changed
 - Require PHP 7.1+ and Symfony 4 components.
 - Update to namespaced PHPUnit 7.0.

@@ -45,7 +45,7 @@ class TimelineDataBuilder
             $timelineItems[] = [
                 'group' => $this->resolveTestExecutorId($testElement),
                 'content' => (string) $testElement['name'],
-                'title' => $this->assembleFullTestName($testElement),
+                'title' => $this->buildItemTitle($testElement),
                 'start' => $this->toCompatibleDateFormat((string) $testElement['start']),
                 'end' => $this->toCompatibleDateFormat((string) $testElement['end']),
                 'className' => (string) $testElement['result'],
@@ -89,12 +89,26 @@ class TimelineDataBuilder
         return $executors;
     }
 
+    private function buildItemTitle(\SimpleXMLElement $testElement): string
+    {
+        return sprintf(
+            '%s<br>(%d sec)',
+            $this->assembleFullTestName($testElement),
+            $this->calculateTestDurationSeconds((string) $testElement['start'], (string) $testElement['end'])
+        );
+    }
+
     private function assembleFullTestName(\SimpleXMLElement $testElement): string
     {
         $parentElement = $testElement->xpath('..');
         $testcaseName = (string) reset($parentElement)['name'];
 
         return $testcaseName . '::' . $testElement['name'];
+    }
+
+    private function calculateTestDurationSeconds(string $start, string $end): int
+    {
+        return (new \DateTimeImmutable($end))->getTimestamp() - (new \DateTimeImmutable($start))->getTimestamp();
     }
 
     private function resolveTestExecutorId(\SimpleXMLElement $testElement): string
