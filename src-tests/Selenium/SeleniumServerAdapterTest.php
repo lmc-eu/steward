@@ -57,10 +57,14 @@ class SeleniumServerAdapterTest extends TestCase
             'trailing slash should be removed' => ['http://localhost:4444/wd/hub/', 'http://localhost:4444/wd/hub'],
             'local URL with specified port should keep it' => ['http://localhost:4444', 'http://localhost:4444'],
             'local URL without port should use 4444' => ['http://localhost', 'http://localhost:4444'],
+            'HTTPS URL without port should use 443' => ['https://foo.bar', 'https://foo.bar:443'],
+            'HTTPS on different port than 443' => ['https://foo.bar:666', 'https://foo.bar:666'],
             'cloud service URL with port should keep it' =>
                 ['http://foo:bar@ondemand.saucelabs.com:1337', 'http://foo:bar@ondemand.saucelabs.com:1337'],
             'Sauce Labs cloud service without port should use 80' =>
                 ['http://foo:bar@ondemand.saucelabs.com', 'http://foo:bar@ondemand.saucelabs.com:80'],
+            'Sauce Labs HTTPS cloud service without port should use 443' =>
+                ['https://foo:bar@ondemand.saucelabs.com', 'https://foo:bar@ondemand.saucelabs.com:443'],
             'BrowserStack cloud service without port should use 80' =>
                 ['http://foo:bar@hub-cloud.browserstack.com', 'http://foo:bar@hub-cloud.browserstack.com:80'],
             'TestingBot cloud service without port should use 80' =>
@@ -68,9 +72,9 @@ class SeleniumServerAdapterTest extends TestCase
             'non-cloud URL without port should use 4444' => ['http://foo.com', 'http://foo.com:4444'],
             'username and host should get default port' => ['http://user@foo', 'http://user@foo:4444'],
             'all url parts' =>
-                ['https://user:pass@host:1337/wd/hub?foo=bar', 'https://user:pass@host:1337/wd/hub?foo=bar'],
+                ['http://user:pass@host:1337/wd/hub?foo=bar', 'http://user:pass@host:1337/wd/hub?foo=bar'],
             'all parts expects port should get default port' =>
-                ['https://user:pass@host/wd/hub?foo=bar', 'https://user:pass@host:4444/wd/hub?foo=bar'],
+                ['http://user:pass@host/wd/hub?foo=bar', 'http://user:pass@host:4444/wd/hub?foo=bar'],
         ];
     }
 

@@ -17,6 +17,7 @@ class SeleniumServerAdapter
     protected const HUB_ENDPOINT = '/wd/hub';
     protected const DEFAULT_PORT = 4444;
     protected const DEFAULT_PORT_CLOUD_SERVICE = 80;
+    protected const DEFAULT_PORT_CLOUD_SERVICE_HTTPS = 443;
 
     /** @var array */
     protected $serverUrlParts;
@@ -165,7 +166,7 @@ class SeleniumServerAdapter
         }
 
         if (empty($urlParts['port'])) {
-            $urlParts['port'] = $this->guessPort($urlParts['host']);
+            $urlParts['port'] = $this->guessPort($urlParts['host'], $urlParts['scheme']);
         }
 
         return $urlParts;
@@ -174,8 +175,12 @@ class SeleniumServerAdapter
     /**
      * Guess port for given service
      */
-    protected function guessPort(string $host): int
+    protected function guessPort(string $host, string $scheme): int
     {
+        if ($scheme === 'https') {
+            return self::DEFAULT_PORT_CLOUD_SERVICE_HTTPS;
+        }
+
         foreach (['saucelabs.com', 'browserstack.com', 'testingbot.com'] as $knownCloudHost) {
             if (mb_strpos($host, $knownCloudHost) !== false) {
                 return self::DEFAULT_PORT_CLOUD_SERVICE;
