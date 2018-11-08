@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Process;
 
 use Lmc\Steward\Console\Style\StewardStyle;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class ExecutionLoop
@@ -13,14 +14,21 @@ class ExecutionLoop
     private $io;
     /** @var OptimizeOrderInterface */
     private $optimizeStrategy;
+    /** @var int */
+    private $parallelLimit;
     /** @var Stopwatch */
     protected $stopwatch;
 
-    public function __construct(ProcessSet $processSet, StewardStyle $io, OptimizeOrderInterface $optimizeStrategy)
-    {
+    public function __construct(
+        ProcessSet $processSet,
+        StewardStyle $io,
+        OptimizeOrderInterface $optimizeStrategy,
+        int $parallelLimit = 50
+    ) {
         $this->processSet = $processSet;
         $this->io = $io;
         $this->optimizeStrategy = $optimizeStrategy;
+        $this->parallelLimit = $parallelLimit;
         $this->stopwatch = new Stopwatch();
     }
 
@@ -32,6 +40,7 @@ class ExecutionLoop
 
         $counterWaitingOutput = 1;
         $statusesCountLast = [];
+
         // Iterate over prepared and queued until everything is done
         while (true) {
             $prepared = $this->processSet->get(ProcessWrapper::PROCESS_STATUS_PREPARED);
@@ -40,7 +49,6 @@ class ExecutionLoop
             if (count($prepared) === 0 && count($queued) === 0) {
                 break;
             }
-
             // Start all prepared tasks and set status of not running as finished
             foreach ($prepared as $testClass => $processWrapper) {
                 if (!$processWrapper->getProcess()->isStarted()) {
@@ -114,7 +122,7 @@ class ExecutionLoop
                     }
                 }
             }
-
+            $this->dequeueParallelProcesses();
             $this->dequeueDependentProcesses();
 
             $statusesCount = $this->processSet->countStatuses();
@@ -158,7 +166,40 @@ class ExecutionLoop
         $this->processSet->optimizeOrder($this->optimizeStrategy);
 
         // Initialize first processes that should be run
-        $this->processSet->dequeueProcessesWithoutDelay($this->io);
+        $this->dequeueProcessesWithoutDelay();
+    }
+
+    /**
+     * Set queued processes without delay as prepared
+     */
+    protected function dequeueProcessesWithoutDelay(): void
+    {
+        $queuedProcesses = $this->processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+
+        foreach ($queuedProcesses as $className => $processWrapper) {
+            if ($processWrapper->isDelayed()) {
+                $this->io->writeln(
+                    sprintf(
+                        'Testcase "%s" is queued to be run %01.1f minutes after testcase "%s" is finished',
+                        $className,
+                        $processWrapper->getDelayMinutes(),
+                        $processWrapper->getDelayAfter()
+                    ),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
+            } elseif ($this->parallelLimitReached()) {
+                $this->io->writeln(
+                    sprintf('Max parallel limit reached, testcase "%s" is queued', $className),
+                    OutputInterface::VERBOSITY_QUIET
+                );
+            } else {
+                $this->io->writeln(
+                    sprintf('Testcase "%s" is prepared to be run', $className),
+                    OutputInterface::VERBOSITY_DEBUG
+                );
+                $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
+            }
+        }
     }
 
     protected function dequeueDependentProcesses(): void
@@ -175,11 +216,28 @@ class ExecutionLoop
         foreach ($queued as $testClass => $processWrapper) {
             $delaySeconds = $processWrapper->getDelayMinutes() * 60;
 
-            if (in_array($processWrapper->getDelayAfter(), $doneClasses, true)
+            if (!$this->parallelLimitReached()
+                && in_array($processWrapper->getDelayAfter(), $doneClasses, true)
                 && (time() - $done[$processWrapper->getDelayAfter()]->getFinishedTime()) > $delaySeconds
             ) {
                 if ($this->io->isVeryVerbose()) {
-                    $this->io->runStatus(sprintf('Unqueing testcase "%s"', $testClass));
+                    $this->io->runStatus(sprintf('Dequeing testcase "%s"', $testClass));
+                }
+                $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
+            }
+        }
+    }
+
+    protected function dequeueParallelProcesses(): void
+    {
+        $queued = $this->processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
+
+        foreach ($queued as $testClass => $processWrapper) {
+            if (!$processWrapper->isDelayed() && !$this->parallelLimitReached()) {
+                if ($this->io->isVeryVerbose()) {
+                    $this->io->runStatus(
+                        sprintf('Dequeing testcase "%s" which was queued because of parallel limit', $testClass)
+                    );
                 }
                 $processWrapper->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
             }
@@ -244,5 +302,10 @@ class ExecutionLoop
             $processWrapper->getProcess()->getIncrementalErrorOutput(),
             $processWrapper->getClassName()
         );
+    }
+
+    protected function parallelLimitReached(): bool
+    {
+        return count($this->processSet->get(ProcessWrapper::PROCESS_STATUS_PREPARED)) >= $this->parallelLimit;
     }
 }

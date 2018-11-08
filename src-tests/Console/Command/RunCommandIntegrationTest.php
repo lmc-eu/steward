@@ -92,6 +92,26 @@ class RunCommandIntegrationTest extends TestCase
         ];
     }
 
+    public function testShouldExecuteTestsWithParallelLimit(): void
+    {
+        $this->tester->execute(
+            [
+                'command' => $this->command->getName(),
+                'environment' => 'staging',
+                'browser' => 'chrome',
+                '--tests-dir' => __DIR__ . '/Fixtures/ParallelTests',
+                '--parallel-limit' => 1,
+            ],
+            ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
+        );
+
+        $output = $this->tester->getDisplay();
+
+        $this->assertStringMatchesFormatFile(__DIR__ . '/Fixtures/ParallelTests/expected-debug-output.txt', $output);
+
+        $this->assertSame(0, $this->tester->getStatusCode());
+    }
+
     public function testShouldExecuteTestsThatDontNeedBrowser(): void
     {
         $this->tester->execute(

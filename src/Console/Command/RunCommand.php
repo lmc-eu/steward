@@ -51,6 +51,7 @@ class RunCommand extends Command
     public const OPTION_FILTER = 'filter';
     public const OPTION_NO_EXIT = 'no-exit';
     public const OPTION_IGNORE_DELAYS = 'ignore-delays';
+    public const OPTION_PARALLEL_LIMIT = 'parallel-limit';
 
     /**
      * @internal
@@ -148,6 +149,13 @@ class RunCommand extends Command
                 'i',
                 InputOption::VALUE_NONE,
                 'Ignore delays defined between testcases'
+            )
+            ->addOption(
+                self::OPTION_PARALLEL_LIMIT,
+                'l',
+                InputOption::VALUE_REQUIRED,
+                'Number of maximum testcases being executed in a parallel',
+                50
             );
 
         $this->addUsage('staging firefox');
@@ -204,6 +212,13 @@ class RunCommand extends Command
         $seleniumAdapter = $this->getSeleniumAdapter($input->getOption(self::OPTION_SERVER_URL));
         $input->setOption(self::OPTION_SERVER_URL, $seleniumAdapter->getServerUrl());
 
+        // Make sure parallel-limit is greater than 0
+        $parallelLimit = (int) $input->getOption(self::OPTION_PARALLEL_LIMIT);
+        if ($parallelLimit === 0) {
+            throw new \RuntimeException('Parallel limit must be a whole number greater than 0');
+        }
+        $input->setOption(self::OPTION_PARALLEL_LIMIT, $parallelLimit);
+
         $this->getDispatcher()->dispatch(
             CommandEvents::RUN_TESTS_INIT,
             new ExtendedConsoleEvent($this, $input, $output)
@@ -215,6 +230,9 @@ class RunCommand extends Command
             );
             $output->writeln(
                 sprintf('Ignore delays: %s', ($input->getOption(self::OPTION_IGNORE_DELAYS)) ? 'yes' : 'no')
+            );
+            $output->writeln(
+                sprintf('Parallel limit: %d', $input->getOption(self::OPTION_PARALLEL_LIMIT))
             );
         }
     }
@@ -263,7 +281,9 @@ class RunCommand extends Command
             return 1;
         }
 
-        $executionLoop = new ExecutionLoop($processSet, $this->io, new MaxTotalDelayStrategy());
+        $maxParallelLimit = $input->getOption(self::OPTION_PARALLEL_LIMIT);
+
+        $executionLoop = new ExecutionLoop($processSet, $this->io, new MaxTotalDelayStrategy(), $maxParallelLimit);
 
         $allTestsPassed = $executionLoop->start();
 

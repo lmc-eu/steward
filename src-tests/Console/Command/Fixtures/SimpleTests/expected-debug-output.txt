@@ -3,6 +3,7 @@ Browser: chrome
 Environment: staging
 Path to logs: %s/logs
 Ignore delays: no
+Parallel limit: 50
 Selenium server (hub) url: %s, trying connection...OK
 Searching for testcases:
  - in directory "%s/src-tests/Console/Command/Fixtures/SimpleTests"
@@ -35,7 +36,7 @@ Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] [WebDriver] Ex
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> [%s] --- Finished execution of test "testWebpage" ---%A
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest> OK (1 test, 1 assertion)%A
 [%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\SimpleTest" (result: passed, time: %f sec)%A
-[%s] Unqueing testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest"%A
+[%s] Dequeing testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest"%A
 [%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest" started with command:
 '%s/steward/bin/phpunit-steward' '--log-junit=%s/logs/Lmc-Steward-Console-Command-Fixtures-SimpleTests-DependantTest.xml' '--configuration=%s/phpunit.xml' '%s/DependantTest.php'
 Lmc\Steward\Console\Command\Fixtures\SimpleTests\DependantTest> [%s] Registering test results publisher "Lmc\Steward\Publisher\XmlPublisher"%a

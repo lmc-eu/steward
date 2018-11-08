@@ -1,0 +1,18 @@
+%A
+Parallel limit: 1
+%A
+Testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\FirstTest" is prepared to be run
+Max parallel limit reached, testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\SecondTest" is queued
+Testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\TestDependingOnFirstTest" is queued to be run 0.0 minutes after testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\FirstTest" is finished
+%A
+[%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\FirstTest" started%A
+%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\FirstTest" (result: passed, time: %f sec)
+[%s] Dequeing testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\SecondTest" which was queued because of parallel limit
+%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\SecondTest" (result: passed, time: %f sec)
+[%s] Dequeing testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\TestDependingOnFirstTest"
+%A
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\TestDependingOnFirstTest" (result: passed, time: %f sec)%A
+[%s] All testcases done in %f seconds
+%A[OK] Testcases executed: 3 (passed: 3)%A

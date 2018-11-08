@@ -62,7 +62,6 @@
         "phpstan/phpstan-shim": "^0.10.5",
         "jakub-onderka/php-parallel-lint": "^1.0.0",
         "lmc/coding-standard": "^1.0.0",
-        "squizlabs/php_codesniffer": "^3.2.3",
         "phpstan/phpstan-phpunit": "^0.10.0"
     },
     "suggest": {
