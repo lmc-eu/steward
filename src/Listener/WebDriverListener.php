@@ -16,6 +16,7 @@ use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestListenerDefaultImplementation;
 use PHPUnit\Framework\WarningTestCase;
+use PHPUnit\Runner\BaseTestRunner;
 
 /**
  * Listener for initialization and destruction of WebDriver before and after each test.
@@ -58,6 +59,10 @@ class WebDriverListener implements TestListener
 
         if (!$test instanceof AbstractTestCase) {
             throw new \InvalidArgumentException('Test case must be descendant of Lmc\Steward\Test\AbstractTestCase');
+        }
+
+        if ($test->getStatus() === BaseTestRunner::STATUS_SKIPPED) {
+            return;
         }
 
         // Initialize NullWebDriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method

@@ -21,6 +21,7 @@
 - Remote server running in W3C-protocol mode (eg. Selenium v3.5.3+) was erroneously detected as BrowserStack cloud service.
 - `--xdebug` option did not have any effect unless passed as the last option.
 - Properly auto-detect port 443 (not 80) when https server URL is used as `--server-url`.
+- Do not start browser for test skipped because it was depending on some already failed test (using `@depends` annotation).
 
 ### Removed
 - `TestUtils` class which was already deprecated in 2.1.
