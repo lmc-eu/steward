@@ -82,7 +82,7 @@ class TimelineDataBuilderTest extends TestCase
                 [
                     'group' => 2,
                     'content' => 'testBarFirstPassed',
-                    'title' => 'Foo\\BarPassedTest::testBarFirstPassed',
+                    'title' => 'Foo\\BarPassedTest::testBarFirstPassed<br>(333 sec)',
                     'start' => '2016-12-29T12:56:29',
                     'end' => '2016-12-29T13:02:02',
                     'className' => 'passed',
@@ -90,7 +90,7 @@ class TimelineDataBuilderTest extends TestCase
                 [
                     'group' => 0,
                     'content' => 'testBarSecondPassed',
-                    'title' => 'Foo\\BarPassedTest::testBarSecondPassed',
+                    'title' => 'Foo\\BarPassedTest::testBarSecondPassed<br>(66 sec)',
                     'start' => '2016-12-29T12:57:05',
                     'end' => '2016-12-29T12:58:11',
                     'className' => 'passed',
@@ -98,7 +98,7 @@ class TimelineDataBuilderTest extends TestCase
                 [
                     'group' => 'unknown',
                     'content' => 'testBarThirdWithoutExecutor',
-                    'title' => 'Foo\\BarPassedTest::testBarThirdWithoutExecutor',
+                    'title' => 'Foo\\BarPassedTest::testBarThirdWithoutExecutor<br>(1 sec)',
                     'start' => '2016-12-29T12:56:28',
                     'end' => '2016-12-29T12:56:29',
                     'className' => 'passed',
@@ -106,7 +106,7 @@ class TimelineDataBuilderTest extends TestCase
                 [
                     'group' => 1,
                     'content' => 'testBarFirstPassed',
-                    'title' => 'Foo\\BazFailedTest::testBarFirstPassed',
+                    'title' => 'Foo\\BazFailedTest::testBarFirstPassed<br>(10 sec)',
                     'start' => '2016-12-29T12:57:05',
                     'end' => '2016-12-29T12:57:15',
                     'className' => 'passed',
@@ -114,7 +114,7 @@ class TimelineDataBuilderTest extends TestCase
                 [
                     'group' => 2,
                     'content' => 'testBazSecondBroken',
-                    'title' => 'Foo\\BazFailedTest::testBazSecondBroken',
+                    'title' => 'Foo\\BazFailedTest::testBazSecondBroken<br>(175 sec)',
                     'start' => '2017-01-02T03:02:08',
                     'end' => '2017-01-02T03:05:03',
                     'className' => 'broken',
