@@ -36,7 +36,7 @@
         "ext-filter": "*",
         "ext-SimpleXML": "*",
         "ext-libxml": "*",
-        "phpunit/phpunit": "7.4.x-dev",
+        "phpunit/phpunit": "^7.4.4",
         "symfony/console": "^4.0",
         "symfony/process": "^4.0 !=4.0.2",
         "symfony/finder": "^4.0",
