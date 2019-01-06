@@ -14,7 +14,6 @@ matrix:
     - php: 7.1
       env: dependencies="--prefer-lowest --prefer-stable"
     - php: 7.3
-      env: dependencies="--ignore-platform-reqs"
     - php: 7.2
       env: CHECK_CODESTYLE=1
       before_install:
