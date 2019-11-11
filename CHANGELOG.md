@@ -10,6 +10,7 @@
 ### Changed
 - Require PHP 7.1+ and Symfony 4 components.
 - Update to namespaced PHPUnit 7.0.
+- Use php-webdriver 1.7.1+.
 - Methods now uses strict type-hints and return type-hints. Inherited classes and interfaces (eg. `CustomCapabilitiesResolverInterface`, `OptimizeOrderInterface` etc.) may require to be changed in accordance with this.
 - Simplified and improved test output.
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
