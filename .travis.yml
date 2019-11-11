@@ -10,14 +10,15 @@ services:
 
 env:
   global:
-    - SELENIUM_VERSION="3.14.0"
-    - CHROMEDRIVER_VERSION="2.43"
+    - SELENIUM_VERSION="3.141.59"
 
 matrix:
   include:
-    - php: 7.1
+    - name: 'Lowest dependencies'
+      php: 7.1
       env: dependencies="--prefer-lowest --prefer-stable"
-    - php: 7.3
+    - name: 'Codestyle and static analysis'
+      php: 7.3
       env: CHECK_CODESTYLE=1
       before_install:
         - phpenv config-rm xdebug.ini
@@ -34,7 +35,7 @@ install:
 before_script:
   - mkdir -p src-tests/logs/
   - mkdir -p src-tests/coverage/
-  - mkdir chromedriver; wget -q -t 3 https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip; unzip chromedriver_linux64.zip -d chromedriver
+  - mkdir chromedriver; CHROMEDRIVER_VERSION=$(wget -qO- "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"); wget -q -t 3 https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip; unzip chromedriver_linux64 -d chromedriver
   - CHROMEDRIVER_PATH=$PWD/chromedriver/chromedriver
   - SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi $SELENIUM_VERSION)
   - java -Dwebdriver.chrome.driver="$CHROMEDRIVER_PATH" -jar $SELENIUM_JAR -log selenium-server.log &
