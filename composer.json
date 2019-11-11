@@ -28,41 +28,41 @@
     },
     "require": {
         "php": "^7.1",
-        "ext-zip": "*",
+        "ext-SimpleXML": "*",
         "ext-curl": "*",
-        "ext-mbstring": "*",
-        "ext-json": "*",
         "ext-dom": "*",
         "ext-filter": "*",
-        "ext-SimpleXML": "*",
+        "ext-json": "*",
         "ext-libxml": "*",
+        "ext-mbstring": "*",
+        "ext-zip": "*",
+        "beberlei/assert": "^3.0",
+        "clue/graph": "~0.9.0",
+        "doctrine/inflector": "~1.0",
+        "facebook/webdriver": "^1.7.1",
+        "florianwolters/component-util-singleton": "0.3.2",
+        "graphp/algorithms": "^0.8.1",
+        "nette/reflection": "^2.4.2",
+        "ondram/ci-detector": "^3.1",
         "phpunit/phpunit": "^7.4.4",
         "symfony/console": "^4.0",
-        "symfony/process": "^4.0 !=4.0.2",
-        "symfony/finder": "^4.0",
         "symfony/event-dispatcher": "^4.0",
         "symfony/filesystem": "^4.0",
-        "symfony/stopwatch": "^4.0",
-        "symfony/yaml": "^4.0",
+        "symfony/finder": "^4.0",
         "symfony/options-resolver": "^4.0",
-        "nette/reflection": "^2.4.2",
-        "facebook/webdriver": "^1.7.1",
-        "clue/graph": "~0.9.0",
-        "graphp/algorithms": "^0.8.1",
-        "florianwolters/component-util-singleton": "0.3.2",
-        "doctrine/inflector": "~1.0",
-        "beberlei/assert": "^3.0",
-        "ondram/ci-detector": "^3.0"
+        "symfony/process": "^4.0 !=4.0.2",
+        "symfony/stopwatch": "^4.0",
+        "symfony/yaml": "^4.0"
     },
     "require-dev": {
-        "php-mock/php-mock-phpunit": "^2.1.2",
-        "phpunit/php-code-coverage": "^6.0",
-        "php-coveralls/php-coveralls": "^2.0",
-        "symfony/var-dumper": "^4.0",
-        "phpstan/phpstan-shim": "^0.10.5",
         "jakub-onderka/php-parallel-lint": "^1.0.0",
         "lmc/coding-standard": "^1.0.0",
-        "phpstan/phpstan-phpunit": "^0.10.0"
+        "php-coveralls/php-coveralls": "^2.0",
+        "php-mock/php-mock-phpunit": "^2.1.2",
+        "phpstan/phpstan-phpunit": "^0.11.2",
+        "phpstan/phpstan-shim": "^0.11.19",
+        "phpunit/php-code-coverage": "^6.0",
+        "symfony/var-dumper": "^4.0"
     },
     "suggest": {
         "ext-posix": "For colored output",
@@ -78,7 +78,7 @@
         ],
         "analyze": [
             "vendor/bin/parallel-lint -j 10 ./bin ./bin/phpunit-steward ./bin/steward ./src ./src-tests",
-            "vendor/bin/phpstan.phar analyze ./src ./src-tests -c phpstan.neon --ansi --level 4"
+            "vendor/bin/phpstan.phar analyze -c phpstan.neon --ansi --level 4 ./src ./src-tests"
         ],
         "test": [
             "export COLUMNS=120 && cd src-tests && ../vendor/bin/phpunit --colors=always"
@@ -94,5 +94,8 @@
         "branch-alias": {
             "dev-master": "3.0.x-dev"
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }

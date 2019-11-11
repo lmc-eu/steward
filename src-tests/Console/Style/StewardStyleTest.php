@@ -186,9 +186,6 @@ HTXT;
         );
     }
 
-    /**
-     * @requires function Symfony\Component\Console\Input\StreamableInputInterface::isInteractive
-     */
     public function testShouldFormatQuestion(): void
     {
         $inputMock = $this->getMockBuilder(StreamableInputInterface::class)->getMock();
