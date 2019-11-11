@@ -135,6 +135,7 @@ class Legacy extends AbstractComponent
      *
      * @param string $legacyName filename to store the data if null getLegacyFilename is called to generate filename
      *      from the test class name
+     * @param mixed $data
      * @throws LegacyException
      */
     public function saveWithName($data, string $legacyName): void
@@ -153,6 +154,7 @@ class Legacy extends AbstractComponent
      *
      * @param string $type LEGACY_TYPE_CASE (shared by all tests in test case)
      *      or LEGACY_TYPE_TEST (shared only by the same test function)
+     * @param mixed $data
      * @throws LegacyException
      */
     public function save($data, string $type = self::LEGACY_TYPE_CASE): void
@@ -204,6 +206,7 @@ class Legacy extends AbstractComponent
     /**
      * Converts legacy value to string that can be printed (e.g. in log)
      * calls __toString on the object if it's defined otherwise print_r()
+     * @param mixed $object
      */
     private function getPrintableValue($object): string
     {

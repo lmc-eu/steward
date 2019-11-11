@@ -188,7 +188,7 @@ class XmlPublisher extends AbstractPublisher
         }
 
         // open (or create) the file and acquire exclusive lock (or wait until it is acquired)
-        $this->fileHandle = fopen($file, 'c+');
+        $this->fileHandle = fopen($file, 'c+b');
         if (!flock($this->fileHandle, LOCK_EX)) {
             throw new \RuntimeException(sprintf('Cannot obtain lock for file "%s"', $file));
         }

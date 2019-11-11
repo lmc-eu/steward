@@ -93,6 +93,8 @@ class NullWebDriver implements WebDriver, JavaScriptExecutor, WebDriverHasInputD
     }
 
     /**
+     * @param string $name
+     * @param array $params
      * @return mixed
      */
     public function execute($name, $params)
@@ -111,6 +113,7 @@ class NullWebDriver implements WebDriver, JavaScriptExecutor, WebDriverHasInputD
     }
 
     /**
+     * @param string $script
      * @return mixed
      */
     public function executeScript($script, array $arguments = [])
@@ -119,6 +122,7 @@ class NullWebDriver implements WebDriver, JavaScriptExecutor, WebDriverHasInputD
     }
 
     /**
+     * @param string $script
      * @return mixed
      */
     public function executeAsyncScript($script, array $arguments = [])

@@ -103,7 +103,7 @@ class SeleniumServerAdapterTest extends TestCase
 
     public function testShouldReturnTrueIfUrlIsAccessible(): void
     {
-        $dummyResource = fopen(__FILE__, 'r');
+        $dummyResource = fopen(__FILE__, 'rb');
 
         $fsockopenMock = $this->getFunctionMock(__NAMESPACE__, 'fsockopen');
         $fsockopenMock->expects($this->once())

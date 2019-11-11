@@ -245,7 +245,7 @@ HTXT;
      */
     private function getInputStreamWithUserInput(string $input)
     {
-        $stream = fopen('php://memory', 'r+', false);
+        $stream = fopen('php://memory', 'r+b', false);
         fwrite($stream, $input);
         rewind($stream);
 
