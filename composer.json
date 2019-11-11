@@ -34,7 +34,6 @@
         "ext-filter": "*",
         "ext-json": "*",
         "ext-libxml": "*",
-        "ext-mbstring": "*",
         "ext-zip": "*",
         "beberlei/assert": "^3.0",
         "clue/graph": "~0.9.0",
@@ -50,6 +49,7 @@
         "symfony/filesystem": "^4.0",
         "symfony/finder": "^4.0",
         "symfony/options-resolver": "^4.0",
+        "symfony/polyfill-mbstring": "^1.12",
         "symfony/process": "^4.0 !=4.0.2",
         "symfony/stopwatch": "^4.0",
         "symfony/yaml": "^4.0"
