@@ -186,9 +186,6 @@ HTXT;
         );
     }
 
-    /**
-     * @requires function Symfony\Component\Console\Input\StreamableInputInterface::isInteractive
-     */
     public function testShouldFormatQuestion(): void
     {
         $inputMock = $this->getMockBuilder(StreamableInputInterface::class)->getMock();
@@ -248,7 +245,7 @@ HTXT;
      */
     private function getInputStreamWithUserInput(string $input)
     {
-        $stream = fopen('php://memory', 'r+', false);
+        $stream = fopen('php://memory', 'r+b', false);
         fwrite($stream, $input);
         rewind($stream);
 

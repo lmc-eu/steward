@@ -10,6 +10,7 @@
 ### Changed
 - Require PHP 7.1+ and Symfony 4 components.
 - Update to namespaced PHPUnit 7.0.
+- Use php-webdriver 1.7.1+.
 - Methods now uses strict type-hints and return type-hints. Inherited classes and interfaces (eg. `CustomCapabilitiesResolverInterface`, `OptimizeOrderInterface` etc.) may require to be changed in accordance with this.
 - Simplified and improved test output.
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
@@ -23,6 +24,7 @@
 - `--xdebug` option did not have any effect unless passed as the last option.
 - Properly auto-detect port 443 (not 80) when https server URL is used as `--server-url`.
 - Do not start browser for test skipped because it was depending on some already failed test (using `@depends` annotation).
+- Parsing of latest Selenium server version in `install` command.
 
 ### Removed
 - `TestUtils` class which was already deprecated in 2.1.

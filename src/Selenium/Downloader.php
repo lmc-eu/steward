@@ -137,8 +137,13 @@ class Downloader
             $devVersion = $matches[2];
         }
 
+        $devVersionToAppend = '';
+        if (!empty($devVersion) && $versionParts[0] === '3') { // Selenium 3 releases included dev version in their path
+            $devVersionToAppend = '-' . $devVersion;
+        }
+
         $fileUrl = self::$storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1]
-            . (!empty($devVersion) ? '-' . $devVersion : '')
+            . $devVersionToAppend
             . '/' . $this->getFileName();
 
         return $fileUrl;

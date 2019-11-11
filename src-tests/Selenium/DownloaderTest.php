@@ -20,7 +20,7 @@ class DownloaderTest extends TestCase
             ->with('https://selenium-release.storage.googleapis.com')
             ->willReturn($releasesDummyResponse);
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 '2.43.0',
                 '2.43.1',
@@ -29,7 +29,7 @@ class DownloaderTest extends TestCase
                 '3.0.0-beta1',
                 '3.0.0-beta2',
                 '3.0.0-beta3',
-                '3.0.0-beta3',
+                '3.0.0-beta3', // intentional, it there twice in the actual realworld response...
                 '3.0.0-beta4',
                 '3.0.0',
                 '3.0.1',
@@ -40,6 +40,9 @@ class DownloaderTest extends TestCase
                 '3.9.1',
                 '3.10.0',
                 '3.11.0',
+                '4.0.0-alpha-1',
+                '4.0.0-alpha-2',
+                '4.0.0',
             ],
             Downloader::getAvailableVersions()
         );
@@ -54,7 +57,7 @@ class DownloaderTest extends TestCase
             ->with('https://selenium-release.storage.googleapis.com')
             ->willReturn($releasesDummyResponse);
 
-        $this->assertEquals('3.11.0', Downloader::getLatestVersion());
+        $this->assertEquals('4.0.0', Downloader::getLatestVersion());
     }
 
     public function testShouldReturnEmptyArrayOfAvailableVersionsIfRequestToGetVersionFailed(): void
@@ -103,17 +106,6 @@ class DownloaderTest extends TestCase
     /**
      * @group integration
      */
-    public function testShouldReturnValidLinkToSpecifiedVersion(): void
-    {
-        $downloader = new Downloader(__DIR__ . '/Fixtures');
-        $downloader->setVersion('2.53.1');
-
-        $this->assertIsDownloadable($downloader->getFileUrl());
-    }
-
-    /**
-     * @group integration
-     */
     public function testShouldReadLatestVersionFromTheStorageUrl(): void
     {
         $latestVersion = Downloader::getLatestVersion();
@@ -145,7 +137,7 @@ class DownloaderTest extends TestCase
             ->willReturn($releasesDummyResponse);
 
         $downloader = new Downloader(__DIR__ . '/Fixtures');
-        $this->assertEquals('3.11.0', $downloader->getVersion());
+        $this->assertEquals('4.0.0', $downloader->getVersion());
     }
 
     public function testShouldAssembleTargetFilePath(): void
@@ -164,7 +156,7 @@ class DownloaderTest extends TestCase
         $downloader = new Downloader(__DIR__ . '/Fixtures');
         $downloader->setVersion($version);
 
-        $this->assertEquals(
+        $this->assertSame(
             'https://selenium-release.storage.googleapis.com' . $expectedPath,
             $downloader->getFileUrl()
         );
@@ -179,8 +171,9 @@ class DownloaderTest extends TestCase
             ['2.53.0', '/2.53/selenium-server-standalone-2.53.0.jar'],
             ['2.53.1', '/2.53/selenium-server-standalone-2.53.1.jar'],
             ['3.0.0-beta2', '/3.0-beta2/selenium-server-standalone-3.0.0-beta2.jar'],
-            ['3.0.0-rc3', '/3.0-rc3/selenium-server-standalone-3.0.0-rc3.jar'],
             ['3.0.0', '/3.0/selenium-server-standalone-3.0.0.jar'],
+            ['4.0.0-alpha-1', '/4.0/selenium-server-standalone-4.0.0-alpha-1.jar'],
+            ['4.0.0', '/4.0/selenium-server-standalone-4.0.0.jar'],
         ];
     }
 

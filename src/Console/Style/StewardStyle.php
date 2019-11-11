@@ -159,7 +159,7 @@ class StewardStyle extends OutputStyle
         throw new \BadMethodCallException('Method not implemented');
     }
 
-    public function confirm($question, $default = true): void
+    public function confirm($question, $default = true): bool
     {
         throw new \BadMethodCallException('Method not implemented');
     }
