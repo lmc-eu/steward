@@ -2,9 +2,11 @@
 
 namespace Lmc\Steward\WebDriver;
 
+use Facebook\WebDriver\Remote\JsonWireCompat;
+use Facebook\WebDriver\Remote\WebDriverResponse;
 use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverCommandExecutor;
 use Lmc\Steward\ConfigHelper;
-use Lmc\Steward\WebDriver\Fixtures\DummyCommandExecutor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -12,6 +14,8 @@ class RemoteWebDriverTest extends TestCase
 {
     /** @var RemoteWebDriver|MockObject */
     protected $driver;
+    /** @var WebDriverCommandExecutor|MockObject */
+    protected $executorMock;
 
     protected function setUp(): void
     {
@@ -21,12 +25,15 @@ class RemoteWebDriverTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
-        $this->driver->setCommandExecutor(new DummyCommandExecutor());
+        $this->executorMock = $this->createMock(WebDriverCommandExecutor::class);
+        $this->driver->setCommandExecutor($this->executorMock);
     }
 
     public function testShouldWriteLoadedUrlToLogEvenWithDisabledDebugMode(): void
     {
         $this->setDebugMode(false); // Make debug mode disabled
+
+        $this->setUpExecutorToReturnResponse(new WebDriverResponse());
 
         $this->driver->get('http://foo.bar');
 
@@ -36,6 +43,10 @@ class RemoteWebDriverTest extends TestCase
     public function testShouldLogCommandsInDebugMode(): void
     {
         $this->setDebugMode(true); // Enable debug mode
+
+        $response = new WebDriverResponse();
+        $response->setValue([JsonWireCompat::WEB_DRIVER_ELEMENT_IDENTIFIER => []]);
+        $this->setUpExecutorToReturnResponse($response);
 
         $this->driver->findElement(WebDriverBy::className('foo'));
         $this->driver->getTitle();
@@ -50,6 +61,10 @@ class RemoteWebDriverTest extends TestCase
     {
         $this->setDebugMode(false); // Make debug mode disabled
 
+        $response = new WebDriverResponse();
+        $response->setValue([JsonWireCompat::WEB_DRIVER_ELEMENT_IDENTIFIER => []]);
+        $this->setUpExecutorToReturnResponse($response);
+
         $this->driver->findElement(WebDriverBy::className('foo'));
         $this->driver->getTitle();
 
@@ -62,5 +77,12 @@ class RemoteWebDriverTest extends TestCase
         $configValues['DEBUG'] = $enabled ? 1 : 0;
         ConfigHelper::setEnvironmentVariables($configValues);
         ConfigHelper::unsetConfigInstance();
+    }
+
+    protected function setUpExecutorToReturnResponse(WebDriverResponse $response): void
+    {
+        $this->executorMock->expects($this->any())
+            ->method('execute')
+            ->willReturn($response);
     }
 }
