@@ -120,7 +120,7 @@ class XmlPublisherTest extends TestCase
         $this->assertEquals('started', $xml->testcase->test['status']);
         $this->assertEmpty($xml->testcase->test['result']);
 
-        $this->assertNotEmpty($xml->testcase->test['start']);
+        $this->assertNotEmpty((string) $xml->testcase->test['start']);
         $startDate = (string) $xml->testcase->test['start']; // convert to string so it could be serialized by PHPUnit
         $this->assertEmpty($xml->testcase->test['end']);
 
@@ -158,7 +158,7 @@ class XmlPublisherTest extends TestCase
         $this->assertEquals($originalTestStartDate, $xml->testcase->test['start']);
 
         // and the end date is now set
-        $this->assertNotEmpty($xml->testcase->test['end']);
+        $this->assertNotEmpty((string) $xml->testcase->test['end']);
     }
 
     public function testShouldAddTestcaseResultToEmptyFile()
@@ -173,9 +173,9 @@ class XmlPublisherTest extends TestCase
         $this->assertInstanceOf(\SimpleXMLElement::class, $xml->testcase);
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
         $this->assertEquals('queued', $xml->testcase['status']);
-        $this->assertEmpty($xml->testcase->test['result']);
-        $this->assertEmpty($xml->testcase->test['start']);
-        $this->assertEmpty($xml->testcase->test['end']);
+        $this->assertEmpty((string) $xml->testcase->test['result']);
+        $this->assertEmpty((string) $xml->testcase->test['start']);
+        $this->assertEmpty((string) $xml->testcase->test['end']);
 
         return [$fileName];
     }
@@ -203,8 +203,8 @@ class XmlPublisherTest extends TestCase
         $this->assertEquals('testCaseNameFoo', $xml->testcase['name']);
         $this->assertEquals('done', $xml->testcase['status']);
         $this->assertEquals('passed', $xml->testcase['result']);
-        $this->assertNotEmpty($xml->testcase['start']);
-        $this->assertNotEmpty($xml->testcase['end']);
+        $this->assertNotEmpty((string) $xml->testcase['start']);
+        $this->assertNotEmpty((string) $xml->testcase['end']);
     }
 
     public function testShouldFailIfGivenDirectoryDoesNotExists(): void
