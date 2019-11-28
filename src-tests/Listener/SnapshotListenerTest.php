@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Listener;
 
-use Facebook\WebDriver\Exception\TimeOutException;
+use Facebook\WebDriver\Exception\TimeoutException;
 use Lmc\Steward\ConfigHelper;
 use Lmc\Steward\Test\AbstractTestCase;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
@@ -158,7 +158,7 @@ class SnapshotListenerTest extends TestCase
         $webDriver = $this->createMock(RemoteWebDriver::class);
         $webDriver->expects($this->once())
             ->method('getCurrentURL')
-            ->willThrowException(new TimeOutException('Timed out'));
+            ->willThrowException(new TimeoutException('Timed out'));
 
         $test->wd = $webDriver;
 
