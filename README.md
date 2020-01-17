@@ -14,7 +14,7 @@ Steward is set of libraries made to simplify writing and running robust function
 - It allows you to start writing complex test cases in a minute.
 - It makes a lot of work for you: download and install Selenium server with one command; set-up browser of your choice; automatically take a screenshot on failed assertion; produce test results in JUnit format (easily processable e.g. by Jenkins and other tools) and more.
 - Your tests are run in a parallel, so the bottleneck is just the amount of Selenium nodes you start simultaneously.
-- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/facebook/php-webdriver/wiki/Example-command-reference) can help you shorten your tests and make them more readable.
+- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/php-webdriver/php-webdriver/wiki/Example-command-reference) can help you shorten your tests and make them more readable.
 - If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all.
 - Allows you to plan tests dependencies - need to wait 2 minutes until some event gets through your message queue so you could test the result? No problem! The order of tests is even optimized to minimize the total execution time.
 - Status of the tests could be clearly watched during tests execution, so you will easily know how many tests were already finished and what was their result.
@@ -22,7 +22,7 @@ Steward is set of libraries made to simplify writing and running robust function
 - Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated, giving you a possibility to run tests with even less setup and without own infrastructure.
 - It is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain quality of our various products thanks to hundreds of test-cases. The library itself is also extensively covered with unit tests.
 - Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
-[php-webdriver](https://github.com/facebook/php-webdriver) is the most used and developed Selenium language binding for PHP,
+[php-webdriver](https://github.com/php-webdriver/php-webdriver) is the most used and developed Selenium language binding for PHP,
 [PHPUnit](https://phpunit.de/) is well known and widely used testing framework and
 [Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications.
 

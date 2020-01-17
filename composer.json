@@ -37,7 +37,7 @@
         "symfony/filesystem": "~3.0",
         "symfony/stopwatch": "^3.0",
         "nette/reflection": "^2.4.2",
-        "facebook/webdriver": "^1.4.0",
+        "php-webdriver/webdriver": "^1.4.0",
         "clue/graph": "~0.9.0",
         "graphp/algorithms": "^0.8.1",
         "florianwolters/component-util-singleton": "0.3.2",
