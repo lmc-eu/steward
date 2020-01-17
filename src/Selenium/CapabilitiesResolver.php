@@ -122,7 +122,7 @@ final class CapabilitiesResolver
         // Firefox does not (as a intended feature) trigger "change" and "focus" events in javascript if not in active
         // (focused) window. This would be a problem for concurrent testing - solution is to use focusmanager.testmode.
         // See https://code.google.com/p/selenium/issues/detail?id=157
-        $profile = new FirefoxProfile(); // see https://github.com/facebook/php-webdriver/wiki/FirefoxProfile
+        $profile = new FirefoxProfile(); // see https://github.com/php-webdriver/php-webdriver/wiki/FirefoxProfile
         $profile->setPreference('focusmanager.testmode', true);
 
         $capabilities->setCapability(FirefoxDriver::PROFILE, $profile);

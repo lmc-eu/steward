@@ -107,7 +107,7 @@ abstract class AbstractTestCase extends TestCase
      * Sleep for given amount of seconds. Unlike sleep(), also the float values are supported.
      * ALWAYS TRY TO USE WAIT() AND EXPLICIT WAITS INSTEAD!
      *
-     * @see https://github.com/facebook/php-webdriver/wiki/HowTo-Wait
+     * @see https://github.com/php-webdriver/php-webdriver/wiki/HowTo-Wait
      */
     public static function sleep(float $seconds): void
     {

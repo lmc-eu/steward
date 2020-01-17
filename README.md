@@ -19,7 +19,7 @@ Steward is a set of libraries made to simplify writing and running robust functi
    - produces test results in JUnit format (easily processable, for example, by Jenkins and other tools)
    - and more...
 - Tests are run in parallel, so the only bottleneck is the number of Selenium nodes you start simultaneously.
-- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/facebook/php-webdriver/wiki/Example-command-reference) helps shorten your tests and improve readability.
+- Simple syntax sugar layer on top of default [WebDriver commands](https://github.com/php-webdriver/php-webdriver/wiki/Example-command-reference) helps shorten your tests and improve readability.
 - If you already use PHP, you don't have to learn a new language to write functional tests. Moreover, if you are familiar with unit tests and PHPUnit, you know it all.
 - Allows you to plan test dependencies.
    - For example, if you need to wait 2 minutes until some event gets through your message queue before testing the result? No problem! The order of tests is optimized to minimize the total execution time.
@@ -29,7 +29,7 @@ Steward is a set of libraries made to simplify writing and running robust functi
 - Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated giving you a chance to run tests with less setup and without your own infrastructure.
 - Steward is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain the quality of our products thanks to hundreds of test-cases. The library itself is also extensively covered by unit tests.
 - Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
-[php-webdriver](https://github.com/facebook/php-webdriver) is the most used and developed Selenium language binding for PHP,
+[php-webdriver](https://github.com/php-webdriver/php-webdriver) is the most used and developed Selenium language binding for PHP,
 [PHPUnit](https://phpunit.de/) is a well known and widely used testing framework, and
 [Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications.
 
