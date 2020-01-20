@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+## 2.3.5 - 2020-01-20
+### Changed
+- Replace facebook/webdriver with its successor php-webdriver/webdriver.
+
 ## 2.3.4 - 2018-07-27
 ### Fixed
 - Backport visibility fix of `setUp()` and `tearDown()` methods of AbstractTestCase (to eg. allow use of [lmc/coding-standard](https://github.com/lmc-eu/php-coding-standard/) in projects using Steward).
