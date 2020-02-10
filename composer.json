@@ -42,7 +42,7 @@
         "graphp/algorithms": "^0.8.1",
         "nette/reflection": "^2.4.2",
         "ondram/ci-detector": "^3.1",
-        "php-webdriver/webdriver": "^1.8@dev",
+        "php-webdriver/webdriver": "^1.8.1",
         "phpunit/phpunit": "^7.4.4",
         "symfony/console": "^4.0",
         "symfony/event-dispatcher": "^4.0",
