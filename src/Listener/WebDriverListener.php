@@ -120,6 +120,7 @@ class WebDriverListener implements TestListener
             );
 
             ob_start(); // Capture any output from commands bellow to make them appended to output of the test.
+
             try {
                 // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
                 // Should be removed with PhantomJS 2

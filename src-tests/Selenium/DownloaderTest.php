@@ -109,7 +109,7 @@ class DownloaderTest extends TestCase
     public function testShouldReadLatestVersionFromTheStorageUrl(): void
     {
         $latestVersion = Downloader::getLatestVersion();
-        $this->assertInternalType('string', $latestVersion);
+        $this->assertIsString($latestVersion);
         $this->assertRegExp('/^\d+\.\d+\.\d+.*$/', $latestVersion);
 
         $downloader = new Downloader(__DIR__ . '/Fixtures');

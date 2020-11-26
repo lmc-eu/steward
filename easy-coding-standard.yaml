@@ -1,11 +1,14 @@
 imports:
-    - { resource: '%vendor_dir%/lmc/coding-standard/easy-coding-standard.yaml' }
+    - { resource: 'vendor/lmc/coding-standard/easy-coding-standard.yaml' }
 
 parameters:
     skip:
         PHP_CodeSniffer\Standards\Generic\Sniffs\PHP\ForbiddenFunctionsSniff:
-            - 'src/bootstrap.php'
             - 'src-tests/bootstrap.php'
+            - 'src-tests/ConfigHelper.php'
+            - 'src-tests/ConfigProviderTest.php'
+            - 'src/bootstrap.php'
+            - 'src/Component/Legacy.php'
             - 'src/Listener/TestStartLogListener.php'
             - 'src/Listener/TestStatusListener.php'
             - 'src/Test/AbstractTestCase.php'

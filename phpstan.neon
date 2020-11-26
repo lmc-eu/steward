@@ -1,20 +1,20 @@
-includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-
 parameters:
     ignoreErrors:
         - '#Constructor of class .+ImplementsCapabilitiesResolverInterface has an unused parameter \$config#'
-        - '#Lmc\\Steward\\ConfigProviderHelper::__construct\(\) does not call parent constructor from Lmc\\Steward\\ConfigProvider#'
         - '#Constructor of class Lmc\\Steward\\Selenium\\Fixtures\\CapabilitiesResolverFixture has an unused parameter \$config#'
         - '#Call to an undefined method Lmc\\Steward\\Component\\Fixtures\\MockComponent::notExisting\(\)#'
         - "#Property Lmc\\\\Steward\\\\Test\\\\AbstractTestCase::\\$wd \\(Facebook\\\\WebDriver\\\\Remote\\\\RemoteWebDriver\\) does not accept Lmc\\\\Steward\\\\WebDriver\\\\NullWebDriver#"
-        # PHPStan does not like the singleton methods
-        - "#Property Lmc\\\\Steward\\\\Listener\\\\WebDriverListener::\\$config \\(Lmc\\\\Steward\\\\ConfigProvider\\) does not accept object.#" # https://github.com/phpstan/phpstan/issues/1301
-        - "#^Offset [0-9]+ does not exist on array\\(\\).$#" # https://github.com/phpstan/phpstan-phpunit/issues/25
+        - message: '#should return .+ but return statement is missing#'
+          path: 'src/WebDriver/NullWebDriver.php'
         - message: '#Variable \$e might not be defined.#'
           path: 'src/Listener/WebDriverListener.php'
     excludes_analyse:
         - '%rootDir%/../../../src-tests/Process/Fixtures/InvalidTests/WrongClassTest.php'
         - '%rootDir%/../../../src-tests/Test/SyntaxSugarTraitTest.php'
         - '%rootDir%/../../../src-tests/ConfigProviderTest.php'
-    bootstrap: %rootDir%/../../../src-tests/bootstrap.php
+    bootstrapFiles:
+        - '%rootDir%/../../../src-tests/bootstrap.php'
+    level: 4
+    paths:
+        - src/
+        - src-tests/
