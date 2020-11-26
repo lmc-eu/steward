@@ -24,10 +24,10 @@ class TestStatusListener implements TestListener
 {
     use TestListenerDefaultImplementation;
 
-    /** @var AbstractPublisher[] $publishers */
+    /** @var AbstractPublisher[] */
     protected $publishers = [];
 
-    /** @var \DateTimeInterface $startDate */
+    /** @var \DateTimeImmutable */
     protected $startDate;
 
     /**

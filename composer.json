@@ -10,6 +10,10 @@
     "license": "MIT",
     "authors": [
         {
+            "name": "Ondřej Machulda",
+            "email": "ondrej.machulda@gmail.com"
+        },
+        {
             "name": "LMC s.r.o.",
             "homepage": "https://github.com/lmc-eu"
         }
@@ -31,7 +35,7 @@
         "nette/reflection": "^2.4.2",
         "ondram/ci-detector": "^3.1",
         "php-webdriver/webdriver": "^1.8.1",
-        "phpunit/phpunit": "^7.4.4",
+        "phpunit/phpunit": "^7.5",
         "symfony/console": "^4.0",
         "symfony/event-dispatcher": "^4.0",
         "symfony/filesystem": "^4.0",
@@ -44,12 +48,13 @@
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.2",
-        "jakub-onderka/php-parallel-lint": "^1.0.0",
-        "lmc/coding-standard": "^1.0.0",
+        "lmc/coding-standard": "^2.1",
         "php-coveralls/php-coveralls": "^2.0",
         "php-mock/php-mock-phpunit": "^2.1.2",
-        "phpstan/phpstan-phpunit": "^0.11.2",
-        "phpstan/phpstan-shim": "^0.11.19",
+        "php-parallel-lint/php-parallel-lint": "^1.0.0",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan": "^0.12.11",
+        "phpstan/phpstan-phpunit": "^0.12.6",
         "phpunit/php-code-coverage": "^6.0",
         "symfony/var-dumper": "^4.0"
     },
@@ -91,12 +96,13 @@
             "@test"
         ],
         "analyze": [
-            "vendor/bin/phpstan.phar analyze -c phpstan.neon --ansi --level 4 ./src ./src-tests"
+            "vendor/bin/phpstan analyze -c phpstan.neon --ansi"
         ],
         "codestyle:check": [
             "vendor/bin/ecs check src/ src-tests/ --ansi"
         ],
         "codestyle:fix": [
+            "@composer normalize",
             "vendor/bin/ecs check src/ src-tests/ --ansi --fix"
         ],
         "lint": [

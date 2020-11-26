@@ -261,7 +261,7 @@ class InstallCommandTest extends TestCase
      * Get Downloader mock mocking isAlreadyDownloaded and download method to act like file is being downloaded
      *
      * @param int|bool $expectedFileSize
-     * @return Downloader|MockObject $downloaderMock
+     * @return Downloader|MockObject
      */
     protected function getDownloadMock($expectedFileSize = 123): MockObject
     {
