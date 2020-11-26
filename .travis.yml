@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - '7.1'
   - '7.2'
   - '7.3'
   - '7.4'
@@ -16,7 +15,7 @@ env:
 matrix:
   include:
     - name: 'Lowest dependencies'
-      php: 7.1
+      php: 7.2
       env: dependencies="--prefer-lowest --prefer-stable"
     - name: 'Codestyle and static analysis'
       php: 7.4
