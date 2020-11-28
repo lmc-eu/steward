@@ -7,7 +7,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
 
 Steward is a set of libraries made to simplify writing and running robust functional system tests in
-[PHPUnit](https://phpunit.de/) using [Selenium WebDriver](http://www.seleniumhq.org/).
+[PHPUnit](https://phpunit.de/) using [Selenium WebDriver](https://www.selenium.dev/).
 
 ## What's great about Steward?
 - It allows you to start writing complex test cases in a minute.
@@ -26,17 +26,17 @@ Steward is a set of libraries made to simplify writing and running robust functi
 - You can extend Steward easily by registering custom events to EventDispatcher.
    - For example if you can add custom configuration options or change parameters passed to child PHPUnit processes.
 - Cloud services like [Sauce Labs](https://saucelabs.com/), [BrowserStack](https://www.browserstack.com/) or [TestingBot](https://testingbot.com/) are fully integrated giving you a chance to run tests with less setup and without your own infrastructure.
-- Steward is field tested - we use it daily in [our company](https://www.lmc.eu/english) to maintain the quality of our products thanks to hundreds of test-cases. The library itself is also extensively covered by unit tests.
-- Steward is built on solid foundations: [WebDriver](http://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
+- Steward is field tested - we use it daily in [our company](https://www.lmc.eu/en/) to maintain the quality of our products thanks to hundreds of test-cases. The library itself is also extensively covered by unit tests.
+- Steward is built on solid foundations: [WebDriver](https://www.w3.org/TR/webdriver/) is W3C draft standard for browser automation,
 [php-webdriver](https://github.com/php-webdriver/php-webdriver) is the most used and developed Selenium language binding for PHP,
 [PHPUnit](https://phpunit.de/) is a well known and widely used testing framework, and
-[Symfony Console](http://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications.
+[Symfony Console](https://symfony.com/doc/current/components/console.html) is industry standard for PHP CLI applications.
 
 ## Example usage
 To see how to use and extend Steward, have a look at our [example project](https://github.com/lmc-eu/steward-example).
 
 ## Changelog
-For the latest changes see the [CHANGELOG.md](CHANGELOG.md) file. We follow [Semantic Versioning](http://semver.org/).
+For the latest changes see the [CHANGELOG.md](./CHANGELOG.md) file. We follow [Semantic Versioning](https://semver.org/).
 
 ## Getting started
 ### 1. Install Steward
@@ -77,7 +77,7 @@ in our wiki for more information.
 ### 3. Write the first test
 To provide you with Steward functionality, your tests have to extend the `Lmc\Steward\Test\AbstractTestCase` class.
 
-You must also configure [PSR-4 autoloading](http://www.php-fig.org/psr/psr-4/) so that your tests could be found by
+You must also configure [PSR-4 autoloading](https://www.php-fig.org/psr/psr-4/) so that your tests could be found by
 Steward. It is as easy as adding the following to your `composer.json` file:
 
 ```json
@@ -105,7 +105,7 @@ class TitlePageTest extends AbstractTestCase
     public function testShouldContainSearchInput()
     {
         // Load the URL (will wait until page is loaded)
-        $this->wd->get('http://www.w3.org/'); // $this->wd holds instance of \RemoteWebDriver
+        $this->wd->get('https://www.w3.org/'); // $this->wd holds instance of \RemoteWebDriver
 
         // Do some assertion
         $this->assertContains('W3C', $this->wd->getTitle());
@@ -146,7 +146,7 @@ Now that Selenium Server is listening, let's launch your test! Use the  `run` co
 ./vendor/bin/steward run staging firefox
 ```
 
-In a few moments you should see a Firefox window appear, then the http://www.w3.org/ site (as defined in the example tests)
+In a few moments you should see a Firefox window appear, then the https://www.w3.org/ site (as defined in the example tests)
 should be loaded before the window instantly closes. See the output of the command to check the test result.
 
 The `run` command has two required arguments: the name of the environment and the browser:
@@ -195,7 +195,7 @@ File `timeline.html` will then be generated into the `logs/` directory.
 ![Example timeline visualization](https://lmc-eu.github.io/steward/images/timeline.png)
 
 ## License
-Steward is open source software licensed under the [MIT license](LICENCE.md).
+Steward is open source software licensed under the [MIT license](./LICENCE.md).
 
 [wiki-docker]: https://github.com/lmc-eu/steward/wiki/Selenium-server-&-browser-drivers#option-2-start-selenium-server--browser-inside-docker-
 [wiki-debugging]: https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward

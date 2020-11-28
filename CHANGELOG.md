@@ -16,7 +16,7 @@
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
 - Default browser size is now defined using class constants instead of class variables. To override the default, instead of `public static $browserWidth = ...;` use `public const BROWSER_WIDTH = ...;`.
 - When test class constants defining default browser width (`BROWSER_WIDTH`) or height (`BROWSER_HEIGHT`) is set to `null`, no default browser window size will be set on test startup.
-- Don't hardcode timezone to `Europe/Prague`. Timezone is now used based on your PHP settings ([date.timezone](http://php.net/manual/en/datetime.configuration.php#ini.date.timezone)).
+- Don't hardcode timezone to `Europe/Prague`. Timezone is now used based on your PHP settings ([date.timezone](https://php.net/manual/en/datetime.configuration.php#ini.date.timezone)).
 - Server URL now must be provided including URL prefix (if it has one, like `/wd/hub`) - eg. `http://foo.bar:4444/wd/hub`. This means the `/wd/hub` part is now never auto-amended.
 - Package `symfony/polyfill-mbstring` now provides mbstring functions even if PHP mbstring extension is not installed.
 
