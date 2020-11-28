@@ -25,7 +25,6 @@ matrix:
       before_script: ~
       script:
         - composer lint
-        - composer codestyle:check
         - composer analyze
       after_success: ~
 

@@ -92,16 +92,13 @@
         "all": [
             "@lint",
             "@analyze",
-            "@codestyle:check",
             "@test"
         ],
         "analyze": [
+            "vendor/bin/ecs check src/ src-tests/ --ansi",
             "vendor/bin/phpstan analyze -c phpstan.neon --ansi"
         ],
-        "codestyle:check": [
-            "vendor/bin/ecs check src/ src-tests/ --ansi"
-        ],
-        "codestyle:fix": [
+        "fix": [
             "@composer normalize",
             "vendor/bin/ecs check src/ src-tests/ --ansi --fix"
         ],
