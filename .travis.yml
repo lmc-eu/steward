@@ -17,16 +17,6 @@ matrix:
     - name: 'Lowest dependencies'
       php: 7.2
       env: dependencies="--prefer-lowest --prefer-stable"
-    - name: 'Codestyle and static analysis'
-      php: 7.4
-      env: CHECK_CODESTYLE=1
-      before_install:
-        - phpenv config-rm xdebug.ini
-      before_script: ~
-      script:
-        - composer lint
-        - composer analyze
-      after_success: ~
 
 install:
   - travis_retry composer self-update && composer --version
