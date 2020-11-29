@@ -174,7 +174,6 @@ class RunCommandTest extends TestCase
         return [
             'firefox is supported' => ['firefox', false, 'firefox'],
             'chrome is supported' => ['chrome', false, 'chrome'],
-            'phantomjs is supported' => ['phantomjs', false, 'phantomjs'],
             'MicrosoftEdge is supported' => ['MicrosoftEdge', false, 'MicrosoftEdge'],
             'MicrosoftEdge is supported in lowercase' => ['microsoftedge', false, 'MicrosoftEdge'],
             'browser name is case insensitive' => ['FIREFOX', false, 'firefox'],
@@ -249,7 +248,7 @@ class RunCommandTest extends TestCase
 
         $this->assertContains('Unexpected response from Selenium server (This is teapot)', $this->tester->getDisplay());
         $this->assertContains(
-            'Looks like url "http://foo.bar:1337" is occupied by something else than Selenium server.',
+            'URL "http://foo.bar:1337" is occupied by something else than Selenium server.',
             $this->tester->getDisplay()
         );
         $this->assertSame(1, $this->tester->getStatusCode());

@@ -36,7 +36,6 @@ class RunCommand extends Command
         'microsoftedge' => WebDriverBrowserType::MICROSOFT_EDGE,
         'internet explorer' => WebDriverBrowserType::IE,
         'safari' => WebDriverBrowserType::SAFARI,
-        'phantomjs' => WebDriverBrowserType::PHANTOMJS,
     ];
 
     public const ARGUMENT_ENVIRONMENT = 'environment';
@@ -159,7 +158,9 @@ class RunCommand extends Command
             );
 
         $this->addUsage('staging firefox');
-        $this->addUsage('--group=foo --group=bar --exclude-group=baz -vvv development phantomjs');
+        $this->addUsage(
+            '--group=foo --group=bar --exclude-group=baz --server-url=http://localhost:4444/wd/hub -vv staging chrome'
+        );
 
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }
@@ -364,9 +365,9 @@ class RunCommand extends Command
             );
             $this->io->error(
                 sprintf(
-                    'Looks like url "%s" is occupied by something else than Selenium server. '
-                    . 'Make sure Selenium server is really accessible on this url '
-                    . 'or change it using --server-url option',
+                    'URL "%s" is occupied by something else than Selenium server. Make sure Selenium server is really'
+                    . ' accessible on this URL or change it using --server-url option.'
+                    . ' If using Selenium 3.x, also make sure you are not be missing "/wd/hub" part in the server URL.',
                     $seleniumAdapter->getServerUrl()
                 )
             );

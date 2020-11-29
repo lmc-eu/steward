@@ -2,8 +2,6 @@
 
 namespace Lmc\Steward\Selenium;
 
-use Facebook\WebDriver\Firefox\FirefoxDriver;
-use Facebook\WebDriver\Firefox\FirefoxProfile;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;
@@ -101,31 +99,20 @@ final class CapabilitiesResolver
         return $capabilities;
     }
 
+    /**
+     * Setup Steward-default capabilities for specific browsers.
+     * To setup custom default capabilities for each browser, implement custom capabilities resolver, see
+     * https://github.com/lmc-eu/steward/wiki/Set-custom-capabilities#implement-custom-capabilities-resolver
+     */
     protected function setupBrowserSpecificCapabilities(
         DesiredCapabilities $capabilities,
         string $browser
     ): DesiredCapabilities {
         switch ($browser) {
-            case WebDriverBrowserType::FIREFOX:
-                $capabilities = $this->setupFirefoxCapabilities($capabilities);
-                break;
             case WebDriverBrowserType::IE:
                 $capabilities = $this->setupInternetExplorerCapabilities($capabilities);
                 break;
         }
-
-        return $capabilities;
-    }
-
-    protected function setupFirefoxCapabilities(DesiredCapabilities $capabilities): DesiredCapabilities
-    {
-        // Firefox does not (as a intended feature) trigger "change" and "focus" events in javascript if not in active
-        // (focused) window. This would be a problem for concurrent testing - solution is to use focusmanager.testmode.
-        // See https://code.google.com/p/selenium/issues/detail?id=157
-        $profile = new FirefoxProfile(); // see https://github.com/php-webdriver/php-webdriver/wiki/FirefoxProfile
-        $profile->setPreference('focusmanager.testmode', true);
-
-        $capabilities->setCapability(FirefoxDriver::PROFILE, $profile);
 
         return $capabilities;
     }

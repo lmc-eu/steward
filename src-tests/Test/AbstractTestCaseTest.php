@@ -47,13 +47,7 @@ class AbstractTestCaseTest extends TestCase
 
         $wdWindowMock->expects($this->once())
             ->method('setSize')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf(WebDriverDimension::class),
-                    $this->attributeEqualTo('width', 1280),
-                    $this->attributeEqualTo('height', 1024)
-                )
-            );
+            ->with($this->equalTo(new WebDriverDimension(1280, 1024)));
 
         $this->testCase->wd = $wdMock;
 

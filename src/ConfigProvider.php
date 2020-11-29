@@ -2,7 +2,8 @@
 
 namespace Lmc\Steward;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
+use Doctrine\Inflector\Language;
 use FlorianWolters\Component\Util\Singleton\SingletonTrait;
 
 /**
@@ -117,6 +118,7 @@ class ConfigProvider
     private function retrieveConfigurationValues(array $options): array
     {
         $outputValues = [];
+        $inflector = InflectorFactory::createForLanguage(Language::ENGLISH)->build();
 
         foreach ($options as $option) {
             $value = getenv($option);
@@ -126,7 +128,7 @@ class ConfigProvider
                 throw new \RuntimeException(sprintf('%s environment variable must be defined', $option));
             }
 
-            $outputValues[Inflector::camelize(mb_strtolower($option))] = $value;
+            $outputValues[$inflector->camelize(mb_strtolower($option))] = $value;
         }
 
         return $outputValues;
