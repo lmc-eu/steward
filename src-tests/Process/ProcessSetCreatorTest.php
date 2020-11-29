@@ -101,7 +101,6 @@ class ProcessSetCreatorTest extends TestCase
         $processes = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED);
         $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->getProcess();
         $testCommand = $dummyTestProcess->getCommandLine();
-        $testEnv = $dummyTestProcess->getEnv();
 
         $this->assertContains('phpunit', $testCommand);
         $this->assertContains(
@@ -112,15 +111,13 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertNotContains('--filter', $testCommand);
         $this->assertStringMatchesFormat('%A--configuration=%A%esrc%ephpunit.xml%A', $testCommand);
 
-        // Check defaults were passed to the Processes
+        // Check defaults were passed to the Process environment
+        $testEnv = $dummyTestProcess->getEnv();
         $definition = $this->command->getDefinition();
-        $expectedEnv = [
-            'BROWSER_NAME' => 'firefox',
-            'ENV' => 'staging',
-            'SERVER_URL' => $definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(),
-            'LOGS_DIR' => '/foo/bar/logs',
-        ];
-        $this->assertArraySubset($expectedEnv, $testEnv);
+        $this->assertSame('firefox', $testEnv['BROWSER_NAME']);
+        $this->assertSame('staging', $testEnv['ENV']);
+        $this->assertSame($definition->getOption(RunCommand::OPTION_SERVER_URL)->getDefault(), $testEnv['SERVER_URL']);
+        $this->assertSame('/foo/bar/logs', $testEnv['LOGS_DIR']);
     }
 
     public function testShouldThrowExceptionIfAddingFileWithNoClass(): void
@@ -295,18 +292,15 @@ class ProcessSetCreatorTest extends TestCase
         $process = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->getProcess();
         $processEnv = $process->getEnv();
 
-        $this->assertArraySubset(
-            [
-                'BROWSER_NAME' => 'chrome',
-                'ENV' => 'staging',
-                'SERVER_URL' => 'http://foo.bar:1337',
-                'LOGS_DIR' => realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
-                'CAPABILITY' => '{"webdriver.log.file":"\/foo\/bar.log","whitespaced":"OS X 10.8",'
-                    . '"webdriver.foo":false,"version":"14.14393"}',
-                'CAPABILITIES_RESOLVER' => '',
-            ],
-            $processEnv
+        $this->assertSame('chrome', $processEnv['BROWSER_NAME']);
+        $this->assertSame('staging', $processEnv['ENV']);
+        $this->assertSame('http://foo.bar:1337', $processEnv['SERVER_URL']);
+        $this->assertSame(realpath(__DIR__ . '/Fixtures/custom-logs-dir/'), $processEnv['LOGS_DIR']);
+        $this->assertSame(
+            '{"webdriver.log.file":"\/foo\/bar.log","whitespaced":"OS X 10.8","webdriver.foo":false,"version":"14.14393"}',
+            $processEnv['CAPABILITY']
         );
+        $this->assertSame('', $processEnv['CAPABILITIES_RESOLVER']);
     }
 
     public function testShouldSetPHPUnitColoredOptionOnlyIfTheOutputIsDecorated(): void
