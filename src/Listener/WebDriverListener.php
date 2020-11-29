@@ -5,7 +5,6 @@ namespace Lmc\Steward\Listener;
 use Facebook\WebDriver\Exception\SessionNotCreatedException;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\CapabilitiesResolver;
 use Lmc\Steward\Test\AbstractTestCase;
@@ -122,12 +121,6 @@ class WebDriverListener implements TestListener
             ob_start(); // Capture any output from commands bellow to make them appended to output of the test.
 
             try {
-                // Workaround for PhantomJS 1.x - see https://github.com/detro/ghostdriver/issues/343
-                // Should be removed with PhantomJS 2
-                if (ConfigProvider::getInstance()->browserName === WebDriverBrowserType::PHANTOMJS) {
-                    $test->wd->execute('deleteAllCookies');
-                }
-
                 $test->wd->close();
                 $test->wd->quit();
             } catch (WebDriverException $e) {

@@ -37,6 +37,7 @@
 - `UniqueValue` component. (You may use Faker or some other library for similar use-case.)
 - `AbstractTestCaseBase` class. It should probably not affect anything, as it was only used internally.
 - Workarounds for legacy Firefox (version 47 and older) which are no longer needed.
+- PhantomJS support.
 
 ## 2.3.2 - 2017-12-02
 ### Changed

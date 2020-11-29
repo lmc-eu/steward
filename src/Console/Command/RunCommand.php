@@ -36,7 +36,6 @@ class RunCommand extends Command
         'microsoftedge' => WebDriverBrowserType::MICROSOFT_EDGE,
         'internet explorer' => WebDriverBrowserType::IE,
         'safari' => WebDriverBrowserType::SAFARI,
-        'phantomjs' => WebDriverBrowserType::PHANTOMJS,
     ];
 
     public const ARGUMENT_ENVIRONMENT = 'environment';
@@ -159,7 +158,9 @@ class RunCommand extends Command
             );
 
         $this->addUsage('staging firefox');
-        $this->addUsage('--group=foo --group=bar --exclude-group=baz -vvv development phantomjs');
+        $this->addUsage(
+            '--group=foo --group=bar --exclude-group=baz --server-url=http://localhost:4444/wd/hub -vv staging chrome'
+        );
 
         $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
     }

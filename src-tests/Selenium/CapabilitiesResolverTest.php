@@ -60,7 +60,6 @@ class CapabilitiesResolverTest extends TestCase
                 },
             ],
             [WebDriverBrowserType::SAFARI],
-            [WebDriverBrowserType::PHANTOMJS],
         ];
     }
 

@@ -174,7 +174,6 @@ class RunCommandTest extends TestCase
         return [
             'firefox is supported' => ['firefox', false, 'firefox'],
             'chrome is supported' => ['chrome', false, 'chrome'],
-            'phantomjs is supported' => ['phantomjs', false, 'phantomjs'],
             'MicrosoftEdge is supported' => ['MicrosoftEdge', false, 'MicrosoftEdge'],
             'MicrosoftEdge is supported in lowercase' => ['microsoftedge', false, 'MicrosoftEdge'],
             'browser name is case insensitive' => ['FIREFOX', false, 'firefox'],
