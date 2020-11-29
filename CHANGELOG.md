@@ -32,10 +32,11 @@
     - Instead of `TestUtils::setSelect2Value()` use directly the new `Select2` component and `selectByVisiblePartialText()` method.
     - Instead of `TestUtils::getFixturePath()` use `Facebook\WebDriver\Remote\FileDetector` instead.
     - Instead of `TestUtils::sleep()` use `AbstractTestCase::sleep()` method instead.
-- `getConfig()` method of ConfigProvider. Instead call the property directly on instance of the ConfigProvider.
+- `getConfig()` method of ConfigProvider. Call the property instead directly on an instance of the ConfigProvider.
 - `--fixtures-dir` option of the `run` command, `fixtures_dir` option of configuration file and `ConfigProvider->fixturesDir` variable. They were deprecated in version 2.1.0 and no longer used since.
 - `UniqueValue` component. (You may use Faker or some other library for similar use-case.)
 - `AbstractTestCaseBase` class. It should probably not affect anything, as it was only used internally.
+- Workarounds for legacy Firefox (version 47 and older) which are no longer needed.
 
 ## 2.3.2 - 2017-12-02
 ### Changed

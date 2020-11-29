@@ -249,7 +249,7 @@ class RunCommandTest extends TestCase
 
         $this->assertContains('Unexpected response from Selenium server (This is teapot)', $this->tester->getDisplay());
         $this->assertContains(
-            'Looks like url "http://foo.bar:1337" is occupied by something else than Selenium server.',
+            'URL "http://foo.bar:1337" is occupied by something else than Selenium server.',
             $this->tester->getDisplay()
         );
         $this->assertSame(1, $this->tester->getStatusCode());

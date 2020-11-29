@@ -364,9 +364,9 @@ class RunCommand extends Command
             );
             $this->io->error(
                 sprintf(
-                    'Looks like url "%s" is occupied by something else than Selenium server. '
-                    . 'Make sure Selenium server is really accessible on this url '
-                    . 'or change it using --server-url option',
+                    'URL "%s" is occupied by something else than Selenium server. Make sure Selenium server is really'
+                    . ' accessible on this URL or change it using --server-url option.'
+                    . ' If using Selenium 3.x, also make sure you are not be missing "/wd/hub" part in the server URL.',
                     $seleniumAdapter->getServerUrl()
                 )
             );

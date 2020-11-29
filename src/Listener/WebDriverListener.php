@@ -2,7 +2,7 @@
 
 namespace Lmc\Steward\Listener;
 
-use Facebook\WebDriver\Exception\UnknownServerException;
+use Facebook\WebDriver\Exception\SessionNotCreatedException;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
@@ -140,10 +140,8 @@ class WebDriverListener implements TestListener
     }
 
     /**
-     * Subroutine to encapsulate creation of real WebDriver. Handles some exceptions that may occur etc.
+     * Subroutine to encapsulate creation of real WebDriver.
      * The WebDriver instance is stored to $test->wd when created.
-     *
-     * @throws UnknownServerException
      */
     protected function createWebDriver(
         AbstractTestCase $test,
@@ -153,66 +151,21 @@ class WebDriverListener implements TestListener
         int $connectTimeoutMs,
         int $requestTimeoutMs
     ): void {
-        $browserName = ConfigProvider::getInstance()->browserName;
+        try {
+            $test->wd = RemoteWebDriver::create(
+                $remoteServerUrl,
+                $desiredCapabilities,
+                $connectTimeoutMs,
+                $requestTimeoutMs,
+                null,
+                null,
+                $requiredCapabilities
+            );
 
-        for ($startAttempts = 0; $startAttempts < 4; $startAttempts++) {
-            try {
-                $test->wd = RemoteWebDriver::create(
-                    $remoteServerUrl,
-                    $desiredCapabilities,
-                    $connectTimeoutMs,
-                    $requestTimeoutMs,
-                    null,
-                    null,
-                    $requiredCapabilities
-                );
-
-                return;
-            } catch (UnknownServerException $e) {
-                if ($this->cannotBindToFirefoxLockingPort($browserName, $e->getMessage())) {
-                    // As a consequence of Selenium issue #5172 (cannot change locking port), Firefox may on CI server
-                    // collide with other FF instance. As a workaround, we try to start it again after a short delay.
-                    $test->warn(
-                        'Firefox locking port is occupied; beginning attempt #%d to start it ("%s")',
-                        $startAttempts + 2,
-                        $e->getMessage()
-                    );
-                    sleep(1);
-                    continue;
-                }
-
-                if (mb_strpos($e->getMessage(), 'Error forwarding the new session') !== false) {
-                    $test->warn('Cannot execute test on the node. Maybe you started just the hub and not the node?');
-                }
-
-                throw $e;
-            } catch (WebDriverException $e) {
-                if ($this->mayBeMissingFullServerUrl($remoteServerUrl, $e->getMessage())) {
-                    $test->warn('Unable to initialize new WebDriver session.');
-                    $test->warn(
-                        'Server URL ("%s") appears to be missing "/wd/hub" part, so make sure you are ussing full URL'
-                        . ' of the server (not just a hostname and port).',
-                        $remoteServerUrl
-                    );
-                }
-
-                throw $e;
-            }
+            return;
+        } catch (SessionNotCreatedException $e) {
+            $test->warn('Unable to initialize new WebDriver session.');
+            throw $e;
         }
-
-        $test->warn('All %d attempts to instantiate Firefox WebDriver failed', $startAttempts + 1);
-        throw $e;
-    }
-
-    private function cannotBindToFirefoxLockingPort(string $browserName, string $exceptionMessage): bool
-    {
-        return $browserName === 'firefox'
-            && mb_strpos($exceptionMessage, 'Unable to bind to locking port') !== false;
-    }
-
-    private function mayBeMissingFullServerUrl(string $remoteServerUrl, string $exceptionMessage): bool
-    {
-        return mb_strpos($exceptionMessage, 'JSON decoding of remote response failed.') !== false
-            && mb_strpos($remoteServerUrl, 'wd/hub') === false;
     }
 }

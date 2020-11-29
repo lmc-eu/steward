@@ -6,8 +6,6 @@ parameters:
         - "#Property Lmc\\\\Steward\\\\Test\\\\AbstractTestCase::\\$wd \\(Facebook\\\\WebDriver\\\\Remote\\\\RemoteWebDriver\\) does not accept Lmc\\\\Steward\\\\WebDriver\\\\NullWebDriver#"
         - message: '#should return .+ but return statement is missing#'
           path: 'src/WebDriver/NullWebDriver.php'
-        - message: '#Variable \$e might not be defined.#'
-          path: 'src/Listener/WebDriverListener.php'
     excludes_analyse:
         - '%rootDir%/../../../src-tests/Process/Fixtures/InvalidTests/WrongClassTest.php'
         - '%rootDir%/../../../src-tests/Test/SyntaxSugarTraitTest.php'

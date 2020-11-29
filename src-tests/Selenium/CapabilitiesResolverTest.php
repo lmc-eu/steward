@@ -33,7 +33,6 @@ class CapabilitiesResolverTest extends TestCase
         $resolver->setCiDetector($this->createConfiguredMock(CiDetector::class, ['isCiDetected' => false]));
 
         $desiredCapabilities = $resolver->resolveDesiredCapabilities($test);
-        $this->assertInstanceOf(DesiredCapabilities::class, $desiredCapabilities);
 
         $desiredCapabilitiesArray = $desiredCapabilities->toArray();
         $this->assertSame($browser, $desiredCapabilitiesArray['browserName']);
@@ -51,12 +50,7 @@ class CapabilitiesResolverTest extends TestCase
     public function provideBrowsers(): array
     {
         return [
-            [
-                WebDriverBrowserType::FIREFOX,
-                function ($capabilitiesArray): void {
-                    $this->assertNotEmpty($capabilitiesArray['firefox_profile']);
-                },
-            ],
+            [WebDriverBrowserType::FIREFOX],
             [WebDriverBrowserType::CHROME],
             [WebDriverBrowserType::MICROSOFT_EDGE],
             [
