@@ -7,9 +7,9 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Utils\Annotations\ClassAnnotations;
 use Lmc\Steward\Utils\Annotations\ClassParser;
 use Lmc\Steward\Utils\Strings;
-use Nette\Reflection\AnnotationsParser;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
@@ -243,7 +243,7 @@ class ProcessSetCreator
     private function getClassAnnotations(string $className, string $fileName): array
     {
         try {
-            return AnnotationsParser::getAll(new \ReflectionClass($className));
+            return ClassAnnotations::getAnnotationsForClass($className);
         } catch (\ReflectionException $e) {
             throw new \RuntimeException(
                 sprintf(
@@ -251,7 +251,9 @@ class ProcessSetCreator
                     . 'the file path.',
                     $className,
                     $fileName
-                )
+                ),
+                0,
+                $e
             );
         }
     }

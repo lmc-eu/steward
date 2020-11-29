@@ -8,9 +8,9 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\CapabilitiesResolver;
 use Lmc\Steward\Test\AbstractTestCase;
+use Lmc\Steward\Utils\Annotations\ClassAnnotations;
 use Lmc\Steward\WebDriver\NullWebDriver;
 use Lmc\Steward\WebDriver\RemoteWebDriver;
-use Nette\Reflection\AnnotationsParser;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestListenerDefaultImplementation;
@@ -65,8 +65,8 @@ class WebDriverListener implements TestListener
         }
 
         // Initialize NullWebDriver if self::NO_BROWSER_ANNOTATION is used on testcase class or test method
-        $testCaseAnnotations = AnnotationsParser::getAll(new \ReflectionClass($test));
-        $testAnnotations = AnnotationsParser::getAll(new \ReflectionMethod($test, $test->getName(false)));
+        $testCaseAnnotations = ClassAnnotations::getAnnotationsForInstance($test);
+        $testAnnotations = ClassAnnotations::getAnnotationsForMethodOfInstance($test, $test->getName(false));
 
         if (isset($testCaseAnnotations[self::NO_BROWSER_ANNOTATION])
             || isset($testAnnotations[self::NO_BROWSER_ANNOTATION])
