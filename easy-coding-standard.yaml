@@ -18,3 +18,4 @@ parameters:
     exclude_files:
         - 'src-tests/coverage/*'
         - 'src-tests/FunctionalTests/logs/coverage/*'
+        - 'src-tests/Utils/Annotations/Fixtures/*'

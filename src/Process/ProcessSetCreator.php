@@ -7,6 +7,7 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
 use Lmc\Steward\Publisher\AbstractPublisher;
+use Lmc\Steward\Utils\Annotations\ClassParser;
 use Lmc\Steward\Utils\Strings;
 use Nette\Reflection\AnnotationsParser;
 use Symfony\Component\Console\Input\InputInterface;
@@ -84,7 +85,8 @@ class ProcessSetCreator
         /** @var SplFileInfo $file */
         foreach ($files as $file) {
             $fileName = $file->getRealPath();
-            $className = $this->getClassNameFromFile($fileName);
+            $className = ClassParser::readClassNameFromFile($file);
+
             $annotations = $this->getClassAnnotations($className, $fileName);
 
             if ($excludingGroups = $this->getExcludingGroups($excludeGroups, $annotations)) {
@@ -214,29 +216,6 @@ class ProcessSetCreator
         }
 
         return $excludingGroups;
-    }
-
-    private function getClassNameFromFile(string $fileName): string
-    {
-        // Parse classes from the testcase file
-        $classes = AnnotationsParser::parsePhp(\file_get_contents($fileName));
-
-        if (empty($classes)) {
-            throw new \RuntimeException(sprintf('No class found in file "%s"', $fileName));
-        }
-
-        if (count($classes) > 1) {
-            throw new \RuntimeException(
-                sprintf(
-                    'File "%s" contains definition of %d classes. However, each class must be defined in its own'
-                    . ' separate file.',
-                    $fileName,
-                    count($classes)
-                )
-            );
-        }
-
-        return key($classes);
     }
 
     private function setupProcessDelays(ProcessWrapper $processWrapper, array $annotations): void

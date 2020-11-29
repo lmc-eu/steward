@@ -36,6 +36,7 @@
         "ondram/ci-detector": "^3.1",
         "php-webdriver/webdriver": "^1.8.1",
         "phpunit/phpunit": "^7.5.20",
+        "roave/better-reflection": "^4.3",
         "symfony/console": "^4.0",
         "symfony/event-dispatcher": "^4.0",
         "symfony/filesystem": "^4.0",
