@@ -86,7 +86,6 @@ class ProcessSetCreator
         foreach ($files as $file) {
             $fileName = $file->getRealPath();
             $className = ClassParser::readClassNameFromFile($file);
-
             $annotations = $this->getClassAnnotations($className, $fileName);
 
             if ($excludingGroups = $this->getExcludingGroups($excludeGroups, $annotations)) {
@@ -238,7 +237,7 @@ class ProcessSetCreator
     }
 
     /**
-     * Get annotations for the first class in testcase (one file = one class)
+     * Get annotations for the class
      */
     private function getClassAnnotations(string $className, string $fileName): array
     {
