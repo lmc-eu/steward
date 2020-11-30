@@ -9,7 +9,7 @@
 
 ### Changed
 - Require PHP 7.2+ and Symfony 4 components.
-- Update to namespaced PHPUnit 7.0.
+- Update to namespaced PHPUnit. Set minimal required version to PHPUnit 8.5.12.
 - Use php-webdriver 1.8+ with W3C WebDriver support.
 - Methods now uses strict type-hints and return type-hints. Inherited classes and interfaces (eg. `CustomCapabilitiesResolverInterface`, `OptimizeOrderInterface` etc.) may require to be changed in accordance with this.
 - Simplified and improved test output.

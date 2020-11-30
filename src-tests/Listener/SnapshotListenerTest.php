@@ -111,7 +111,7 @@ class SnapshotListenerTest extends TestCase
                 $dummyException,
                 'FooBarTest',
                 'testFooBar',
-                0,
+                '0',
                 ['foo', 'bar'],
                 'FooBarTest-testFooBar-with-data-set-0',
             ],

@@ -3,8 +3,8 @@
 namespace Lmc\Steward;
 
 use Lmc\Steward\Test\AbstractTestCase;
-use PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount;
 
 trait MockAbstractTestCaseWithNameTrait
 {
