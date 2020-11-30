@@ -52,12 +52,12 @@ class InstallCommandTest extends TestCase
         );
 
         $output = $this->tester->getDisplay();
-        $this->assertContains('Downloading Selenium standalone server version 6.3.6...', $output);
-        $this->assertContains(
+        $this->assertStringContainsString('Downloading Selenium standalone server version 6.3.6...', $output);
+        $this->assertStringContainsString(
             'Download URL: https://selenium-release.storage.googleapis.com/6.3/selenium-server-standalone-6.3.6.jar',
             $output
         );
-        $this->assertContains('Downloaded 2 MB, file saved successfully.', $this->tester->getDisplay());
+        $this->assertStringContainsString('Downloaded 2 MB, file saved successfully.', $this->tester->getDisplay());
 
         $this->assertSame(0, $this->tester->getStatusCode());
     }
@@ -79,11 +79,11 @@ class InstallCommandTest extends TestCase
 
         $output = $this->tester->getDisplay();
 
-        $this->assertContains('Enter Selenium server version to install [2.34.5]:', $output);
+        $this->assertStringContainsString('Enter Selenium server version to install [2.34.5]:', $output);
 
         // Check latest version was downloaded
-        $this->assertContains('Downloading Selenium standalone server version 2.34.5...', $output);
-        $this->assertContains(
+        $this->assertStringContainsString('Downloading Selenium standalone server version 2.34.5...', $output);
+        $this->assertStringContainsString(
             'Download URL: https://selenium-release.storage.googleapis.com/2.34/selenium-server-standalone-2.34.5.jar',
             $output
         );
@@ -107,8 +107,8 @@ class InstallCommandTest extends TestCase
 
         // Check custom version was downloaded
         $output = $this->tester->getDisplay();
-        $this->assertContains('Downloading Selenium standalone server version 1.33.7...', $output);
-        $this->assertContains(
+        $this->assertStringContainsString('Downloading Selenium standalone server version 1.33.7...', $output);
+        $this->assertStringContainsString(
             'Download URL: https://selenium-release.storage.googleapis.com/1.33/selenium-server-standalone-1.33.7.jar',
             $output
         );
@@ -133,9 +133,12 @@ class InstallCommandTest extends TestCase
         );
 
         $output = $this->tester->getDisplay();
-        $this->assertContains('Enter Selenium server version to install:', $output);
-        $this->assertContains('Please provide version to download (latest version auto-detect failed)', $output);
-        $this->assertContains('Downloading Selenium standalone server version 6.6.6...', $output);
+        $this->assertStringContainsString('Enter Selenium server version to install:', $output);
+        $this->assertStringContainsString(
+            'Please provide version to download (latest version auto-detect failed)',
+            $output
+        );
+        $this->assertStringContainsString('Downloading Selenium standalone server version 6.6.6...', $output);
     }
 
     public function testShouldThrowAnExceptionInNonInteractiveModeIfLastVersionCheckFailsAndNoVersionWasProvided(): void
@@ -173,7 +176,7 @@ class InstallCommandTest extends TestCase
 
         $output = $this->tester->getDisplay();
         $this->assertEquals(realpath($filePath) . PHP_EOL, $output);
-        $this->assertContains('6.33.6', $output);
+        $this->assertStringContainsString('6.33.6', $output);
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
@@ -191,7 +194,7 @@ class InstallCommandTest extends TestCase
         );
 
         $this->assertEquals(realpath($filePath) . PHP_EOL, $this->tester->getDisplay());
-        $this->assertContains('2.34.5', $this->tester->getDisplay());
+        $this->assertStringContainsString('2.34.5', $this->tester->getDisplay());
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
@@ -206,7 +209,7 @@ class InstallCommandTest extends TestCase
 
         $this->tester->execute(['command' => $this->command->getName(), 'version' => '2.34.5']);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'File "selenium-server-standalone-2.34.5.jar" already exists',
             $this->tester->getDisplay()
         );

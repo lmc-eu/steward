@@ -19,3 +19,7 @@ parameters:
         - 'src-tests/coverage/*'
         - 'src-tests/FunctionalTests/logs/coverage/*'
         - 'src-tests/Utils/Annotations/Fixtures/*'
+
+services:
+    PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff:
+        absoluteLineLimit: 120 # To enforce line length limit

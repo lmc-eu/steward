@@ -109,7 +109,10 @@ class ProcessSet implements \Countable
                 } else { // is dependant => link it to its dependency
                     // Throw error if dependency is to not existing vertex
                     if (!$this->graph->hasVertex($processWrapper->getDelayAfter())) {
-                        throw LogicException::forDelayWithNotExistingTestcase($className, $processWrapper->getDelayAfter());
+                        throw LogicException::forDelayWithNotExistingTestcase(
+                            $className,
+                            $processWrapper->getDelayAfter()
+                        );
                     }
 
                     $this->graph->getVertex($processWrapper->getDelayAfter())

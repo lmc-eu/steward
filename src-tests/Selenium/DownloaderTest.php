@@ -301,7 +301,7 @@ class DownloaderTest extends TestCase
         $responseCode = $http_response_header[0];
         fclose($fd);
 
-        $this->assertContains('200 OK', $responseCode);
+        $this->assertStringContainsString('200 OK', $responseCode);
     }
 
     private function mockGetHeadersToReturnHeader(string $responseHeader): void

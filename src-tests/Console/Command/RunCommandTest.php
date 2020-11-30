@@ -130,8 +130,8 @@ class RunCommandTest extends TestCase
         );
 
         $output = $this->tester->getDisplay();
-        $this->assertContains('Path to logs: ' . realpath(__DIR__) . '/Fixtures/logs', $output);
-        $this->assertContains(' - in directory "' . realpath(__DIR__) . '/Fixtures/DummyTests"', $output);
+        $this->assertStringContainsString('Path to logs: ' . realpath(__DIR__) . '/Fixtures/logs', $output);
+        $this->assertStringContainsString(' - in directory "' . realpath(__DIR__) . '/Fixtures/DummyTests"', $output);
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
@@ -163,8 +163,8 @@ class RunCommandTest extends TestCase
 
         if (!$shouldThrowException) {
             $output = $this->tester->getDisplay();
-            $this->assertContains('Browser: ' . $expectedNameInOutput, $output);
-            $this->assertContains('No testcases found, exiting.', $output);
+            $this->assertStringContainsString('Browser: ' . $expectedNameInOutput, $output);
+            $this->assertStringContainsString('No testcases found, exiting.', $output);
         }
     }
 
@@ -210,8 +210,11 @@ class RunCommandTest extends TestCase
             ]
         );
 
-        $this->assertContains('Error connecting to Selenium server ("Foo Bar Error")', $this->tester->getDisplay());
-        $this->assertContains(
+        $this->assertStringContainsString(
+            'Error connecting to Selenium server ("Foo Bar Error")',
+            $this->tester->getDisplay()
+        );
+        $this->assertStringContainsString(
             'Make sure your Selenium server is really accessible on url "http://foo.bar:1337"',
             $this->tester->getDisplay()
         );
@@ -248,8 +251,11 @@ class RunCommandTest extends TestCase
             ]
         );
 
-        $this->assertContains('Unexpected response from Selenium server (This is teapot)', $this->tester->getDisplay());
-        $this->assertContains(
+        $this->assertStringContainsString(
+            'Unexpected response from Selenium server (This is teapot)',
+            $this->tester->getDisplay()
+        );
+        $this->assertStringContainsString(
             'URL "http://foo.bar:1337" is occupied by something else than Selenium server.',
             $this->tester->getDisplay()
         );
@@ -272,8 +278,8 @@ class RunCommandTest extends TestCase
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );
 
-        $this->assertContains('by pattern "NotExisting.foo"', $this->tester->getDisplay());
-        $this->assertContains('No testcases found, exiting.', $this->tester->getDisplay());
+        $this->assertStringContainsString('by pattern "NotExisting.foo"', $this->tester->getDisplay());
+        $this->assertStringContainsString('No testcases found, exiting.', $this->tester->getDisplay());
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
@@ -343,7 +349,7 @@ class RunCommandTest extends TestCase
             ]
         );
 
-        $this->assertContains('No testcases matched given groups, exiting.', $this->tester->getDisplay());
+        $this->assertStringContainsString('No testcases matched given groups, exiting.', $this->tester->getDisplay());
         $this->assertSame(1, $this->tester->getStatusCode());
     }
 
@@ -383,7 +389,7 @@ class RunCommandTest extends TestCase
             ]
         );
 
-        $this->assertContains('Testcases executed: 0', $this->tester->getDisplay());
+        $this->assertStringContainsString('Testcases executed: 0', $this->tester->getDisplay());
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 

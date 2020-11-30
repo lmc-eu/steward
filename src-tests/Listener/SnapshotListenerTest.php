@@ -146,7 +146,10 @@ class SnapshotListenerTest extends TestCase
         $listener = new SnapshotListener();
         $listener->addError($test, new \Exception('Error', 333), 3.3);
 
-        $this->assertContains('[WARN] WebDriver instance not found, cannot take snapshot.', $test->getActualOutput());
+        $this->assertStringContainsString(
+            '[WARN] WebDriver instance not found, cannot take snapshot.',
+            $test->getActualOutput()
+        );
     }
 
     public function testShouldAppendErrorOutputIfWebDriverThrowsException(): void
@@ -165,7 +168,7 @@ class SnapshotListenerTest extends TestCase
         $listener = new SnapshotListener();
         $listener->addError($test, new \Exception('Error', 333), 3.3);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             '[WARN] Error taking page snapshot, perhaps browser is not accessible?',
             $test->getActualOutput()
         );

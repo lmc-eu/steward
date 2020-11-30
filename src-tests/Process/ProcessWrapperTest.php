@@ -33,7 +33,7 @@ class ProcessWrapperTest extends TestCase
         $wrapper->setDelay('Bar', $delay);
 
         $this->assertTrue($wrapper->isDelayed());
-        $this->assertEquals($delay, $wrapper->getDelayMinutes(), '', 0.001);
+        $this->assertEqualsWithDelta($delay, $wrapper->getDelayMinutes(), 0.001, '');
     }
 
     /**
@@ -204,7 +204,7 @@ class ProcessWrapperTest extends TestCase
 
         $error = $wrapper->checkProcessTimeout();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Process for class "ClassName" exceeded the timeout of 33 seconds and was killed.',
             $error
         );

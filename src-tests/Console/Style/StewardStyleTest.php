@@ -42,7 +42,7 @@ class StewardStyleTest extends TestCase
 
         $output = $this->outputBuffer->fetch();
         $this->assertRegExp('/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/', $output);
-        $this->assertContains('Foo bar', $output);
+        $this->assertStringContainsString('Foo bar', $output);
     }
 
     /**

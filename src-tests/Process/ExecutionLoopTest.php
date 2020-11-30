@@ -30,7 +30,7 @@ class ExecutionLoopTest extends TestCase
         $output = $outputBuffer->fetch();
 
         $this->assertTrue($result, 'Exception loop did not finish successfully, output was: ' . "\n" . $output);
-        $this->assertContains('[OK] Testcases executed: 0', $output);
+        $this->assertStringContainsString('[OK] Testcases executed: 0', $output);
     }
 
     /** @test */
@@ -60,12 +60,12 @@ class ExecutionLoopTest extends TestCase
 
         $this->assertTrue($result, 'Exception loop did not finish successfully, output was: ' . "\n" . $output);
 
-        $this->assertContains('Testcase "NoDelay" is prepared to be run', $output);
-        $this->assertContains(
+        $this->assertStringContainsString('Testcase "NoDelay" is prepared to be run', $output);
+        $this->assertStringContainsString(
             'Testcase "Delayed" is queued to be run 0.0 minutes after testcase "NoDelay" is finished',
             $output
         );
 
-        $this->assertContains('Dequeing testcase "Delayed"', $output);
+        $this->assertStringContainsString('Dequeing testcase "Delayed"', $output);
     }
 }
