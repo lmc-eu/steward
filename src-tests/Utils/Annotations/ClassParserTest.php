@@ -1,9 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Lmc\Utils\Annotations;
+namespace Lmc\Steward\Utils\Annotations;
 
 use Lmc\Steward\Exception\RuntimeException;
-use Lmc\Steward\Utils\Annotations\ClassParser;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\SplFileInfo;
 
