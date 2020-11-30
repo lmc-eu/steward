@@ -6,11 +6,11 @@ use Lmc\Steward\Console\Application;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Selenium\Downloader;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -149,7 +149,7 @@ class InstallCommandTest extends TestCase
         $fileGetContentsMock->expects($this->any())
             ->willReturn(false);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Auto-detection of latest Selenium version failed - version must be provided');
 
         $this->tester->execute(

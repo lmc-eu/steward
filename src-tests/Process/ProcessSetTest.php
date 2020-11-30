@@ -4,6 +4,8 @@ namespace Lmc\Steward\Process;
 
 use Assert\InvalidArgumentException;
 use Graphp\Algorithms\Tree\OutTree;
+use Lmc\Steward\Exception\LogicException;
+use Lmc\Steward\Exception\RuntimeException;
 use Lmc\Steward\Process\Fixtures\MockOrderStrategy;
 use Lmc\Steward\Publisher\XmlPublisher;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +35,7 @@ class ProcessSetTest extends TestCase
     {
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Testcase with name "Foo\Bar" was already added');
 
         $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
@@ -201,9 +203,9 @@ class ProcessSetTest extends TestCase
 
         $this->set->add($process);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
-            'Testcase "Foo" has @delayAfter dependency on "NotExisting", but this testcase was not defined.'
+            'Testcase "Foo" has @delayAfter dependency on "NotExisting", but this testcase is not defined.'
         );
         $this->set->buildTree();
     }
@@ -224,7 +226,7 @@ class ProcessSetTest extends TestCase
         $this->set->add($processA);
         $this->set->add($processB);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot build tree graph from tests dependencies.');
 
         $this->set->buildTree();

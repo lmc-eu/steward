@@ -6,6 +6,8 @@ use Lmc\Steward\Console\Command\RunCommand;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
+use Lmc\Steward\Exception\LogicException;
+use Lmc\Steward\Exception\RuntimeException;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Utils\Annotations\ClassAnnotations;
 use Lmc\Steward\Utils\Annotations\ClassParser;
@@ -219,21 +221,18 @@ class ProcessSetCreator
 
     private function setupProcessDelays(ProcessWrapper $processWrapper, array $annotations): void
     {
-        $delayAfter = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
+        $delayAfterClass = !empty($annotations['delayAfter']) ? current($annotations['delayAfter']) : '';
         $delayMinutes = !empty($annotations['delayMinutes']) ? current($annotations['delayMinutes']) : null;
 
-        if ($delayAfter) {
-            $processWrapper->setDelay($delayAfter, $delayMinutes);
-        } elseif ($delayMinutes !== null && empty($delayAfter)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Testcase "%s" has defined delay %d minutes, '
-                    . 'but doesn\'t have defined the testcase to run after',
-                    $processWrapper->getClassName(),
-                    $delayMinutes
-                )
-            );
+        if ($delayMinutes !== null && empty($delayAfterClass)) {
+            throw LogicException::forDelayWithMissingTestcase($processWrapper->getClassName(), $delayMinutes);
         }
+
+        if ($delayAfterClass === '') {
+            return;
+        }
+
+        $processWrapper->setDelay($delayAfterClass, $delayMinutes);
     }
 
     /**
@@ -244,16 +243,7 @@ class ProcessSetCreator
         try {
             return ClassAnnotations::getAnnotationsForClass($className);
         } catch (\ReflectionException $e) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Error loading class "%s" from file "%s". Make sure the class name and namespace matches '
-                    . 'the file path.',
-                    $className,
-                    $fileName
-                ),
-                0,
-                $e
-            );
+            throw RuntimeException::forReflectionErrorWhenLoadedFromFile($className, $fileName, $e);
         }
     }
 }

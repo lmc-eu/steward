@@ -7,6 +7,7 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Process\ExecutionLoop;
 use Lmc\Steward\Process\MaxTotalDelayStrategy;
 use Lmc\Steward\Process\ProcessSetCreator;
@@ -192,13 +193,7 @@ class RunCommand extends Command
 
         // Check if browser is supported
         if (!isset($this->supportedBrowsers[$browserNormalized])) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Browser "%s" is not supported (use one of: %s)',
-                    $browserNormalized,
-                    implode(', ', array_keys($this->supportedBrowsers))
-                )
-            );
+            throw CommandException::forUnsupportedBrowser($browserNormalized, array_keys($this->supportedBrowsers));
         }
 
         // Set WebDriver browser identifier back to the argument value
@@ -216,7 +211,7 @@ class RunCommand extends Command
         // Make sure parallel-limit is greater than 0
         $parallelLimit = (int) $input->getOption(self::OPTION_PARALLEL_LIMIT);
         if ($parallelLimit === 0) {
-            throw new \RuntimeException('Parallel limit must be a whole number greater than 0');
+            throw new CommandException('Parallel limit must be a whole number greater than 0');
         }
         $input->setOption(self::OPTION_PARALLEL_LIMIT, $parallelLimit);
 

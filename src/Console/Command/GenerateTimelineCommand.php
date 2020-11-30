@@ -4,6 +4,7 @@ namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
+use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Publisher\XmlPublisher;
 use Lmc\Steward\Timeline\TimelineDataBuilder;
 use Symfony\Component\Console\Input\InputInterface;
@@ -112,14 +113,7 @@ class GenerateTimelineCommand extends Command
     {
         $inputResultsFilePath = $input->getOption(self::OPTION_RESULTS_FILE);
         if (!is_readable($inputResultsFilePath)) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Cannot read results file "%s", make sure it is accessible '
-                    . '(or use --%s option if it is stored elsewhere)',
-                    $inputResultsFilePath,
-                    self::OPTION_RESULTS_FILE
-                )
-            );
+            throw CommandException::forNotAccessibleResultsFile($inputResultsFilePath, self::OPTION_RESULTS_FILE);
         }
 
         return $inputResultsFilePath;

@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\Application;
+use Lmc\Steward\Exception\CommandException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -11,6 +12,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @covers \Lmc\Steward\Console\Command\GenerateTimelineCommand
+ * @covers \Lmc\Steward\Exception\CommandException
  */
 class GenerateTimelineCommandTest extends TestCase
 {
@@ -33,7 +35,7 @@ class GenerateTimelineCommandTest extends TestCase
 
     public function testShouldShowErrorIfResultsFileCannotBeFound(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Cannot read results file "/not/accessible.xml"');
 
         $this->tester->execute(

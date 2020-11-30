@@ -8,6 +8,7 @@ use Lmc\Steward\Console\Configuration\ConfigFileReader;
 use Lmc\Steward\Console\Configuration\ConfigResolver;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Style\StewardStyle;
+use Lmc\Steward\Exception\CommandException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -29,7 +30,7 @@ class Command extends \Symfony\Component\Console\Command\Command
     public function __construct(EventDispatcher $dispatcher, string $name = null)
     {
         if (!defined('STEWARD_BASE_DIR')) {
-            throw new \RuntimeException('The STEWARD_BASE_DIR constant is not defined');
+            throw new CommandException('The STEWARD_BASE_DIR constant is not defined');
         }
 
         $this->dispatcher = $dispatcher;

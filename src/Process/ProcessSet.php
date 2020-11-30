@@ -6,6 +6,8 @@ use Assert\Assertion;
 use Fhaculty\Graph\Graph;
 use Fhaculty\Graph\Vertex;
 use Graphp\Algorithms\Tree\OutTree;
+use Lmc\Steward\Exception\LogicException;
+use Lmc\Steward\Exception\RuntimeException;
 use Lmc\Steward\Publisher\AbstractPublisher;
 
 /**
@@ -57,12 +59,7 @@ class ProcessSet implements \Countable
     {
         $className = $processWrapper->getClassName();
         if (isset($this->processes[$className])) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Testcase with name "%s" was already added, make sure you don\'t have duplicate class names.',
-                    $className
-                )
-            );
+            throw RuntimeException::forDuplicateClassName($className);
         }
 
         $this->processes[$className] = $processWrapper;
@@ -112,13 +109,7 @@ class ProcessSet implements \Countable
                 } else { // is dependant => link it to its dependency
                     // Throw error if dependency is to not existing vertex
                     if (!$this->graph->hasVertex($processWrapper->getDelayAfter())) {
-                        throw new \InvalidArgumentException(
-                            sprintf(
-                                'Testcase "%s" has @delayAfter dependency on "%s", but this testcase was not defined.',
-                                $className,
-                                $processWrapper->getDelayAfter()
-                            )
-                        );
+                        throw LogicException::forDelayWithNotExistingTestcase($className, $processWrapper->getDelayAfter());
                     }
 
                     $this->graph->getVertex($processWrapper->getDelayAfter())
@@ -131,9 +122,7 @@ class ProcessSet implements \Countable
         $this->tree = new OutTree($this->graph);
 
         if (!$this->tree->isTree()) {
-            throw new \InvalidArgumentException(
-                sprintf('Cannot build tree graph from tests dependencies. Probably some cyclic dependency is present.')
-            );
+            throw LogicException::forCyclicDependencyInGraph();
         }
 
         return $this->tree;

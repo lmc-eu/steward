@@ -79,11 +79,15 @@ class ProcessWrapper
     {
         Assertion::notNull(
             $minutes,
-            sprintf('Testcase "%s" should run after "%s", but no delay was defined', $this->getClassName(), $afterClass)
+            sprintf(
+                'Testcase "%s" should run after "%s", but no delay was defined using @delayMinutes',
+                $this->getClassName(),
+                $afterClass
+            )
         );
 
         $assertionError = sprintf(
-            'Delay defined in testcase "%s" must be greater than or equal 0, but "%s" was given',
+            'Delay defined in testcase "%s" using @delayMinutes must be greater than or equal 0, but "%s" was given',
             $this->getClassName(),
             $minutes
         );

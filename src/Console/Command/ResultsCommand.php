@@ -4,6 +4,7 @@ namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
+use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Process\ProcessWrapper;
 use Lmc\Steward\Publisher\AbstractPublisher;
 use Lmc\Steward\Publisher\XmlPublisher;
@@ -61,14 +62,7 @@ class ResultsCommand extends Command
         $filePath = $input->getOption(self::OPTION_RESULTS_FILE);
 
         if (!is_readable($filePath)) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Cannot read results file "%s", make sure it is accessible '
-                    . '(or use --%s option if it is stored elsewhere)',
-                    $filePath,
-                    self::OPTION_RESULTS_FILE
-                )
-            );
+            throw CommandException::forNotAccessibleResultsFile($filePath, self::OPTION_RESULTS_FILE);
         }
 
         $data = $this->processResults($filePath);
