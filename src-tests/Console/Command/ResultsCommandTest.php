@@ -3,6 +3,7 @@
 namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\Application;
+use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\LineEndingsNormalizerTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @covers \Lmc\Steward\Console\Command\ResultsCommand
+ * @covers \Lmc\Steward\Exception\CommandException
  */
 class ResultsCommandTest extends TestCase
 {
@@ -35,7 +37,7 @@ class ResultsCommandTest extends TestCase
 
     public function testShouldShowErrorIfResultsFileCannotBeFound(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Cannot read results file "/not/accessible.xml"');
 
         $this->tester->execute(

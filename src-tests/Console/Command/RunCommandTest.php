@@ -7,6 +7,7 @@ use Lmc\Steward\Console\Application;
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
+use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Process\ProcessSet;
 use Lmc\Steward\Process\ProcessSetCreator;
 use Lmc\Steward\Process\ProcessWrapper;
@@ -20,6 +21,7 @@ use Symfony\Component\Finder\Finder;
 
 /**
  * @covers \Lmc\Steward\Console\Command\RunCommand
+ * @covers \Lmc\Steward\Exception\CommandException
  * @covers \Lmc\Steward\Process\ExecutionLoop
  */
 class RunCommandTest extends TestCase
@@ -145,7 +147,7 @@ class RunCommandTest extends TestCase
         $this->command->setSeleniumAdapter($seleniumAdapterMock);
 
         if ($shouldThrowException) {
-            $this->expectException(\RuntimeException::class);
+            $this->expectException(CommandException::class);
             $this->expectExceptionMessage('Browser "' . $browserName . '" is not supported');
         }
 

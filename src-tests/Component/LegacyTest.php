@@ -4,12 +4,13 @@ namespace Lmc\Steward\Component;
 
 use Lmc\Steward\Component\Fixtures\StringableObject;
 use Lmc\Steward\ConfigHelper;
+use Lmc\Steward\Exception\LegacyComponentException;
 use Lmc\Steward\Test\AbstractTestCase;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Lmc\Steward\Component\Legacy
- * @covers \Lmc\Steward\Component\LegacyException
+ * @covers \Lmc\Steward\Exception\LegacyComponentException
  */
 class LegacyTest extends TestCase
 {
@@ -35,7 +36,7 @@ class LegacyTest extends TestCase
         $legacy = new Legacy($this->testCase);
         $this->expectOutputRegex('/.*New Legacy instantiated.*/');
 
-        $this->expectException(LegacyException::class);
+        $this->expectException(LegacyComponentException::class);
         $this->expectExceptionMessage('Cannot read Legacy file');
 
         $legacy->loadWithName('not-existing');
@@ -50,7 +51,7 @@ class LegacyTest extends TestCase
         $legacy->setFileDir(sys_get_temp_dir());
         $this->expectOutputRegex('/.*New Legacy instantiated.*/');
 
-        $this->expectException(LegacyException::class);
+        $this->expectException(LegacyComponentException::class);
         $this->expectExceptionMessage('Cannot parse Legacy from file');
 
         $legacy->loadWithName('wrong');
@@ -98,7 +99,7 @@ class LegacyTest extends TestCase
 
         $this->expectOutputRegex('/.*Saving data as Legacy "baz" to file "\/notexisting\/baz\.legacy".*/');
 
-        $this->expectException(LegacyException::class);
+        $this->expectException(LegacyComponentException::class);
         $this->expectExceptionMessage('Cannot save Legacy to file /notexisting/baz.legacy');
 
         $legacy->saveWithName([], 'baz');
@@ -146,7 +147,7 @@ class LegacyTest extends TestCase
         $legacy = new Legacy($testCasePhase1);
         $legacy->setFileDir(sys_get_temp_dir());
 
-        $this->expectException(LegacyException::class);
+        $this->expectException(LegacyComponentException::class);
         $this->expectExceptionMessage(
             'Cannot generate Legacy name from class without \'Phase\' followed by number in name'
         );
@@ -223,11 +224,11 @@ class LegacyTest extends TestCase
 
         try {
             $legacy2Method2->load(Legacy::LEGACY_TYPE_TEST);
-        } catch (LegacyException $e) {
-            $this->assertContains('Cannot read Legacy file', $e->getMessage());
+        } catch (LegacyComponentException $e) {
+            $this->assertStringContainsString('Cannot read Legacy file', $e->getMessage());
 
             return;
         }
-        $this->fail('Expected exception LegacyException not thrown when loading Legacy that should not exists');
+        $this->fail('Expected exception LegacyComponentException not thrown when loading Legacy that should not exists');
     }
 }

@@ -7,6 +7,8 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Configuration\ConfigOptions;
 use Lmc\Steward\Console\Configuration\ConfigResolver;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
+use Lmc\Steward\Exception\LogicException;
+use Lmc\Steward\Exception\RuntimeException;
 use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedByZeroTimeTest;
 use Lmc\Steward\Process\Fixtures\DelayedTests\DelayedTest;
 use Lmc\Steward\Process\Fixtures\DelayedTests\FirstTest;
@@ -24,6 +26,8 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
+ * @covers \Lmc\Steward\Exception\LogicException
+ * @covers \Lmc\Steward\Exception\RuntimeException
  * @covers \Lmc\Steward\Process\ProcessSetCreator
  */
 class ProcessSetCreatorTest extends TestCase
@@ -124,7 +128,7 @@ class ProcessSetCreatorTest extends TestCase
     {
         $files = $this->findDummyTests('WrongClassTest.php', 'InvalidTests');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageRegExp(
             '/Error loading class "Lmc\\\\Steward\\\\Process\\\\Fixtures\\\\InvalidTests\\\\ReallyWrongClassTest"'
             . ' from file ".*WrongClassTest.php"/'
@@ -213,10 +217,10 @@ class ProcessSetCreatorTest extends TestCase
     {
         $files = $this->findDummyTests('InvalidDelayTest.php', 'InvalidTests');
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
-            'Testcase "Lmc\Steward\Process\Fixtures\InvalidTests\InvalidDelayTest" has defined delay 5 minutes, '
-            . 'but doesn\'t have defined the testcase to run after'
+            'Testcase "Lmc\Steward\Process\Fixtures\InvalidTests\InvalidDelayTest" has defined @delayMinutes 5 minutes, '
+            . 'but doesn\'t have defined the testcase to run after using @delayAfter'
         );
 
         $this->creator->createFromFiles($files, [], []);

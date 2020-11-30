@@ -4,9 +4,9 @@ namespace Lmc\Steward\Console\Command;
 
 use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
+use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Selenium\Downloader;
 use OndraM\CiDetector\CiDetector;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -144,13 +144,13 @@ class InstallCommand extends Command
 
         // When latest version cannot be detected, the version must always be provided
         if (!$isInteractiveInput) { // we have nowhere to get the version number in non-interactive mode
-            throw new RuntimeException('Auto-detection of latest Selenium version failed - version must be provided');
+            throw new CommandException('Auto-detection of latest Selenium version failed - version must be provided');
         }
 
         // in interactive mode version must specified
         return $this->io->ask($questionText, null, function ($answer) {
             if (empty($answer)) {
-                throw new \RuntimeException('Please provide version to download (latest version auto-detect failed)');
+                throw new CommandException('Please provide version to download (latest version auto-detect failed)');
             }
 
             return $answer;

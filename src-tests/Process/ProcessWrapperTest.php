@@ -72,15 +72,17 @@ class ProcessWrapperTest extends TestCase
         return [
             'negative value' => [
                 -5,
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "-5" was given',
+                'Delay defined in testcase "Foo" using @delayMinutes must be greater than or equal 0, '
+                . 'but "-5" was given',
             ],
             'string value' => [
                 'omg',
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "omg" was given',
+                'Delay defined in testcase "Foo" using @delayMinutes must be greater than or equal 0, '
+                . 'but "omg" was given',
             ],
             'empty value' => [
                 '',
-                'Delay defined in testcase "Foo" must be greater than or equal 0, but "" was given',
+                'Delay defined in testcase "Foo" using @delayMinutes must be greater than or equal 0, but "" was given',
             ],
         ];
     }
@@ -90,7 +92,9 @@ class ProcessWrapperTest extends TestCase
         $wrapper = new ProcessWrapper(new Process(''), 'Foo');
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Testcase "Foo" should run after "Bar", but no delay was defined');
+        $this->expectExceptionMessage(
+            'Testcase "Foo" should run after "Bar", but no delay was defined using @delayMinutes'
+        );
 
         $wrapper->setDelay('Bar', null);
     }
