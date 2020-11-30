@@ -408,7 +408,7 @@ class RunCommandTest extends TestCase
 
         $seleniumAdapterMock->expects($this->any())
             ->method('getLastError')
-            ->willReturn(null);
+            ->willReturn('');
 
         $seleniumAdapterMock->expects($this->any())
             ->method('isSeleniumServer')

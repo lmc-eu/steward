@@ -8,8 +8,8 @@
 - Show test duration in timeline tooltips.
 
 ### Changed
-- Require PHP 7.3+ and Symfony 4 components.
-- Update to namespaced PHPUnit 7.0.
+- Require PHP 7.3+ and Symfony 5 components.
+- Update to namespaced PHPUnit. Set minimal required version to PHPUnit 8.5.
 - Use php-webdriver 1.8+ with W3C WebDriver support.
 - Methods now uses strict type-hints and return type-hints. Inherited classes and interfaces (eg. `CustomCapabilitiesResolverInterface`, `OptimizeOrderInterface` etc.) may require to be changed in accordance with this.
 - Simplified and improved test output.

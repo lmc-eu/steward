@@ -35,7 +35,7 @@
         "ondram/ci-detector": "^4.0",
         "php-webdriver/webdriver": "^1.10.0",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "phpunit/phpunit": "^7.5.20",
+        "phpunit/phpunit": "^8.5.14",
         "roave/better-reflection": "^4.3",
         "symfony/console": "^5.2",
         "symfony/event-dispatcher": "^5.2",
@@ -55,7 +55,6 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^0.12.80",
         "phpstan/phpstan-phpunit": "^0.12.17",
-        "phpunit/php-code-coverage": "^6.1",
         "symfony/var-dumper": "^5.2"
     },
     "suggest": {
