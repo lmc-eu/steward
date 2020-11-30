@@ -120,16 +120,6 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertSame('/foo/bar/logs', $testEnv['LOGS_DIR']);
     }
 
-    public function testShouldThrowExceptionIfAddingFileWithNoClass(): void
-    {
-        $files = $this->findDummyTests('NoClassTest.php', 'InvalidTests');
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/No class found in file ".*NoClassTest.php"/');
-
-        $this->creator->createFromFiles($files, [], []);
-    }
-
     public function testShouldThrowExceptionIfAddingClassWithNameMismatchingTheFileName(): void
     {
         $files = $this->findDummyTests('WrongClassTest.php', 'InvalidTests');
@@ -140,17 +130,6 @@ class ProcessSetCreatorTest extends TestCase
             . ' from file ".*WrongClassTest.php"/'
         );
 
-        $this->creator->createFromFiles($files, [], []);
-    }
-
-    public function testShouldThrowExceptionIfMultipleClassesAreDefinedInFile(): void
-    {
-        $files = $this->findDummyTests('MultipleClassesInFileTest.php', 'InvalidTests');
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
-            '/File ".*MultipleClassesInFileTest.php" contains definition of 2 classes/'
-        );
         $this->creator->createFromFiles($files, [], []);
     }
 

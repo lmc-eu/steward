@@ -12,7 +12,7 @@ class StringsTest extends TestCase
     /**
      * @dataProvider provideStringToFilename
      */
-    public function testShouldCOnvertStringToFilename(string $string, string $expectedFilename): void
+    public function testShouldConvertStringToFilename(string $string, string $expectedFilename): void
     {
         $this->assertSame($expectedFilename, Strings::toFilename($string));
     }
