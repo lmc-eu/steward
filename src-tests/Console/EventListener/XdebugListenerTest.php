@@ -96,7 +96,7 @@ class XdebugListenerTest extends TestCase
         $this->listener->onCommandRunTestsInit($event);
 
         if ($expectedIdeKey !== null) {
-            $this->assertContains(
+            $this->assertStringContainsString(
                 'Xdebug remote debugging initialized with IDE key: ' . $expectedIdeKey,
                 $output->fetch()
             );

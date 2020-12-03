@@ -92,14 +92,17 @@ class ResultsCommandTest extends TestCase
         $output = $this->tester->getDisplay();
 
         $this->assertSame(0, $this->tester->getStatusCode());
-        $this->assertContains('|  - testBanStarted   | started  |        | 2016-04-29 12:33:33 |          |', $output);
+        $this->assertStringContainsString(
+            '|  - testBanStarted   | started  |        | 2016-04-29 12:33:33 |          |',
+            $output
+        );
         $this->assertRegExp('/| \d+ sec/', $output);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Testcases (1 total): prepared: 1, running: 0, done: 0 (passed: 0, failed: 0, fatal: 0',
             $output
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Tests (1 so far): started: 1, done: 0 (passed: 0, failed or broken: 0, skipped or incomplete: 0)',
             $output
         );

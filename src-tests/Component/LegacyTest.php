@@ -229,6 +229,8 @@ class LegacyTest extends TestCase
 
             return;
         }
-        $this->fail('Expected exception LegacyComponentException not thrown when loading Legacy that should not exists');
+        $this->fail(
+            'Expected exception LegacyComponentException not thrown when loading Legacy that should not exists'
+        );
     }
 }

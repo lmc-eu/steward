@@ -76,6 +76,6 @@ class GenerateTimelineCommandTest extends TestCase
         $output = $this->tester->getDisplay();
 
         $this->assertSame(0, $this->tester->getStatusCode());
-        $this->assertContains('[OK] Timeline generated to file "/foo/bar.html"', $output);
+        $this->assertStringContainsString('[OK] Timeline generated to file "/foo/bar.html"', $output);
     }
 }

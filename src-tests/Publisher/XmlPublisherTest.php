@@ -50,9 +50,9 @@ class XmlPublisherTest extends TestCase
 
     public function testShouldAllowToSetCustomFileName(): void
     {
-        $this->assertNotContains('custom.xml', $this->publisher->getFilePath());
+        $this->assertStringNotContainsString('custom.xml', $this->publisher->getFilePath());
         $this->publisher->setFileName('custom.xml');
-        $this->assertContains('custom.xml', $this->publisher->getFilePath());
+        $this->assertStringContainsString('custom.xml', $this->publisher->getFilePath());
     }
 
     public function testShouldAllowToOverrideConfigObjectFileDirWithCustomDir(): void

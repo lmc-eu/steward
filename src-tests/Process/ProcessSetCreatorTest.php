@@ -106,13 +106,13 @@ class ProcessSetCreatorTest extends TestCase
         $dummyTestProcess = $processes[self::NAME_DUMMY_TEST]->getProcess();
         $testCommand = $dummyTestProcess->getCommandLine();
 
-        $this->assertContains('phpunit', $testCommand);
-        $this->assertContains(
+        $this->assertStringContainsString('phpunit', $testCommand);
+        $this->assertStringContainsString(
             '--log-junit=/foo/bar/logs/Lmc-Steward-Process-Fixtures-DummyTests-DummyTest.xml',
             $testCommand
         );
-        $this->assertNotContains('--colors', $testCommand); // Decorated output is disabled in setUp()
-        $this->assertNotContains('--filter', $testCommand);
+        $this->assertStringNotContainsString('--colors', $testCommand); // Decorated output is disabled in setUp()
+        $this->assertStringNotContainsString('--filter', $testCommand);
         $this->assertStringMatchesFormat('%A--configuration=%A%esrc%ephpunit.xml%A', $testCommand);
 
         // Check defaults were passed to the Process environment
@@ -144,7 +144,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertQueuedTests([self::NAME_BAR_TEST, self::NAME_FOO_TEST], $processSet);
 
         $output = $this->bufferedOutput->fetch();
-        $this->assertContains('by group(s): bar, foo', $output);
+        $this->assertStringContainsString('by group(s): bar, foo', $output);
         $this->assertStringMatchesFormat('%AFound testcase file #1 in group bar: %A%eGroupBarTest.php%A', $output);
         $this->assertStringMatchesFormat('%AFound testcase file #2 in group foo: %A%eGroupFooTest.php%A', $output);
     }
@@ -156,7 +156,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertQueuedTests([self::NAME_DUMMY_TEST], $processSet);
 
         $output = $this->bufferedOutput->fetch();
-        $this->assertContains('excluding group(s): bar, foo', $output);
+        $this->assertStringContainsString('excluding group(s): bar, foo', $output);
         $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupBarTest.php with group bar%A', $output);
         $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupFooTest.php with group foo%A', $output);
     }
@@ -169,8 +169,8 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertQueuedTests([self::NAME_FOO_TEST], $processSet);
 
         $output = $this->bufferedOutput->fetch();
-        $this->assertContains('by group(s): both', $output);
-        $this->assertContains('excluding group(s): bar', $output);
+        $this->assertStringContainsString('by group(s): both', $output);
+        $this->assertStringContainsString('excluding group(s): bar', $output);
         $this->assertStringMatchesFormat('%AFound testcase file #1 in group both: %A%eGroupFooTest.php%A', $output);
         $this->assertStringMatchesFormat('%AExcluding testcase file %A%eGroupBarTest.php with group bar%A', $output);
     }
@@ -219,8 +219,8 @@ class ProcessSetCreatorTest extends TestCase
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
-            'Testcase "Lmc\Steward\Process\Fixtures\InvalidTests\InvalidDelayTest" has defined @delayMinutes 5 minutes, '
-            . 'but doesn\'t have defined the testcase to run after using @delayAfter'
+            'Testcase "Lmc\Steward\Process\Fixtures\InvalidTests\InvalidDelayTest" has defined @delayMinutes'
+            . ' 5 minutes, but doesn\'t have defined the testcase to run after using @delayAfter'
         );
 
         $this->creator->createFromFiles($files, [], []);
@@ -235,9 +235,9 @@ class ProcessSetCreatorTest extends TestCase
         $testCommand = $dummyTestProcess->getCommandLine();
         $output = $this->bufferedOutput->fetch();
 
-        $this->assertContains('Filtering testcases:', $output);
-        $this->assertContains('by testcase/test name: testCase::testName', $output);
-        $this->assertContains('--filter=testCase::testName', $testCommand);
+        $this->assertStringContainsString('Filtering testcases:', $output);
+        $this->assertStringContainsString('by testcase/test name: testCase::testName', $output);
+        $this->assertStringContainsString('--filter=testCase::testName', $testCommand);
     }
 
     public function testShouldPropagateCustomOptionsIntoProcess(): void
@@ -251,9 +251,9 @@ class ProcessSetCreatorTest extends TestCase
                 '--' . RunCommand::OPTION_SERVER_URL . '=' . 'http://foo.bar:1337',
                 '--' . RunCommand::OPTION_LOGS_DIR . '=' . realpath(__DIR__ . '/Fixtures/custom-logs-dir/'),
                 '--' . RunCommand::OPTION_CAPABILITY . '=webdriver.log.file:/foo/bar.log',
-                '--' . RunCommand::OPTION_CAPABILITY . '=whitespaced:OS X 10.8',
+                '--' . RunCommand::OPTION_CAPABILITY . '=whitespaced:OS X 10',
                 '--' . RunCommand::OPTION_CAPABILITY . '=webdriver.foo:false',
-                '--' . RunCommand::OPTION_CAPABILITY . '=version:"14.14393"',
+                '--' . RunCommand::OPTION_CAPABILITY . '=version:"14.143"',
             ]
         );
 
@@ -280,7 +280,7 @@ class ProcessSetCreatorTest extends TestCase
         $this->assertSame('http://foo.bar:1337', $processEnv['SERVER_URL']);
         $this->assertSame(realpath(__DIR__ . '/Fixtures/custom-logs-dir/'), $processEnv['LOGS_DIR']);
         $this->assertSame(
-            '{"webdriver.log.file":"\/foo\/bar.log","whitespaced":"OS X 10.8","webdriver.foo":false,"version":"14.14393"}',
+            '{"webdriver.log.file":"\/foo\/bar.log","whitespaced":"OS X 10","webdriver.foo":false,"version":"14.143"}',
             $processEnv['CAPABILITY']
         );
         $this->assertSame('', $processEnv['CAPABILITIES_RESOLVER']);
@@ -294,7 +294,7 @@ class ProcessSetCreatorTest extends TestCase
         $processSet = $this->creator->createFromFiles($files, [], []);
         $process = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->getProcess();
         $commandWithoutColors = $process->getCommandLine();
-        $this->assertNotContains('--colors', $commandWithoutColors);
+        $this->assertStringNotContainsString('--colors', $commandWithoutColors);
 
         // Enable decorated output and test if the option is added to the command
         $this->bufferedOutput->setDecorated(true);
@@ -309,7 +309,7 @@ class ProcessSetCreatorTest extends TestCase
         $processSet = $this->creator->createFromFiles($files, [], []);
         $process = $processSet->get(ProcessWrapper::PROCESS_STATUS_QUEUED)[self::NAME_DUMMY_TEST]->getProcess();
         $commandWithColors = $process->getCommandLine();
-        $this->assertContains('--colors=always', $commandWithColors);
+        $this->assertStringContainsString('--colors=always', $commandWithColors);
     }
 
     public function testShouldDispatchProcessEvent(): void

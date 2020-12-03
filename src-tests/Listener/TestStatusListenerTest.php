@@ -71,7 +71,7 @@ class TestStatusListenerTest extends TestCase
         );
 
         foreach ($expectedExtraPublishers as $expectedExtraPublisher) {
-            $this->assertContains(
+            $this->assertStringContainsString(
                 'Registering test results publisher "' . $expectedExtraPublisher . '"',
                 $output
             );
