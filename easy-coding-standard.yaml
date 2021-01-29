@@ -23,3 +23,5 @@ parameters:
 services:
     PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff:
         absoluteLineLimit: 120 # To enforce line length limit
+    PhpCsFixer\Fixer\PhpUnit\PhpUnitExpectationFixer:
+        target: '5.6'
