@@ -43,6 +43,8 @@ jobs:
       - name: Submit coverage to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: ${{ github.job }}-PHP-${{ matrix.php-version }} ${{ matrix.dependencies }}
           NO_COLOR: 'true'
         run: |
           composer global require php-coveralls/php-coveralls
@@ -86,15 +88,29 @@ jobs:
       - name: Submit coverage to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: ${{ github.job }}
           NO_COLOR: 'true'
+
         run: |
           composer global require php-coveralls/php-coveralls
-          ~/.composer/vendor/bin/php-coveralls --coverage_clover=./src-tests/logs/clover.xml --json_path=./src-tests/logs/coveralls-upload.json -v
+          ~/.composer/vendor/bin/php-coveralls --coverage_clover=./src-tests/logs/clover.xml --coverage_clover=./src-tests/FunctionalTests/logs/clover.xml --json_path=./src-tests/logs/coveralls-upload.json -v
 
       - name: Dump logs
         if: ${{ always() }}
         run: |
           [ -r selenium-server.log ] && cat selenium-server.log
+
+  finish-tests:
+    name: Tests finished
+    needs: [unit-tests, integration-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
 
   codestyle:
       name: "Code style and static analysis"
