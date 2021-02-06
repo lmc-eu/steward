@@ -48,6 +48,54 @@ jobs:
           composer global require php-coveralls/php-coveralls
           ~/.composer/vendor/bin/php-coveralls --coverage_clover=./src-tests/logs/clover.xml --json_path=./src-tests/logs/coveralls-upload.json -v
 
+  integration-tests:
+    runs-on: ubuntu-latest
+    name: Integration tests
+    env:
+      SELENIUM_VERSION: 3.141.59
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: mbstring, intl, zip
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer update --no-interaction
+
+      - name: Start Selenium server and Xvfb
+        run: |
+          google-chrome --version
+          chromedriver --version
+          SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi $SELENIUM_VERSION)
+          xvfb-run --server-args="-screen 0, 1280x720x24" --auto-servernum java -jar $SELENIUM_JAR -log selenium-server.log &
+          while ! nc -z localhost 4444 </dev/null; do echo Waiting for Selenium server to start...; sleep 1; done
+
+      - name: Run tests
+        working-directory: ./src-tests/
+        env:
+          COLUMNS: 120
+        run: |
+          ../vendor/bin/phpunit --group integration --coverage-clover ./logs/clover.xml
+
+      - name: Submit coverage to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NO_COLOR: 'true'
+        run: |
+          composer global require php-coveralls/php-coveralls
+          ~/.composer/vendor/bin/php-coveralls --coverage_clover=./src-tests/logs/clover.xml --json_path=./src-tests/logs/coveralls-upload.json -v
+
+      - name: Dump logs
+        if: ${{ always() }}
+        run: |
+          [ -r selenium-server.log ] && cat selenium-server.log
+
   codestyle:
       name: "Code style and static analysis"
       runs-on: ubuntu-latest
