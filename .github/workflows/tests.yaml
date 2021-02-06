@@ -7,6 +7,47 @@ on:
     - cron:  '0 3 * * *'
 
 jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['7.2', '7.3', '7.4']
+        dependencies: ['']
+        include:
+          - { php-version: '7.2', dependencies: '--prefer-lowest --prefer-stable' }
+
+    name: Unit tests - PHP ${{ matrix.php-version }} ${{ matrix.dependencies }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, intl, zip
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer update --no-interaction ${{ matrix.dependencies }}
+
+      - name: Run tests
+        working-directory: ./src-tests/
+        env:
+          COLUMNS: 120
+        run: |
+          ../vendor/bin/phpunit --exclude-group integration --coverage-clover ./logs/clover.xml
+
+      - name: Submit coverage to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NO_COLOR: 'true'
+        run: |
+          composer global require php-coveralls/php-coveralls
+          ~/.composer/vendor/bin/php-coveralls --coverage_clover=./src-tests/logs/clover.xml --json_path=./src-tests/logs/coveralls-upload.json -v
+
   codestyle:
       name: "Code style and static analysis"
       runs-on: ubuntu-latest
