@@ -45,7 +45,6 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: ${{ github.job }}-PHP-${{ matrix.php-version }} ${{ matrix.dependencies }}
-          NO_COLOR: 'true'
         run: |
           composer global require php-coveralls/php-coveralls
           ~/.composer/vendor/bin/php-coveralls --coverage_clover=./src-tests/logs/clover.xml --json_path=./src-tests/logs/coveralls-upload.json -v
