@@ -7,10 +7,10 @@ Testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\TestDependingOnFirs
 %A
 [%s] Execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\FirstTest" started%A
 %A
-[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\FirstTest" (result: passed, time: %f sec)
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\FirstTest" (result: passed, time: %f sec)%A
 [%s] Dequeing testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\SecondTest" which was queued because of parallel limit
 %A
-[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\SecondTest" (result: passed, time: %f sec)
+[%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\SecondTest" (result: passed, time: %f sec)%A
 [%s] Dequeing testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\TestDependingOnFirstTest"
 %A
 [%s] Finished execution of testcase "Lmc\Steward\Console\Command\Fixtures\ParallelTests\TestDependingOnFirstTest" (result: passed, time: %f sec)%A
