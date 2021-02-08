@@ -49,7 +49,7 @@
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.11",
-        "lmc/coding-standard": "^2.1",
+        "lmc/coding-standard": "dev-main as 3.0",
         "php-mock/php-mock-phpunit": "^2.6.0",
         "php-parallel-lint/php-parallel-lint": "^1.2.0",
         "phpstan/extension-installer": "^1.0",
@@ -95,15 +95,15 @@
             "@test"
         ],
         "analyze": [
-            "vendor/bin/ecs check src/ src-tests/ --ansi",
+            "vendor/bin/ecs check src/ src-tests/ ecs.php --ansi",
             "vendor/bin/phpstan analyze -c phpstan.neon --ansi"
         ],
         "fix": [
             "@composer normalize",
-            "vendor/bin/ecs check src/ src-tests/ --ansi --fix"
+            "vendor/bin/ecs check src/ src-tests/ ecsp.php --ansi --fix"
         ],
         "lint": [
-            "vendor/bin/parallel-lint -j 10 ./bin ./bin/phpunit-steward ./bin/steward ./src ./src-tests",
+            "vendor/bin/parallel-lint -j 10 ./bin ./bin/phpunit-steward ./bin/steward ./src ./src-tests ecs.php",
             "@composer validate",
             "@composer normalize --dry-run"
         ],
