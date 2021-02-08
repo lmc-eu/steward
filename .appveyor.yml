@@ -22,7 +22,7 @@ install:
   - IF EXIST c:\tools\php (SET PHP=0)
   - IF %PHP%==1 cinst -y OpenSSL.Light
  # TODO: remove -version and use the latest PHP (after Steward has PHP 8.0 support)
-  - IF %PHP%==1 cinst -y php -version 7.4.13 --params "/InstallDir:C:\tools\php" # we could use -version to specify exact version, but we rather use the latest available
+  - IF %PHP%==1 cinst -y php -version 7.4.15 --params "/InstallDir:C:\tools\php" # we could use -version to specify exact version, but we rather use the latest available
   - cd C:\tools\php
   - IF %PHP%==1 copy php.ini-production php.ini /Y
   - IF %PHP%==1 echo extension_dir=ext >> php.ini
@@ -31,6 +31,8 @@ install:
   - IF %PHP%==1 echo extension=php_curl.dll >> php.ini
   - cd %APPVEYOR_BUILD_FOLDER%
   - appveyor DownloadFile https://getcomposer.org/composer.phar
+  - php --version
+  - php --ini
   - php composer.phar update --no-interaction --no-progress
 
 test_script:

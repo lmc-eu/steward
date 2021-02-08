@@ -102,10 +102,10 @@ class StewardStyleTest extends TestCase
         $this->forceLineLength($style);
 
         $rawOutput = <<<HTXT
-Basic output
-[WARN] Warning output
-[DEBUG] Debug output
-HTXT;
+            Basic output
+            [WARN] Warning output
+            [DEBUG] Debug output
+            HTXT;
 
         $style->output($rawOutput, 'Foo\Bar');
     }
@@ -129,10 +129,10 @@ HTXT;
         $this->forceLineLength($style);
 
         $rawOutput = <<<HTXT
-Error output with trailing whitespace
+            Error output with trailing whitespace
 
 
-HTXT;
+            HTXT;
 
         $style->errorOutput($rawOutput, 'Foo\Bar');
     }
