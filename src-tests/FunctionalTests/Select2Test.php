@@ -10,8 +10,8 @@ use Lmc\Steward\Test\AbstractTestCase;
 /**
  * Test Select2 component through real Steward-based TestCase.
  *
- * @group integration
  * @group functional
+ * @group integration
  * @covers \Lmc\Steward\Component\Select2
  */
 class Select2Test extends AbstractTestCase

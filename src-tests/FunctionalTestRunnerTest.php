@@ -14,8 +14,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * Run Steward-based tests (from FunctionalTests/ directory) which tests Steward components through real Steward run.
  * Quis custodiet ipsos custodes?
  *
- * @group integration
  * @group functional
+ * @group integration
  * @runTestsInSeparateProcesses
  */
 class FunctionalTestRunnerTest extends TestCase

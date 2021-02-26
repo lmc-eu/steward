@@ -100,7 +100,7 @@
         ],
         "fix": [
             "@composer normalize",
-            "vendor/bin/ecs check src/ src-tests/ ecsp.php --ansi --fix"
+            "vendor/bin/ecs check src/ src-tests/ ecs.php --ansi --fix"
         ],
         "lint": [
             "vendor/bin/parallel-lint -j 10 ./bin ./bin/phpunit-steward ./bin/steward ./src ./src-tests ecs.php",

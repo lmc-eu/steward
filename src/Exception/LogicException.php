@@ -29,9 +29,7 @@ class LogicException extends \LogicException implements StewardExceptionInterfac
 
     public static function forCyclicDependencyInGraph(): self
     {
-        $message = sprintf(
-            'Cannot build tree graph from tests dependencies. Probably some cyclic dependency is present.'
-        );
+        $message = 'Cannot build tree graph from tests dependencies. Probably some cyclic dependency is present.';
 
         return new self($message);
     }
