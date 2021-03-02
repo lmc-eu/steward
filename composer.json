@@ -49,7 +49,7 @@
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.11",
-        "lmc/coding-standard": "dev-main as 3.0",
+        "lmc/coding-standard": "^3.0.0",
         "php-mock/php-mock-phpunit": "^2.6.0",
         "php-parallel-lint/php-parallel-lint": "^1.2.0",
         "phpstan/extension-installer": "^1.0",
