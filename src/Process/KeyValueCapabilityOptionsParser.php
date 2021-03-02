@@ -34,6 +34,8 @@ class KeyValueCapabilityOptionsParser
 
     /**
      * Guess most appropriate data type acceptable by JSON
+     *
+     * @return mixed
      */
     private function castToGuessedDataType(string $value)
     {

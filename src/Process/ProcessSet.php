@@ -168,7 +168,6 @@ class ProcessSet implements \Countable
     public function countResults(): array
     {
         $done = $this->get(ProcessWrapper::PROCESS_STATUS_DONE);
-        $doneClasses = [];
         $resultsCount = [
             ProcessWrapper::PROCESS_RESULT_PASSED => 0,
             ProcessWrapper::PROCESS_RESULT_FAILED => 0,
@@ -177,7 +176,6 @@ class ProcessSet implements \Countable
 
         // Retrieve names of done processes and count their results
         foreach ($done as $className => $processObject) {
-            $doneClasses[] = $className;
             $resultsCount[$processObject->getResult()]++;
         }
 

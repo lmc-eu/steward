@@ -277,7 +277,7 @@ class RunCommand extends Command
             return 1;
         }
 
-        $maxParallelLimit = $input->getOption(self::OPTION_PARALLEL_LIMIT);
+        $maxParallelLimit = (int) $input->getOption(self::OPTION_PARALLEL_LIMIT);
 
         $executionLoop = new ExecutionLoop($processSet, $this->io, new MaxTotalDelayStrategy(), $maxParallelLimit);
 

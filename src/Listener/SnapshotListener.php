@@ -19,7 +19,7 @@ class SnapshotListener implements TestListener
 {
     use TestListenerDefaultImplementation;
 
-    public function addError(Test $test, \Throwable $e, float $time): void
+    public function addError(Test $test, \Throwable $t, float $time): void
     {
         if ($test instanceof AbstractTestCase) {
             $this->takeSnapshot($test);
