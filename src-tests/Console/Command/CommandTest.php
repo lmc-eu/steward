@@ -41,7 +41,7 @@ class CommandTest extends TestCase
 
         $dispatcherMock->expects($this->at(0))
             ->method('dispatch')
-            ->with($this->equalTo(CommandEvents::PRE_INITIALIZE), $this->isInstanceOf(ExtendedConsoleEvent::class));
+            ->with($this->isInstanceOf(ExtendedConsoleEvent::class), $this->equalTo(CommandEvents::PRE_INITIALIZE));
 
         $application = new Application();
         $application->add(new DummyCommand($dispatcherMock, 'command'));

@@ -245,11 +245,11 @@ class InstallCommandTest extends TestCase
 
         $dispatcherMock->expects($this->at(0))
             ->method('dispatch')
-            ->with($this->equalTo(CommandEvents::CONFIGURE), $this->isInstanceOf(BasicConsoleEvent::class));
+            ->with($this->isInstanceOf(BasicConsoleEvent::class), $this->equalTo(CommandEvents::CONFIGURE));
 
         $dispatcherMock->expects($this->at(1))
             ->method('dispatch')
-            ->with($this->equalTo(CommandEvents::PRE_INITIALIZE), $this->isInstanceOf(ExtendedConsoleEvent::class));
+            ->with($this->isInstanceOf(ExtendedConsoleEvent::class), $this->equalTo(CommandEvents::PRE_INITIALIZE));
 
         $application = new Application();
         $application->add(new InstallCommand($dispatcherMock));

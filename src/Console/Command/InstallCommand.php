@@ -47,7 +47,7 @@ class InstallCommand extends Command
                 'Specific Selenium version to install'
             );
 
-        $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
+        $this->getDispatcher()->dispatch(new BasicConsoleEvent($this), CommandEvents::CONFIGURE);
     }
 
     /**

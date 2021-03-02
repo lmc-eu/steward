@@ -54,7 +54,7 @@ class ResultsCommand extends Command
                 realpath(STEWARD_BASE_DIR . '/logs/' . XmlPublisher::FILE_NAME)
             );
 
-        $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
+        $this->getDispatcher()->dispatch(new BasicConsoleEvent($this), CommandEvents::CONFIGURE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

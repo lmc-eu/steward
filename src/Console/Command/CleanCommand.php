@@ -52,7 +52,7 @@ class CleanCommand extends Command
                 STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'logs'
             );
 
-        $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
+        $this->getDispatcher()->dispatch(new BasicConsoleEvent($this), CommandEvents::CONFIGURE);
     }
 
     protected function resolveConfiguration(InputInterface $input): array

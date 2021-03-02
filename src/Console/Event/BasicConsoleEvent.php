@@ -3,7 +3,7 @@
 namespace Lmc\Steward\Console\Event;
 
 use Lmc\Steward\Console\Command\Command;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Basic event dispatched from console commands, containing just instance of the Command itself.
