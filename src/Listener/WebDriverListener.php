@@ -5,6 +5,7 @@ namespace Lmc\Steward\Listener;
 use Facebook\WebDriver\Exception\SessionNotCreatedException;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\Selenium\CapabilitiesResolver;
 use Lmc\Steward\Test\AbstractTestCase;
@@ -124,7 +125,12 @@ class WebDriverListener implements TestListener
                 $test->wd->close();
                 $test->wd->quit();
             } catch (WebDriverException $e) {
-                $test->warn('Error closing the session, browser may died.');
+                // Geckodriver always throw error when closing the session. We ignore it to not pollute the output.
+                // https://github.com/mozilla/geckodriver/issues/732, https://bugzilla.mozilla.org/show_bug.cgi?id=1403510
+                if (ConfigProvider::getInstance()->browserName !== WebDriverBrowserType::FIREFOX
+                    || $e->getMessage() !== 'invalid session id') {
+                    $test->warn('Error closing the session, browser may died.');
+                }
             } finally {
                 $output = ob_get_clean();
                 $test->appendFormattedTestLog($output);
