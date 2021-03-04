@@ -62,7 +62,7 @@ class GenerateTimelineCommand extends Command
                 STEWARD_BASE_DIR . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . self::DEFAULT_OUTPUT_FILENAME
             );
 
-        $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
+        $this->getDispatcher()->dispatch(new BasicConsoleEvent($this), CommandEvents::CONFIGURE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

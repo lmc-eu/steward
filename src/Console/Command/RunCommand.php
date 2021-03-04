@@ -163,7 +163,7 @@ class RunCommand extends Command
             '--group=foo --group=bar --exclude-group=baz --server-url=http://localhost:4444/wd/hub -vv staging chrome'
         );
 
-        $this->getDispatcher()->dispatch(CommandEvents::CONFIGURE, new BasicConsoleEvent($this));
+        $this->getDispatcher()->dispatch(new BasicConsoleEvent($this), CommandEvents::CONFIGURE);
     }
 
     /**
@@ -216,8 +216,8 @@ class RunCommand extends Command
         $input->setOption(self::OPTION_PARALLEL_LIMIT, $parallelLimit);
 
         $this->getDispatcher()->dispatch(
-            CommandEvents::RUN_TESTS_INIT,
-            new ExtendedConsoleEvent($this, $input, $output)
+            new ExtendedConsoleEvent($this, $input, $output),
+            CommandEvents::RUN_TESTS_INIT
         );
 
         if ($output->isVeryVerbose()) {
@@ -277,7 +277,7 @@ class RunCommand extends Command
             return 1;
         }
 
-        $maxParallelLimit = $input->getOption(self::OPTION_PARALLEL_LIMIT);
+        $maxParallelLimit = (int) $input->getOption(self::OPTION_PARALLEL_LIMIT);
 
         $executionLoop = new ExecutionLoop($processSet, $this->io, new MaxTotalDelayStrategy(), $maxParallelLimit);
 

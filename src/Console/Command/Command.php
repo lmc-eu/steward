@@ -46,8 +46,8 @@ class Command extends \Symfony\Component\Console\Command\Command
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->getDispatcher()->dispatch(
-            CommandEvents::PRE_INITIALIZE,
-            new ExtendedConsoleEvent($this, $input, $output)
+            new ExtendedConsoleEvent($this, $input, $output),
+            CommandEvents::PRE_INITIALIZE
         );
 
         $this->io = new StewardStyle($input, $output);

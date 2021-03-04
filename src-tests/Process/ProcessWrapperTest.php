@@ -13,7 +13,7 @@ class ProcessWrapperTest extends TestCase
 {
     public function testShouldWrapGivenProcess(): void
     {
-        $process = new Process('');
+        $process = new Process([]);
 
         $wrapper = new ProcessWrapper($process, 'ClassName');
 
@@ -29,7 +29,7 @@ class ProcessWrapperTest extends TestCase
      */
     public function testShouldSetDelayForTheProcess(float $delay): void
     {
-        $wrapper = new ProcessWrapper(new Process(''), 'Foo');
+        $wrapper = new ProcessWrapper(new Process([]), 'Foo');
         $wrapper->setDelay('Bar', $delay);
 
         $this->assertTrue($wrapper->isDelayed());
@@ -56,7 +56,7 @@ class ProcessWrapperTest extends TestCase
         $delay,
         string $expectedExceptionMessage
     ): void {
-        $wrapper = new ProcessWrapper(new Process(''), 'Foo');
+        $wrapper = new ProcessWrapper(new Process([]), 'Foo');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedExceptionMessage);
@@ -89,7 +89,7 @@ class ProcessWrapperTest extends TestCase
 
     public function testShouldFailIfDependencyWasDefinedButWithoutDelay(): void
     {
-        $wrapper = new ProcessWrapper(new Process(''), 'Foo');
+        $wrapper = new ProcessWrapper(new Process([]), 'Foo');
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -139,7 +139,7 @@ class ProcessWrapperTest extends TestCase
 
     public function testShouldNotStoreResultAndTimeOfWhenSettingOtherThanDoneStatus(): void
     {
-        $preparedTest = new ProcessWrapper(new Process(''), 'PreparedTest');
+        $preparedTest = new ProcessWrapper(new Process([]), 'PreparedTest');
         $preparedTest->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
 
         $this->assertNull($preparedTest->getResult());
@@ -148,7 +148,7 @@ class ProcessWrapperTest extends TestCase
 
     public function testShouldFailIfWrongProcessStatusGiven(): void
     {
-        $wrapper = new ProcessWrapper(new Process(''), 'Foo');
+        $wrapper = new ProcessWrapper(new Process([]), 'Foo');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -182,7 +182,7 @@ class ProcessWrapperTest extends TestCase
                 $this->identicalTo(null)
             );
 
-        $wrapper = new ProcessWrapper(new Process(''), 'FooClassName', $publisherMock);
+        $wrapper = new ProcessWrapper(new Process([]), 'FooClassName', $publisherMock);
 
         $wrapper->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
     }
@@ -195,7 +195,7 @@ class ProcessWrapperTest extends TestCase
             ->method('checkTimeout')
             ->willThrowException(
                 new ProcessTimedOutException(
-                    new Process('', null, null, null, 33),
+                    new Process([], null, null, null, 33),
                     ProcessTimedOutException::TYPE_GENERAL
                 )
             );

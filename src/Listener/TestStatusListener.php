@@ -45,9 +45,9 @@ class TestStatusListener implements TestListener
         $publishersToRegister = [XmlPublisher::class];
 
         // If current server is SauceLabs/TestingBot, autoregister its publisher
-        if ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {
+        if ($seleniumServerAdapter->getCloudService() === SeleniumServerAdapter::CLOUD_SERVICE_SAUCELABS) {
             $publishersToRegister[] = SauceLabsPublisher::class;
-        } elseif ($seleniumServerAdapter->getCloudService() == SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT) {
+        } elseif ($seleniumServerAdapter->getCloudService() === SeleniumServerAdapter::CLOUD_SERVICE_TESTINGBOT) {
             $publishersToRegister[] = TestingBotPublisher::class;
         }
 

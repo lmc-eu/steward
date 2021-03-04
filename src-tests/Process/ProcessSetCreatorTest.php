@@ -316,7 +316,7 @@ class ProcessSetCreatorTest extends TestCase
     {
         $this->dispatcherMock->expects($this->at(0))
             ->method('dispatch')
-            ->with($this->equalTo(CommandEvents::RUN_TESTS_PROCESS), $this->isInstanceOf(RunTestsProcessEvent::class));
+            ->with($this->isInstanceOf(RunTestsProcessEvent::class), $this->equalTo(CommandEvents::RUN_TESTS_PROCESS));
 
         $this->creator->createFromFiles($this->findDummyTests(), [], ['bar', 'foo']);
     }

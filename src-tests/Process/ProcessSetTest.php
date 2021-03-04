@@ -24,27 +24,27 @@ class ProcessSetTest extends TestCase
     public function testShouldBeCountable(): void
     {
         $this->assertCount(0, $this->set);
-        $this->set->add(new ProcessWrapper(new Process(''), 'Foo'));
+        $this->set->add(new ProcessWrapper(new Process([]), 'Foo'));
         $this->assertCount(1, $this->set);
-        $this->set->add(new ProcessWrapper(new Process(''), 'Bar'));
-        $this->set->add(new ProcessWrapper(new Process(''), 'Baz'));
+        $this->set->add(new ProcessWrapper(new Process([]), 'Bar'));
+        $this->set->add(new ProcessWrapper(new Process([]), 'Baz'));
         $this->assertCount(3, $this->set);
     }
 
     public function testShouldFailWhenAddingTestWithNonUniqueName(): void
     {
-        $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
+        $this->set->add(new ProcessWrapper(new Process([]), 'Foo\Bar'));
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Testcase with name "Foo\Bar" was already added');
 
-        $this->set->add(new ProcessWrapper(new Process(''), 'Foo\Bar'));
+        $this->set->add(new ProcessWrapper(new Process([]), 'Foo\Bar'));
     }
 
     public function testShouldHasNewlyAddedProcessInQueuedState(): void
     {
-        $this->set->add(new ProcessWrapper(new Process(''), 'Foo'));
-        $this->set->add(new ProcessWrapper(new Process(''), 'Bar'));
+        $this->set->add(new ProcessWrapper(new Process([]), 'Foo'));
+        $this->set->add(new ProcessWrapper(new Process([]), 'Bar'));
 
         $this->assertCount(2, $this->set->get(ProcessWrapper::PROCESS_STATUS_QUEUED));
         $this->assertCount(0, $this->set->get(ProcessWrapper::PROCESS_STATUS_DONE));
@@ -53,8 +53,8 @@ class ProcessSetTest extends TestCase
 
     public function testShouldAddAndGetWrappedProcesses(): void
     {
-        $processFoo = new ProcessWrapper(new Process(''), 'Foo');
-        $processBaz = new ProcessWrapper(new Process(''), 'Baz');
+        $processFoo = new ProcessWrapper(new Process([]), 'Foo');
+        $processBaz = new ProcessWrapper(new Process([]), 'Baz');
         $this->set->add($processFoo);
         $this->set->add($processBaz);
 
@@ -66,9 +66,9 @@ class ProcessSetTest extends TestCase
 
     public function testShouldRetrieveProcessesByStatus(): void
     {
-        $doneTest1 = new ProcessWrapper(new Process(''), 'DoneTest1');
-        $doneTest2 = new ProcessWrapper(new Process(''), 'DoneTest2');
-        $preparedTest = new ProcessWrapper(new Process(''), 'PreparedTest');
+        $doneTest1 = new ProcessWrapper(new Process([]), 'DoneTest1');
+        $doneTest2 = new ProcessWrapper(new Process([]), 'DoneTest2');
+        $preparedTest = new ProcessWrapper(new Process([]), 'PreparedTest');
         $this->set->add($doneTest1);
         $this->set->add($doneTest2);
         $this->set->add($preparedTest);
@@ -113,7 +113,7 @@ class ProcessSetTest extends TestCase
             );
 
         $set = new ProcessSet($publisherMock);
-        $set->add(new ProcessWrapper(new Process(''), 'FooClassName'));
+        $set->add(new ProcessWrapper(new Process([]), 'FooClassName'));
     }
 
     public function testShouldAllowToDefinePublisherUsingSetter(): void
@@ -133,18 +133,18 @@ class ProcessSetTest extends TestCase
             );
 
         $set->setPublisher($publisherMock);
-        $set->add(new ProcessWrapper(new Process(''), 'FooClassName'));
+        $set->add(new ProcessWrapper(new Process([]), 'FooClassName'));
     }
 
     public function testShouldCountStatusesOfWrappedProcesses(): void
     {
-        $doneTest1 = new ProcessWrapper(new Process(''), 'DoneTest1');
+        $doneTest1 = new ProcessWrapper(new Process([]), 'DoneTest1');
         $doneTest1->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
-        $doneTest2 = new ProcessWrapper(new Process(''), 'DoneTest2');
+        $doneTest2 = new ProcessWrapper(new Process([]), 'DoneTest2');
         $doneTest2->setStatus(ProcessWrapper::PROCESS_STATUS_DONE);
-        $queuedTest = new ProcessWrapper(new Process(''), 'QueuedTest');
+        $queuedTest = new ProcessWrapper(new Process([]), 'QueuedTest');
         $queuedTest->setStatus(ProcessWrapper::PROCESS_STATUS_QUEUED);
-        $preparedTest = new ProcessWrapper(new Process(''), 'PreparedTest');
+        $preparedTest = new ProcessWrapper(new Process([]), 'PreparedTest');
         $preparedTest->setStatus(ProcessWrapper::PROCESS_STATUS_PREPARED);
 
         $this->set->add($doneTest1);
@@ -198,7 +198,7 @@ class ProcessSetTest extends TestCase
 
     public function testShouldFailBuildingTreeIfTestHasDependencyOnNotExistingTest(): void
     {
-        $process = new ProcessWrapper(new Process(''), 'Foo');
+        $process = new ProcessWrapper(new Process([]), 'Foo');
         $process->setDelay('NotExisting', 5);
 
         $this->set->add($process);
@@ -218,9 +218,9 @@ class ProcessSetTest extends TestCase
           A <--> B
         */
 
-        $processA = new ProcessWrapper(new Process(''), 'A');
+        $processA = new ProcessWrapper(new Process([]), 'A');
         $processA->setDelay('B', 1);
-        $processB = new ProcessWrapper(new Process(''), 'B');
+        $processB = new ProcessWrapper(new Process([]), 'B');
         $processB->setDelay('A', 1);
 
         $this->set->add($processA);
@@ -242,12 +242,12 @@ class ProcessSetTest extends TestCase
 
         // Order in which dependencies are added before buildTree() is called is not important,
         // so add leafs to the tree first.
-        $processC = new ProcessWrapper(new Process(''), 'C');
+        $processC = new ProcessWrapper(new Process([]), 'C');
         $processC->setDelay('B', 3);
-        $processD = new ProcessWrapper(new Process(''), 'D');
+        $processD = new ProcessWrapper(new Process([]), 'D');
         $processD->setDelay('B', 5);
-        $processA = new ProcessWrapper(new Process(''), 'A');
-        $processB = new ProcessWrapper(new Process(''), 'B');
+        $processA = new ProcessWrapper(new Process([]), 'A');
+        $processB = new ProcessWrapper(new Process([]), 'B');
 
         $this->set->add($processC);
         $this->set->add($processD);
@@ -291,11 +291,11 @@ class ProcessSetTest extends TestCase
         //       3 / \ 5
         //        C   D
 
-        $processA = new ProcessWrapper(new Process(''), 'A');
-        $processB = new ProcessWrapper(new Process(''), 'B');
-        $processC = new ProcessWrapper(new Process(''), 'C');
+        $processA = new ProcessWrapper(new Process([]), 'A');
+        $processB = new ProcessWrapper(new Process([]), 'B');
+        $processC = new ProcessWrapper(new Process([]), 'C');
         $processC->setDelay('B', 3);
-        $processD = new ProcessWrapper(new Process(''), 'D');
+        $processD = new ProcessWrapper(new Process([]), 'D');
         $processD->setDelay('B', 5);
 
         $this->set->add($processA);
@@ -324,13 +324,13 @@ class ProcessSetTest extends TestCase
         //            | 0 (zero delay is also allowed)
         //            E
 
-        $processA = new ProcessWrapper(new Process(''), 'A');
-        $processB = new ProcessWrapper(new Process(''), 'B');
-        $processC = new ProcessWrapper(new Process(''), 'C');
+        $processA = new ProcessWrapper(new Process([]), 'A');
+        $processB = new ProcessWrapper(new Process([]), 'B');
+        $processC = new ProcessWrapper(new Process([]), 'C');
         $processC->setDelay('B', 3);
-        $processD = new ProcessWrapper(new Process(''), 'D');
+        $processD = new ProcessWrapper(new Process([]), 'D');
         $processD->setDelay('B', 5);
-        $processE = new ProcessWrapper(new Process(''), 'E');
+        $processE = new ProcessWrapper(new Process([]), 'E');
         $processE->setDelay('D', 0);
 
         $this->set->add($processA);
@@ -371,8 +371,8 @@ class ProcessSetTest extends TestCase
 
     public function testShouldFailWhenFailingDependantsButTheTreeWasNotYetBuilt(): void
     {
-        $processA = new ProcessWrapper(new Process(''), 'A');
-        $processB = new ProcessWrapper(new Process(''), 'B');
+        $processA = new ProcessWrapper(new Process([]), 'A');
+        $processB = new ProcessWrapper(new Process([]), 'B');
         $processB->setDelay('A', 3);
 
         $this->set->add($processA);

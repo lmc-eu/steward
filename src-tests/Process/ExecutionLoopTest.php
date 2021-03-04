@@ -36,8 +36,8 @@ class ExecutionLoopTest extends TestCase
     /** @test */
     public function shouldDequeueProcessesWithoutDelayOnStartup(): void
     {
-        $noDelayTest = new ProcessWrapper(new Process('echo NoDelay'), 'NoDelay');
-        $delayedTest = new ProcessWrapper(new Process('echo Delayed'), 'Delayed');
+        $noDelayTest = new ProcessWrapper(new Process(['echo', 'NoDelay']), 'NoDelay');
+        $delayedTest = new ProcessWrapper(new Process(['echo', 'Delayed']), 'Delayed');
         $delayedTest->setDelay('NoDelay', 0.001);
 
         $processSet = new ProcessSet();

@@ -24,7 +24,7 @@ class ConfigProvider
     use SingletonTrait;
 
     /** @var array Configuration options and theirs values */
-    private $config = null;
+    private $config;
     /** @var array Array of custom configuration options that should be added to the default ones */
     private $customConfigurationOptions = [];
 

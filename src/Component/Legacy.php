@@ -116,7 +116,7 @@ class Legacy extends AbstractComponent
         $name = preg_replace('/Phase\d/', '', $name); // remove 'PhaseX' from the name
         $name = Strings::toFilename($name);
 
-        if ($type == self::LEGACY_TYPE_TEST) {
+        if ($type === self::LEGACY_TYPE_TEST) {
             $name .= '#' . Strings::toFilename($this->tc->getName(false));
         }
 

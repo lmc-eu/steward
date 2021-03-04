@@ -174,14 +174,14 @@ class ProcessSetCreator
 
         $dispatcher = $this->command->getDispatcher();
         $dispatcher->dispatch(
-            CommandEvents::RUN_TESTS_PROCESS,
             $processEvent = new RunTestsProcessEvent(
                 $this->command,
                 $this->input,
                 $this->output,
                 $env,
                 $phpunitArgs
-            )
+            ),
+            CommandEvents::RUN_TESTS_PROCESS
         );
 
         $phpunitExecutable = realpath(__DIR__ . '/../../bin/phpunit-steward');
