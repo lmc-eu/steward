@@ -3,9 +3,6 @@
 namespace Lmc\Steward\Utils\Annotations;
 
 use Lmc\Steward\Exception\RuntimeException;
-use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflector\ClassReflector;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -15,14 +12,12 @@ class ClassParser
 {
     public static function readClassNameFromFile(SplFileInfo $file): string
     {
-        $reflection = new ClassReflector(
-            new SingleFileSourceLocator($file->getRealPath(), (new BetterReflection())->astLocator())
-        );
+        $fileInfo = new \hanneskod\classtools\Iterator\SplFileInfo($file);
+        $classesInFile = $fileInfo->getReader()->getDefinitionNames();
 
-        $classesInFile = $reflection->getAllClasses();
         self::assertOneClassInFile($classesInFile, $file);
 
-        return $classesInFile[0]->getName();
+        return $classesInFile[0];
     }
 
     private static function assertOneClassInFile(array $classesInFile, SplFileInfo $file): void
