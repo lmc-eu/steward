@@ -8,6 +8,9 @@ use Roave\BetterReflection\Reflector\ClassReflector;
 use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * Parse PHP files to get information of the class they contains.
+ */
 class ClassParser
 {
     public static function readClassNameFromFile(SplFileInfo $file): string

@@ -5,6 +5,9 @@ namespace Lmc\Steward\Utils\Annotations;
 use phpDocumentor\Reflection\DocBlock\Tags\BaseTag;
 use phpDocumentor\Reflection\DocBlockFactory;
 
+/**
+ * Read simple class annotations from their doc-blocks.
+ */
 class ClassAnnotations
 {
     public static function getAnnotationsForInstance($object): array
