@@ -26,7 +26,7 @@ class ClassParserTest extends TestCase
         $file = $this->createFileInfo('MultipleClassesInFile.php');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/^File ".+MultipleClassesInFile.php" contains definition of 2 classes\./'
         );
         ClassParser::readClassNameFromFile($file);
@@ -37,7 +37,7 @@ class ClassParserTest extends TestCase
         $file = $this->createFileInfo('NoClassInFile.php');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^No class found in file ".+NoClassInFile.php"/');
+        $this->expectExceptionMessageMatches('/^No class found in file ".+NoClassInFile.php"/');
         ClassParser::readClassNameFromFile($file);
     }
 

@@ -129,7 +129,7 @@ class ProcessSetCreatorTest extends TestCase
         $files = $this->findDummyTests('WrongClassTest.php', 'InvalidTests');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Error loading class "Lmc\\\\Steward\\\\Process\\\\Fixtures\\\\InvalidTests\\\\ReallyWrongClassTest"'
             . ' from file ".*WrongClassTest.php"/'
         );

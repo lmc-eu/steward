@@ -258,7 +258,7 @@ class DownloaderTest extends TestCase
         $this->mockGetHeadersToReturnHeader('HTTP/1.0 404 Not Found');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/Error downloading file "[^"]+" \(HTTP\/1\.0 404 Not Found\)/');
+        $this->expectExceptionMessageMatches('/Error downloading file "[^"]+" \(HTTP\/1\.0 404 Not Found\)/');
 
         $downloader->download();
     }
