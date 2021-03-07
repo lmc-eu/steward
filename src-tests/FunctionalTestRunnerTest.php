@@ -27,6 +27,13 @@ class FunctionalTestRunnerTest extends TestCase
 
     protected function setUp(): void
     {
+        $serverUrl = getenv('SELENIUM_SERVER_URL');
+        if ($serverUrl === '' || $serverUrl === false) {
+            $this->markTestSkipped(
+                'To execute integration tests SELENIUM_SERVER_URL environment variable must be provided'
+            );
+        }
+
         $dispatcher = new EventDispatcher();
         $application = new Application();
         $application->setDispatcher($dispatcher);
@@ -53,6 +60,7 @@ class FunctionalTestRunnerTest extends TestCase
                 'browser' => 'chrome',
                 '--tests-dir' => __DIR__ . '/FunctionalTests',
                 '--logs-dir' => __DIR__ . '/FunctionalTests/logs',
+                '--server-url' => getenv('SELENIUM_SERVER_URL'),
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
         );

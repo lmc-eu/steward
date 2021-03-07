@@ -81,6 +81,7 @@ jobs:
         working-directory: ./src-tests/
         env:
           COLUMNS: 120
+          SELENIUM_SERVER_URL: http://127.0.0.1:4444/wd/hub
         run: |
           ../vendor/bin/phpunit --group integration --coverage-clover ./logs/clover.xml
 
@@ -90,7 +91,6 @@ jobs:
           COVERALLS_PARALLEL: true
           COVERALLS_FLAG_NAME: ${{ github.job }}
           NO_COLOR: 'true'
-
         run: |
           composer global require php-coveralls/php-coveralls
           ~/.composer/vendor/bin/php-coveralls --coverage_clover=./src-tests/logs/clover.xml --coverage_clover=./src-tests/FunctionalTests/logs/clover.xml --json_path=./src-tests/logs/coveralls-upload.json -v

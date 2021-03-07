@@ -27,6 +27,13 @@ class RunCommandIntegrationTest extends TestCase
 
     protected function setUp(): void
     {
+        $serverUrl = getenv('SELENIUM_SERVER_URL');
+        if ($serverUrl === '' || $serverUrl === false) {
+            $this->markTestSkipped(
+                'To execute integration tests SELENIUM_SERVER_URL environment variable must be provided'
+            );
+        }
+
         $dispatcher = new EventDispatcher();
         $application = new Application();
         $application->add(new RunCommand($dispatcher));
@@ -47,6 +54,7 @@ class RunCommandIntegrationTest extends TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'chrome',
+                '--server-url' => getenv('SELENIUM_SERVER_URL'),
                 '--tests-dir' => __DIR__ . '/Fixtures/SimpleTests',
             ],
             ['verbosity' => $outputVerbosity]
@@ -100,6 +108,7 @@ class RunCommandIntegrationTest extends TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'chrome',
+                '--server-url' => getenv('SELENIUM_SERVER_URL'),
                 '--tests-dir' => __DIR__ . '/Fixtures/ParallelTests',
                 '--parallel-limit' => 1,
             ],
@@ -120,6 +129,7 @@ class RunCommandIntegrationTest extends TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'internet explorer', // intentionally use unavailable browser to make sure it is not used
+                '--server-url' => getenv('SELENIUM_SERVER_URL'),
                 '--tests-dir' => __DIR__ . '/Fixtures/NoBrowserTests',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
@@ -141,6 +151,7 @@ class RunCommandIntegrationTest extends TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'chrome',
+                '--server-url' => getenv('SELENIUM_SERVER_URL'),
                 '--tests-dir' => __DIR__ . '/Fixtures/FailingTests',
             ],
             ['verbosity' => $outputVerbosity]
@@ -172,6 +183,7 @@ class RunCommandIntegrationTest extends TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'chrome',
+                '--server-url' => getenv('SELENIUM_SERVER_URL'),
                 '--no-exit' => true,
                 '--tests-dir' => __DIR__ . '/Fixtures/FailingTests',
             ],
@@ -188,6 +200,7 @@ class RunCommandIntegrationTest extends TestCase
                 'command' => $this->command->getName(),
                 'environment' => 'staging',
                 'browser' => 'chrome',
+                '--server-url' => getenv('SELENIUM_SERVER_URL'),
                 '--tests-dir' => __DIR__ . '/Fixtures/SkippedTests',
             ],
             ['verbosity' => OutputInterface::VERBOSITY_DEBUG]
