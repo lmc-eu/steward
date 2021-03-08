@@ -78,7 +78,7 @@ class CapabilitiesResolverTest extends TestCase
             ]
         );
 
-        $ciMock = $this->createConfiguredMock(Jenkins::class, ['getBuildNumber' => 1337, 'getCiName' => 'Jenkins']);
+        $ciMock = $this->createConfiguredMock(Jenkins::class, ['getBuildNumber' => '1337', 'getCiName' => 'Jenkins']);
         $ciDetectorMock = $this->createConfiguredMock(
             CiDetector::class,
             ['isCiDetected' => true, 'detect' => $ciMock]

@@ -208,7 +208,7 @@ class SeleniumServerAdapterTest extends TestCase
             ->willReturn('THIS IS NOT JSON');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/^Unable to connect to remote server: error parsing server JSON response \(.+\)$/'
         );
 

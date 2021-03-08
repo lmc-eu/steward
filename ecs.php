@@ -46,5 +46,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         );
 
     $services->set(PhpUnitExpectationFixer::class)
-        ->call('configure', [['target' => '5.6']]);
+        ->call('configure', [['target' => '8.4']]);
 };

@@ -103,7 +103,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
             ->willReturn('omg wtf');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Error publishing results of test testBar to API "https:\/\/.*": omg wtf/'
         );
 
