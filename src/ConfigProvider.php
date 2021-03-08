@@ -4,13 +4,11 @@ namespace Lmc\Steward;
 
 use Doctrine\Inflector\InflectorFactory;
 use Doctrine\Inflector\Language;
-use FlorianWolters\Component\Util\Singleton\SingletonTrait;
 
 /**
  * Provide access to global configuration (from within the tests).
  * The configuration is immutable - ie. cannot be altered after it is used for the first time.
  *
- * @method static ConfigProvider getInstance()
  * @property-read string $browserName
  * @property-read string $env
  * @property-read string $serverUrl
@@ -21,12 +19,34 @@ use FlorianWolters\Component\Util\Singleton\SingletonTrait;
  */
 class ConfigProvider
 {
-    use SingletonTrait;
+    /** @var ConfigProvider */
+    private static $instance;
 
     /** @var array Configuration options and theirs values */
     private $config;
     /** @var array Array of custom configuration options that should be added to the default ones */
     private $customConfigurationOptions = [];
+
+    final protected function __construct()
+    {
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new static();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Prevent unserializing the singleton
+     */
+    public function __wakeup(): void
+    {
+        throw new \RuntimeException('ConfigProvider is a singleton and cannot be unserialized.');
+    }
 
     public function __get(string $name)
     {
@@ -132,5 +152,12 @@ class ConfigProvider
         }
 
         return $outputValues;
+    }
+
+    /**
+     * Prevent cloning of the singleton
+     */
+    private function __clone()
+    {
     }
 }

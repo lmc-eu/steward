@@ -10,9 +10,12 @@ class ConfigProviderHelper extends ConfigProvider
 {
     protected $config = [];
 
-    public function __construct(array $config)
+    public static function createWithConfig(array $config): self
     {
-        $this->config = $config;
+        $configHelper = new static();
+        $configHelper->config = $config;
+
+        return $configHelper;
     }
 
     public function __get(string $name)
