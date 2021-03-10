@@ -30,7 +30,6 @@
         "beberlei/assert": "^3.0",
         "clue/graph": "^0.9.2",
         "doctrine/inflector": "^2.0.3",
-        "florianwolters/component-util-singleton": "^0.3.2",
         "graphp/algorithms": "^0.8.2",
         "hanneskod/classtools": "^1.2",
         "ondram/ci-detector": "^4.0",

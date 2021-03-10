@@ -138,4 +138,19 @@ class ConfigProviderTest extends TestCase
         // This should fail, as the Config instance was already created
         $config->setCustomConfigurationOptions(['CUSTOM_OPTION']);
     }
+
+    public function testShouldAlwaysGetTheSameSingletonInstance(): void
+    {
+        $firstInstance = ConfigProvider::getInstance();
+        $secondInstance = ConfigProvider::getInstance();
+
+        $this->assertSame($firstInstance, $secondInstance);
+    }
+
+    public function testShouldNotAllowUnserializing(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('ConfigProvider is a singleton and cannot be unserialized.');
+        unserialize(serialize(ConfigProvider::getInstance()));
+    }
 }

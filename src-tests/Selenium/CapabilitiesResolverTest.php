@@ -27,7 +27,7 @@ class CapabilitiesResolverTest extends TestCase
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');
 
-        $configMock = new ConfigProviderHelper(['browserName' => $browser]);
+        $configMock = ConfigProviderHelper::createWithConfig(['browserName' => $browser]);
 
         $resolver = new CapabilitiesResolver($configMock);
         $resolver->setCiDetector($this->createConfiguredMock(CiDetector::class, ['isCiDetected' => false]));
@@ -71,7 +71,7 @@ class CapabilitiesResolverTest extends TestCase
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');
 
-        $configMock = new ConfigProviderHelper(
+        $configMock = ConfigProviderHelper::createWithConfig(
             [
                 'browserName' => WebDriverBrowserType::FIREFOX,
                 'env' => 'staging',
@@ -113,7 +113,7 @@ class CapabilitiesResolverTest extends TestCase
         /** @var AbstractTestCase $test */
         $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name'], 'FooBarTest');
 
-        $configMock = new ConfigProviderHelper(
+        $configMock = ConfigProviderHelper::createWithConfig(
             [
                 'browserName' => 'firefox',
                 'capabilitiesResolver' => CapabilitiesResolverFixture::class,
