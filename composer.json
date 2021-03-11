@@ -106,7 +106,7 @@
             "@composer normalize --dry-run"
         ],
         "test": [
-            "export COLUMNS=120 && cd src-tests && ../vendor/bin/phpunit --colors=always"
+            "export COLUMNS=120 && ./vendor/bin/phpunit --configuration ./src-tests/phpunit.xml --colors=always"
         ]
     }
 }

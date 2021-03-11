@@ -34,11 +34,10 @@ jobs:
         run: composer update --no-interaction ${{ matrix.dependencies }}
 
       - name: Run tests
-        working-directory: ./src-tests/
         env:
           COLUMNS: 120
         run: |
-          ../vendor/bin/phpunit --exclude-group integration --coverage-clover ./logs/clover.xml
+          ./vendor/bin/phpunit --configuration ./src-tests/phpunit.xml --exclude-group integration --coverage-clover ./src-tests/logs/clover.xml
 
       - name: Submit coverage to Coveralls
         env:
@@ -78,12 +77,11 @@ jobs:
           while ! nc -z localhost 4444 </dev/null; do echo Waiting for Selenium server to start...; sleep 1; done
 
       - name: Run tests
-        working-directory: ./src-tests/
         env:
           COLUMNS: 120
           SELENIUM_SERVER_URL: http://127.0.0.1:4444/wd/hub
         run: |
-          ../vendor/bin/phpunit --group integration --coverage-clover ./logs/clover.xml
+          ./vendor/bin/phpunit --configuration ./src-tests/phpunit.xml --group integration --coverage-clover ./src-tests/logs/clover.xml
 
       - name: Submit coverage to Coveralls
         env:
