@@ -6,6 +6,7 @@
 ### Added
 - `--parallel-limit` (`-l`) option of `run` command to allow limiting maximum number of tests being run simultaneously.
 - Show test duration in timeline tooltips.
+- PHP 8 support.
 
 ### Changed
 - Require PHP 7.3+ and Symfony 5 components.

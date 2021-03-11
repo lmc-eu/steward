@@ -54,8 +54,9 @@ class Downloader
         $releases = $xml->xpath('//*[text()[contains(.,"selenium-server-standalone")]]');
         $availableVersions = [];
         foreach ($releases as $release) {
+            $release = (string) $release;
             $parsedVersion = preg_replace('/.*standalone-(.+)\.jar/', '$1', $release);
-            if ((string) $release === $parsedVersion) { // regexp did not match
+            if ($release === $parsedVersion) { // regexp did not match
                 continue;
             }
 

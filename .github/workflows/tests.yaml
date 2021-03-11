@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ['7.3', '7.4']
+        php-version: ['7.3', '7.4', '8.0']
         dependencies: ['']
         include:
           - { php-version: '7.3', dependencies: '--prefer-lowest --prefer-stable' }
@@ -40,6 +40,7 @@ jobs:
           ./vendor/bin/phpunit --configuration ./src-tests/phpunit.xml --exclude-group integration --coverage-clover ./src-tests/logs/clover.xml
 
       - name: Submit coverage to Coveralls
+        if: ${{ matrix.php-version < 8.0 }} # Code coverage on PHP 8 is not supported with PHPUnit 8
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
