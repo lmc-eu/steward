@@ -2,6 +2,8 @@
 
 namespace Lmc\Steward\Selenium;
 
+use Lmc\Steward\Utils\FileGetContentsWrapper;
+
 /**
  * Resolve released Selenium server versions
  */
@@ -19,12 +21,28 @@ class VersionResolver
         '4.0-alpha5/selenium-server-4.0.0-alpha-5.jar',
     ];
 
+    /** @var FileGetContentsWrapper */
+    private $fileGetContentsWrapper;
+
+    public function __construct()
+    {
+        $this->fileGetContentsWrapper = new FileGetContentsWrapper();
+    }
+
+    /**
+     * @internal
+     */
+    public function setFileGetContentsWrapper(FileGetContentsWrapper $fileGetContentsWrapper): void
+    {
+        $this->fileGetContentsWrapper = $fileGetContentsWrapper;
+    }
+
     /**
      * @return Version[]
      */
     public function getAvailableVersions(): array
     {
-        $data = @file_get_contents(Downloader::SELENIUM_STORAGE_URL);
+        $data = $this->fileGetContentsWrapper->fileGetContents(Downloader::SELENIUM_STORAGE_URL);
         if (!$data) {
             return [];
         }

@@ -2,27 +2,33 @@
 
 namespace Lmc\Steward\Selenium;
 
-use phpmock\phpunit\PHPMock;
+use Lmc\Steward\Utils\FileGetContentsWrapper;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Lmc\Steward\Selenium\VersionResolver
+ * @covers \Lmc\Steward\Utils\FileGetContentsWrapper
  */
 class VersionResolverTest extends TestCase
 {
-    use PHPMock;
+    /** @var VersionResolver */
+    protected $resolver;
+
+    protected function setUp(): void
+    {
+        $this->resolver = new VersionResolver();
+    }
 
     public function testShouldGetAvailableVersions(): void
     {
         $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response.xml');
+        $fileGetContentsMock = $this->createConfiguredMock(
+            FileGetContentsWrapper::class,
+            ['fileGetContents' => $releasesDummyResponse]
+        );
 
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->with('https://selenium-release.storage.googleapis.com')
-            ->willReturn($releasesDummyResponse);
-
-        $resolver = new VersionResolver();
-        $availableVersions = $resolver->getAvailableVersions();
+        $this->resolver->setFileGetContentsWrapper($fileGetContentsMock);
+        $availableVersions = $this->resolver->getAvailableVersions();
 
         $this->assertContainsOnlyInstancesOf(Version::class, $availableVersions);
 
@@ -59,59 +65,67 @@ class VersionResolverTest extends TestCase
 
     public function testShouldGetLatestVersion(): void
     {
-        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response.xml');
+        $fileGetContentsMock = $this->createConfiguredMock(
+            FileGetContentsWrapper::class,
+            ['fileGetContents' => file_get_contents(__DIR__ . '/Fixtures/releases-response.xml')]
+        );
 
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->with('https://selenium-release.storage.googleapis.com')
-            ->willReturn($releasesDummyResponse);
+        $this->resolver->setFileGetContentsWrapper($fileGetContentsMock);
 
-        $this->assertEquals('4.0.0', (new VersionResolver())->getLatestVersion()->toString());
+        $this->assertEquals('4.0.0', $this->resolver->getLatestVersion()->toString());
     }
 
     public function testShouldReturnEmptyArrayOfAvailableVersionsIfRequestToGetVersionFailed(): void
     {
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->willReturn(false);
+        $fileGetContentsMock = $this->createConfiguredMock(
+            FileGetContentsWrapper::class,
+            ['fileGetContents' => false]
+        );
 
-        $this->assertSame([], (new VersionResolver())->getAvailableVersions());
-        $this->assertNull((new VersionResolver())->getLatestVersion());
+        $this->resolver->setFileGetContentsWrapper($fileGetContentsMock);
+
+        $this->assertSame([], $this->resolver->getAvailableVersions());
+        $this->assertNull($this->resolver->getLatestVersion());
     }
 
     public function testShouldReturnEmptyArrayOfAvailableVersionsIfRequestToGetLatestVersionReturnsInvalidXml(): void
     {
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->willReturn('is not XML');
+        $fileGetContentsMock = $this->createConfiguredMock(
+            FileGetContentsWrapper::class,
+            ['fileGetContents' => 'this is not XM']
+        );
 
-        $this->assertSame([], (new VersionResolver())->getAvailableVersions());
-        $this->assertNull((new VersionResolver())->getLatestVersion());
+        $this->resolver->setFileGetContentsWrapper($fileGetContentsMock);
+
+        $this->assertSame([], $this->resolver->getAvailableVersions());
+        $this->assertNull($this->resolver->getLatestVersion());
     }
 
     public function testShouldReturnEmptyArrayOfAvailableVersionsIfLatestVersionCannotBeFound(): void
     {
-        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-missing.xml');
+        $fileGetContentsMock = $this->createConfiguredMock(
+            FileGetContentsWrapper::class,
+            ['fileGetContents' => file_get_contents(__DIR__ . '/Fixtures/releases-response-missing.xml')]
+        );
 
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->willReturn($releasesDummyResponse);
+        $this->resolver->setFileGetContentsWrapper($fileGetContentsMock);
 
-        $this->assertSame([], (new VersionResolver())->getAvailableVersions());
-        $this->assertNull((new VersionResolver())->getLatestVersion());
+        $this->assertSame([], $this->resolver->getAvailableVersions());
+        $this->assertNull($this->resolver->getLatestVersion());
     }
 
     public function testShouldNotIncludeInvalidVersionsInAvailableVersions(): void
     {
-        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-invalid-version.xml');
+        $fileGetContentsMock = $this->createConfiguredMock(
+            FileGetContentsWrapper::class,
+            ['fileGetContents' => file_get_contents(__DIR__ . '/Fixtures/releases-response-invalid-version.xml')]
+        );
 
-        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->willReturn($releasesDummyResponse);
+        $this->resolver->setFileGetContentsWrapper($fileGetContentsMock);
 
         $this->assertEquals(
             [Version::createFromString('3.1.0'), Version::createFromString('3.10.0')],
-            (new VersionResolver())->getAvailableVersions()
+            $this->resolver->getAvailableVersions()
         );
     }
 
