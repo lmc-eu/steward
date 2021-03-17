@@ -8,7 +8,8 @@ use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Selenium\Downloader;
-use phpmock\phpunit\PHPMock;
+use Lmc\Steward\Selenium\Version;
+use Lmc\Steward\Selenium\VersionResolver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,8 +21,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class InstallCommandTest extends TestCase
 {
-    use PHPMock;
-
     /** @var InstallCommand */
     protected $command;
     /** @var CommandTester */
@@ -47,16 +46,11 @@ class InstallCommandTest extends TestCase
             [
                 'command' => $this->command->getName(),
                 'version' => '6.3.6',
-            ],
-            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
+            ]
         );
 
         $output = $this->tester->getDisplay();
-        $this->assertStringContainsString('Downloading Selenium standalone server version 6.3.6...', $output);
-        $this->assertStringContainsString(
-            'Download URL: https://selenium-release.storage.googleapis.com/6.3/selenium-server-standalone-6.3.6.jar',
-            $output
-        );
+        $this->assertStringContainsString('Downloading Selenium standalone server version 6.3.6', $output);
         $this->assertStringContainsString('Downloaded 2 MB, file saved successfully.', $this->tester->getDisplay());
 
         $this->assertSame(0, $this->tester->getStatusCode());
@@ -68,13 +62,12 @@ class InstallCommandTest extends TestCase
     public function testShouldDownloadLatestVersionIfUserDoesNotEnterItsOwn(): void
     {
         $this->command->setDownloader($this->getDownloadMock());
-        $this->mockLatestVersionCheck();
+        $this->command->setVersionResolver($this->createVersionResolverMock('2.34.5'));
 
         $this->tester->setInputs([PHP_EOL]);
 
         $this->tester->execute(
-            ['command' => $this->command->getName()],
-            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
+            ['command' => $this->command->getName()]
         );
 
         $output = $this->tester->getDisplay();
@@ -82,11 +75,7 @@ class InstallCommandTest extends TestCase
         $this->assertStringContainsString('Enter Selenium server version to install [2.34.5]:', $output);
 
         // Check latest version was downloaded
-        $this->assertStringContainsString('Downloading Selenium standalone server version 2.34.5...', $output);
-        $this->assertStringContainsString(
-            'Download URL: https://selenium-release.storage.googleapis.com/2.34/selenium-server-standalone-2.34.5.jar',
-            $output
-        );
+        $this->assertStringContainsString('Downloading Selenium standalone server version 2.34.5', $output);
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
@@ -96,22 +85,17 @@ class InstallCommandTest extends TestCase
     public function testShouldDownloadVersionEnteredByUser(): void
     {
         $this->command->setDownloader($this->getDownloadMock());
-        $this->mockLatestVersionCheck();
+        $this->command->setVersionResolver($this->createVersionResolverMock('2.34.5'));
 
         $this->tester->setInputs(['1.33.7' . PHP_EOL]);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
-            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
 
         // Check custom version was downloaded
         $output = $this->tester->getDisplay();
-        $this->assertStringContainsString('Downloading Selenium standalone server version 1.33.7...', $output);
-        $this->assertStringContainsString(
-            'Download URL: https://selenium-release.storage.googleapis.com/1.33/selenium-server-standalone-1.33.7.jar',
-            $output
-        );
+        $this->assertStringContainsString('Downloading Selenium standalone server version 1.33.7', $output);
         $this->assertSame(0, $this->tester->getStatusCode());
     }
 
@@ -121,15 +105,12 @@ class InstallCommandTest extends TestCase
     public function testShouldRequireVersionToBeEnteredIfLastVersionCheckFails(): void
     {
         $this->command->setDownloader($this->getDownloadMock());
-        $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->willReturn(false);
+        $this->command->setVersionResolver($this->createVersionResolverMock(null));
 
         $this->tester->setInputs([PHP_EOL, '6.6.6']);
 
         $this->tester->execute(
             ['command' => $this->command->getName()],
-            ['verbosity' => OutputInterface::VERBOSITY_VERBOSE] // to get the file URL output
         );
 
         $output = $this->tester->getDisplay();
@@ -138,19 +119,12 @@ class InstallCommandTest extends TestCase
             'Please provide version to download (latest version auto-detect failed)',
             $output
         );
-        $this->assertStringContainsString('Downloading Selenium standalone server version 6.6.6...', $output);
+        $this->assertStringContainsString('Downloading Selenium standalone server version 6.6.6', $output);
     }
 
     public function testShouldThrowAnExceptionInNonInteractiveModeIfLastVersionCheckFailsAndNoVersionWasProvided(): void
     {
-        $downloaderMock = $this->getMockBuilder(Downloader::class)
-            ->setConstructorArgs([__DIR__ . '/Fixtures/vendor/bin'])
-            ->getMock();
-
-        $this->command->setDownloader($downloaderMock);
-        $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->willReturn(false);
+        $this->command->setVersionResolver($this->createVersionResolverMock(null));
 
         $this->expectException(CommandException::class);
         $this->expectExceptionMessage('Auto-detection of latest Selenium version failed - version must be provided');
@@ -166,8 +140,15 @@ class InstallCommandTest extends TestCase
         // Path to an existing file
         $filePath = __DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-6.33.6.jar';
 
-        $this->command->setDownloader($this->getDownloadMock());
-        $this->mockLatestVersionCheck(); // will provide 2.34.5 as an version
+        $downloader = $this->createConfiguredMock(
+            Downloader::class,
+            [
+                'download' => 333,
+                'isAlreadyDownloaded' => false,
+                'getFilePath' => $filePath,
+            ]
+        );
+        $this->command->setDownloader($downloader);
 
         $this->tester->execute(
             ['command' => $this->command->getName(), 'version' => '6.33.6'], // specify 6.33.6 as custom option
@@ -186,7 +167,7 @@ class InstallCommandTest extends TestCase
         $filePath = __DIR__ . '/Fixtures/vendor/bin/selenium-server-standalone-2.34.5.jar';
 
         $this->command->setDownloader($this->getDownloadMock());
-        $this->mockLatestVersionCheck(); // will provide 2.34.5 as an version
+        $this->command->setVersionResolver($this->createVersionResolverMock('2.34.5'));
 
         $this->tester->execute(
             ['command' => $this->command->getName()], // do not specify custom version
@@ -203,7 +184,9 @@ class InstallCommandTest extends TestCase
      */
     public function testShouldNotDownloadTheFileAgainIfAlreadyExists(): void
     {
-        $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
+        $this->command->setDownloader(
+            new Downloader(__DIR__ . '/Fixtures/vendor/bin', Version::createFromString('2.34.5'))
+        );
 
         $this->tester->setInputs([PHP_EOL]);
 
@@ -221,7 +204,9 @@ class InstallCommandTest extends TestCase
      */
     public function testShouldNotDownloadTheFileAgainIfAlreadyExistsOutputOnlyFilePathInNonInteractiveMode(): void
     {
-        $this->command->setDownloader(new Downloader(__DIR__ . '/Fixtures/vendor/bin'));
+        $this->command->setDownloader(
+            new Downloader(__DIR__ . '/Fixtures/vendor/bin', Version::createFromString('2.34.5'))
+        );
 
         $this->tester->setInputs([PHP_EOL]);
 
@@ -264,12 +249,12 @@ class InstallCommandTest extends TestCase
      * Get Downloader mock mocking isAlreadyDownloaded and download method to act like file is being downloaded
      *
      * @param int|bool $expectedFileSize
-     * @return Downloader|MockObject
+     * @return Downloader&MockObject
      */
     protected function getDownloadMock($expectedFileSize = 123): MockObject
     {
         $downloaderMock = $this->getMockBuilder(Downloader::class)
-            ->setConstructorArgs([__DIR__ . '/Fixtures/vendor/bin'])
+            ->setConstructorArgs([__DIR__ . '/Fixtures/vendor/bin', Version::createFromString('2.34.5')])
             ->setMethods(['isAlreadyDownloaded', 'download'])
             ->getMock();
 
@@ -286,13 +271,17 @@ class InstallCommandTest extends TestCase
     }
 
     /**
-     * Make latest version check to return version 2.34.5
+     * @return VersionResolver&MockObject
      */
-    protected function mockLatestVersionCheck(): void
+    private function createVersionResolverMock(?string $latestVersion): MockObject
     {
-        $releasesDummyResponse = file_get_contents(__DIR__ . '/Fixtures/releases-response-minimal.xml');
-        $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');
-        $fileGetContentsMock->expects($this->any())
-            ->willReturn($releasesDummyResponse);
+        $mock = $this->createConfiguredMock(
+            VersionResolver::class,
+            [
+                'getLatestVersion' => $latestVersion === null ? null : Version::createFromString($latestVersion),
+            ]
+        );
+
+        return $mock;
     }
 }
