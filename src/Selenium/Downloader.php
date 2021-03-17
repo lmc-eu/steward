@@ -9,8 +9,8 @@ use Assert\Assert;
  */
 class Downloader
 {
-    /** @var string Selenium storage URL */
-    public static $storageUrl = 'https://selenium-release.storage.googleapis.com';
+    /** @var string */
+    public const SELENIUM_STORAGE_URL = 'https://selenium-release.storage.googleapis.com';
     /** @var string Target directory where should be the file saved */
     private $targetDir;
     /** @var string Version to download */
@@ -40,7 +40,7 @@ class Downloader
 
     public static function getAvailableVersions(): array
     {
-        $data = @file_get_contents(self::$storageUrl);
+        $data = @file_get_contents(self::SELENIUM_STORAGE_URL);
         if (!$data) {
             return [];
         }
@@ -143,7 +143,7 @@ class Downloader
             $devVersionToAppend = '-' . $devVersion;
         }
 
-        $fileUrl = self::$storageUrl . '/' . $versionParts[0] . '.' . $versionParts[1]
+        $fileUrl = self::SELENIUM_STORAGE_URL . '/' . $versionParts[0] . '.' . $versionParts[1]
             . $devVersionToAppend
             . '/' . $this->getFileName();
 

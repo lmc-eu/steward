@@ -14,7 +14,15 @@
         <Size>21190292</Size>
     </Contents>
     <Contents>
-        <Key>3.8/selenium-server-standalone-invalid</Key>
+        <Key>3.8/selenium-server-standalone-invalid.jar</Key>
+        <Generation>1512155826778637</Generation>
+        <MetaGeneration>1</MetaGeneration>
+        <LastModified>2017-12-01T19:17:06.743Z</LastModified>
+        <ETag>"c2d12c231f9de454bdfc758a784ec080"</ETag>
+        <Size>22844868</Size>
+    </Contents>
+    <Contents>
+        <Key>4.0/selenium-server-.jar</Key>
         <Generation>1512155826778637</Generation>
         <MetaGeneration>1</MetaGeneration>
         <LastModified>2017-12-01T19:17:06.743Z</LastModified>
