@@ -51,9 +51,12 @@ jobs:
 
   integration-tests:
     runs-on: ubuntu-latest
-    name: Integration tests
-    env:
-      SELENIUM_VERSION: 3.141.59
+
+    strategy:
+      matrix:
+        selenium-version: ['3.141.59', '4.0.0-beta-2']
+
+    name: Integration tests (Selenium ${{ matrix.selenium-version }})
 
     steps:
       - uses: actions/checkout@v2
@@ -70,11 +73,13 @@ jobs:
         run: composer update --no-interaction
 
       - name: Start Selenium server and Xvfb
+        env:
+          SELENIUM_EXTRA_PARAMS: "${{ matrix.selenium-version != '3.141.59' && 'standalone' || '' }}"
         run: |
           google-chrome --version
           chromedriver --version
-          SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi $SELENIUM_VERSION)
-          xvfb-run --server-args="-screen 0, 1280x720x24" --auto-servernum java -jar $SELENIUM_JAR -log selenium-server.log &
+          SELENIUM_JAR=$(bin/steward install --no-interaction --no-ansi ${{ matrix.selenium-version }})
+          xvfb-run --server-args="-screen 0, 1280x720x24" --auto-servernum java -jar $SELENIUM_JAR $SELENIUM_EXTRA_PARAMS >selenium-server.log &
           while ! nc -z localhost 4444 </dev/null; do echo Waiting for Selenium server to start...; sleep 1; done
 
       - name: Run tests
@@ -88,7 +93,7 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_PARALLEL: true
-          COVERALLS_FLAG_NAME: ${{ github.job }}
+          COVERALLS_FLAG_NAME: ${{ github.job }}-selenium-${{ matrix.selenium-version }}
           NO_COLOR: 'true'
         run: |
           composer global require php-coveralls/php-coveralls
