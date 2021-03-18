@@ -6,6 +6,8 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Exception\CommandException;
 use Lmc\Steward\Selenium\Downloader;
+use Lmc\Steward\Selenium\Version;
+use Lmc\Steward\Selenium\VersionResolver;
 use OndraM\CiDetector\CiDetector;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,6 +20,8 @@ class InstallCommand extends Command
 {
     /** @var Downloader */
     protected $downloader;
+    /** @var VersionResolver */
+    protected $versionResolver;
 
     /**
      * Target directory to store the selenium server (relatively to STEWARD_BASE_DIR)
@@ -35,16 +39,24 @@ class InstallCommand extends Command
     }
 
     /**
+     * @internal
+     */
+    public function setVersionResolver(VersionResolver $versionResolver): void
+    {
+        $this->versionResolver = $versionResolver;
+    }
+
+    /**
      * Configure command
      */
     protected function configure(): void
     {
         $this->setName('install')
-            ->setDescription('Download latest Selenium standalone server jar file')
+            ->setDescription('Download Selenium standalone server jar file')
             ->addArgument(
                 'version',
                 InputArgument::OPTIONAL,
-                'Specific Selenium version to install'
+                'Specific Selenium version to install. If none provided, use the latest version.'
             );
 
         $this->getDispatcher()->dispatch(new BasicConsoleEvent($this), CommandEvents::CONFIGURE);
@@ -61,24 +73,13 @@ class InstallCommand extends Command
             $verboseOutput = true;
         }
 
-        $version = $input->getArgument('version'); // exact version could be specified as argument
-
-        if (!$version) {
-            $version = $this->askForVersion($input->isInteractive());
+        $versionInput = $input->getArgument('version'); // exact version could be specified as argument
+        if (!$versionInput) {
+            $versionInput = $this->askForVersion($input->isInteractive());
         }
 
-        if ($verboseOutput) {
-            $this->io->note(
-                sprintf(
-                    'Downloading Selenium standalone server version %s...%s',
-                    $version,
-                    (!(new CiDetector())->isCiDetected() ? ' Just for you <3!' : '')
-                )
-            );
-        }
-
-        $downloader = $this->getDownloader();
-        $downloader->setVersion($version);
+        $version = Version::createFromString($versionInput);
+        $downloader = $this->getDownloaderForVersion($version);
         $targetPath = realpath($downloader->getFilePath());
 
         if ($this->io->isVerbose()) {
@@ -91,7 +92,7 @@ class InstallCommand extends Command
                     sprintf('File "%s" already exists - won\'t be downloaded again.', basename($targetPath))
                 );
 
-                $this->io->note('Path to file: ' . $targetPath);
+                $this->io->success('Path to file: ' . $targetPath);
                 $this->printLinkToWiki();
             } else {
                 $this->io->writeln($targetPath); // In non-verbose mode only output path to the file
@@ -101,7 +102,15 @@ class InstallCommand extends Command
         }
 
         if ($verboseOutput) {
-            $this->io->note('Downloading may take a while - its ~20 MB...');
+            $this->io->note(
+                sprintf(
+                    'Downloading Selenium standalone server version %s%s',
+                    $version->toString(),
+                    (!(new CiDetector())->isCiDetected() ? ' - just for you! ♥️' : '')
+                )
+            );
+
+            $this->io->note('Downloading may take a while... (File size over 20 MB.)');
         }
 
         $downloadedSize = $downloader->download();
@@ -111,7 +120,7 @@ class InstallCommand extends Command
             $this->io->success(
                 sprintf('Downloaded %d MB, file saved successfully.', round($downloadedSize / 1024 / 1024, 1))
             );
-            $this->io->note('Path to file: ' . $downloadedFilePath);
+            $this->io->success('Path to file: ' . $downloadedFilePath);
             $this->printLinkToWiki();
         } else {
             $this->io->writeln($downloadedFilePath); // In non-verbose mode only output path to the file
@@ -123,23 +132,34 @@ class InstallCommand extends Command
     /**
      * @codeCoverageIgnore
      */
-    protected function getDownloader(): Downloader
+    protected function getDownloaderForVersion(Version $version): Downloader
     {
         if ($this->downloader === null) {
-            $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir);
+            $this->downloader = new Downloader(STEWARD_BASE_DIR . $this->targetDir, $version);
         }
 
         return $this->downloader;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
+    protected function getVersionResolver(): VersionResolver
+    {
+        if ($this->versionResolver === null) {
+            $this->versionResolver = new VersionResolver();
+        }
+
+        return $this->versionResolver;
+    }
+
     private function askForVersion(bool $isInteractiveInput): string
     {
-        $latestVersion = Downloader::getLatestVersion();
-
         $questionText = 'Enter Selenium server version to install';
+        $latestVersion = $this->getVersionResolver()->getLatestVersion();
 
         if ($latestVersion !== null) {
-            return $this->io->ask($questionText, $latestVersion);
+            return $this->io->ask($questionText, $latestVersion->toString());
         }
 
         // When latest version cannot be detected, the version must always be provided
@@ -147,7 +167,7 @@ class InstallCommand extends Command
             throw new CommandException('Auto-detection of latest Selenium version failed - version must be provided');
         }
 
-        // in interactive mode version must specified
+        // In interactive mode version must specified
         return $this->io->ask($questionText, null, function ($answer) {
             if (empty($answer)) {
                 throw new CommandException('Please provide version to download (latest version auto-detect failed)');
