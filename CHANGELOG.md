@@ -42,6 +42,18 @@
 - Workarounds for legacy Firefox (version 47 and older) which are no longer needed.
 - PhantomJS support.
 
+## 2.3.5 - 2020-01-20
+### Changed
+- Replace facebook/webdriver with its successor php-webdriver/webdriver.
+
+## 2.3.4 - 2018-07-27
+### Fixed
+- Backport visibility fix of `setUp()` and `tearDown()` methods of AbstractTestCase (to eg. allow use of [lmc/coding-standard](https://github.com/lmc-eu/php-coding-standard/) in projects using Steward).
+
+## 2.3.3 - 2018-03-12
+### Fixed
+- Selenium server releases were incorrectly parsed, meaning `steward install` command will detect version 3.9.1 as the latest one (even though there are already released newer versions of Selenium server).
+
 ## 2.3.2 - 2017-12-02
 ### Changed
 - Increase minimal required version of PHPUnit and nette/reflections to maintain PHP 7.2 compatibility even with lowest possible versions of dependencies.
