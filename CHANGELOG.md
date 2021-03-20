@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+
+## 3.0.0-beta - 2021-03-20
 ### Added
 - `--parallel-limit` (`-l`) option of `run` command to allow limiting maximum number of tests being run simultaneously.
 - Show test duration in timeline tooltips.
