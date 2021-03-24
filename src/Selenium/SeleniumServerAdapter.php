@@ -97,10 +97,10 @@ class SeleniumServerAdapter
             return false;
         }
 
-        $decodedData = json_decode($responseData);
-
-        if (!$decodedData) {
-            $this->lastError = 'error parsing server JSON response (' . json_last_error_msg() . ')';
+        try {
+            $decodedData = json_decode($responseData, false, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            $this->lastError = 'error parsing server JSON response (' . $e->getMessage() . ')';
 
             return false;
         }
@@ -146,8 +146,13 @@ class SeleniumServerAdapter
             return '';
         }
 
-        $responseJson = json_decode($responseData);
-        if (!$responseJson || empty($responseJson->proxyId)) {
+        try {
+            $responseJson = json_decode($responseData, false, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            return '';
+        }
+
+        if (empty($responseJson->proxyId)) {
             return '';
         }
 
@@ -192,13 +197,11 @@ class SeleniumServerAdapter
 
     protected function removeHubEndpointPathIfPresent(string $path): string
     {
-        $path = preg_replace(
+        return preg_replace(
             '/^(.*)(' . preg_quote(self::HUB_ENDPOINT, '/') . '\/?)$/',
             '$1',
             $path
         );
-
-        return $path;
     }
 
     /**

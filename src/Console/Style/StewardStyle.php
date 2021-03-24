@@ -30,7 +30,7 @@ class StewardStyle extends OutputStyle
      */
     public function runStatus(string $message): void
     {
-        $this->writeln($this->getTimestampPrefix() . ' ' . $message);
+        $this->writeln(static::getTimestampPrefix() . ' ' . $message);
     }
 
     /**

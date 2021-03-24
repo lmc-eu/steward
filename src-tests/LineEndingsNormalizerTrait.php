@@ -9,8 +9,6 @@ trait LineEndingsNormalizerTrait
      */
     private function normalizeLineEndings(string $string)
     {
-        $string = preg_replace('~(*BSR_ANYCRLF)\R~', "\n", $string);
-
-        return $string;
+        return preg_replace('~(*BSR_ANYCRLF)\R~', "\n", $string);
     }
 }

@@ -165,7 +165,7 @@ class ProcessSetCreator
         $env = [
             'BROWSER_NAME' => $this->input->getArgument(RunCommand::ARGUMENT_BROWSER),
             'ENV' => mb_strtolower($this->input->getArgument(RunCommand::ARGUMENT_ENVIRONMENT)),
-            'CAPABILITY' => json_encode($capabilities),
+            'CAPABILITY' => json_encode($capabilities, JSON_THROW_ON_ERROR),
             'CAPABILITIES_RESOLVER' => $this->config[ConfigOptions::CAPABILITIES_RESOLVER],
             'SERVER_URL' => $this->input->getOption(RunCommand::OPTION_SERVER_URL),
             'LOGS_DIR' => $this->config[ConfigOptions::LOGS_DIR],

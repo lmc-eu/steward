@@ -161,7 +161,7 @@ class SeleniumServerAdapterTest extends TestCase
             ->willReturn($response);
 
         $this->assertTrue($this->adapter->isSeleniumServer());
-        $this->assertSame($this->adapter->getCloudService(), $expectedCloudService);
+        $this->assertSame($expectedCloudService, $this->adapter->getCloudService());
         $this->assertEmpty($this->adapter->getLastError());
     }
 
