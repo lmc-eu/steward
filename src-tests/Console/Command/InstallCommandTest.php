@@ -275,13 +275,11 @@ class InstallCommandTest extends TestCase
      */
     private function createVersionResolverMock(?string $latestVersion): MockObject
     {
-        $mock = $this->createConfiguredMock(
+        return $this->createConfiguredMock(
             VersionResolver::class,
             [
                 'getLatestVersion' => $latestVersion === null ? null : Version::createFromString($latestVersion),
             ]
         );
-
-        return $mock;
     }
 }

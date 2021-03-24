@@ -96,8 +96,8 @@ class GenerateTimelineCommand extends Command
             [
                 '{{stewardVersion}}' => $this->getApplication()->getVersion(),
                 '{{dateGenerated}}' => (new \DateTime())->format('Y-m-d H:i:s'),
-                '{{timelineGroups}}' => json_encode($timelineGroups),
-                '{{timelineItems}}' => json_encode($timelineItems),
+                '{{timelineGroups}}' => json_encode($timelineGroups, JSON_THROW_ON_ERROR),
+                '{{timelineItems}}' => json_encode($timelineItems, JSON_THROW_ON_ERROR),
             ]
         );
 

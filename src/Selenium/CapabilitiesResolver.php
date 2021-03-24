@@ -41,7 +41,7 @@ final class CapabilitiesResolver
         );
 
         if (!empty($this->config->capability)) {
-            $extraCapabilities = json_decode($this->config->capability);
+            $extraCapabilities = json_decode($this->config->capability, false, 512, JSON_THROW_ON_ERROR);
             foreach ($extraCapabilities as $extraCapabilityName => $extraCapabilityValue) {
                 $capabilities->setCapability($extraCapabilityName, $extraCapabilityValue);
             }

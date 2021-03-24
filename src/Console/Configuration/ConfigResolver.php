@@ -30,9 +30,7 @@ class ConfigResolver
     {
         $config = $this->optionsResolver->resolve($configFileInputOptions);
 
-        $config = $this->setupAndTestDirs($input, $config);
-
-        return $config;
+        return $this->setupAndTestDirs($input, $config);
     }
 
     /**

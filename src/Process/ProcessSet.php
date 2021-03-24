@@ -175,7 +175,7 @@ class ProcessSet implements \Countable
         ];
 
         // Retrieve names of done processes and count their results
-        foreach ($done as $className => $processObject) {
+        foreach ($done as $processObject) {
             $resultsCount[$processObject->getResult()]++;
         }
 
