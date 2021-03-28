@@ -110,7 +110,7 @@ class InstallCommand extends Command
                 )
             );
 
-            $this->io->note('Downloading may take a while... (File size over 20 MB.)');
+            $this->io->note('Downloading may take a while... (File size is over 20 MB.)');
         }
 
         $downloadedSize = $downloader->download();
@@ -179,7 +179,7 @@ class InstallCommand extends Command
 
     private function printLinkToWiki(): void
     {
-        $this->io->note(
+        $this->io->suggestion(
             'What now? Learn how to start the Selenium server: '
             . 'https://github.com/lmc-eu/steward/wiki/Selenium-server-&-browser-drivers'
         );

@@ -186,6 +186,16 @@ class StewardStyleTest extends TestCase
         );
     }
 
+    public function testShouldFormatSuggestion(): void
+    {
+        $this->style->suggestion('Suggestion message');
+
+        $this->assertStringEqualsFile(
+            __DIR__ . '/Fixtures/suggestion.txt',
+            $this->normalizeLineEndings($this->outputBuffer->fetch())
+        );
+    }
+
     public function testShouldFormatQuestion(): void
     {
         $inputMock = $this->getMockBuilder(StreamableInputInterface::class)->getMock();

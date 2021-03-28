@@ -139,6 +139,11 @@ class StewardStyle extends OutputStyle
         $this->symfonyStyle->block($message, 'NOTE', 'fg=yellow', ' ');
     }
 
+    public function suggestion($message): void
+    {
+        $this->symfonyStyle->block($message, '💡', 'fg=yellow', ' ');
+    }
+
     public function caution($message): void
     {
         throw new \BadMethodCallException('Method not implemented');
