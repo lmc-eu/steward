@@ -6,6 +6,7 @@ use Lmc\Steward\Console\CommandEvents;
 use Lmc\Steward\Console\Event\BasicConsoleEvent;
 use Lmc\Steward\Console\Event\ExtendedConsoleEvent;
 use Lmc\Steward\Console\Event\RunTestsProcessEvent;
+use Lmc\Steward\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +21,6 @@ class XdebugListener implements EventSubscriberInterface
 {
     public const OPTION_XDEBUG = 'xdebug';
     public const DEFAULT_VALUE = 'phpstorm';
-    public const DOCS_URL = 'https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward';
 
     /** @var string */
     protected $xdebugIdeKey;
@@ -67,23 +67,10 @@ class XdebugListener implements EventSubscriberInterface
         }
 
         if (!extension_loaded('xdebug')) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Extension Xdebug is not loaded or installed. See %s for help and more information.',
-                    self::DOCS_URL
-                )
-            );
+            throw RuntimeException::forMissingXdebugExtension();
         }
 
-        if (!ini_get('xdebug.remote_enable')) {
-            throw new \RuntimeException(
-                sprintf(
-                    'The xdebug.remote_enable directive must be set to true to enable remote debugging. '
-                    . 'See %s for help and more information.',
-                    self::DOCS_URL
-                )
-            );
-        }
+        $this->assertXdebugConfiguration();
 
         $output->writeln(
             sprintf('Xdebug remote debugging initialized with IDE key: %s', $this->xdebugIdeKey),
@@ -121,5 +108,18 @@ class XdebugListener implements EventSubscriberInterface
         }
 
         return $optionValue;
+    }
+
+    private function assertXdebugConfiguration(): void
+    {
+        if (version_compare(phpversion('xdebug'), '3.0.0', '>=')) {
+            if (mb_strpos(ini_get('xdebug.mode'), 'debug') === false) {
+                throw RuntimeException::forMissingXdebugConfiguration('"xdebug.mode" must be set to "debug"');
+            }
+        } else {
+            if (!ini_get('xdebug.remote_enable')) {
+                throw RuntimeException::forMissingXdebugConfiguration('"xdebug.remote_enable" must be set to true');
+            }
+        }
     }
 }

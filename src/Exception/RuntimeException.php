@@ -4,6 +4,8 @@ namespace Lmc\Steward\Exception;
 
 class RuntimeException extends \RuntimeException implements StewardExceptionInterface
 {
+    private const XDEBUG_DOCS_URL = 'https://github.com/lmc-eu/steward/wiki/Debugging-Selenium-tests-with-Steward';
+
     public static function forReflectionErrorWhenLoadedFromFile(
         string $className,
         string $fileName,
@@ -40,6 +42,29 @@ class RuntimeException extends \RuntimeException implements StewardExceptionInte
         $message = sprintf(
             'Testcase with name "%s" was already added, make sure you don\'t have duplicate class names.',
             $className
+        );
+
+        return new self($message);
+    }
+
+    public static function forMissingXdebugConfiguration(string $configuration): self
+    {
+        $message = sprintf(
+            'PHP configuration %s to enable remote debugging.' . "\n"
+            . '💡 See %s for help and more information',
+            $configuration,
+            self::XDEBUG_DOCS_URL
+        );
+
+        return new self($message);
+    }
+
+    public static function forMissingXdebugExtension(): self
+    {
+        $message = sprintf(
+            'Extension Xdebug is not loaded or installed.' . "\n"
+            . '💡 See %s for help and more information',
+            self::XDEBUG_DOCS_URL
         );
 
         return new self($message);

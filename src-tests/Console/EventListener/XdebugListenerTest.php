@@ -18,6 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @covers \Lmc\Steward\Console\EventListener\XdebugListener
+ * @covers \Lmc\Steward\Exception\RuntimeException
  */
 class XdebugListenerTest extends TestCase
 {
@@ -80,7 +81,9 @@ class XdebugListenerTest extends TestCase
         string $stringInput,
         ?string $expectedIdeKey
     ): void {
-        $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
+        $this->mockXdebugExtension($isExtensionLoaded = true);
+        $this->mockIniGet('xdebug.mode', 'debug');
+
         $command = new RunCommand(new EventDispatcher());
 
         $input = new StringInput($stringInput);
@@ -129,7 +132,7 @@ class XdebugListenerTest extends TestCase
 
     public function testShouldFailWhenXdebugExtensionIsNotLoaded(): void
     {
-        $this->mockXdebugExtension($isExtensionLoaded = false, $isRemoteEnabled = false);
+        $this->mockXdebugExtension($isExtensionLoaded = false);
 
         $command = new RunCommand(new EventDispatcher());
         $event = $this->prepareExtendedConsoleEvent(
@@ -144,9 +147,16 @@ class XdebugListenerTest extends TestCase
         $this->listener->onCommandRunTestsInit($event);
     }
 
-    public function testShouldFailWhenXdebugExtensionIsLoadedButRemoteDebugIsNotEnabled(): void
-    {
-        $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = false);
+    /**
+     * @dataProvider provideXdebugVersions
+     */
+    public function testShouldFailWhenXdebugIsNotProperlyConfigured(
+        string $expectedExceptionMessage,
+        string $xdebugVersion,
+        array $iniParams
+    ): void {
+        $this->mockXdebugExtension($isExtensionLoaded = true, $xdebugVersion);
+        $this->mockIniGet(...$iniParams);
 
         $command = new RunCommand(new EventDispatcher());
         $event = $this->prepareExtendedConsoleEvent(
@@ -156,16 +166,26 @@ class XdebugListenerTest extends TestCase
         );
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(
-            'The xdebug.remote_enable directive must be set to true to enable remote debugging.'
-        );
+        $this->expectExceptionMessage($expectedExceptionMessage);
 
         $this->listener->onCommandRunTestsInit($event);
     }
 
+    /**
+     * @return array[]
+     */
+    public function provideXdebugVersions(): array
+    {
+        return [
+            'xdebug 2' => ['"xdebug.remote_enable" must be set to true', '2.9.0', ['xdebug.remote_enable', false]],
+            'xdebug 3' => ['"xdebug.mode" must be set to "debug"', '3.0.0', ['xdebug.mode', 'develop']],
+        ];
+    }
+
     public function testShouldInjectEnvironmentVariableOnProcessRunEventIfXdebugOptionWasPassed(): void
     {
-        $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
+        $this->mockXdebugExtension($isExtensionLoaded = true);
+        $this->mockIniGet('xdebug.mode', 'debug');
 
         $command = new RunCommand(new EventDispatcher());
         $input = new StringInput('env firefox --xdebug');
@@ -184,7 +204,8 @@ class XdebugListenerTest extends TestCase
 
     public function testShouldNotInjectEnvironmentVariableIfXdebugOptionWasNotPassed(): void
     {
-        $this->mockXdebugExtension($isExtensionLoaded = true, $isRemoteEnabled = true);
+        $this->mockXdebugExtension($isExtensionLoaded = true);
+        $this->mockIniGet('xdebug.mode', 'debug');
 
         $command = new RunCommand(new EventDispatcher());
         $input = new StringInput('env firefox');
@@ -216,22 +237,27 @@ class XdebugListenerTest extends TestCase
         return new ExtendedConsoleEvent($command, $input, $output);
     }
 
-    /**
-     * Mock xdebug extension status.
-     *
-     * @param bool $isExtensionLoaded Mocked extension_loaded('xdebug') value
-     * @param bool $isRemoteEnabled Mocked ini_get('xdebug.remote_enable') value
-     */
-    protected function mockXdebugExtension(bool $isExtensionLoaded, bool $isRemoteEnabled): void
+    protected function mockXdebugExtension(bool $isExtensionLoaded, string $xdebugVersion = '3.0.0'): void
     {
         $extensionLoadedMock = $this->getFunctionMock(__NAMESPACE__, 'extension_loaded');
         $extensionLoadedMock->expects($this->any())
             ->with('xdebug')
             ->willReturn($isExtensionLoaded);
 
+        $extensionLoadedMock = $this->getFunctionMock(__NAMESPACE__, 'phpversion');
+        $extensionLoadedMock->expects($this->any())
+            ->with('xdebug')
+            ->willReturn($xdebugVersion);
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function mockIniGet(string $option, $value): void
+    {
         $iniGetMock = $this->getFunctionMock(__NAMESPACE__, 'ini_get');
         $iniGetMock->expects($this->any())
-            ->with('xdebug.remote_enable')
-            ->willReturn($isRemoteEnabled);
+            ->with($option)
+            ->willReturn($value);
     }
 }
