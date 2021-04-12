@@ -176,6 +176,8 @@ class ProcessWrapper
     private function resolveResult(): string
     {
         $exitCode = $this->getProcess()->getExitCode();
+        var_dump('Exit code is:');
+        var_dump($exitCode);
 
         // If the process was not even started, mark its result as failed
         if ($exitCode === null) {
