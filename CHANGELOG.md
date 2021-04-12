@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Fixed
+- Properly detect Xdebug 3.
 
 ## 3.0.0-beta - 2021-03-20
 ### Added
