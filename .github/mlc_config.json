@@ -2,6 +2,9 @@
   "ignorePatterns": [
     {
       "pattern": "^https://github.com/lmc-eu/steward/(pull|issues)/"
+    },
+    {
+      "pattern": "^https://www.php.net"
     }
   ]
 }

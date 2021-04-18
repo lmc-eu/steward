@@ -21,7 +21,7 @@
 - `RunTestsProcessEvent` (dispatched from `run` command when initializing PHPUnit processes) now contains array of environment variables instead of ProcessBuilder. Use `setEnvironmentVars()` method to change the variables passed to the process.
 - Default browser size is now defined using class constants instead of class variables. To override the default, instead of `public static $browserWidth = ...;` use `public const BROWSER_WIDTH = ...;`.
 - When test class constants defining default browser width (`BROWSER_WIDTH`) or height (`BROWSER_HEIGHT`) is set to `null`, no default browser window size will be set on test startup.
-- Don't hardcode timezone to `Europe/Prague`. Timezone is now used based on your PHP settings ([date.timezone](https://php.net/manual/en/datetime.configuration.php#ini.date.timezone)).
+- Don't hardcode timezone to `Europe/Prague`. Timezone is now used based on your PHP settings ([date.timezone](https://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone)).
 - Server URL now must be provided including URL prefix (if it has one, like `/wd/hub`) - eg. `http://foo.bar:4444/wd/hub`. This means the `/wd/hub` part is now never auto-amended.
 - Package `symfony/polyfill-mbstring` now provides mbstring functions even if PHP mbstring extension is not installed.
 - Read annotations (like `@group`, `@noBrowser` etc.) using different and more-robust underlying libraries.
@@ -125,7 +125,7 @@
 
 ## 2.0.0 - 2016-10-30
 ### Removed
-- Support for PHP 5.5, minimal required version of PHP is now 5.6. Also the 5.5 version is [no longer supported](https://secure.php.net/supported-versions.php) by the upstream since July. ([#87](https://github.com/lmc-eu/steward/pull/87))
+- Support for PHP 5.5, minimal required version of PHP is now 5.6. Also the 5.5 version is no longer supported by the upstream since July. ([#87](https://github.com/lmc-eu/steward/pull/87))
 - BC: Aliases for old non-namespaced [php-webdriver](https://github.com/facebook/php-webdriver) which were deprecated in Steward 1.2. ([#66](https://github.com/lmc-eu/steward/pull/66))
 - BC: `run-tests` alias of `run` command. ([#71](https://github.com/lmc-eu/steward/pull/71))
 - BC: Option `--publish-results` of run command. The default publishers and custom publishers defined in phpunit.xml will be always registered. ([#85](https://github.com/lmc-eu/steward/pull/85))
