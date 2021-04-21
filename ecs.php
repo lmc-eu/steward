@@ -45,6 +45,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             [['line_length' => 120, 'break_long_lines' => true, 'inline_short_lines' => false]]
         );
 
-    $services->set(PhpUnitExpectationFixer::class)
-        ->call('configure', [['target' => '8.4']]);
+    if (PHP_VERSION_ID >= 80000) { // The check fails on PHP <8.0. See https://github.com/symplify/symplify/issues/3130
+        $services->set(PhpUnitExpectationFixer::class)
+            ->call('configure', [['target' => '8.4']]);
+    }
 };
