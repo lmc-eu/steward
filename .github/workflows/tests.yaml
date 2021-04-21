@@ -3,6 +3,7 @@ name: Tests and linting
 on:
   push:
   pull_request:
+  workflow_dispatch:
   schedule:
     - cron:  '0 3 * * *'
 
@@ -28,7 +29,6 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, intl, zip
           coverage: xdebug
-          tools: composer:v2
 
       - name: Install dependencies
         run: composer update --no-interaction ${{ matrix.dependencies }}
@@ -67,7 +67,6 @@ jobs:
           php-version: 7.4
           extensions: mbstring, intl, zip
           coverage: xdebug
-          tools: composer:v2
 
       - name: Install dependencies
         run: composer update --no-interaction
@@ -124,9 +123,8 @@ jobs:
         - name: Setup PHP
           uses: shivammathur/setup-php@v2
           with:
-            php-version: '7.4'
+            php-version: '8.0'
             extensions: mbstring, intl
-            tools: composer:v2
 
         - name: Install dependencies
           run: composer update --no-progress

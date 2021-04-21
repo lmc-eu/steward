@@ -64,7 +64,7 @@ abstract class AbstractCloudPublisher extends AbstractPublisher
     }
 
     /**
-     * @return resource
+     * @return resource|\CurlHandle|false
      */
     protected function initCurl(string $url, string $auth)
     {
