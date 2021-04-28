@@ -3,6 +3,7 @@
 namespace Lmc\Steward\WebDriver;
 
 use Facebook\WebDriver\Remote\JsonWireCompat;
+use Facebook\WebDriver\Remote\LocalFileDetector;
 use Facebook\WebDriver\Remote\WebDriverResponse;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverCommandExecutor;
@@ -55,6 +56,21 @@ class RemoteWebDriverTest extends TestCase
             '/.*Executing command "findElement" with params {"using":"class name","value":"foo"}/'
         );
         $this->expectOutputRegex('/.*Executing command "getTitle" with params \[\]/');
+    }
+
+    public function testShouldNotLogUploadFileParams(): void
+    {
+        $this->setDebugMode(true); // Enable debug mode
+
+        $response = new WebDriverResponse();
+        $response->setValue([JsonWireCompat::WEB_DRIVER_ELEMENT_IDENTIFIER => ['foo-bar']]);
+        $this->setUpExecutorToReturnResponse($response);
+
+        $fileElement = $this->driver->findElement(WebDriverBy::name('upload'));
+        $fileElement->setFileDetector(new LocalFileDetector())
+            ->sendKeys(__DIR__ . '/Fixtures/dummy.txt');
+
+        $this->expectOutputRegex('/Executing command "uploadFile"$/m');
     }
 
     public function testShouldNotLogCommandsInNormalMode(): void
