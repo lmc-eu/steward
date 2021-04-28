@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\WebDriver;
 
+use Facebook\WebDriver\Remote\DriverCommand;
 use Lmc\Steward\ConfigProvider;
 
 /**
@@ -19,11 +20,15 @@ class RemoteWebDriver extends \Facebook\WebDriver\Remote\RemoteWebDriver
     public function execute($command_name, $params = [])
     {
         if (ConfigProvider::getInstance()->debug) {
-            $this->log(
-                'Executing command "%s" with params %s',
-                $command_name,
-                json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-            );
+            if ($command_name === DriverCommand::UPLOAD_FILE) {
+                $this->log('Executing command "%s"', $command_name);
+            } else {
+                $this->log(
+                    'Executing command "%s" with params %s',
+                    $command_name,
+                    json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                );
+            }
         }
 
         return parent::execute($command_name, $params);

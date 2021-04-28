@@ -8,6 +8,9 @@
 ### Fixed
 - Properly detect Xdebug 3.
 
+### Changed
+- When filling file input element, do not dump whole file contents to the output to not pollute it with useless data.
+
 ## 3.0.0-beta - 2021-03-20
 ### Added
 - `--parallel-limit` (`-l`) option of `run` command to allow limiting maximum number of tests being run simultaneously.
