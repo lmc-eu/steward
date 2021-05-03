@@ -86,13 +86,11 @@ class WebDriverListener implements TestListener
         $test->log('Initializing "%s" WebDriver', $this->config->browserName);
 
         $desiredCapabilities = $this->getCapabilitiesResolver()->resolveDesiredCapabilities($test);
-        $requiredCapabilities = $this->getCapabilitiesResolver()->resolveRequiredCapabilities($test);
 
         $this->createWebDriver(
             $test,
             $this->config->serverUrl,
             $desiredCapabilities,
-            $requiredCapabilities,
             $connectTimeoutMs = 2 * 60 * 1000,
             // How long could request to Selenium take (eg. how long could we wait in hub's queue to available node)
             $requestTimeoutMs = 60 * 60 * 1000 // 1 hour (same as timeout for the whole process)
@@ -146,7 +144,6 @@ class WebDriverListener implements TestListener
         AbstractTestCase $test,
         string $remoteServerUrl,
         DesiredCapabilities $desiredCapabilities,
-        DesiredCapabilities $requiredCapabilities,
         int $connectTimeoutMs,
         int $requestTimeoutMs
     ): void {
@@ -157,8 +154,7 @@ class WebDriverListener implements TestListener
                 $connectTimeoutMs,
                 $requestTimeoutMs,
                 null,
-                null,
-                $requiredCapabilities
+                null
             );
 
             return;

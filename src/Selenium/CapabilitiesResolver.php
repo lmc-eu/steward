@@ -60,17 +60,6 @@ final class CapabilitiesResolver
         return $capabilities;
     }
 
-    public function resolveRequiredCapabilities(AbstractTestCase $test): DesiredCapabilities
-    {
-        $capabilities = new DesiredCapabilities();
-
-        if ($this->customCapabilitiesResolver !== null) {
-            $capabilities = $this->customCapabilitiesResolver->resolveRequiredCapabilities($test, $capabilities);
-        }
-
-        return $capabilities;
-    }
-
     /**
      * @internal
      */

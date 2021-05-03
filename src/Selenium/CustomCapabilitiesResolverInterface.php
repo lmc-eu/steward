@@ -20,15 +20,4 @@ interface CustomCapabilitiesResolverInterface
         AbstractTestCase $test,
         DesiredCapabilities $capabilities
     ): DesiredCapabilities;
-
-    /**
-     * Resolve required capabilities for given test.
-     *
-     * Please note "required capabilities" are implemented inconsistently in current WebDriver backends, so you should
-     * most probably set only "desired capabilities" until backends conforms the W3C WebDriver spec.
-     */
-    public function resolveRequiredCapabilities(
-        AbstractTestCase $test,
-        DesiredCapabilities $capabilities
-    ): DesiredCapabilities;
 }
