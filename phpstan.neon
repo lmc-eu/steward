@@ -1,3 +1,6 @@
+includes:
+    - phpstan-dynamic.php # dynamic PHPStan configuration
+
 parameters:
     ignoreErrors:
         - '#Constructor of class .+ImplementsCapabilitiesResolverInterface has an unused parameter \$config#'
