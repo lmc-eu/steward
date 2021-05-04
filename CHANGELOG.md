@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Removed
+- `resolveRequiredCapabilities()` method from `CustomCapabilitiesResolverInterface`, as this feature is not fully used in php-webdriver anyway.
 
 ## 3.0.0-rc1 - 2021-04-18
 ### Fixed

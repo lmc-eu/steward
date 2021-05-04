@@ -2,10 +2,8 @@
 
 namespace Lmc\Steward\Selenium;
 
-use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Facebook\WebDriver\WebDriverPlatform;
-use Lmc\Steward\ConfigProvider;
 use Lmc\Steward\ConfigProviderHelper;
 use Lmc\Steward\Selenium\Fixtures\CapabilitiesResolverFixture;
 use Lmc\Steward\Test\AbstractTestCase;
@@ -93,21 +91,6 @@ class CapabilitiesResolverTest extends TestCase
         $this->assertEquals(['staging', 'Jenkins', 'FooBarTest'], $desiredCapabilitiesArray['tags']);
     }
 
-    public function testShouldResolveRequiredCapabilities(): void
-    {
-        /** @var AbstractTestCase $test */
-        $test = $this->getMockForAbstractClass(AbstractTestCase::class, ['name']);
-
-        $configMock = $this->createMock(ConfigProvider::class);
-        $resolver = new CapabilitiesResolver($configMock);
-
-        $requiredCapabilities = $resolver->resolveRequiredCapabilities($test);
-
-        // TODO: should be instance of WebDriverCapabilities interface in next php-webdriver major release
-        $this->assertInstanceOf(DesiredCapabilities::class, $requiredCapabilities);
-        $this->assertSame([], $requiredCapabilities->toArray());
-    }
-
     public function testShouldCallCustomCapabilitiesResolverIfDefined(): void
     {
         /** @var AbstractTestCase $test */
@@ -124,14 +107,9 @@ class CapabilitiesResolverTest extends TestCase
         $resolver->setCiDetector($this->createConfiguredMock(CiDetector::class, ['isCiDetected' => false]));
 
         $desiredCapabilities = $resolver->resolveDesiredCapabilities($test);
-        $requiredCapabilities = $resolver->resolveRequiredCapabilities($test);
 
         $this->assertNotEmpty(
             $desiredCapabilities->getCapability(CapabilitiesResolverFixture::CUSTOM_DESIRED_CAPABILITY)
-        );
-
-        $this->assertNotEmpty(
-            $requiredCapabilities->getCapability(CapabilitiesResolverFixture::CUSTOM_REQUIRED_CAPABILITY)
         );
     }
 }

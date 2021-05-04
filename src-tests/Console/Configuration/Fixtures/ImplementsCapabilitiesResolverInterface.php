@@ -19,11 +19,4 @@ class ImplementsCapabilitiesResolverInterface implements CustomCapabilitiesResol
     ): DesiredCapabilities {
         return $capabilities;
     }
-
-    public function resolveRequiredCapabilities(
-        AbstractTestCase $test,
-        DesiredCapabilities $capabilities
-    ): DesiredCapabilities {
-        return $capabilities;
-    }
 }
