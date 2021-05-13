@@ -2,7 +2,6 @@
 
 namespace Lmc\Steward\Console\Command\Fixtures\FailingTests;
 
-use Lmc\Steward\Component\Legacy;
 use Lmc\Steward\Test\AbstractTestCase;
 
 /**
