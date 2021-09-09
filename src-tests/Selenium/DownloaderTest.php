@@ -49,7 +49,7 @@ class DownloaderTest extends TestCase
         $downloader = new Downloader(__DIR__ . '/Fixtures', Version::createFromString($version));
 
         $this->assertSame(
-            'https://selenium-release.storage.googleapis.com' . $expectedPath,
+            'https://github.com/SeleniumHQ/selenium/releases/download/' . $expectedPath,
             $downloader->getFileUrl()
         );
     }
@@ -60,12 +60,12 @@ class DownloaderTest extends TestCase
     public function provideVersions(): array
     {
         return [
-            ['2.53.0', '/2.53/selenium-server-standalone-2.53.0.jar'],
-            ['2.53.1', '/2.53/selenium-server-standalone-2.53.1.jar'],
-            ['3.0.0-beta2', '/3.0-beta2/selenium-server-standalone-3.0.0-beta2.jar'],
-            ['3.0.0', '/3.0/selenium-server-standalone-3.0.0.jar'],
-            ['4.0.0-beta-1', '/4.0-beta-1/selenium-server-4.0.0-beta-1.jar'],
-            ['4.0.0', '/4.0/selenium-server-4.0.0.jar'],
+            ['2.53.0', 'selenium-2.53.0/selenium-server-standalone-2.53.0.jar'],
+            ['2.53.1', 'selenium-2.53.1/selenium-server-standalone-2.53.1.jar'],
+            ['3.0.0', 'selenium-3.0.0/selenium-server-standalone-3.0.0.jar'],
+            ['3.141.59', 'selenium-3.141.59/selenium-server-standalone-3.141.59.jar'],
+            ['4.0.0-beta-4', 'selenium-4.0.0-beta-4/selenium-server-4.0.0-beta-4.jar'],
+            ['4.0.0', 'selenium-4.0.0/selenium-server-4.0.0.jar'],
         ];
     }
 
@@ -94,7 +94,7 @@ class DownloaderTest extends TestCase
         $expectedFile = __DIR__ . '/Fixtures/selenium-server-standalone-1.33.7.jar';
         $this->assertFileNotExists($expectedFile, 'File already exists, though it should be created only by the test');
 
-        $this->mockGetHeadersToReturnHeader('HTTP/1.0 200 OK');
+        $this->mockGetHeadersToReturnHeader('HTTP/1.1 200 OK');
 
         $this->assertEquals(9, $downloader->download());
         $this->assertFileExists($expectedFile);
@@ -141,7 +141,7 @@ class DownloaderTest extends TestCase
             ->method('getFileUrl')
             ->willReturn(__DIR__ . '/Fixtures/dummy-file.jar');
 
-        $this->mockGetHeadersToReturnHeader('HTTP/1.0 200 OK');
+        $this->mockGetHeadersToReturnHeader('HTTP/1.1 200 OK');
 
         $downloader->download();
 

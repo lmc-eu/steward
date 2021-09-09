@@ -3,6 +3,9 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+### Changed
+- Download Selenium server releases from GitHub (see [announcement](https://www.selenium.dev/blog/2021/downloads-moving-to-github-releases/)).
+
 ### Removed
 - `resolveRequiredCapabilities()` method from `CustomCapabilitiesResolverInterface`, as this feature is not fully used in php-webdriver anyway.
 

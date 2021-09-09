@@ -8,9 +8,8 @@ trait AssertDownloadableTrait
     {
         $context = stream_context_create(['http' => ['method' => 'HEAD', 'ignore_errors' => true]]);
         $fd = fopen($url, 'rb', false, $context);
-        $responseCode = $http_response_header[0];
         fclose($fd);
 
-        $this->assertStringContainsString('200 OK', $responseCode, 'Error downloading from "' . $url . '"');
+        $this->assertContains('HTTP/1.1 200 OK', $http_response_header, 'Error downloading from "' . $url . '"');
     }
 }
