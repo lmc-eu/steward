@@ -3,6 +3,8 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 
 ## Unreleased
+
+## 3.0.0-rc2 - 2021-11-29
 ### Changed
 - Download Selenium server releases from GitHub (see [announcement](https://www.selenium.dev/blog/2021/downloads-moving-to-github-releases/)).
 
