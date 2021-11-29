@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP\ForbiddenFunctionsSniff;
+use PhpCsFixer\Fixer\FunctionNotation\FunctionTypehintSpaceFixer;
 use PhpCsFixer\Fixer\PhpUnit\PhpUnitExpectationFixer;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symplify\CodingStandard\Fixer\LineLength\LineLengthFixer;
@@ -22,6 +23,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 'src/Listener/TestStatusListener.php',
                 'src/Test/AbstractTestCase.php',
                 'src/WebDriver/RemoteWebDriver.php',
+            ],
+            FunctionTypehintSpaceFixer::class => [ // broken for '&' when args in anonymous function passed by reference
+                'src-tests/Selenium/SeleniumServerAdapterTest.php',
             ],
             'PHP_CodeSniffer\Standards\Generic\Sniffs\Files\OneClassPerFileSniff.MultipleFound' => [
                 'src-tests/Process/Fixtures/InvalidTests/MultipleClassesInFileTest.php',

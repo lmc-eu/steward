@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ['7.3', '7.4', '8.0']
+        php-version: ['7.3', '7.4', '8.0', '8.1']
         dependencies: ['']
         include:
           - { php-version: '7.3', dependencies: '--prefer-lowest --prefer-stable' }
@@ -64,7 +64,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: '7.4' # Code coverage on PHP 8 is not supported with PHPUnit 8
           extensions: mbstring, intl, zip
           coverage: xdebug
 
@@ -123,7 +123,7 @@ jobs:
         - name: Setup PHP
           uses: shivammathur/setup-php@v2
           with:
-            php-version: '8.0'
+            php-version: '8.1'
             extensions: mbstring, intl
 
         - name: Install dependencies
