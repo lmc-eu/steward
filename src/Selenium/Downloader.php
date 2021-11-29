@@ -8,7 +8,7 @@ namespace Lmc\Steward\Selenium;
 class Downloader
 {
     /** @var string */
-    public const SELENIUM_STORAGE_URL = 'https://selenium-release.storage.googleapis.com';
+    private const DOWNLOAD_URL = 'https://github.com/SeleniumHQ/selenium/releases/download';
     /** @var string Target directory where should be the file saved */
     private $targetDir;
     /** @var Version Version to download */
@@ -36,7 +36,7 @@ class Downloader
      */
     public function getFilePath(): string
     {
-        return $this->targetDir . '/' . $this->getFileName();
+        return $this->targetDir . '/' . $this->assembleFileName();
     }
 
     /**
@@ -45,12 +45,10 @@ class Downloader
     public function getFileUrl(): string
     {
         return sprintf(
-            '%s/%s.%s%s/%s',
-            self::SELENIUM_STORAGE_URL,
-            $this->version->getMajor(),
-            $this->version->getMinor(),
-            $this->version->getDev() !== '' ? '-' . $this->version->getDev() : '',
-            $this->getFileName()
+            '%s/%s/%s',
+            self::DOWNLOAD_URL,
+            $this->assembleTagName(),
+            $this->assembleFileName()
         );
     }
 
@@ -72,7 +70,7 @@ class Downloader
 
         $fp = @fopen($fileUrl, 'rb');
         $responseHeaders = get_headers($fileUrl);
-        if (mb_strpos($responseHeaders[0], '200 OK') === false) {
+        if (!in_array('HTTP/1.1 200 OK', $responseHeaders, true)) {
             throw new \RuntimeException(sprintf('Error downloading file "%s" (%s)', $fileUrl, $responseHeaders[0]));
         }
 
@@ -86,10 +84,18 @@ class Downloader
         return $downloadedSize;
     }
 
+    private function assembleTagName(): string
+    {
+        return sprintf(
+            'selenium-%s',
+            $this->version->toString()
+        );
+    }
+
     /**
      * Get name of the jar file
      */
-    protected function getFileName(): string
+    protected function assembleFileName(): string
     {
         $baseName = ($this->version->getMajor() === '4' ? 'selenium-server' : 'selenium-server-standalone');
 

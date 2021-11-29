@@ -54,7 +54,7 @@ jobs:
 
     strategy:
       matrix:
-        selenium-version: ['3.141.59', '4.0.0-beta-2']
+        selenium-version: ['3.141.59', '4.1.0']
 
     name: Integration tests (Selenium ${{ matrix.selenium-version }})
 

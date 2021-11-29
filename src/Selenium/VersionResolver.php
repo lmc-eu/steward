@@ -9,18 +9,7 @@ use Lmc\Steward\Utils\FileGetContentsWrapper;
  */
 class VersionResolver
 {
-    /** @var string[] Versions with malformed names, duplicates etc. */
-    private const IGNORED_VERSIONS = [
-        '3.0-beta2/selenium-server-standalone-3.0.0-beta3.jar',
-        '4.0/selenium-server-4.0.0-alpha-1.jar',
-        '4.0/selenium-server-4.0.0-alpha-2.jar',
-        '4.0/selenium-server-standalone-4.0.0-alpha-1.jar',
-        '4.0/selenium-server-standalone-4.0.0-alpha-2.jar',
-        '4.0-alpha/selenium-server-4.0.0-alpha-3.jar',
-        '4.0-alpha4/selenium-server-4.0.0-alpha-4.jar',
-        '4.0-alpha5/selenium-server-4.0.0-alpha-5.jar',
-    ];
-
+    private const RELEASES_API_URL = 'https://api.github.com/repos/SeleniumHQ/selenium/releases';
     /** @var FileGetContentsWrapper */
     private $fileGetContentsWrapper;
 
@@ -38,71 +27,24 @@ class VersionResolver
     }
 
     /**
-     * @return Version[]
-     */
-    public function getAvailableVersions(): array
-    {
-        $data = $this->fileGetContentsWrapper->fileGetContents(Downloader::SELENIUM_STORAGE_URL);
-        if (!$data) {
-            return [];
-        }
-
-        libxml_use_internal_errors(true); // disable errors from being thrown
-        $xml = simplexml_load_string($data);
-        if (!$xml) {
-            return [];
-        }
-
-        $releases = $xml->xpath('//*[text()[contains(.,"selenium-server") and contains(.,".jar")]]');
-        $availableVersions = [];
-        foreach ($releases as $release) {
-            $release = (string) $release;
-
-            if (in_array($release, self::IGNORED_VERSIONS, true)) { // skip ignored version
-                continue;
-            }
-
-            $parsedVersion = preg_replace('/.*(standalone|server)-(.+\..+\..+)\.jar/', '$2', $release);
-            if ($release === $parsedVersion) { // regexp did not match
-                continue;
-            }
-
-            $availableVersions[] = Version::createFromString($parsedVersion);
-        }
-
-        $this->sortVersions($availableVersions);
-
-        return $availableVersions;
-    }
-
-    /**
-     * Get latest released version of Selenium server. If not found, null is returned.
+     * Get latest released stable version of Selenium server. If not found, null is returned.
      */
     public function getLatestVersion(): ?Version
     {
-        $availableVersions = $this->getAvailableVersions();
+        $responseData = $this->fileGetContentsWrapper->fileGetContents(self::RELEASES_API_URL . '/latest');
 
-        if (empty($availableVersions)) {
+        try {
+            $decodedData = json_decode($responseData, false, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
             return null;
         }
 
-        return end($availableVersions);
-    }
+        if (!isset($decodedData->tag_name)) {
+            return null;
+        }
 
-    private function sortVersions(array &$versions): void
-    {
-        // Sort naturally, but versions like 3.0.0 must be after 3.0.0-beta, so we must take care of them explicitly
-        usort($versions, static function (Version $a, Version $b): int {
-            $aParts = explode('-', $a->toString());
-            $bParts = explode('-', $b->toString());
+        $version = preg_replace('/^selenium-(.+)$/', '$1', $decodedData->tag_name);
 
-            // First part is the same (3.0.0), but one string does have second part (-beta) while the other one does not
-            if ($aParts[0] === $bParts[0] && (count($aParts) !== count($bParts))) {
-                // The one with less parts should be ordered after the longer one
-                return count($bParts) <=> count($aParts);
-            }
-
-            return strnatcmp(mb_strtolower($a->toString()), mb_strtolower($b->toString()));
-        });
+        return Version::createFromString($version);
     }
 }

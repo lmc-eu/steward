@@ -12,6 +12,15 @@ class FileGetContentsWrapper
      */
     public function fileGetContents(string $filename)
     {
-        return file_get_contents($filename);
+        $options = [
+            'http' => [
+                'method' => 'GET',
+                'header' => "User-Agent: PHP\r\n",
+            ],
+        ];
+
+        $context = stream_context_create($options);
+
+        return file_get_contents($filename, false, $context);
     }
 }
