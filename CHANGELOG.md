@@ -4,21 +4,8 @@
 
 ## Unreleased
 
-## 3.0.0-rc2 - 2021-11-29
-### Changed
-- Download Selenium server releases from GitHub (see [announcement](https://www.selenium.dev/blog/2021/downloads-moving-to-github-releases/)).
+## 3.0.0 - 2021-12-02
 
-### Removed
-- `resolveRequiredCapabilities()` method from `CustomCapabilitiesResolverInterface`, as this feature is not fully used in php-webdriver anyway.
-
-## 3.0.0-rc1 - 2021-04-18
-### Fixed
-- Properly detect Xdebug 3.
-
-### Changed
-- When filling file input element, do not dump whole file contents to the output to not pollute it with useless data.
-
-## 3.0.0-beta - 2021-03-20
 ### Added
 - `--parallel-limit` (`-l`) option of `run` command to allow limiting maximum number of tests being run simultaneously.
 - Show test duration in timeline tooltips.
@@ -37,6 +24,8 @@
 - Server URL now must be provided including URL prefix (if it has one, like `/wd/hub`) - eg. `http://foo.bar:4444/wd/hub`. This means the `/wd/hub` part is now never auto-amended.
 - Package `symfony/polyfill-mbstring` now provides mbstring functions even if PHP mbstring extension is not installed.
 - Read annotations (like `@group`, `@noBrowser` etc.) using different and more-robust underlying libraries.
+- When filling file input element, do not dump whole file contents to the output to not pollute it with useless data.
+- Download Selenium server releases from GitHub (see [announcement](https://www.selenium.dev/blog/2021/downloads-moving-to-github-releases/)).
 
 ### Fixed
 - Remote server running in W3C-protocol mode (eg. Selenium v3.5.3+) was erroneously detected as BrowserStack cloud service.
@@ -45,6 +34,7 @@
 - Do not start browser for test skipped because it was depending on some already failed test (using `@depends` annotation).
 - Parsing the latest Selenium server version in `install` command.
 - Do not print `Error closing the session, browser may died.` after Firefox closes the error.
+- Properly detect Xdebug 3.
 
 ### Removed
 - `TestUtils` class which was already deprecated in 2.1.
@@ -57,6 +47,7 @@
 - `AbstractTestCaseBase` class. It should probably not affect anything, as it was only used internally.
 - Workarounds for legacy Firefox (version 47 and older) which are no longer needed.
 - PhantomJS support.
+- `resolveRequiredCapabilities()` method from `CustomCapabilitiesResolverInterface`, as this feature is not fully used in php-webdriver anyway.
 
 ## 2.3.5 - 2020-01-20
 ### Changed
