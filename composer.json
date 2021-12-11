@@ -1,13 +1,13 @@
 {
     "name": "lmc/steward",
     "description": "Steward - makes Selenium WebDriver + PHPUnit testing easy and robust",
+    "license": "MIT",
     "keywords": [
         "selenium",
         "webdriver",
         "phpunit",
         "testing"
     ],
-    "license": "MIT",
     "authors": [
         {
             "name": "Ondřej Machulda",
@@ -61,14 +61,7 @@
         "ext-posix": "For colored output",
         "ext-xdebug": "For remote tests debugging"
     },
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-main": "3.0.x-dev"
-        }
-    },
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "Lmc\\Steward\\": "src/"
@@ -82,11 +75,18 @@
             "/src-tests/Process/Fixtures/InvalidTests/*"
         ]
     },
-    "minimum-stability": "stable",
     "bin": [
         "bin/steward",
         "bin/steward.php"
     ],
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "3.0.x-dev"
+        }
+    },
     "scripts": {
         "all": [
             "@lint",
