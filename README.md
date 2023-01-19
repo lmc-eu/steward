@@ -1,7 +1,7 @@
 # Steward: easy and robust testing with Selenium WebDriver + PHPUnit
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
-[![GitHub Actions Build Status](https://img.shields.io/github/workflow/status/lmc-eu/steward/Tests%20and%20linting?style=flat-square&label=GitHub%20Actions%20build)](https://github.com/lmc-eu/steward/actions)
+[![GitHub Actions Build Status](https://img.shields.io/github/actions/workflow/status/lmc-eu/steward/tests.yaml?style=flat-square&label=GitHub%20Actions%20build)](https://github.com/lmc-eu/steward/actions)
 [![AppVeyor Build Status](https://img.shields.io/appveyor/ci/lmc-eu/steward/main.svg?style=flat-square&label=AppVeyor)](https://ci.appveyor.com/project/lmc-eu/steward)
 [![Coverage Status](https://img.shields.io/coveralls/lmc-eu/steward/main.svg?style=flat-square)](https://coveralls.io/r/lmc-eu/steward?branch=main)
 [![Total Downloads](https://img.shields.io/packagist/dt/lmc/steward.svg?style=flat-square)](https://packagist.org/packages/lmc/steward)
