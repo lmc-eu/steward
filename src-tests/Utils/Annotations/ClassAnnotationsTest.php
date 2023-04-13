@@ -53,6 +53,7 @@ class ClassAnnotationsTest extends TestCase
                     'first' => ['First value', 'Second value of first'],
                     'second' => ['Second value'],
                     'third' => ['Third "special" value'],
+                    'see' => [''],
                 ],
             ],
             'Class with mixed key-only and key-value annotations' => [

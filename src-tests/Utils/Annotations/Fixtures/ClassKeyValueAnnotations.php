@@ -7,6 +7,7 @@ namespace Lmc\Steward\Utils\Annotations\Fixtures;
  * @second Second value
  * @third Third "special" value
  * @first Second value of first
+ * @see FOO-BAR This makes phpDocumentor to return InvalidTag instance
  */
 class ClassKeyValueAnnotations
 {

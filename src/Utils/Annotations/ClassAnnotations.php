@@ -48,10 +48,9 @@ class ClassAnnotations
 
         $annotations = [];
 
-        /** @var BaseTag $tag */
         foreach ($docBlock->getTags() as $tag) {
             $annotationToAdd = '';
-            if ($tag->getDescription() !== null) {
+            if ($tag instanceof BaseTag && $tag->getDescription() !== null) {
                 $annotationToAdd = $tag->getDescription()->getBodyTemplate();
             }
 

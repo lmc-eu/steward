@@ -4,6 +4,9 @@
 
 ## Unreleased
 
+### Fixed
+- Invalid class annotation could cause fatal error when parsing tests.
+
 ## 3.0.0 - 2021-12-02
 
 ### Added
