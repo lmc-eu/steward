@@ -6,15 +6,14 @@ parameters:
         - '#Constructor of class .+ImplementsCapabilitiesResolverInterface has an unused parameter \$config#'
         - '#Constructor of class Lmc\\Steward\\Selenium\\Fixtures\\CapabilitiesResolverFixture has an unused parameter \$config#'
         - '#Call to an undefined method Lmc\\Steward\\Component\\Fixtures\\MockComponent::notExisting\(\)#'
-        - "#Property Lmc\\\\Steward\\\\Test\\\\AbstractTestCase::\\$wd \\(Facebook\\\\WebDriver\\\\Remote\\\\RemoteWebDriver\\) does not accept Lmc\\\\Steward\\\\WebDriver\\\\NullWebDriver#"
-        - message: '#should return .+ but return statement is missing#'
-          path: 'src/WebDriver/NullWebDriver.php'
+        - '#Property Lmc\\Steward\\Test\\AbstractTestCase::\$wd \(.+\) does not accept Lmc\\Steward\\WebDriver\\NullWebDriver#'
         - message: '#SimpleXMLElement does not accept string#'
           path: 'src/Publisher/XmlPublisher.php'
-    excludes_analyse:
+    excludePaths:
         - '%rootDir%/../../../src-tests/Process/Fixtures/InvalidTests/WrongClassTest.php'
         - '%rootDir%/../../../src-tests/Test/SyntaxSugarTraitTest.php'
         - '%rootDir%/../../../src-tests/ConfigProviderTest.php'
+        - 'src/WebDriver/NullWebDriver.php'
     bootstrapFiles:
         - '%rootDir%/../../../src-tests/bootstrap.php'
     level: 4

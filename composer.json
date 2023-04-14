@@ -52,9 +52,9 @@
         "lmc/coding-standard": "^3.0.0",
         "php-mock/php-mock-phpunit": "^2.6.0",
         "php-parallel-lint/php-parallel-lint": "^1.2.0",
-        "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^0.12.80",
-        "phpstan/phpstan-phpunit": "^0.12.17",
+        "phpstan/extension-installer": "^1.2",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
         "symfony/var-dumper": "^5.2"
     },
     "suggest": {

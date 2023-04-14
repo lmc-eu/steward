@@ -28,6 +28,7 @@ class TestingBotPublisherTest extends AbstractCloudPublisherTestCase
      */
     public function testShouldPublishTestResult(string $testResult, ?string $message, string $expectedData): void
     {
+        /** @phpstan-ignore-next-line */
         $this->testInstanceMock->wd = $this->createMock(RemoteWebDriver::class);
 
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');
