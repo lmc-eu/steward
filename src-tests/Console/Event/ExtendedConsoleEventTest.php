@@ -2,7 +2,6 @@
 
 namespace Lmc\Steward\Console\Event;
 
-use Lmc\Steward\Console\Command\Command;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,15 +12,12 @@ class ExtendedConsoleEventTest extends BasicConsoleEventTest
     protected $inputMock;
     /** @var OutputInterface|MockObject */
     protected $outputMock;
-    /** @var Command|MockObject */
-    protected $commandMock;
 
     protected function setUp(): void
     {
-        $this->commandMock = $this->createMock(Command::class);
+        parent::setUp();
 
         $this->inputMock = $this->createMock(InputInterface::class);
-
         $this->outputMock = $this->createMock(OutputInterface::class);
     }
 

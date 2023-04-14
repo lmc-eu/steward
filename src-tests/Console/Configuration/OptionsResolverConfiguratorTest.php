@@ -23,6 +23,7 @@ class OptionsResolverConfiguratorTest extends TestCase
 
         $configurator->configure($optionsResolver);
 
+        /** @phpstan-ignore-next-line */
         $this->assertNotEmpty($optionsResolver->getDefinedOptions());
     }
 

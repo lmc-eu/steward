@@ -73,7 +73,7 @@ class SeleniumServerAdapter
             5
         );
         if (!is_resource($seleniumConnection)) {
-            $this->lastError = $connectionError ?? 'unknown connection error';
+            $this->lastError = ($connectionError !== '') ? $connectionError : 'unknown connection error';
 
             return false;
         }

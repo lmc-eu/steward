@@ -83,6 +83,7 @@ abstract class AbstractCloudPublisherTestCase extends TestCase
 
     public function testShouldThrowExceptionIfPublishToApiFailed(): void
     {
+        /** @phpstan-ignore-next-line */
         $this->testInstanceMock->wd = $this->createMock(RemoteWebDriver::class);
 
         $curlInitMock = $this->getFunctionMock(__NAMESPACE__, 'curl_init');

@@ -14,7 +14,7 @@ class ClassAnnotations
     {
         $reflectionObject = new \ReflectionObject($object);
 
-        return static::getAnnotations($reflectionObject);
+        return self::getAnnotations($reflectionObject);
     }
 
     /**
@@ -24,14 +24,14 @@ class ClassAnnotations
     {
         $reflectionClass = new \ReflectionClass($className);
 
-        return static::getAnnotations($reflectionClass);
+        return self::getAnnotations($reflectionClass);
     }
 
     public static function getAnnotationsForMethodOfInstance($object, string $method): array
     {
         $reflectionMethod = new \ReflectionMethod($object, $method);
 
-        return static::getAnnotations($reflectionMethod);
+        return self::getAnnotations($reflectionMethod);
     }
 
     /**
