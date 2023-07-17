@@ -5,7 +5,7 @@ namespace Lmc\Steward\Exception;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 
 /**
- * Runtime exception from Steward Command (ie. wrong CLI arguments).
+ * Runtime exception from Steward Command (e.g. wrong CLI arguments).
  * It also implements `Symfony\Component\Console\Exception\ExceptionInterface` to not break Symfony Command behavior.
  */
 class CommandException extends \RuntimeException implements ExceptionInterface, StewardExceptionInterface

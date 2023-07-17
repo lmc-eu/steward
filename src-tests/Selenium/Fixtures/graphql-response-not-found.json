@@ -1,0 +1,21 @@
+{
+  "errors": [
+    {
+      "message": "Exception while fetching data (\u002fsession) : No ongoing session found with the requested session id.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 3
+        }
+      ],
+      "path": [
+        "session"
+      ],
+      "extensions": {
+        "sessionId": "4f1bebc2-667e-4b99-b16a-ff36221a20b3",
+        "classification": "DataFetchingException"
+      }
+    }
+  ],
+  "data": null
+}

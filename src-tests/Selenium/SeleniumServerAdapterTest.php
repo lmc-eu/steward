@@ -216,13 +216,21 @@ class SeleniumServerAdapterTest extends TestCase
     }
 
     /**
-     * @dataProvider provideSessionExecutorResponse
+     * @dataProvider provideTestsessionResponse
      */
-    public function testShouldGetSessionExecutor(string $responseData, string $expectedSessionExecutor): void
-    {
+    public function testShouldGetSessionExecutorForSelenium3(
+        string $responseData,
+        string $expectedSessionExecutor
+    ): void {
         $adapter = new SeleniumServerAdapter('http://127.0.0.1:4444/wd/hub');
         $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
-        $fileGetContentsMock->expects($this->once())
+
+        // Selenium 3 does not provide GraphQL API
+        $fileGetContentsMock->expects($this->at(0))
+            ->with('http://127.0.0.1:4444/graphql')
+            ->willReturn(false);
+
+        $fileGetContentsMock->expects($this->at(1))
             ->with('http://127.0.0.1:4444/grid/api/testsession?session=4f1bebc2-667e-4b99-b16a-ff36221a20b3')
             ->willReturn($responseData);
 
@@ -235,7 +243,7 @@ class SeleniumServerAdapterTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideSessionExecutorResponse(): array
+    public function provideTestsessionResponse(): array
     {
         $responseExecutorFound = file_get_contents(__DIR__ . '/Fixtures/testsession-found.json');
         $responseExecutorNotFound = file_get_contents(__DIR__ . '/Fixtures/testsession-not-found.json');
@@ -244,6 +252,48 @@ class SeleniumServerAdapterTest extends TestCase
         return [
             // $responseData, $expectedSessionExecutor
             'Executor for session was found' => [$responseExecutorFound, 'http://10.1.255.241:5555'],
+            'Executor for session was not found' => [$responseExecutorNotFound, ''],
+            'Invalid response by API to get session information' => [$responseInvalid, ''],
+            'Empty response' => ['', ''],
+        ];
+    }
+
+    /**
+     * @dataProvider provideGraphQlResponse
+     */
+    public function testShouldGetSessionExecutorForSelenium4(
+        string $responseData,
+        string $expectedSessionExecutor
+    ): void {
+        $adapter = new SeleniumServerAdapter('http://127.0.0.1:4444/wd/hub');
+        $fileGetContentsMock = $this->getFunctionMock(__NAMESPACE__, 'file_get_contents');
+
+        $fileGetContentsMock->expects($this->at(0))
+            ->with('http://127.0.0.1:4444/graphql')
+            ->willReturn('{"data": {"__typename": "GridQuery"}}');
+
+        $fileGetContentsMock->expects($this->at(1))
+            ->with('http://127.0.0.1:4444/graphql')
+            ->willReturn($responseData);
+
+        $this->assertSame(
+            $expectedSessionExecutor,
+            $adapter->getSessionExecutor('4f1bebc2-667e-4b99-b16a-ff36221a20b3')
+        );
+    }
+
+    /**
+     * @return array[]
+     */
+    public function provideGraphQlResponse(): array
+    {
+        $responseExecutorFound = file_get_contents(__DIR__ . '/Fixtures/graphql-response-found.json');
+        $responseExecutorNotFound = file_get_contents(__DIR__ . '/Fixtures/graphql-response-not-found.json');
+        $responseInvalid = file_get_contents(__DIR__ . '/Fixtures/graphql-response-invalid.txt');
+
+        return [
+            // $responseData, $expectedSessionExecutor
+            'Executor for session was found' => [$responseExecutorFound, 'http://10.216.10.116:5555'],
             'Executor for session was not found' => [$responseExecutorNotFound, ''],
             'Invalid response by API to get session information' => [$responseInvalid, ''],
             'Empty response' => ['', ''],
