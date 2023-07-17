@@ -302,10 +302,10 @@ class XmlPublisherTest extends TestCase
     }
 
     /**
-     * @dataProvider provideEndpointTestsessionResponse
+     * @dataProvider provideServerGraphQlResponse
      */
     public function testShouldLogTestExecutorWhenTestStarted(
-        string $testsessionEndpointResponse,
+        string $serverResponse,
         ?string $expectedExecutor
     ): void {
         $webDriverMock = $this->createMock(RemoteWebDriver::class);
@@ -317,9 +317,12 @@ class XmlPublisherTest extends TestCase
         $testMock->wd = $webDriverMock;
 
         $fileGetContentsMock = $this->getFunctionMock('Lmc\Steward\Selenium', 'file_get_contents');
-        $fileGetContentsMock->expects($this->once())
-            ->with('http://server.tld:4444/grid/api/testsession?session=session-id-foo-bar')
-            ->willReturn($testsessionEndpointResponse);
+        $fileGetContentsMock->expects($this->at(0))
+            ->with('http://server.tld:4444/graphql')
+            ->willReturn('{"data": {"__typename": "GridQuery"}}');
+        $fileGetContentsMock->expects($this->at(1))
+            ->with('http://server.tld:4444/graphql')
+            ->willReturn($serverResponse);
 
         $fileName = $this->createEmptyFile();
 
@@ -341,12 +344,12 @@ class XmlPublisherTest extends TestCase
     /**
      * @return array[]
      */
-    public function provideEndpointTestsessionResponse(): array
+    public function provideServerGraphQlResponse(): array
     {
         return [
             'executor found' => [
-                file_get_contents(__DIR__ . '/../Selenium/Fixtures/testsession-found.json'),
-                'http://10.1.255.241:5555',
+                file_get_contents(__DIR__ . '/../Selenium/Fixtures/graphql-response-found.json'),
+                'http://10.216.10.116:5555',
             ],
             'empty response' => ['', null],
         ];

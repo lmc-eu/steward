@@ -14,6 +14,7 @@ class SeleniumServerAdapter
 
     protected const STATUS_ENDPOINT = '/status';
     protected const TESTSESSION_ENDPOINT = '/grid/api/testsession';
+    protected const GRAPHQL_ENDPOINT = '/graphql';
     protected const HUB_ENDPOINT = '/wd/hub';
     protected const DEFAULT_PORT = 4444;
     protected const DEFAULT_PORT_CLOUD_SERVICE = 80;
@@ -60,7 +61,7 @@ class SeleniumServerAdapter
     }
 
     /**
-     * Test if server URL is accessible and we can connected there
+     * Test if server URL is accessible and we can connect there
      */
     public function isAccessible(): bool
     {
@@ -134,29 +135,30 @@ class SeleniumServerAdapter
      */
     public function getSessionExecutor(string $sessionId): string
     {
-        $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 1]]);
+        if ($this->isGraphQlCapable()) {
+            try {
+                $response = $this->graphQlQuery(sprintf('{ session (id: "%s") { id, nodeId, nodeUri } }', $sessionId));
+            } catch (\RuntimeException $e) {
+                return '';
+            }
 
-        // Selenium server URL ends with /wd/hub. But the endpoint to get the session info is available on URL
-        // which starts from the same root path as the /wd/hub - thus we must remove this path.
-        $endpointUrl = $this->removeHubEndpointPathIfPresent($this->getServerUrl()) . self::TESTSESSION_ENDPOINT;
-
-        $responseData = @file_get_contents($endpointUrl . '?session=' . $sessionId, false, $context);
-
-        if (!$responseData) {
-            return '';
+            return $response['data']['session']['nodeUri'] ?? '';
         }
+
+        return $this->getSessionExecutorForSelenium3($sessionId);
+    }
+
+    private function isGraphQlCapable(): bool
+    {
+        $query = '{__typename}'; // simple GraphQL health check to query top level typename
 
         try {
-            $responseJson = json_decode($responseData, false, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            return '';
+            $this->graphQlQuery($query);
+        } catch (\Throwable $e) {
+            return false;
         }
 
-        if (empty($responseJson->proxyId)) {
-            return '';
-        }
-
-        return $responseJson->proxyId;
+        return true;
     }
 
     /**
@@ -222,5 +224,62 @@ class SeleniumServerAdapter
         }
 
         return '';
+    }
+
+    private function getSessionExecutorForSelenium3(string $sessionId): string
+    {
+        $serverBaseUrl = $this->removeHubEndpointPathIfPresent($this->getServerUrl());
+        $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 1]]);
+        $endpointUrl = $serverBaseUrl . self::TESTSESSION_ENDPOINT;
+        $responseData = @file_get_contents($endpointUrl . '?session=' . $sessionId, false, $context);
+
+        if (!$responseData) {
+            return '';
+        }
+
+        try {
+            $responseJson = json_decode($responseData, false, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            return '';
+        }
+
+        if (empty($responseJson->proxyId)) {
+            return '';
+        }
+
+        return $responseJson->proxyId;
+    }
+
+    private function graphQlQuery(string $query): array
+    {
+        $context = stream_context_create(
+            [
+                'http' => [
+                    'method' => 'POST',
+                    'header' => ['Content-Type: application/json'],
+                    'content' => json_encode(['query' => $query]),
+                    'timeout' => 5,
+                ],
+            ]
+        );
+
+        $responseData = @file_get_contents(
+            $this->removeHubEndpointPathIfPresent($this->getServerUrl()) . self::GRAPHQL_ENDPOINT,
+            false,
+            $context
+        );
+
+        if ($responseData === false) {
+            $error = error_get_last();
+            throw new \RuntimeException('Error executing GraphQL query: ' . $error['message'], $error['type']);
+        }
+
+        $parsedResponse = json_decode($responseData, true);
+
+        if (!is_array($parsedResponse)) {
+            throw new \RuntimeException('Error decoding GraphQL response');
+        }
+
+        return $parsedResponse;
     }
 }
