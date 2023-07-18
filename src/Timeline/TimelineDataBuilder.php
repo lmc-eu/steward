@@ -92,9 +92,10 @@ class TimelineDataBuilder
     private function buildItemTitle(\SimpleXMLElement $testElement): string
     {
         return sprintf(
-            '%s<br>(%d sec)',
+            '%s<br>Duration: %d sec | Result: %s',
             $this->assembleFullTestName($testElement),
-            $this->calculateTestDurationSeconds((string) $testElement['start'], (string) $testElement['end'])
+            $this->calculateTestDurationSeconds((string) $testElement['start'], (string) $testElement['end']),
+            (string) $testElement['result'],
         );
     }
 
