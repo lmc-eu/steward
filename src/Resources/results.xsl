@@ -6,38 +6,55 @@
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
                 <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <title>Results | Steward</title>
-                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet"/>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1/font/bootstrap-icons.min.css" rel="stylesheet"/>
             </head>
             <body>
                 <div class="container">
-                    <div class="page-header">
+                    <div class="pb-0 mt-4 mb-4 border-bottom">
                         <h1>
                             Steward results
-                            <span class="pull-right"><small>generated with ♥</small></span>
                         </h1>
                     </div>
 
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><h1><xsl:value-of select="count(//testcase)"/> testcases</h1></div>
-                                <ul class="list-group">
+                    <xsl:variable name="in-progress" select="count(//testcase) &gt; count(//testcase[@status='done'])" />
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h1>
+                                        <xsl:value-of select="count(//testcase)"/>
+                                        <xsl:choose>
+                                            <xsl:when test="count(//testcase) = 1">
+                                                testcase
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                testcases
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </h1>
+
+                                </div>
+                                <ul class="list-group list-group-flush">
                                     <li class="list-group-item">prepared: <xsl:value-of select="count(//testcase[@status='prepared'])"/></li>
                                     <li class="list-group-item">queued: <xsl:value-of select="count(//testcase[@status='queued'])"/></li>
                                     <li class="list-group-item">
                                         done: <xsl:value-of select="count(//testcase[@status='done'])"/>
+
                                         <ul style="list-style-type: none; padding-left: 20px;">
                                             <li>
-                                                <span class="glyphicon glyphicon-ok"></span>
+                                                <i class="bi bi-check-lg"></i>
                                                 passed: <xsl:value-of select="count(//testcase[@status='done' and @result='passed'])"/>
                                             </li>
                                             <li>
-                                                <span class="glyphicon glyphicon-remove"></span>
+                                                <i class="bi bi-x-circle-fill"></i>
                                                 failed: <xsl:value-of select="count(//testcase[@status='done' and @result='failed'])"/>
                                             </li>
                                             <li>
-                                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                                <i class="bi bi-exclamation-triangle"></i>
                                                 fatal: <xsl:value-of select="count(//testcase[@status='done' and @result='fatal'])"/>
                                             </li>
                                         </ul>
@@ -45,29 +62,40 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-xs-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-header">
                                     <h1>
-                                        <abbr title="Initialized so far"><xsl:value-of select="count(//test)"/></abbr>
-                                        tests
+                                        <xsl:value-of select="count(//test)"/>
+                                        <xsl:choose>
+                                            <xsl:when test="count(//test) = 1">
+                                                test
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                tests
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <xsl:if test="$in-progress">
+                                            <small class="text-body-secondary" style="font-size: 0.5em">(initialized so far)</small>
+                                        </xsl:if>
                                     </h1>
                                 </div>
-                                <ul class="list-group">
+                                <ul class="list-group list-group-flush">
                                     <li class="list-group-item">started: <xsl:value-of select="count(//test[@status='started'])"/></li>
                                     <li class="list-group-item">
                                         done: <xsl:value-of select="count(//test[@status='done'])"/>
+
                                         <ul style="list-style-type: none; padding-left: 20px;">
                                             <li>
-                                                <span class="glyphicon glyphicon-ok"></span>
+                                                <i class="bi bi-check-lg"></i>
                                                 passed: <xsl:value-of select="count(//test[@status='done' and @result='passed'])"/>
                                             </li>
                                             <li>
-                                                <span class="glyphicon glyphicon-remove"></span>
+                                                <i class="bi bi-x-circle-fill"></i>
                                                 failed or broken: <xsl:value-of select="count(//test[@status='done' and (@result='failed' or @result='broken')])"/>
                                             </li>
                                             <li>
-                                                <span class="glyphicon glyphicon-question-sign"></span>
+                                                <i class="bi bi-question-circle"></i>
                                                 skipped or incomplete: <xsl:value-of select="count(//test[@status='done' and (@result='skipped' or @result='incomplete')])"/>
                                             </li>
                                         </ul>
@@ -80,14 +108,18 @@
                     <xsl:variable name="testcase-progress-passed" select="round(100 div count(//testcase) * count(//testcase[@status='done' and @result='passed']))" />
                     <xsl:variable name="testcase-progress-failed-and-fatal" select="round(100 div count(//testcase) * count(//testcase[@status='done' and (@result='failed' or @result='fatal')]))" />
 
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" style="width: {$testcase-progress-failed-and-fatal}%">
+                    <div class="progress mb-4" style="height: 2em">
+                        <div style="width: {$testcase-progress-failed-and-fatal}%">
+                            <xsl:attribute name="class">
+                                progress-bar bg-danger
+                                <xsl:if test="$in-progress">progress-bar-striped progress-bar-animated</xsl:if>
+                            </xsl:attribute>
                             <xsl:value-of select="$testcase-progress-failed-and-fatal"/> %
                         </div>
                         <div style="width: {$testcase-progress-passed}%">
                             <xsl:attribute name="class">
-                                progress-bar progress-bar-success
-                                <xsl:if test="count(//testcase) &gt; count(//testcase[@status='done'])">progress-bar-striped active</xsl:if>
+                                progress-bar bg-success
+                                <xsl:if test="$in-progress">progress-bar-striped progress-bar-animated</xsl:if>
                             </xsl:attribute>
                             <xsl:if test="count(//testcase[@status='done']) &lt; 1">
                                 <xsl:attribute name="aria-valuenow">0</xsl:attribute>
@@ -96,7 +128,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-condensed table-hover results-table">
+                    <table class="table table-sm table-hover results-table">
                         <thead>
                             <tr>
                                 <th colspan="2">Testcase / tests</th>
@@ -107,9 +139,9 @@
                                 <th>Duration</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-group-divider">
                             <xsl:for-each select="//testcases/testcase">
-                                <tr class="testcase-row active">
+                                <tr class="testcase-row table-active">
                                     <td colspan="2" style="word-break: break-all;">
                                         <xsl:value-of select="@name"/>
                                     </td>
@@ -119,27 +151,27 @@
                                     <td>
                                         <xsl:attribute name="class">
                                             <xsl:choose>
-                                                <xsl:when test="@result = 'passed'">success</xsl:when>
-                                                <xsl:when test="@result = 'failed'">danger</xsl:when>
-                                                <xsl:when test="@result = 'fatal'">warning</xsl:when>
+                                                <xsl:when test="@result = 'passed'">bg-success-subtle</xsl:when>
+                                                <xsl:when test="@result = 'failed'">bg-danger-subtle</xsl:when>
+                                                <xsl:when test="@result = 'fatal'">bg-warning-subtle</xsl:when>
                                             </xsl:choose>
                                         </xsl:attribute>
 
                                         <!-- if the status is queued (this result is not yet know) only add time icon -->
                                         <xsl:if test="@status = 'queued'">
-                                            <span class="glyphicon glyphicon-time"></span>
+                                            <i class="bi bi-clock"></i>
                                         </xsl:if>
 
-                                        <span>
+                                        <i>
                                             <xsl:attribute name="class">
-                                                glyphicon
+                                                bi
                                                 <xsl:choose>
-                                                    <xsl:when test="@result = 'passed'">glyphicon-ok</xsl:when>
-                                                    <xsl:when test="@result = 'failed'">glyphicon-remove</xsl:when>
-                                                    <xsl:when test="@result = 'fatal'">glyphicon-warning-sign</xsl:when>
+                                                    <xsl:when test="@result = 'passed'">bi-check-lg</xsl:when>
+                                                    <xsl:when test="@result = 'failed'">bi-x-circle-fill</xsl:when>
+                                                    <xsl:when test="@result = 'fatal'">bi-exclamation-triangle</xsl:when>
                                                 </xsl:choose>
                                             </xsl:attribute>
-                                        </span>
+                                        </i>
                                         <xsl:text>&#160;&#160;</xsl:text>
                                         <xsl:value-of select="@result"/>
                                     </td>
@@ -173,26 +205,26 @@
                                                 <xsl:choose>
                                                     <xsl:when test="@status = 'started' and ../@result = 'fatal'">
                                                         <xsl:attribute name="class">warning</xsl:attribute>
-                                                        <span class="glyphicon glyphicon-warning-sign"></span>&#160;&#160;fatal
+                                                        <i class="bi bi-exclamation-triangle"></i>&#160;&#160;fatal
                                                     </xsl:when>
                                                     <xsl:otherwise>
                                                         <xsl:attribute name="class">
                                                             <xsl:choose>
-                                                                <xsl:when test="@result = 'passed'">success</xsl:when>
-                                                                <xsl:when test="@result = 'failed' or @result = 'broken'">danger</xsl:when>
-                                                                <xsl:when test="@result = 'skipped' or @result = 'incomplete'">info</xsl:when>
+                                                                <xsl:when test="@result = 'passed'">bg-success-subtle</xsl:when>
+                                                                <xsl:when test="@result = 'failed' or @result = 'broken'">bg-danger-subtle</xsl:when>
+                                                                <xsl:when test="@result = 'skipped' or @result = 'incomplete'">bg-info-subtle</xsl:when>
                                                             </xsl:choose>
                                                         </xsl:attribute>
-                                                        <span>
+                                                        <i>
                                                             <xsl:attribute name="class">
-                                                                glyphicon
+                                                                bi
                                                                 <xsl:choose>
-                                                                    <xsl:when test="@result = 'passed'">glyphicon-ok</xsl:when>
-                                                                    <xsl:when test="@result = 'failed' or @result = 'broken'">glyphicon-remove</xsl:when>
-                                                                    <xsl:when test="@result = 'skipped' or @result = 'incomplete'">glyphicon-question-sign</xsl:when>
+                                                                    <xsl:when test="@result = 'passed'">bi-check-lg</xsl:when>
+                                                                    <xsl:when test="@result = 'failed' or @result = 'broken'">bi-x-circle-fill</xsl:when>
+                                                                    <xsl:when test="@result = 'skipped' or @result = 'incomplete'">bi-question-circle</xsl:when>
                                                                 </xsl:choose>
                                                             </xsl:attribute>
-                                                        </span>
+                                                        </i>
                                                         <xsl:text>&#160;&#160;</xsl:text>
                                                         <xsl:value-of select="@result"/>
                                                     </xsl:otherwise>
@@ -216,8 +248,8 @@
                         </tbody>
                     </table>
                 </div>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/moment@2/moment.min.js"></script>
             <script>
                 <![CDATA[
                 $(function () {
