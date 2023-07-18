@@ -91,7 +91,7 @@ class RunCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Selenium server (hub) URL ',
-                'http://localhost:4444/wd/hub'
+                'http://localhost:4444'
             )
             ->addOption(
                 self::OPTION_CAPABILITY,
