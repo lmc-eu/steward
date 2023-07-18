@@ -87,7 +87,7 @@ Steward. It is as easy as adding the following to your `composer.json` file:
         }
     }
 ```
-Don't forget to create the `selenium-tests/tests/` directory and to run `composer dump-autoload` afterwards.
+Don't forget to create the `selenium-tests/tests/` directory and to run `composer dump-autoload` afterward.
 
 For the test itself, place it in the `selenium-tests/tests/` directory:
 
@@ -130,14 +130,14 @@ class TitlePageTest extends AbstractTestCase
 Now you need to start Selenium server, which will listen for and execute commands sent from your tests.
 
 ```sh
-$ java -jar ./vendor/bin/selenium-server-standalone-3.4.0.jar # the version may differ
+$ java -jar ./vendor/bin/selenium-server-4.10.0.jar standalone # the version may differ
 ```
 
-This will start a single Selenium Server instance (listening on port 4444) in "no-grid" mode (meaning the server receives
-and executes the commands itself).
+This will start a single Selenium Server instance (listening on port 4444) in standalone (alias "no-grid") mode
+(meaning the server will receive and execute the commands itself, without distributing to nodes).
 
-**Note:** You may want to run Selenium  Server in a grid mode. This has the *hub* receiving commands while multiple *nodes* execute them. 
-Consult --help and the `-role` option of Selenium server.
+**Note:** You may want to run Selenium  Server in a grid mode. This has the *hub* receiving commands while multiple *nodes* execute them.
+See [Selenium Grid](https://www.selenium.dev/documentation/grid/getting_started/#hub-and-node) documentation.
 
 #### Run Steward!
 Now that Selenium Server is listening, let's launch your test! Use the  `run` command:
@@ -157,7 +157,7 @@ There is also a bunch of useful options for the `run` command:
 
 - `--group` - only run specific group(s) of tests
 - `--exclude-group` - exclude some group(s) of tests (can be even combined with `--group`)
-- `--server-url` - set different url of selenium server than the default (which is `http://localhost:4444/wd/hub`)
+- `--server-url` - set different url of selenium server than the default (which is `http://localhost:4444`)
 - `--xdebug` - start Xdebug debugger on your tests. Allows you to debug tests from your IDE ([learn more about tests debugging][wiki-debugging] in our Wiki)
 - `--capability` - directly pass any extra capability to the Selenium WebDriver server ([see wiki][wiki-capabilities] for more information and examples)
 - `--parallel-limit` - limit number of testcases being executed in a parallel (default is 50)
