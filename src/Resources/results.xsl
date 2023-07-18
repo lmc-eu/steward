@@ -142,7 +142,7 @@
                         <tbody class="table-group-divider">
                             <xsl:for-each select="//testcases/testcase">
                                 <tr class="testcase-row table-active">
-                                    <td colspan="2" style="word-break: break-all;">
+                                    <td colspan="2" style="word-break: break-all;" class="w-50">
                                         <xsl:value-of select="@name"/>
                                     </td>
                                     <td>
