@@ -43,7 +43,7 @@ if ($installedAsDependency) {
 }
 
 $dispatcher = new EventDispatcher();
-$application = new Application('Steward', '3.0.1');
+$application = new Application('Steward', '3.1.0');
 $application->setDispatcher($dispatcher);
 
 // Search for listeners and attach them to dispatcher

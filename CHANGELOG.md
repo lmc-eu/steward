@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+## 3.1.0 - 2023-07-20
+
 ### Changed
 - Change default value of `--server-url` option to `http://localhost:4444` (i.e. remove `/wd/hub` from the URL).
 - Update to Bootstrap 5 in results.xml and generated timeline.
