@@ -4,6 +4,15 @@
 
 ## Unreleased
 
+### Changed
+- Change default value of `--server-url` option to `http://localhost:4444` (i.e. remove `/wd/hub` from the URL).
+- Update to Bootstrap 5 in results.xml and generated timeline.
+- Show test result in timeline tooltip.
+- Show spinner in results.xml when tests are still in progress.
+
+### Fixed
+- Fix displaying text executors in generated timeline (executors are now read and stored also for tests run on Selenium 4).
+
 ## 3.0.1 - 2023-04-14
 
 ### Fixed
