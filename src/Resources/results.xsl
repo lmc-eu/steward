@@ -12,14 +12,16 @@
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1/font/bootstrap-icons.min.css" rel="stylesheet"/>
             </head>
             <body>
-                <div class="container">
-                    <div class="pb-0 mt-4 mb-4 border-bottom">
-                        <h1>
-                            Steward results
-                        </h1>
-                    </div>
 
-                    <xsl:variable name="in-progress" select="count(//testcase) &gt; count(//testcase[@status='done'])" />
+                <xsl:variable name="in-progress" select="count(//testcase) &gt; count(//testcase[@status='done'])" />
+
+                <div class="container">
+                    <div class="pb-0 mt-4 mb-4 border-bottom d-flex align-items-center">
+                        <h1>Steward results</h1>
+                        <xsl:if test="$in-progress">
+                            <div class="spinner-border ms-auto" role="status" aria-hidden="true" title="Test are still in progress"></div>
+                        </xsl:if>
+                    </div>
 
                     <div class="row mb-4">
                         <div class="col-6">
@@ -111,15 +113,14 @@
                     <div class="progress mb-4" style="height: 2em">
                         <div style="width: {$testcase-progress-failed-and-fatal}%">
                             <xsl:attribute name="class">
-                                progress-bar bg-danger
-                                <xsl:if test="$in-progress">progress-bar-striped progress-bar-animated</xsl:if>
-                            </xsl:attribute>
-                            <xsl:value-of select="$testcase-progress-failed-and-fatal"/> %
+                                <xsl:text>progress-bar bg-danger</xsl:text>
+                                <xsl:if test="$in-progress"> progress-bar-striped progress-bar-animated</xsl:if>
+                            </xsl:attribute><xsl:value-of select="$testcase-progress-failed-and-fatal"/> %
                         </div>
                         <div style="width: {$testcase-progress-passed}%">
                             <xsl:attribute name="class">
-                                progress-bar bg-success
-                                <xsl:if test="$in-progress">progress-bar-striped progress-bar-animated</xsl:if>
+                                <xsl:text>progress-bar bg-success</xsl:text>
+                                <xsl:if test="$in-progress"> progress-bar-striped progress-bar-animated</xsl:if>
                             </xsl:attribute>
                             <xsl:if test="count(//testcase[@status='done']) &lt; 1">
                                 <xsl:attribute name="aria-valuenow">0</xsl:attribute>
