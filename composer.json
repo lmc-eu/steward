@@ -81,9 +81,9 @@
     ],
     "config": {
         "allow-plugins": {
-            "phpstan/extension-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
             "ergebnis/composer-normalize": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "phpstan/extension-installer": true
         },
         "sort-packages": true
     },
