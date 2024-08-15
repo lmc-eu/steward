@@ -2,6 +2,7 @@
 
 namespace Lmc\Steward\Selenium;
 
+use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\WebDriverBrowserType;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;
@@ -101,6 +102,9 @@ final class CapabilitiesResolver
             case WebDriverBrowserType::IE:
                 $capabilities = $this->setupInternetExplorerCapabilities($capabilities);
                 break;
+            case WebDriverBrowserType::CHROME:
+                $capabilities = $this->setupChromeCapabilities($capabilities);
+                break;
         }
 
         return $capabilities;
@@ -110,6 +114,16 @@ final class CapabilitiesResolver
     {
         // Clears cache, cookies, history, and saved form data of MSIE.
         $capabilities->setCapability('ie.ensureCleanSession', true);
+
+        return $capabilities;
+    }
+
+    private function setupChromeCapabilities(DesiredCapabilities $capabilities): DesiredCapabilities
+    {
+        $chromeOptions = new ChromeOptions();
+        // Disable search engine choice pop-up which appears in Chrome 127+
+        $chromeOptions->addArguments(['--disable-search-engine-choice-screen']);
+        $capabilities->setCapability(ChromeOptions::CAPABILITY, $chromeOptions);
 
         return $capabilities;
     }
